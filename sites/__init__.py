@@ -55,6 +55,7 @@ CHINESE = Site(
         "expand": "扩写句子PK",
         "shorten": "缩写句子PK",
         "rhetorical": "反问句改陈述句PK",
+        "poetry": "古诗词PK",
     },
     files={
         "punctuation": "标点pk.html",
@@ -67,6 +68,7 @@ CHINESE = Site(
         "expand": "扩写句子pk.html",
         "shorten": "缩写句子pk.html",
         "rhetorical": "反问句改陈述句pk.html",
+        "poetry": "古诗词pk.html",
     },
     admin_hint="按年级分配授权，填写备注后将授权码发送给用户。",
     admin_scope_header="授权年级／学期",
