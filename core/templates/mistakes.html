@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block title %}错题本 · {{site.title}}{% endblock %}
+{% block content %}
+  <section class="mistake-book" aria-labelledby="mistakes-heading">
+    <div class="section-heading">
+      <div>
+        <h2 id="mistakes-heading">错题本</h2>
+        <p>答错的题会自动记在这里；错题重练时答对一次，就从错题本里移出。</p>
+      </div>
+      <a class="secondary" href="{{url_for('home')}}">返回游戏首页</a>
+    </div>
+    <p class="hint">错题本只保存在这台设备的这个浏览器里，换设备或清理浏览器数据后不会保留。</p>
+    <div id="mistake-list"></div>
+  </section>
+  <script id="mistake-games" type="application/json">{{games|tojson}}</script>
+  <script>
+(() => {
+  const games = JSON.parse(document.getElementById('mistake-games').textContent);
+  const key = {{(site.key ~ '-mistakes-v1')|tojson}}, gameUrl = {{url_for('game_page', game='GAME')|tojson}};
+  const list = document.getElementById('mistake-list');
+  const read = () => { try { return JSON.parse(localStorage.getItem(key)) || {}; } catch { return {}; } };
+  const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text !== undefined) n.textContent = text; return n; };
+  function render() {
+    const book = read(), groups = {};
+    for (const m of Object.values(book)) if (games[m.game]) (groups[m.game] ||= []).push(m);
+    list.replaceChildren();
+    const ids = Object.keys(games).filter(id => groups[id]);
+    if (!ids.length) {
+      const empty = el('div', 'grade-empty');
+      empty.append(el('h3', '', '还没有错题'), el('p', '', '玩游戏时答错的题会出现在这里，方便以后再练。'));
+      list.append(empty);
+      return;
+    }
+    for (const id of ids) {
+      const items = groups[id].sort((a, b) => b.last - a.last);
+      const card = el('article', 'game-card mistake-game');
+      const head = el('div', 'mistake-head');
+      head.append(el('h3', '', `${games[id]} · ${items.length} 题`));
+      const actions = el('div', 'mistake-actions');
+      const practice = el('a', 'game-link', '错题重练');
+      practice.href = gameUrl.replace('GAME', encodeURIComponent(id)) + '#mistakes';
+      const clear = el('button', 'text-button', '清空');
+      clear.type = 'button';
+      clear.onclick = () => {
+        if (!confirm(`清空「${games[id]}」的全部错题？`)) return;
+        const now = read();
+        for (const k of Object.keys(now)) if (now[k].game === id) delete now[k];
+        try { localStorage.setItem(key, JSON.stringify(now)); } catch {}
+        render();
+      };
+      actions.append(practice, clear);
+      head.append(actions);
+      const ol = el('ol', 'mistake-items');
+      for (const m of items) {
+        const li = el('li');
+        li.append(el('p', 'mistake-text', m.text), el('p', 'hint', `正确答案：${m.answer}${m.count > 1 ? ` · 错过 ${m.count} 次` : ''}`));
+        ol.append(li);
+      }
+      card.append(head, ol);
+      list.append(card);
+    }
+  }
+  render();
+})();
+</script>
+{% endblock %}

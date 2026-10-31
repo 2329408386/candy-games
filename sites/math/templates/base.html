@@ -42,7 +42,7 @@
           </form>
         {% endif %}
       </nav>
-      {% else %}<span class="header-note"><span class="status-dot"></span> 一起玩，一起想</span>{% endif %}
+      {% else %}<span class="header-actions"><a class="header-link" href="{{url_for('mistakes')}}">错题本</a><span class="header-note"><span class="status-dot"></span> 一起玩，一起想</span></span>{% endif %}
     </header>
     <main class="{{'admin-main' if is_admin else 'student-main'}}">
       {% with messages=get_flashed_messages(with_categories=true) %}{% for category,message in messages %}

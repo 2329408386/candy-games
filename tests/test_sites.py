@@ -220,3 +220,9 @@ def test_question_bank_requires_license(client, site):
     assert len(r.get_json()["questions"]) == 100
     assert client.get("/static/math-banks.js").status_code == 404
     assert client.get("/static/shared/pk/pk-core.js").status_code == 200
+
+
+def test_mistake_book_page(client, site):
+    html = client.get("/mistakes").get_data(as_text=True)
+    assert f'"{site}-mistakes-v1"' in html and "错题本" in html
+    assert "错题本" in client.get("/").get_data(as_text=True)

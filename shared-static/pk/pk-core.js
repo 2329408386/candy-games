@@ -77,7 +77,8 @@
   const MISTAKE_LIMIT = 300;
   const mistakes = {
     all: () => readStore(MISTAKES_KEY, {}),
-    ids: () => Object.values(mistakes.all()).filter(m => m.game === cfg.id).map(m => m.id),
+    // Only ids still in the bank count, so removed or replaced questions drop out of 错题重练.
+    ids: () => Object.values(mistakes.all()).filter(m => m.game === cfg.id && (!bank || bank.questions.some(q => q.id === m.id))).map(m => m.id),
     add(q, renderer) {
       const book = mistakes.all();
       const key = cfg.id + '/' + q.id;

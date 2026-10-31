@@ -468,6 +468,11 @@ def register_public(app):
             unlocked=allowed_games(row) if row else [],
         )
 
+    @app.get("/mistakes")
+    def mistakes():
+        # The mistake book lives in the browser's localStorage; this page only renders it.
+        return render_template("mistakes.html")
+
     @app.get("/games/<game>")
     def game_page(game):
         if game not in site().games:
