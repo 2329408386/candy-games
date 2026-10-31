@@ -54,7 +54,7 @@ CHINESE = Site(
         "passive": "被字句PK",
         "expand": "扩写句子PK",
         "shorten": "缩写句子PK",
-        "rhetorical": "陈述句PK",
+        "rhetorical": "反问句改陈述句PK",
     },
     files={
         "punctuation": "标点pk.html",

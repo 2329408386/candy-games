@@ -1,4 +1,4 @@
-# 陈述句PK题库复核清单
+# 反问句改陈述句PK题库复核清单
 
 > 本文件由 `python tools/banks.py --fix` 根据 `sites/chinese/banks/rhetorical.json` 生成，请修改题库后重新生成，不要直接编辑。
 

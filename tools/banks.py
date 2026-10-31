@@ -33,6 +33,7 @@ EIGHT = {
     (-1, -1): "西北",
 }
 BLANK = re.compile(r"\[(\d+)\]")
+RHETORICAL_MARKS = ("难道", "怎么", "什么", "吗", "呢", "？")
 
 
 def bank_path(site, game):
@@ -195,6 +196,11 @@ def check_tiles(q, bank, game):
             errors.append("插入词不在词卡中")
     if kind not in ("order", "delete", "expand"):
         errors.append(f"未知题型 {kind}")
+    if game == "rhetorical":
+        texts = [c["text"] for c in q["cards"]]
+        missing = [m for m in RHETORICAL_MARKS if m in q["prompt"] and m not in texts and m not in q["answers"][0]]
+        if missing:
+            errors.append(f"原句里的反问词没有放进词卡：{'、'.join(missing)}")
     return errors
 
 
