@@ -13,10 +13,18 @@
 - `sites/<chinese|math>/`：站点配置 `sites/__init__.py`、游戏页 `games/`、静态资源 `static/`、站点专属模板（首页、外框）。
 - `core/templates/`：两站共用的后台模板。
 - `shared-static/game-audio-v3/`：两站共用的音效。
-- `tools/assets.py`：静态资源指纹；`tools/merge_databases.py`：合并旧库（仅迁移时用过一次）。
+- `tools/assets.py`：静态资源指纹。
+- `docs/`：题库人工复核清单。
 - `deploy/`：systemd、nginx 配置和发布脚本。
 
 两站各自保留独立的密钥（`CHINESE_SECRET`、`MATH_SECRET`）、Cookie 名（`session`、`math_session`）、管理员账号和授权编号。所有数据存在同一个数据库 `/var/lib/candy-games/games.sqlite3` 里，每张表都按 `site` 列区分站点。
+
+## 游戏规则
+- 每款游戏题库 100 题，每局每人抽 20 题（按题型均衡抽取），同局双方不重复。
+- 默认时长：语文标点PK、的地得PK 150 秒，其余语文游戏 180 秒；数学 150 秒。开始页右上角可设 30—1800 秒，开局后锁定。
+- 数学计分：答对 +10，连对额外 +5，答错 −5（最低 0）。
+- 时长与声音开关保存在浏览器 localStorage：语文 `chinese-pk-settings-v1`，数学 `math-pk-settings-v1`。
+- 音效素材与许可见 `shared-static/game-audio-v3/SOURCES.md`。
 
 ## 修改静态资源后
 图片、音效文件名里带内容哈希（`name.<8位哈希>.ext`），js/css 的引用带 `?v=<哈希>`，浏览器会缓存一年，内容一变地址就变，客户端自动拿到新版本。替换或修改任何静态文件后运行：
