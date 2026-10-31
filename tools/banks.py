@@ -100,6 +100,11 @@ def check_choice(q, bank, game):
         errors.append("空格处原字与答案不一致")
     if "targetWord" in q and q["prompt"][q["focus"][0]] not in q["targetWord"]:
         errors.append("标出的字不在目标词中")
+    if game == "similar-char":
+        if not 3 <= len(options) <= 5:
+            errors.append("形近字题应有3~5个选项（2~4个干扰字）")
+        if q.get("origin") not in ("textbook", "extension"):
+            errors.append("缺少 origin")
     if game == "conversion":
         given = (
             sum(v * FACTORS[u] for v, u in zip(q["givenParts"], q["givenUnits"]))
