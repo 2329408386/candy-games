@@ -3,6 +3,9 @@ from pathlib import Path
 
 DB_NAME = "games.sqlite3"
 # Every table is scoped by site ('chinese' or 'math'); ids keep their original per-site numbering.
+# Permissions and grades come from license_groups -> game_groups. licenses.grade_scopes and
+# generation_batches.grade_scopes are deprecated mirrors: still written so older releases can be rolled back to,
+# never read.
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS licenses(site TEXT NOT NULL,id INTEGER NOT NULL,key_hash TEXT NOT NULL,games TEXT NOT NULL,enabled INTEGER NOT NULL DEFAULT 1,buyer TEXT NOT NULL DEFAULT '',assigned_at INTEGER,created_at INTEGER NOT NULL,device_limit INTEGER NOT NULL DEFAULT 3 CHECK(device_limit BETWEEN 1 AND 100),batch_id TEXT,grade_scopes TEXT NOT NULL DEFAULT '[]',archived_at INTEGER,PRIMARY KEY(site,id),UNIQUE(site,key_hash));
 CREATE INDEX IF NOT EXISTS licenses_batch_id ON licenses(site,batch_id);

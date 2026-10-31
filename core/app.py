@@ -149,6 +149,12 @@ def allowed_games(row):
     )
 
 
+def license_grades(lid):
+    """Grades a license covers, derived from its groups (licenses.grade_scopes is a legacy mirror, never read)."""
+    catalog = group_map()
+    return list(dict.fromkeys(catalog[gid]["grade"] for gid in license_group_ids(lid)))
+
+
 def group_scopes_payload(lid):
     catalog = group_map()
     return [{k: catalog[gid][k] for k in ("id", "grade", "name")} for gid in license_group_ids(lid)]
@@ -264,7 +270,10 @@ def filtered():
     if grade:
         if grade not in GRADES:
             abort(400, "无效年级")
-        where.append("EXISTS (SELECT 1 FROM json_each(licenses.grade_scopes) WHERE value=?)")
+        where.append(
+            "EXISTS (SELECT 1 FROM license_groups lg JOIN game_groups gg ON gg.site=lg.site AND gg.id=lg.group_id"
+            " WHERE lg.site=licenses.site AND lg.license_id=licenses.id AND gg.grade=?)"
+        )
         params.append(grade)
     if request.args.get("group"):
         if request.args["group"] not in group_map():
@@ -379,11 +388,14 @@ def create_app(site_config):
         groups_for_grade=groups_for_grade,
         group_games=group_games,
         license_group_ids=license_group_ids,
+        license_grades=license_grades,
         batch_group_ids=batch_group_ids,
         group_labels=group_labels,
     )
     app.jinja_env.filters["datetime"] = lambda value: time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(value))
-    app.jinja_env.filters["grade_names"] = lambda value: "、".join(GRADES[g] for g in json.loads(value))
+    app.jinja_env.filters["grade_names"] = lambda value: "、".join(
+        GRADES[g] for g in (json.loads(value) if isinstance(value, str) else value)
+    )
     app.jinja_env.filters["game_names"] = lambda value: "、".join(site_config.games[g] for g in json.loads(value))
 
     @app.before_request
@@ -565,7 +577,7 @@ def register_api(app):
         return jsonify(
             ok=True,
             games=allowed_games(row),
-            grade_scopes=json.loads(row["grade_scopes"]),
+            grade_scopes=license_grades(row["id"]),
             group_scopes=group_scopes_payload(row["id"]),
             device_count=count + (not bound),
             device_limit=row["device_limit"],
@@ -578,7 +590,7 @@ def register_api(app):
             return jsonify(error="授权已失效，请返回首页重新激活或联系管理员"), 403
         return jsonify(
             games=allowed_games(row),
-            grade_scopes=json.loads(row["grade_scopes"]),
+            grade_scopes=license_grades(row["id"]),
             group_scopes=group_scopes_payload(row["id"]),
             device_limit=row["device_limit"],
             device_count=device_count(row["id"]),

@@ -22,7 +22,16 @@ from sites import SITES  # noqa: E402
 
 PER_PLAYER = 20
 FACTORS = {"毫米": 1, "厘米": 10, "分米": 100, "米": 1000, "千米": 1000000}
-EIGHT = {(0, -1): "北", (1, -1): "东北", (1, 0): "东", (1, 1): "东南", (0, 1): "南", (-1, 1): "西南", (-1, 0): "西", (-1, -1): "西北"}
+EIGHT = {
+    (0, -1): "北",
+    (1, -1): "东北",
+    (1, 0): "东",
+    (1, 1): "东南",
+    (0, 1): "南",
+    (-1, 1): "西南",
+    (-1, 0): "西",
+    (-1, -1): "西北",
+}
 BLANK = re.compile(r"\[(\d+)\]")
 
 
@@ -90,7 +99,11 @@ def check_choice(q, bank, game):
     if "targetWord" in q and q["prompt"][q["focus"][0]] not in q["targetWord"]:
         errors.append("标出的字不在目标词中")
     if game == "conversion":
-        given = sum(v * FACTORS[u] for v, u in zip(q["givenParts"], q["givenUnits"])) if "givenParts" in q else q["given"] * FACTORS[q["fromUnit"]]
+        given = (
+            sum(v * FACTORS[u] for v, u in zip(q["givenParts"], q["givenUnits"]))
+            if "givenParts" in q
+            else q["given"] * FACTORS[q["fromUnit"]]
+        )
         if given != q["answer"] * FACTORS[q["toUnit"]]:
             errors.append(f"换算答案错误：{q['prompt']} = {q['answer']}{q['toUnit']}")
     if game == "mental":
@@ -173,7 +186,9 @@ def check_tiles(q, bank, game):
             errors.append(f"删去词卡得不到答案：{answer}")
     if kind == "expand":
         base = list(q["baseSentence"])
-        built = {"".join(base[: a["position"]]) + a["word"] + "".join(base[a["position"] :]) for a in q["acceptedInsertions"]}
+        built = {
+            "".join(base[: a["position"]]) + a["word"] + "".join(base[a["position"] :]) for a in q["acceptedInsertions"]
+        }
         if built != set(q["answers"]):
             errors.append(f"acceptedInsertions 与 answers 不一致：{built}")
         if not {a["word"] for a in q["acceptedInsertions"]} <= set(q["options"]):
@@ -231,7 +246,13 @@ def check_measure(q, bank, game):
     return errors
 
 
-CHECKS = {"choice": check_choice, "blanks": check_blanks, "tiles": check_tiles, "edit": check_edit, "measure": check_measure}
+CHECKS = {
+    "choice": check_choice,
+    "blanks": check_blanks,
+    "tiles": check_tiles,
+    "edit": check_edit,
+    "measure": check_measure,
+}
 
 
 def check_bank(site, game, bank):
@@ -280,7 +301,11 @@ def doc_rows(site, game, bank):
             answer = q.get("answerText", q["answer"])
             yield f"- {q['id']}：{prompt} 选项：{' / '.join(map(str, q['options']))} 答案：**{answer}**"
         elif t == "blanks":
-            alt = "；也接受 " + " 或 ".join(" / ".join(a) for a in q["acceptedAnswers"][1:]) if q.get("acceptedAnswers") else ""
+            alt = (
+                "；也接受 " + " 或 ".join(" / ".join(a) for a in q["acceptedAnswers"][1:])
+                if q.get("acceptedAnswers")
+                else ""
+            )
             yield f"- {q['id']}：{BLANK.sub('（ ）', q['text'])} 答案：**{' / '.join(q['answers'])}**{alt}"
         elif t == "tiles":
             shown = q.get("baseSentence") or q["prompt"]
@@ -301,9 +326,11 @@ def render_doc(site, game, bank):
     if plans == [None]:
         draw = "每人从全部题目中随机抽20题，双方不重复。"
     else:
-        draw = "每人20题，按分类抽取，双方不重复：" + "；或 ".join(
-            "、".join(f"{k}×{v}" for k, v in plan.items() if v) for plan in plans
-        ) + "。"
+        draw = (
+            "每人20题，按分类抽取，双方不重复："
+            + "；或 ".join("、".join(f"{k}×{v}" for k, v in plan.items() if v) for plan in plans)
+            + "。"
+        )
     counts = Counter(draw_key(q, bank["draw"].get("by", [])) for q in bank["questions"]) if "by" in bank["draw"] else {}
     lines = [
         f"# {title}题库复核清单",

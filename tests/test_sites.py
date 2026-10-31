@@ -226,3 +226,15 @@ def test_mistake_book_page(client, site):
     html = client.get("/mistakes").get_data(as_text=True)
     assert f'"{site}-mistakes-v1"' in html and "错题本" in html
     assert "错题本" in client.get("/").get_data(as_text=True)
+
+
+def test_grades_come_from_license_groups(admin, site, db):
+    # licenses.grade_scopes still says g3-t1; only the group assignment changes.
+    db.execute("UPDATE license_groups SET group_id='g4-t1-a' WHERE site=? AND license_id=1", (site,))
+    db.commit()
+    page = admin.get("/admin?grade=g4-t1").get_data(as_text=True)
+    assert "<td>#1</td>" in page and "<td>#2</td>" not in page
+    assert "<td>#1</td>" not in admin.get("/admin?grade=g3-t1").get_data(as_text=True)
+    user = SiteClient(site)
+    assert user.activate().get_json()["grade_scopes"] == ["g4-t1"]
+    assert "四年级上册" in user.get("/").get_data(as_text=True)

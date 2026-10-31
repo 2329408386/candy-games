@@ -29,7 +29,7 @@
               <input type="hidden" name="csrf" value="{{csrf()}}"><button class="text-button">退出当前授权</button>
             </form>
           </div>
-          <p class="hint">授权学期：{{license.grade_scopes|grade_names}}</p>
+          <p class="hint">授权学期：{{license_grades(license.id)|grade_names}}</p>
           <p class="hint">已绑定 {{device_count}} / {{license.device_limit}} 个浏览器 · 授权永久有效</p>
         {% else %}
           <p class="hint">输入授权码，解锁你的专属游戏。设备名额以授权码设置为准。</p>
@@ -65,7 +65,7 @@
         <span class="game-icon"><svg><use href="#i-shapes"/></svg></span>
         <h3>{{grades[selected_grade]}} · 游戏准备中</h3>
         <p>新的数学小挑战正在路上，敬请期待。</p>
-        {% if license and selected_grade in decode(license.grade_scopes) %}<span class="tag">你已获得对应组授权，后续可访问该组内的游戏</span>{% endif %}
+        {% if license and selected_grade in license_grades(license.id) %}<span class="tag">你已获得对应组授权，后续可访问该组内的游戏</span>{% endif %}
       </div>
     {% else %}
       <p class="hint">已授权组：{{group_labels(license_group_ids(license.id))|join('、') if license else '尚未授权'}}</p>

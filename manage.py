@@ -117,7 +117,11 @@ def summary(site):
                 "grade_scopes": [
                     dict(r)
                     for r in d.execute(
-                        "SELECT grade_scopes,count(*) AS codes FROM licenses WHERE site=? AND archived_at IS NULL GROUP BY grade_scopes",
+                        "SELECT grades AS grade_scopes,count(*) AS codes FROM (SELECT l.id,"
+                        " (SELECT json_group_array(grade) FROM (SELECT DISTINCT gg.grade FROM license_groups lg"
+                        " JOIN game_groups gg ON gg.site=lg.site AND gg.id=lg.group_id"
+                        " WHERE lg.site=l.site AND lg.license_id=l.id ORDER BY gg.grade)) AS grades"
+                        " FROM licenses l WHERE l.site=? AND l.archived_at IS NULL) GROUP BY grades",
                         (s,),
                     )
                 ],
