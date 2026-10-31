@@ -1,0 +1,19 @@
+<dialog class="contact-dialog" id="contact-dialog" aria-labelledby="contact-title">
+  <form method="dialog"><button class="contact-close" aria-label="关闭">×</button></form>
+  <h2 id="contact-title">获取授权码</h2>
+  <p>微信扫一扫，添加管理员为好友，<br>告诉我们年级和想解锁的游戏就可以了。</p>
+  <img src="{{url_for('shared_static', filename='contact/wechat-qr.0736f95e.jpeg')}}" alt="管理员微信二维码" width="958" height="1415" loading="lazy">
+  <p class="hint">在手机上可以长按二维码识别。</p>
+</dialog>
+<script>
+(() => {
+  const dialog = document.getElementById('contact-dialog');
+  document.addEventListener('click', e => {
+    if (e.target === dialog) return dialog.close(); // a click on the backdrop closes it
+    const opener = e.target.closest('[data-contact]');
+    if (!opener) return;
+    e.preventDefault();
+    dialog.showModal();
+  });
+})();
+</script>

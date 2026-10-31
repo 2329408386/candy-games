@@ -10,13 +10,13 @@
         <em>玩出数学的乐趣。</em>
       </h1>
       <p class="intro">
-        把数字变成小游戏，把思考变成小期待。
+        把计算、换算和测量，变成一局局小比拼。
         <br>
-        按年级挑选挑战，一起发现数学的乐趣！
+        课堂上投屏双人PK，课后一个人也能练；答错的题会自动收进错题本。
       </p>
       <section class="activate-panel" aria-label="激活游戏">
         <form id="activate">
-          <input type="hidden" name="csrf" value="{{csrf()}}"><label for="key">开启你的数学之旅</label>
+          <input type="hidden" name="csrf" value="{{csrf()}}"><label for="key">已有授权码？在这里激活</label>
           <div class="activate-row">
             <input id="key" name="key" placeholder="输入你的16位授权码" maxlength="32" required autocomplete="off" autocapitalize="characters"><button id="submit">激活游戏 <span aria-hidden="true">↗</span></button>
           </div>
@@ -32,9 +32,9 @@
           <p class="hint">授权学期：{{license_grades(license.id)|grade_names}}</p>
           <p class="hint">已绑定 {{device_count}} / {{license.device_limit}} 个浏览器 · 授权永久有效</p>
         {% else %}
-          <p class="hint">输入授权码，解锁你的专属游戏。设备名额以授权码设置为准。</p>
+          <p class="hint">还没有授权码？每个游戏都可以免费试玩一局。<button type="button" class="text-button inline-link" data-contact>扫码获取授权码</button></p>
         {% endif %}
-        <p class="hint">更换浏览器或清理Cookie可能占用新名额，设备已满请联系管理员。</p>
+        <p class="hint">每个授权码可在限定数量的浏览器上使用，换浏览器或清除浏览器数据会占用新名额。</p>
       </section>
     </div>
   </section>
@@ -68,7 +68,7 @@
         {% if license and selected_grade in license_grades(license.id) %}<span class="tag">你已获得对应组授权，后续可访问该组内的游戏</span>{% endif %}
       </div>
     {% else %}
-      <p class="hint">已授权组：{{group_labels(license_group_ids(license.id))|join('、') if license else '尚未授权'}}</p>
+      {% if license %}<p class="hint">已授权组：{{group_labels(license_group_ids(license.id))|join("、")}}</p>{% endif %}
       {% for group in groups_for_grade(selected_grade) %}
         <h3>{{group.name}} · {{group_games(group.id)|length}} 个游戏</h3>
         <div class="game-grid math-grid">
@@ -76,14 +76,14 @@
             {% set name=games[id] %}
             <article class="game-card">
               <div class="game-top">
-                <span class="game-icon math-icon" aria-hidden="true">{% if id=='conversion' %}⇄{% elif id=='mental' %}<svg><use href="#i-calc"/></svg>{% elif id=='measure' %}<svg><use href="#i-ruler"/></svg>{% elif id=='units' %}dm{% else %}<svg><use href="#i-compass"/></svg>{% endif %}</span><span class="game-number">0{{loop.index}}</span>
+                <span class="game-icon math-icon" aria-hidden="true">{% if id=='conversion' %}⇄{% elif id=='mental' %}<svg><use href="#i-calc"/></svg>{% elif id=='measure' %}<svg><use href="#i-ruler"/></svg>{% elif id=='units' %}dm{% else %}<svg><use href="#i-compass"/></svg>{% endif %}</span><span class="game-number">{{'%02d'|format(grade_games.index(id)+1)}}</span>
               </div>
               <h3>{{name}}</h3>
               <p>
                 {{ {'conversion':'毫米、厘米、分米、米、千米，换算小达人就是你。','mental':'1000以内的加减法，比一比谁算得又快又准。','measure':'看清起点和终点，练习厘米、毫米等复合长度。','units':'给生活中的物体，填上合适的长度单位。','directions':'八个方向、几点钟方向，一起记录美丽校园。'}[id] }}
               </p>
               <div class="card-bottom">
-                {% if license and id in unlocked %}<a class="game-link" href="{{url_for('game_page',game=id)}}">开始游戏<svg aria-hidden="true"><use href="#i-arrow"/></svg></a>{% else %}<span class="locked"><svg aria-hidden="true"><use href="#i-lock"/></svg>尚未授权</span><span class="muted">等待解锁</span>{% endif %}
+                {% if license and id in unlocked %}<a class="game-link" href="{{url_for('game_page',game=id)}}">开始游戏<svg aria-hidden="true"><use href="#i-arrow"/></svg></a>{% elif id not in trials_used %}<a class="game-link trial-link" href="{{url_for('game_page',game=id)}}">免费试玩一局<svg aria-hidden="true"><use href="#i-arrow"/></svg></a>{% else %}<span class="locked"><svg aria-hidden="true"><use href="#i-lock"/></svg>试玩已结束</span><button type="button" class="text-button inline-link" data-contact>获取授权码</button>{% endif %}
               </div>
             </article>
           {% endfor %}

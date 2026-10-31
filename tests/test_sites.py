@@ -8,6 +8,7 @@ from sites import SITES
 def reset_state(db):
     db.execute("DELETE FROM devices")
     db.execute("DELETE FROM limits")
+    db.execute("DELETE FROM trials")
     db.execute("UPDATE licenses SET enabled=1,device_limit=3 WHERE archived_at IS NULL")
     db.execute("DELETE FROM license_groups WHERE license_id IN (1,2)")
     db.executemany(
@@ -15,6 +16,12 @@ def reset_state(db):
     )
     db.execute("UPDATE game_memberships SET group_id='g3-t1-a'")
     db.commit()
+
+
+def licensed(client, game):
+    """True when the game page is the licensed one (session guard), not the free trial or the locked page."""
+    r = client.get("/games/" + game)
+    return r.status_code == 200 and "/api/session?game=" in r.get_data(as_text=True)
 
 
 def test_home_lists_all_games_and_prefixed_urls(client, site):
@@ -37,7 +44,7 @@ def test_session_cookie_names_are_unchanged(client, site):
 
 def test_activation_unlocks_games_and_guard_uses_site_urls(client, site):
     game = next(iter(SITES[site].games))
-    assert client.get("/games/" + game).status_code == 403
+    assert not licensed(client, game)
     assert client.post("/api/activate", json={"key": "WRONGKEY"}).status_code == 403
     r = client.activate(KEYS[site].lower()[:4] + "-" + KEYS[site][4:])
     assert r.status_code == 200, r.get_data(as_text=True)
@@ -84,7 +91,7 @@ def test_csrf_and_rate_limit(client, site):
 def test_legacy_html_routes_only_on_chinese(client, site):
     if site == "chinese":
         assert client.get("/游戏入口.html").headers["Location"] == "/"
-        assert client.get("/标点pk.html").status_code == 403
+        assert "window.PK_PAGE" in client.get("/标点pk.html").get_data(as_text=True)
     else:
         assert client.get("/mental-math.html").status_code == 404
 
@@ -129,11 +136,11 @@ def test_group_permissions_follow_moves(admin, site, db):
     )
     bid = db.execute("SELECT id FROM game_groups WHERE site=? AND name=?", (site, "B组" + site)).fetchone()[0]
     admin.post("/admin/groups", {"action": "move", "grade": "g3-t1", "game": moved, "group": bid})
-    assert user.get("/games/" + moved).status_code == 403 and user.get("/games/" + games[0]).status_code == 200
+    assert not licensed(user, moved) and licensed(user, games[0])
     admin.post("/admin/licenses/1/groups", {"groups": ["g3-t1-a", bid]})
     assert user.get("/api/session").get_json()["games"] == games
     admin.post("/admin/licenses/1/groups", {"groups": [bid]})
-    assert user.get("/games/" + games[0]).status_code == 403 and user.get("/games/" + moved).status_code == 200
+    assert not licensed(user, games[0]) and licensed(user, moved)
     admin.post("/admin/groups", {"action": "move", "grade": "g3-t1", "game": moved, "group": "g4-t1-a"})
     assert (
         db.execute("SELECT group_id FROM game_memberships WHERE site=? AND game=?", (site, moved)).fetchone()[0] == bid
@@ -212,7 +219,8 @@ def test_static_files(client, site):
 
 def test_question_bank_requires_license(client, site):
     game = next(iter(SITES[site].games))
-    assert client.get(f"/games/{game}/bank.json").status_code == 403
+    trial = client.get(f"/games/{game}/bank.json").get_json()
+    assert trial["total"] == 100 and len(trial["questions"]) <= 40, "an unlicensed browser only gets one round"
     assert client.get("/games/unknown/bank.json").status_code == 404
     client.activate(KEYS[site])
     r = client.get(f"/games/{game}/bank.json")
@@ -238,3 +246,58 @@ def test_grades_come_from_license_groups(admin, site, db):
     user = SiteClient(site)
     assert user.activate().get_json()["grade_scopes"] == ["g4-t1"]
     assert "四年级上册" in user.get("/").get_data(as_text=True)
+
+
+def start_trial(client, game):
+    return client.post(f"/api/trial/{game}/start", json={})
+
+
+def test_free_trial_is_one_round_per_game(client, site):
+    games = list(SITES[site].games)
+    game = games[0]
+    html = client.get("/").get_data(as_text=True)
+    assert html.count("trial-link") == len(games) and "试玩已结束" not in html
+    page = client.get("/games/" + game).get_data(as_text=True)
+    assert '"trial": {"start": "' in page and "/api/session?game=" not in page, "trial pages have no session guard"
+    assert client.c.post(client.prefix + f"/api/trial/{game}/start").status_code == 400, "CSRF is required"
+    assert start_trial(client, game).status_code == 200
+    r = start_trial(client, game)
+    assert r.status_code == 403 and r.get_json()["code"] == "trial_used"
+    denied = client.get("/games/" + game)
+    assert denied.status_code == 403 and "wechat-qr" in denied.get_data(as_text=True)
+    assert client.get(f"/games/{game}/bank.json").status_code == 403
+    html = client.get("/").get_data(as_text=True)
+    assert html.count("trial-link") == len(games) - 1 and "试玩已结束" in html
+    assert start_trial(client, games[1]).status_code == 200, "each game has its own trial"
+    assert start_trial(SiteClient(site), game).status_code == 200, "another browser has its own trial"
+    assert start_trial(client, "unknown").status_code == 404
+
+
+def test_trial_does_not_touch_licensed_play_or_the_other_site(client, site):
+    game = next(iter(SITES[site].games))
+    assert client.activate().status_code == 200
+    assert start_trial(client, game).status_code == 200 and licensed(client, game)
+    assert len(client.get(f"/games/{game}/bank.json").get_json()["questions"]) == 100
+    other = "math" if site == "chinese" else "chinese"
+    o = SiteClient(other)
+    o.c = client.c  # same browser
+    client.post("/api/logout", json={})
+    assert start_trial(client, game).status_code == 200, "a licensed start does not use up the trial"
+    assert start_trial(o, next(iter(SITES[other].games))).status_code == 200
+
+
+def test_trial_bank_fills_a_two_player_round(client, site):
+    from core.app import trial_bank
+
+    with FLASK[site].test_request_context():
+        for game in SITES[site].games:
+            bank = trial_bank(game)
+            draw, questions = bank["draw"], bank["questions"]
+            assert bank["total"] == 100 and len({q["id"] for q in questions}) == len(questions)
+            if draw.get("count"):
+                assert len(questions) == 2 * draw["count"], game
+            else:
+                assert "alternatives" not in draw
+                for key, take in draw["counts"].items():
+                    found = [q for q in questions if "/".join(str(q[f]) for f in draw["by"]) == key]
+                    assert len(found) == 2 * take, (game, key)

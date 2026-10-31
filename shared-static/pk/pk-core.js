@@ -4,9 +4,14 @@
 // ./types/. The engine loads the licensed bank (../games/<id>/bank.json), draws questions, runs the round
 // (one player or two, one shared deadline), scores answers, records mistakes and shows the results.
 // Renderers register with PK.register(type, renderer); see the contract above `register` below.
+// The server injects window.PK_PAGE = {grade, trial}: trial is null for licensed browsers, or {start, csrf} URLs when
+// this browser may play one free round of the game (starting the round uses it up).
 (() => {
   'use strict';
   const cfg = JSON.parse(document.getElementById('game-config').textContent);
+  const PAGE = window.PK_PAGE || {};
+  const TRIAL = PAGE.trial || null;
+  const QR = 'static/shared/contact/wechat-qr.0736f95e.jpeg';
   const SUBJECT = { chinese: '语文', math: '数学' }[cfg.site];
   const PER_PLAYER = 20;
   const NAMES = ['玩家一', '玩家二'];
@@ -61,12 +66,14 @@
   const validSeconds = n => Number.isInteger(n) && n >= 30 && n <= 1800;
   let settings = readStore(SETTINGS_KEY, {});
   let musicOn = settings.music !== false, fxOn = settings.fx !== false, voiceOn = settings.voice !== false;
+  let presentOn = settings.present === true;
   let duration = validSeconds(settings.durations?.[cfg.id]) ? settings.durations[cfg.id] : cfg.defaultSeconds;
   function saveSettings() {
     settings = readStore(SETTINGS_KEY, {});
     settings.music = musicOn;
     settings.fx = fxOn;
     settings.voice = voiceOn;
+    settings.present = presentOn;
     if (!settings.durations || typeof settings.durations !== 'object' || Array.isArray(settings.durations)) settings.durations = {};
     settings.durations[cfg.id] = duration;
     writeStore(SETTINGS_KEY, settings);
@@ -267,19 +274,27 @@
 
   const settingsButton = button('⚙ 设置', () => openSettings(), 'pk-settings-toggle');
   settingsButton.setAttribute('aria-haspopup', 'dialog');
+  const presentButton = button('投屏', () => setPresent(!presentOn, true), 'pk-present-toggle');
+  presentButton.title = '大字号全屏，适合在教室投影或大屏上玩';
+  const tools = el('div', 'pk-tools');
+  tools.append(presentButton, settingsButton);
 
   // start screen
   const top = el('div', 'pk-top');
-  const home = el('a', 'pk-home', '← 返回游戏首页');
-  home.href = url('./');
-  top.append(home, settingsButton);
+  const homeLink = () => {
+    const a = el('a', 'pk-home', '← ');
+    a.append(el('span', '', '返回游戏首页'));
+    a.href = url('./');
+    return a;
+  };
+  top.append(homeLink(), tools);
   const card = el('main', 'pk-card');
   const emblem = el('div', 'pk-emblem', cfg.emblem);
   emblem.setAttribute('aria-hidden', 'true');
-  card.append(el('p', 'pk-eyebrow', `三年级上册 · ${SUBJECT}小课堂`), emblem, el('h1', 'pk-title', cfg.title), el('p', 'pk-description', cfg.description));
+  card.append(el('p', 'pk-eyebrow', `${PAGE.grade ? PAGE.grade + ' · ' : ''}${SUBJECT}小课堂`), emblem, el('h1', 'pk-title', cfg.title), el('p', 'pk-description', cfg.description));
   const stats = el('div', 'pk-stats');
   const statBank = el('strong', '', '…'), statPer = el('strong', '', String(PER_PLAYER)), statSeconds = el('strong', '', String(duration));
-  for (const [strong, label] of [[statBank, '题库题量'], [statPer, '每人题数'], [statSeconds, '本局秒数']]) {
+  for (const [strong, label] of [[statBank, '题库题量'], [statPer, '每人题数'], [statSeconds, '本局时长（秒）']]) {
     const box = el('div');
     box.append(strong, el('span', '', label));
     stats.append(box);
@@ -302,6 +317,7 @@
   go.disabled = true;
   const loadError = el('p', 'pk-error');
   loadError.setAttribute('role', 'alert');
+  if (TRIAL) card.append(el('p', 'pk-trial-note', '免费试玩：可以完整玩一局。点“开始”后，本游戏的试玩机会就用掉了。'));
   card.append(stats, modes, rules, go, loadError);
   startScreen.append(top, card);
 
@@ -318,7 +334,7 @@
       mistakes: `从本机错题本中抽题练习（最多${PER_PLAYER}题），答对后自动移出错题本。`,
     }[mode];
     statPer.textContent = mode === 'mistakes' ? String(Math.min(count, PER_PLAYER)) : String(PER_PLAYER);
-    if (bank) go.textContent = mode === 'pk' ? '开始PK' : '开始练习';
+    if (bank && !trial.claiming) go.textContent = (mode === 'pk' ? '开始PK' : '开始练习') + (TRIAL ? ' · 试玩' : '');
   }
 
   // game screen
@@ -327,9 +343,7 @@
   const timeValue = el('strong', '', String(duration));
   timer.append(timeValue, document.createTextNode(' 秒'));
   timer.setAttribute('aria-label', '剩余时间');
-  const gameHome = el('a', 'pk-home', '← 返回游戏首页');
-  gameHome.href = url('./');
-  header.append(el('h1', '', cfg.title), gameHome, timer);
+  header.append(el('h1', '', cfg.title), homeLink(), timer);
   const arena = el('main', 'pk-arena');
   gameScreen.append(header, arena);
 
@@ -342,11 +356,13 @@
     '<label class="pk-switch"><span>背景音乐</span><input id="pk-music" type="checkbox"></label>' +
     '<label class="pk-switch"><span>点击与答题音效</span><input id="pk-fx" type="checkbox"></label>' +
     '<label class="pk-switch"><span>连击欢呼</span><input id="pk-voice" type="checkbox"></label>' +
+    '<label class="pk-switch"><span>投屏模式（大字号全屏）</span><input id="pk-present" type="checkbox"></label>' +
     '<p class="pk-help">连续答对5题及以上时播放欢呼；关闭点击与答题音效时，欢呼也会静音。</p><p class="pk-error" role="status"></p>' +
     '<div class="pk-actions"><button type="button" class="pk-reset">恢复默认</button><button type="button" class="pk-save">保存设置</button></div>';
   document.body.append(dialog);
   const secondsInput = dialog.querySelector('#pk-seconds'), musicInput = dialog.querySelector('#pk-music'),
-    fxInput = dialog.querySelector('#pk-fx'), voiceInput = dialog.querySelector('#pk-voice'), settingsError = dialog.querySelector('.pk-error');
+    fxInput = dialog.querySelector('#pk-fx'), voiceInput = dialog.querySelector('#pk-voice'),
+    presentInput = dialog.querySelector('#pk-present'), settingsError = dialog.querySelector('.pk-error');
   for (const seconds of [60, 120, 150, 180, 300, 600]) {
     dialog.querySelector('.pk-presets').append(button(seconds + '秒', () => {
       secondsInput.value = seconds;
@@ -365,6 +381,7 @@
     musicInput.checked = musicOn;
     fxInput.checked = fxOn;
     voiceInput.checked = voiceOn;
+    presentInput.checked = presentOn;
     settingsError.textContent = '';
     dialog.showModal();
   }
@@ -385,6 +402,7 @@
     updateSettingsLabels();
     audio.settingsChanged();
     dialog.close();
+    if (presentInput.checked !== presentOn) setPresent(presentInput.checked, true);
   };
   window.addEventListener('storage', e => {
     if (e.key !== SETTINGS_KEY) return;
@@ -392,14 +410,89 @@
     musicOn = s.music !== false;
     fxOn = s.fx !== false;
     voiceOn = s.voice !== false;
+    if ((s.present === true) !== presentOn) setPresent(s.present === true, false);
     if (!round.running && validSeconds(s.durations?.[cfg.id])) duration = s.durations[cfg.id];
     updateSettingsLabels();
     audio.settingsChanged();
   });
 
+  // ---------- 投屏 mode: bigger type everywhere, plus fullscreen when the teacher turns it on ----------
+  let ownFullscreen = false;
+  function setPresent(on, fromClick) {
+    presentOn = on;
+    document.documentElement.classList.toggle('pk-present', on);
+    presentButton.setAttribute('aria-pressed', String(on));
+    presentButton.textContent = on ? '退出投屏' : '投屏';
+    if (!fromClick) return;
+    saveSettings();
+    const fs = document.fullscreenElement;
+    if (on && !fs && document.documentElement.requestFullscreen) {
+      document.documentElement.requestFullscreen().then(() => (ownFullscreen = true)).catch(() => {});
+    } else if (!on && fs && ownFullscreen) {
+      document.exitFullscreen().catch(() => {});
+    }
+  }
+  document.addEventListener('fullscreenchange', () => {
+    // Esc leaves fullscreen; leave 投屏 with it so the page is not stuck at projector size.
+    if (!document.fullscreenElement && ownFullscreen) {
+      ownFullscreen = false;
+      if (presentOn) setPresent(false, true);
+    }
+  });
+  setPresent(presentOn, false);
+
+  // ---------- free trial and the admin's WeChat QR code ----------
+  const trial = { claimed: false, claiming: false, done: false };
+  const contact = el('dialog', 'pk-dialog pk-contact');
+  contact.setAttribute('aria-label', '获取授权码');
+  const contactText = el('p', '');
+  const qr = el('img');
+  qr.alt = '管理员微信二维码';
+  qr.loading = 'lazy';
+  qr.src = url(QR);
+  const contactHead = el('div', 'pk-dialog-head');
+  contactHead.append(el('h2', '', '获取授权码'), button('×', () => contact.close(), 'pk-close'));
+  contactHead.lastChild.setAttribute('aria-label', '关闭');
+  const contactActions = el('div', 'pk-actions');
+  const contactHome = el('a', 'secondary pk-home-button', '返回游戏首页');
+  contactHome.href = url('./');
+  contactActions.append(contactHome);
+  contact.append(contactHead, contactText, qr, el('p', 'pk-help', '在手机上可以长按二维码识别。'), contactActions);
+  contact.addEventListener('click', e => e.target === contact && contact.close());
+  document.body.append(contact);
+  function showContact(reason) {
+    contactText.textContent = (reason || (TRIAL ? '试玩结束啦！' : '')) + '微信扫一扫，添加管理员为好友，获取授权码，解锁全部题目。';
+    if (!contact.open) contact.showModal();
+  }
+  async function claimTrial() {
+    if (trial.claiming) return;
+    trial.claiming = true;
+    go.disabled = true;
+    go.textContent = '正在开始…';
+    let refused = false;
+    try {
+      const token = await fetch(TRIAL.csrf, { cache: 'no-store', credentials: 'same-origin' }).then(r => r.json());
+      const r = await fetch(TRIAL.start, { method: 'POST', cache: 'no-store', credentials: 'same-origin', headers: { 'X-CSRF-Token': token.csrf } });
+      refused = r.status === 403;
+    } catch {} // network trouble: let the child play rather than block the round
+    trial.claiming = false;
+    if (refused) {
+      trial.done = true;
+      go.textContent = '试玩已结束';
+      showContact('本游戏的试玩已经用过了。');
+      return;
+    }
+    trial.claimed = true;
+    go.disabled = false;
+    selectMode(round.mode);
+    startRound();
+  }
+
   // ---------- the round ----------
   function startRound() {
     if (round.running || !bank) return;
+    if (TRIAL && trial.done) return showContact('本游戏的试玩已经结束。');
+    if (TRIAL && !trial.claimed) return void claimTrial();
     if (round.mode === 'mistakes' && !mistakes.ids().length) selectMode('solo');
     audio.unlock();
     let draws;
@@ -434,7 +527,7 @@
     startScreen.hidden = true;
     resultScreen.hidden = true;
     gameScreen.hidden = false;
-    header.append(settingsButton);
+    header.append(tools);
     document.body.classList.add('pk-playing');
     audio.resetCheer();
     audio.resume();
@@ -593,6 +686,7 @@
     if (!round.running) return;
     round.running = false;
     round.ended = true;
+    if (TRIAL) trial.done = true;
     clearInterval(round.timer);
     audio.stop();
     if (Date.now() >= round.deadline) timeValue.textContent = '0';
@@ -630,6 +724,16 @@
     const note = el('p', 'pk-help', '答错的题已记入本机错题本，可在开始页选择“错题重练”，或在游戏首页查看错题本。');
     if (players.some(s => s.wrong.length)) resultScreen.append(note);
     const actions = el('div', 'pk-result-actions');
+    if (TRIAL) {
+      const back = el('a', 'secondary pk-home-button', '返回游戏首页');
+      back.href = url('./');
+      actions.append(button('获取授权码', () => showContact(), 'primary'), back);
+      resultScreen.append(actions);
+      resultScreen.hidden = false;
+      resultScreen.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      setTimeout(() => showContact(), 1200);
+      return;
+    }
     actions.append(button('再来一局', () => {
       if (round.mode === 'mistakes' && !mistakes.ids().length) selectMode('solo');
       startRound();
@@ -637,7 +741,7 @@
       gameScreen.hidden = true;
       resultScreen.hidden = true;
       startScreen.hidden = false;
-      top.append(settingsButton);
+      top.append(tools);
       selectMode(round.mode === 'mistakes' && !mistakes.ids().length ? 'solo' : round.mode);
       window.scrollTo(0, 0);
     }, 'secondary'));
@@ -664,7 +768,7 @@
     renderer = renderers[cfg.type];
     try {
       const response = await fetch(url(`games/${cfg.id}/bank.json`), { cache: 'no-store' });
-      if (response.status === 403) throw Error('授权已失效，请返回游戏首页重新激活。');
+      if (response.status === 403) throw Error(TRIAL ? '本游戏的试玩已经结束，扫码添加管理员微信获取授权码。' : '授权已失效，请返回游戏首页重新激活。');
       if (!response.ok) throw Error('题目加载失败，请刷新页面重试。');
       bank = await response.json();
       if (!renderer || bank.type !== cfg.type) throw Error('游戏组件版本不一致，请刷新页面重试。');
@@ -673,7 +777,7 @@
       loadError.textContent = error instanceof TypeError ? '网络连接失败，请检查网络后刷新页面。' : error.message;
       return;
     }
-    statBank.textContent = bank.questions.length;
+    statBank.textContent = bank.total ?? bank.questions.length;
     go.disabled = false;
     selectMode(location.hash === '#mistakes' && mistakes.ids().length ? 'mistakes' : 'pk');
   }

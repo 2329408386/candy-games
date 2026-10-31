@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="theme-color" content="#f8f5ec">
+    <link rel="icon" href="data:,">
     <title>{% block title %}语文小游戏{% endblock %}</title>
     <link rel="stylesheet" href="{{asset('site.css')}}">
   </head>
@@ -27,13 +28,13 @@
       <a class="brand" href="{{url_for('dashboard') if is_admin else url_for('home')}}"><span class="brand-icon"><svg><use href="#i-book"/></svg></span><span>语文小游戏<small>{{'管理工作台' if is_admin else '让知识，在快乐里发芽'}}</small></span></a>
       {% if is_admin %}
         <nav aria-label="管理导航">
-          <a href="{{url_for('home')}}">游戏首页 <span aria-hidden="true">↗</span></a>{% if session.get('admin_version') %}<a href="{{url_for('dashboard')}}">授权管理</a><a href="{{url_for('game_directory')}}">游戏目录</a><a href="{{url_for('group_admin')}}">分组管理</a><a href="{{url_for('password')}}">修改密码</a>
+          <a href="{{url_for('home')}}">游戏首页 <span aria-hidden="true">↗</span></a>{% if session.get('admin_version') %}<a href="{{url_for('dashboard')}}">授权管理</a><a href="{{url_for('game_directory')}}">游戏目录</a><a href="{{url_for('group_admin')}}">游戏分组</a><a href="{{url_for('password')}}">修改密码</a>
           <form method="post" action="{{url_for('admin_logout')}}">
             <input type="hidden" name="csrf" value="{{csrf()}}"><button class="text-button">退出后台</button>
           </form>
         {% endif %}
       </nav>
-      {% else %}<span class="header-actions"><a class="header-link" href="{{url_for('mistakes')}}">错题本</a><span class="header-note"><span class="status-dot"></span> 一起玩，一起长大</span></span>{% endif %}
+      {% else %}<span class="header-actions"><a class="header-link" href="{{url_for('mistakes')}}">错题本</a><button type="button" class="header-link header-contact" data-contact>获取授权码</button><span class="header-note"><span class="status-dot"></span> 一起玩，一起长大</span></span>{% endif %}
     </header>
     <main class="{{'admin-main' if is_admin else 'student-main'}}">
       {% with messages=get_flashed_messages(with_categories=true) %}{% for category,message in messages %}
@@ -43,7 +44,8 @@
       {% endblock %}
     </main>
     <footer class="site-footer">
-      语文小游戏 <span>·</span> {{'用心管理，让学习更简单' if is_admin else '每一次小挑战，都是一点点进步'}}{% if not is_admin %}<a href="{{url_for('dashboard')}}">管理员入口</a>{% endif %}
+      语文小游戏 <span>·</span> {{'用心管理，让学习更简单' if is_admin else '每一次小挑战，都是一点点进步'}}{% if not is_admin %}<a href="{{url_for('login')}}">管理员入口</a>{% endif %}
     </footer>
+    {% if not is_admin %}{% include 'contact.html' %}{% endif %}
   </body>
 </html>

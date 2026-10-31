@@ -1,8 +1,11 @@
 {% extends 'base.html' %}
+{% block title %}游戏未解锁 · {{site.title}}{% endblock %}
 {% block content %}
-  <div class="panel">
-    <h2>此游戏需要授权</h2>
-    <p>请在首页输入包含该游戏所属学期的授权码。如果授权已被停用、归档、移除该学期或设备已解绑，请联系管理员。</p>
-    <a class="button" href="{{url_for('home')}}">返回首页</a>
-  </div>
+  <section class="panel denied-panel">
+    <span class="game-icon" aria-hidden="true"><svg><use href="#i-lock"/></svg></span>
+    <h2>这个游戏还没有解锁</h2>
+    <p>本游戏的免费试玩已经用过了，或者当前授权码不包含这个游戏。<br>微信扫一扫，添加管理员即可获取授权码。</p>
+    <img class="denied-qr" src="{{url_for('shared_static', filename='contact/wechat-qr.0736f95e.jpeg')}}" alt="管理员微信二维码" width="958" height="1415">
+    <a class="button" href="{{url_for('home')}}">返回游戏首页</a>
+  </section>
 {% endblock %}

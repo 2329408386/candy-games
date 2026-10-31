@@ -11,13 +11,13 @@
         <em>玩出语文的乐趣。</em>
       </h1>
       <p class="intro">
-        把知识变成小游戏，把学习变成小期待。
+        把课本里的知识点，变成一局局小比拼。
         <br>
-        按年级挑选挑战，一起发现学习的乐趣！
+        课堂上投屏双人PK，课后一个人也能练；答错的题会自动收进错题本。
       </p>
       <section class="activate-panel" aria-label="激活游戏">
         <form id="activate">
-          <input type="hidden" name="csrf" value="{{csrf()}}"><label for="key">开启你的学习之旅</label>
+          <input type="hidden" name="csrf" value="{{csrf()}}"><label for="key">已有授权码？在这里激活</label>
           <div class="activate-row">
             <input id="key" name="key" placeholder="输入你的16位授权码" maxlength="32" required autocomplete="off" autocapitalize="characters"><button id="submit">激活游戏 <span aria-hidden="true">↗</span></button>
           </div>
@@ -33,9 +33,9 @@
           <p class="hint">授权学期：{{license_grades(license.id)|grade_names}}</p>
           <p class="hint">已绑定 {{device_count}} / {{license.device_limit}} 个浏览器 · 授权永久有效</p>
         {% else %}
-          <p class="hint">输入授权码，解锁你的专属游戏。设备名额以授权码设置为准。</p>
+          <p class="hint">还没有授权码？每个游戏都可以免费试玩一局。<button type="button" class="text-button inline-link" data-contact>扫码获取授权码</button></p>
         {% endif %}
-        <p class="hint">更换浏览器或清理Cookie可能占用新名额，设备已满请联系管理员。</p>
+        <p class="hint">每个授权码可在限定数量的浏览器上使用，换浏览器或清除浏览器数据会占用新名额。</p>
       </section>
     </div>
   </section>
@@ -69,7 +69,7 @@
         {% if license and selected_grade in license_grades(license.id) %}<span class="tag">你已获得本学期授权，只开放已授权组内的游戏</span>{% endif %}
       </div>
     {% else %}
-      <p class="hint">已授权组：{{group_labels(license_group_ids(license.id))|join("、") if license else "尚未授权"}}</p>
+      {% if license %}<p class="hint">已授权组：{{group_labels(license_group_ids(license.id))|join("、")}}</p>{% endif %}
       {% for group in groups_for_grade(selected_grade) %}
         <h3>{{group.name}} · {{group_games(group.id)|length}} 个游戏</h3>
         <div class="game-grid">
@@ -81,10 +81,10 @@
               </div>
               <h3>{{name}}</h3>
               <p>
-                {{ {'punctuation':'课内原句与独立课外例句各50题，练习提示语标点。','dedide':'“的、地、得”有小秘密，一起找到它们的正确位置。','reading':'走进奇妙的童话世界，看看谁是阅读小达人。','sentence':'化身句子小医生，把不通顺的句子修好吧。','polyphone':'联系课文语境，辨认多音字的正确读音。','similar-char':'看清字形，选对词句中的汉字。','passive':'排列词卡，学会准确表达谁被谁怎么样。','expand':'添上恰当的修饰词，把句子写具体。','shorten':'找出句子主干，保留完整意思。','rhetorical':'调整语气和否定词，保持句子的原意。'}[id] }}
+                {{ {'punctuation':'课文原句和课外例句各50题，专练提示语的标点。','dedide':'“的、地、得”有小秘密，一起找到它们的正确位置。','reading':'走进奇妙的童话世界，看看谁是阅读小达人。','sentence':'化身句子小医生，把不通顺的句子修好吧。','polyphone':'联系课文语境，辨认多音字的正确读音。','similar-char':'看清字形，选对词句中的汉字。','passive':'排列词卡，学会准确表达谁被谁怎么样。','expand':'添上恰当的修饰词，把句子写具体。','shorten':'找出句子主干，保留完整意思。','rhetorical':'调整语气和否定词，保持句子的原意。'}[id] }}
               </p>
               <div class="card-bottom">
-                {% if license and id in unlocked %}<a class="game-link" href="{{url_for('game_page',game=id)}}">开始游戏<svg aria-hidden="true"><use href="#i-arrow"/></svg></a>{% else %}<span class="locked"><svg aria-hidden="true"><use href="#i-lock"/></svg>尚未授权</span><span class="muted">等待解锁</span>{% endif %}
+                {% if license and id in unlocked %}<a class="game-link" href="{{url_for('game_page',game=id)}}">开始游戏<svg aria-hidden="true"><use href="#i-arrow"/></svg></a>{% elif id not in trials_used %}<a class="game-link trial-link" href="{{url_for('game_page',game=id)}}">免费试玩一局<svg aria-hidden="true"><use href="#i-arrow"/></svg></a>{% else %}<span class="locked"><svg aria-hidden="true"><use href="#i-lock"/></svg>试玩已结束</span><button type="button" class="text-button inline-link" data-contact>获取授权码</button>{% endif %}
               </div>
             </article>
           {% endfor %}

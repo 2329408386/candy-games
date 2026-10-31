@@ -214,6 +214,41 @@ def limited(kind, maximum, window):
     return count > maximum
 
 
+# ---- free trial: one round per game per browser (session device token); clearing cookies is not guarded ----
+def device_hash():
+    csrf()  # makes sure the browser has a device token
+    return digest(session["device"])
+
+
+def trials_used():
+    return {
+        r[0] for r in db().execute("SELECT game FROM trials WHERE site=? AND device_hash=?", (site().key, device_hash()))
+    }
+
+
+def trial_open(game):
+    return game not in trials_used()
+
+
+def trial_bank(game):
+    """Just enough questions for one two-player round, so an unlicensed browser never receives the whole bank."""
+    bank = json.loads(bank_json(game))
+    questions, draw = bank["questions"], bank["draw"]
+    rng = secrets.SystemRandom()
+    if draw.get("count"):
+        chosen = rng.sample(questions, min(len(questions), draw["count"] * 2))
+    else:
+        plan = rng.choice(draw.get("alternatives") or [draw["counts"]])
+        chosen = []
+        for key, take in plan.items():
+            pool = [q for q in questions if "/".join(str(q[f]) for f in draw["by"]) == key]
+            chosen += rng.sample(pool, take * 2)
+        bank["draw"] = {"by": draw["by"], "counts": plan}
+    rng.shuffle(chosen)
+    bank.update(questions=chosen, total=len(questions))
+    return bank
+
+
 def license_row(lid):
     return db().execute("SELECT * FROM licenses WHERE site=? AND id=?", (site().key, lid)).fetchone()
 
@@ -369,6 +404,8 @@ def create_app(site_config):
         SESSION_COOKIE_SAMESITE="Lax",
         PERMANENT_SESSION_LIFETIME=86400 * 30,
     )
+    # Creates tables added by newer releases (CREATE TABLE IF NOT EXISTS), so a deploy needs no migration step.
+    schema.initialize(app.config["DATABASE"])
     app.jinja_loader = ChoiceLoader(
         [FileSystemLoader(str(site_config.template_root)), FileSystemLoader(str(ROOT / "core" / "templates"))]
     )
@@ -478,6 +515,7 @@ def register_public(app):
             selected_grade=grade,
             grade_games=games_for_grades([grade]),
             unlocked=allowed_games(row) if row else [],
+            trials_used=trials_used(),
         )
 
     @app.get("/mistakes")
@@ -489,19 +527,28 @@ def register_public(app):
     def game_page(game):
         if game not in site().games:
             abort(404)
-        if not current(game):
+        page = {"grade": GRADES[site().game_grades[game]], "trial": None}
+        if current(game):
+            extra = GUARD.replace("SESSION_URL", url_for("status", game=game)).replace("HOME_URL", url_for("home"))
+        elif trial_open(game):
+            # No session guard here: /api/session refuses unlicensed browsers and would send them home mid-round.
+            page["trial"] = {"start": url_for("trial_start", game=game), "csrf": url_for("csrf_token")}
+            extra = ""
+        else:
             return render_template("denied.html"), 403
-        guard = GUARD.replace("SESSION_URL", url_for("status", game=game)).replace("HOME_URL", url_for("home"))
-        return Response(game_html(game).replace("</body>", guard + "</body>"), mimetype="text/html")
+        script = "<script>window.PK_PAGE=" + json.dumps(page, ensure_ascii=False).replace("</", "<\\/") + ";</script>"
+        return Response(game_html(game).replace("</body>", script + extra + "</body>"), mimetype="text/html")
 
     @app.get("/games/<game>/bank.json")
     def game_bank(game):
         # Banks hold the answers, so they are served only to browsers licensed for the game.
         if game not in site().games:
             abort(404)
-        if not current(game):
-            return jsonify(error="授权已失效，请返回首页重新激活或联系管理员"), 403
-        return Response(bank_json(game), mimetype="application/json")
+        if current(game):
+            return Response(bank_json(game), mimetype="application/json")
+        if trial_open(game):
+            return jsonify(trial_bank(game))
+        return jsonify(error="试玩已结束，扫码添加管理员微信获取授权码"), 403
 
     if app.site.legacy_html_routes:
 
@@ -597,6 +644,23 @@ def register_api(app):
             device_limit=row["device_limit"],
             device_count=device_count(row["id"]),
         )
+
+    @app.post("/api/trial/<game>/start")
+    def trial_start(game):
+        # Starting the round uses up the trial; a reload or leaving midway does not give it back.
+        if game not in site().games:
+            abort(404)
+        if current(game):
+            return jsonify(ok=True)
+        d = db()
+        cursor = d.execute(
+            "INSERT OR IGNORE INTO trials(site,device_hash,game,started_at) VALUES(?,?,?,?)",
+            (site().key, device_hash(), game, int(time.time())),
+        )
+        d.commit()
+        if not cursor.rowcount:
+            return jsonify(error="这个游戏的试玩机会已经用过了", code="trial_used"), 403
+        return jsonify(ok=True)
 
     @app.post("/api/logout")
     def logout():
