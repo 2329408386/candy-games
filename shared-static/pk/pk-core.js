@@ -317,9 +317,20 @@
   if (cfg.tips?.length) {
     // "**词**" marks a key word to highlight; everything stays text nodes.
     const list = el('ol', 'pk-tips');
+    const richText = (parent, text) =>
+      text.split('**').forEach((part, i) => part && parent.append(i % 2 ? el('strong', 'pk-key', part) : document.createTextNode(part)));
     for (const tip of cfg.tips) {
       const li = el('li');
-      tip.split('**').forEach((part, i) => part && li.append(i % 2 ? el('strong', 'pk-key', part) : document.createTextNode(part)));
+      richText(li, typeof tip === 'string' ? tip : tip.text);
+      if (tip.items?.length) {
+        const sub = el('ul', 'pk-subtips');
+        for (const item of tip.items) {
+          const chip = el('li');
+          richText(chip, item);
+          sub.append(chip);
+        }
+        li.append(sub);
+      }
       list.append(li);
     }
     tipsBox = el('section', 'pk-tips-box');
