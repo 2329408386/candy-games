@@ -1,8 +1,112 @@
-{% extends 'base.html' %}{% block title %}授权管理 · {{site.title}}{% endblock %}{% block content %}
-<div class="page-heading"><div><span class="eyebrow">管理工作台</span><h1>{{'历史归档' if archived else '授权管理'}}</h1><p>每一份授权，都是一段学习旅程的开始。</p></div><div class="heading-actions">{% if archived %}<a class="button secondary" href="{{url_for('dashboard')}}">返回有效授权</a>{% else %}<a class="button secondary" href="{{url_for('dashboard',archived=1)}}">历史归档（{{archive_count}}）</a><a class="button" href="{{url_for('new_licenses')}}">＋ 新增授权码</a>{% endif %}</div></div>
-{% if archived %}<div class="notice">归档授权仅供查询，已停止使用，不能重新启用或修改。原始备注及设备记录仍保留。</div>{% else %}<div class="stats"><div class="stat"><span>全部授权码</span><strong>{{stats.total}}</strong></div><div class="stat highlight"><span>可分配授权码</span><strong>{{stats.available}}</strong></div><div class="stat"><span>已分配</span><strong>{{stats.assigned}}</strong></div><div class="stat"><span>已停用</span><strong>{{stats.disabled}}</strong></div></div>
-{% endif %}
-{% if batch %}<div class="batch-banner"><div><strong>生成批次 · {{batch.created_at|datetime}}</strong><p>{{group_labels(batch_group_ids(batch.id))|join('、') or '历史批次'}} · {{batch.quantity}} 个授权码 · 每码最多 {{batch.device_limit}} 个浏览器</p></div><a class="button secondary" href="{{url_for('export',batch=batch.id,archived='1' if archived else '0')}}">导出本批次</a></div>{% endif %}
-<section class="panel"><form class="filters">{% if archived %}<input type="hidden" name="archived" value="1">{% endif %}{% if request.args.get('batch') %}<input type="hidden" name="batch" value="{{request.args.get('batch')}}">{% endif %}<div class="filter search"><label for="q">搜索授权码</label><input id="q" name="q" value="{{request.args.get('q','')}}" placeholder="授权码、编号、买家或订单"></div>{% if not archived %}<div class="filter combo"><label for="grade">授权年级／学期</label><select id="grade" name="grade"><option value="">全部年级／学期</option>{% for id,name in grades.items() %}<option value="{{id}}" {% if request.args.get('grade')==id %}selected{% endif %}>{{name}}</option>{% endfor %}</select></div>{% endif %}<div class="filter"><label for="group">游戏组</label><select name="group" id="group"><option value="">全部组</option>{% for gid,group in group_map().items() %}<option value="{{gid}}" {% if request.args.get("group")==gid %}selected{% endif %}>{{group_labels([gid])[0]}}</option>{% endfor %}</select></div><div class="filter"><label for="state">授权状态</label><select id="state" name="state">{% for id,name in [('','全部状态'),('unassigned','未分配'),('assigned','已分配'),('disabled','已停用')] %}<option value="{{id}}" {% if request.args.get('state')==id %}selected{% endif %}>{{name}}</option>{% endfor %}</select></div><button>查询</button><a class="text-button" href="{{url_for('dashboard',archived=1) if archived else url_for('dashboard')}}">重置</a></form></section>
-<section class="panel"><div class="toolbar"><div><h2>授权码列表 <span class="tag">{{total}} 条</span></h2><p>{{'归档码不可用于激活，请勿继续分发。' if archived else site.admin_hint}}</p></div><a class="button secondary" href="{{export_url}}">↓ 导出当前结果CSV</a></div><div class="scroll"><table><thead><tr><th>编号</th><th>授权码</th><th>{{'历史游戏权限' if archived else site.admin_scope_header}}</th><th>设备名额</th><th>状态 / 买家</th><th>操作</th></tr></thead><tbody>{% for r in rows %}<tr><td>#{{r.id}}</td><td><code>{{keys[r.key_hash]}}</code></td><td>{% if archived %}{{r.games|game_names}}{% else %}{% for label in group_labels(license_group_ids(r.id)) %}<span class="tag">{{label}}</span>{% endfor %}{% endif %}</td><td style="white-space:nowrap">{{r.devices}} / {{r.device_limit}}</td><td><span class="tag {{'off' if not r.enabled else ''}}">{{'已归档' if archived else ('启用' if r.enabled else '停用')}}</span><span class="buyer">{{r.buyer if r.assigned_at else '未分配'}}</span></td><td><a class="row-action" href="{{url_for('detail',lid=r.id)}}">{{'查看历史' if archived else '管理 / 分配'}} →</a></td></tr>{% else %}<tr><td colspan="6" class="empty">没有符合条件的授权码，试试更换筛选条件。</td></tr>{% endfor %}</tbody></table></div><div class="pagination"><span>共 {{total}} 条 · 每页50条</span><nav aria-label="分页">{% if page>1 %}<a href="{{previous}}">← 上一页</a>{% endif %}<span>{{page}} / {{pages}}</span>{% if page<pages %}<a href="{{next}}">下一页 →</a>{% endif %}</nav></div></section>
-{% endblock %}
+{% extends 'base.html' %}
+{% block title %}授权管理 · {{site.title}}{% endblock %}
+{% block content %}
+  <div class="page-heading">
+    <div>
+      <span class="eyebrow">管理工作台</span>
+      <h1>{{'历史归档' if archived else '授权管理'}}</h1>
+      <p>每一份授权，都是一段学习旅程的开始。</p>
+    </div>
+    <div class="heading-actions">
+      {% if archived %}<a class="button secondary" href="{{url_for('dashboard')}}">返回有效授权</a>{% else %}<a class="button secondary" href="{{url_for('dashboard',archived=1)}}">历史归档（{{archive_count}}）</a><a class="button" href="{{url_for('new_licenses')}}">＋ 新增授权码</a>{% endif %}
+    </div>
+  </div>
+  {% if archived %}
+    <div class="notice">归档授权仅供查询，已停止使用，不能重新启用或修改。原始备注及设备记录仍保留。</div>
+  {% else %}
+    <div class="stats">
+      <div class="stat"><span>全部授权码</span><strong>{{stats.total}}</strong></div>
+      <div class="stat highlight"><span>可分配授权码</span><strong>{{stats.available}}</strong></div>
+      <div class="stat"><span>已分配</span><strong>{{stats.assigned}}</strong></div>
+      <div class="stat"><span>已停用</span><strong>{{stats.disabled}}</strong></div>
+    </div>
+  {% endif %}
+  {% if batch %}
+    <div class="batch-banner">
+      <div>
+        <strong>生成批次 · {{batch.created_at|datetime}}</strong>
+        <p>{{group_labels(batch_group_ids(batch.id))|join('、') or '历史批次'}} · {{batch.quantity}} 个授权码 · 每码最多 {{batch.device_limit}} 个浏览器</p>
+      </div>
+      <a class="button secondary" href="{{url_for('export',batch=batch.id,archived='1' if archived else '0')}}">导出本批次</a>
+    </div>
+  {% endif %}
+  <section class="panel">
+    <form class="filters">
+      {% if archived %}<input type="hidden" name="archived" value="1">{% endif %}{% if request.args.get('batch') %}<input type="hidden" name="batch" value="{{request.args.get('batch')}}">{% endif %}
+      <div class="filter search">
+        <label for="q">搜索授权码</label><input id="q" name="q" value="{{request.args.get('q','')}}" placeholder="授权码、编号、买家或订单">
+      </div>
+      {% if not archived %}
+        <div class="filter combo">
+          <label for="grade">授权年级／学期</label><select id="grade" name="grade">
+          <option value="">全部年级／学期</option>
+          {% for id,name in grades.items() %}
+            <option value="{{id}}" {% if request.args.get('grade')==id %}selected{% endif %}>{{name}}</option>
+            {% endfor %}</select>
+          </div>
+        {% endif %}
+        <div class="filter">
+          <label for="group">游戏组</label><select name="group" id="group">
+          <option value="">全部组</option>
+          {% for gid,group in group_map().items() %}
+            <option value="{{gid}}" {% if request.args.get("group")==gid %}selected{% endif %}>{{group_labels([gid])[0]}}</option>
+            {% endfor %}</select>
+          </div>
+          <div class="filter">
+            <label for="state">授权状态</label><select id="state" name="state">{% for id,name in [('','全部状态'),('unassigned','未分配'),('assigned','已分配'),('disabled','已停用')] %}
+            <option value="{{id}}" {% if request.args.get('state')==id %}selected{% endif %}>{{name}}</option>
+            {% endfor %}</select>
+          </div>
+          <button>查询</button><a class="text-button" href="{{url_for('dashboard',archived=1) if archived else url_for('dashboard')}}">重置</a>
+        </form>
+      </section>
+      <section class="panel">
+        <div class="toolbar">
+          <div>
+            <h2>授权码列表 <span class="tag">{{total}} 条</span></h2>
+            <p>{{'归档码不可用于激活，请勿继续分发。' if archived else site.admin_hint}}</p>
+          </div>
+          <a class="button secondary" href="{{export_url}}">↓ 导出当前结果CSV</a>
+        </div>
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>编号</th>
+                <th>授权码</th>
+                <th>{{'历史游戏权限' if archived else site.admin_scope_header}}</th>
+                <th>设备名额</th>
+                <th>状态 / 买家</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for r in rows %}
+                <tr>
+                  <td>#{{r.id}}</td>
+                  <td><code>{{keys[r.key_hash]}}</code></td>
+                  <td>
+                    {% if archived %}{{r.games|game_names}}{% else %}{% for label in group_labels(license_group_ids(r.id)) %}<span class="tag">{{label}}</span>{% endfor %}{% endif %}
+                  </td>
+                  <td style="white-space:nowrap">{{r.devices}} / {{r.device_limit}}</td>
+                  <td>
+                    <span class="tag {{'off' if not r.enabled else ''}}">{{'已归档' if archived else ('启用' if r.enabled else '停用')}}</span><span class="buyer">{{r.buyer if r.assigned_at else '未分配'}}</span>
+                  </td>
+                  <td><a class="row-action" href="{{url_for('detail',lid=r.id)}}">{{'查看历史' if archived else '管理 / 分配'}} →</a></td>
+                </tr>
+              {% else %}
+                <tr>
+                  <td colspan="6" class="empty">没有符合条件的授权码，试试更换筛选条件。</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <div class="pagination">
+          <span>共 {{total}} 条 · 每页50条</span>
+          <nav aria-label="分页">
+            {% if page>1 %}<a href="{{previous}}">← 上一页</a>{% endif %}<span>{{page}} / {{pages}}</span>{% if page<pages %}<a href="{{next}}">下一页 →</a>{% endif %}
+          </nav>
+        </div>
+      </section>
+    {% endblock %}

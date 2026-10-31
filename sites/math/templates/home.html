@@ -1,7 +1,96 @@
-{% extends 'base.html' %}{% block content %}
-<section class="hero"><div class="hero-art" role="img" aria-label="尺子、钟面、罗盘和几何图形组成的数学乐园"><span class="art-note">小伙伴们一起出发！</span></div><div class="hero-copy"><span class="eyebrow">每天一点点，数学更有趣</span><h1>和小伙伴一起，<br><em>玩出数学的乐趣。</em></h1><p class="intro">把数字变成小游戏，把思考变成小期待。<br>按年级挑选挑战，一起发现数学的乐趣！</p><section class="activate-panel" aria-label="激活游戏"><form id="activate"><input type="hidden" name="csrf" value="{{csrf()}}"><label for="key">开启你的数学之旅</label><div class="activate-row"><input id="key" name="key" placeholder="输入你的16位授权码" maxlength="32" required autocomplete="off" autocapitalize="characters"><button id="submit">激活游戏 <span aria-hidden="true">↗</span></button></div></form><p id="message" role="status"></p>{% if license %}<div class="activation-state"><p class="success">已授权，可进入下方已解锁的游戏。</p><form method="post" action="{{url_for('logout')}}"><input type="hidden" name="csrf" value="{{csrf()}}"><button class="text-button">退出当前授权</button></form></div><p class="hint">授权学期：{{license.grade_scopes|grade_names}}</p><p class="hint">已绑定 {{device_count}} / {{license.device_limit}} 个浏览器 · 授权永久有效</p>{% else %}<p class="hint">输入授权码，解锁你的专属游戏。设备名额以授权码设置为准。</p>{% endif %}<p class="hint">更换浏览器或清理Cookie可能占用新名额，设备已满请联系管理员。</p></section></div></section>
-<section aria-labelledby="games-heading"><div class="section-heading"><div><h2 id="games-heading">今天，想挑战什么？</h2><p>选一个喜欢的，和小伙伴一起开始吧。</p></div><span class="count-label">{{grades[selected_grade]}} · {{grade_games|length}} 个游戏</span></div><form class="grade-picker" method="get" action="{{url_for('home')}}#games-heading"><div><label for="year">选择年级</label><select id="year" name="year" onchange="this.form.submit()">{% for year in range(1,7) %}<option value="{{year}}" {% if year==selected_year %}selected{% endif %}>{{grade_names[year-1]}}年级</option>{% endfor %}</select></div><div><label for="term">选择学期</label><select id="term" name="term" onchange="this.form.submit()"><option value="1" {% if selected_term==1 %}selected{% endif %}>上册</option><option value="2" {% if selected_term==2 %}selected{% endif %}>下册</option></select></div><button class="secondary">查看游戏</button></form>{% if not grade_games %}<div class="grade-empty"><span class="game-icon"><svg><use href="#i-shapes"/></svg></span><h3>{{grades[selected_grade]}} · 游戏准备中</h3><p>新的数学小挑战正在路上，敬请期待。</p>{% if license and selected_grade in decode(license.grade_scopes) %}<span class="tag">你已获得对应组授权，后续可访问该组内的游戏</span>{% endif %}</div>{% else %}<p class="hint">已授权组：{{group_labels(license_group_ids(license.id))|join('、') if license else '尚未授权'}}</p>{% for group in groups_for_grade(selected_grade) %}<h3>{{group.name}} · {{group_games(group.id)|length}} 个游戏</h3><div class="game-grid math-grid">{% for id in group_games(group.id) %}{% set name=games[id] %}<article class="game-card"><div class="game-top"><span class="game-icon math-icon" aria-hidden="true">{% if id=='conversion' %}⇄{% elif id=='mental' %}<svg><use href="#i-calc"/></svg>{% elif id=='measure' %}<svg><use href="#i-ruler"/></svg>{% elif id=='units' %}dm{% else %}<svg><use href="#i-compass"/></svg>{% endif %}</span><span class="game-number">0{{loop.index}}</span></div><h3>{{name}}</h3><p>{{ {'conversion':'毫米、厘米、分米、米、千米，换算小达人就是你。','mental':'1000以内的加减法，比一比谁算得又快又准。','measure':'看清起点和终点，练习厘米、毫米等复合长度。','units':'给生活中的物体，填上合适的长度单位。','directions':'八个方向、几点钟方向，一起记录美丽校园。'}[id] }}</p><div class="card-bottom">{% if license and id in unlocked %}<a class="game-link" href="{{url_for('game_page',game=id)}}">开始游戏<svg aria-hidden="true"><use href="#i-arrow"/></svg></a>{% else %}<span class="locked"><svg aria-hidden="true"><use href="#i-lock"/></svg>尚未授权</span><span class="muted">等待解锁</span>{% endif %}</div></article>{% endfor %}</div>{% endfor %}{% endif %}</section>
-<script>
+{% extends 'base.html' %}
+{% block content %}
+  <section class="hero">
+    <div class="hero-art" role="img" aria-label="尺子、钟面、罗盘和几何图形组成的数学乐园"><span class="art-note">小伙伴们一起出发！</span></div>
+    <div class="hero-copy">
+      <span class="eyebrow">每天一点点，数学更有趣</span>
+      <h1>
+        和小伙伴一起，
+        <br>
+        <em>玩出数学的乐趣。</em>
+      </h1>
+      <p class="intro">
+        把数字变成小游戏，把思考变成小期待。
+        <br>
+        按年级挑选挑战，一起发现数学的乐趣！
+      </p>
+      <section class="activate-panel" aria-label="激活游戏">
+        <form id="activate">
+          <input type="hidden" name="csrf" value="{{csrf()}}"><label for="key">开启你的数学之旅</label>
+          <div class="activate-row">
+            <input id="key" name="key" placeholder="输入你的16位授权码" maxlength="32" required autocomplete="off" autocapitalize="characters"><button id="submit">激活游戏 <span aria-hidden="true">↗</span></button>
+          </div>
+        </form>
+        <p id="message" role="status"></p>
+        {% if license %}
+          <div class="activation-state">
+            <p class="success">已授权，可进入下方已解锁的游戏。</p>
+            <form method="post" action="{{url_for('logout')}}">
+              <input type="hidden" name="csrf" value="{{csrf()}}"><button class="text-button">退出当前授权</button>
+            </form>
+          </div>
+          <p class="hint">授权学期：{{license.grade_scopes|grade_names}}</p>
+          <p class="hint">已绑定 {{device_count}} / {{license.device_limit}} 个浏览器 · 授权永久有效</p>
+        {% else %}
+          <p class="hint">输入授权码，解锁你的专属游戏。设备名额以授权码设置为准。</p>
+        {% endif %}
+        <p class="hint">更换浏览器或清理Cookie可能占用新名额，设备已满请联系管理员。</p>
+      </section>
+    </div>
+  </section>
+  <section aria-labelledby="games-heading">
+    <div class="section-heading">
+      <div>
+        <h2 id="games-heading">今天，想挑战什么？</h2>
+        <p>选一个喜欢的，和小伙伴一起开始吧。</p>
+      </div>
+      <span class="count-label">{{grades[selected_grade]}} · {{grade_games|length}} 个游戏</span>
+    </div>
+    <form class="grade-picker" method="get" action="{{url_for('home')}}#games-heading">
+      <div>
+        <label for="year">选择年级</label><select id="year" name="year" onchange="this.form.submit()">{% for year in range(1,7) %}
+        <option value="{{year}}" {% if year==selected_year %}selected{% endif %}>{{grade_names[year-1]}}年级</option>
+        {% endfor %}</select>
+      </div>
+      <div>
+        <label for="term">选择学期</label><select id="term" name="term" onchange="this.form.submit()">
+        <option value="1" {% if selected_term==1 %}selected{% endif %}>上册</option>
+        <option value="2" {% if selected_term==2 %}selected{% endif %}>下册</option>
+        </select>
+      </div>
+      <button class="secondary">查看游戏</button>
+    </form>
+    {% if not grade_games %}
+      <div class="grade-empty">
+        <span class="game-icon"><svg><use href="#i-shapes"/></svg></span>
+        <h3>{{grades[selected_grade]}} · 游戏准备中</h3>
+        <p>新的数学小挑战正在路上，敬请期待。</p>
+        {% if license and selected_grade in decode(license.grade_scopes) %}<span class="tag">你已获得对应组授权，后续可访问该组内的游戏</span>{% endif %}
+      </div>
+    {% else %}
+      <p class="hint">已授权组：{{group_labels(license_group_ids(license.id))|join('、') if license else '尚未授权'}}</p>
+      {% for group in groups_for_grade(selected_grade) %}
+        <h3>{{group.name}} · {{group_games(group.id)|length}} 个游戏</h3>
+        <div class="game-grid math-grid">
+          {% for id in group_games(group.id) %}
+            {% set name=games[id] %}
+            <article class="game-card">
+              <div class="game-top">
+                <span class="game-icon math-icon" aria-hidden="true">{% if id=='conversion' %}⇄{% elif id=='mental' %}<svg><use href="#i-calc"/></svg>{% elif id=='measure' %}<svg><use href="#i-ruler"/></svg>{% elif id=='units' %}dm{% else %}<svg><use href="#i-compass"/></svg>{% endif %}</span><span class="game-number">0{{loop.index}}</span>
+              </div>
+              <h3>{{name}}</h3>
+              <p>
+                {{ {'conversion':'毫米、厘米、分米、米、千米，换算小达人就是你。','mental':'1000以内的加减法，比一比谁算得又快又准。','measure':'看清起点和终点，练习厘米、毫米等复合长度。','units':'给生活中的物体，填上合适的长度单位。','directions':'八个方向、几点钟方向，一起记录美丽校园。'}[id] }}
+              </p>
+              <div class="card-bottom">
+                {% if license and id in unlocked %}<a class="game-link" href="{{url_for('game_page',game=id)}}">开始游戏<svg aria-hidden="true"><use href="#i-arrow"/></svg></a>{% else %}<span class="locked"><svg aria-hidden="true"><use href="#i-lock"/></svg>尚未授权</span><span class="muted">等待解锁</span>{% endif %}
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+        {% endfor %}{% endif %}
+      </section>
+      <script>
 document.getElementById('activate').addEventListener('submit',async e=>{
     e.preventDefault();
     const b=document.getElementById('submit'),m=document.getElementById('message');
@@ -28,4 +117,5 @@ document.getElementById('activate').addEventListener('submit',async e=>{
         m.textContent=error.name==='AbortError'?'请求超时，请检查网络后重试':error instanceof TypeError?'网络连接失败，请检查网络后重试':error.message;
     }finally{clearTimeout(timer);b.disabled=false;}
 });
-</script>{% endblock %}
+</script>
+    {% endblock %}

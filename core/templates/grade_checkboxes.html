@@ -1,1 +1,8 @@
-<div class="grade-checkbox-grid">{% for grade,label in grades.items() %}<fieldset class="grade-group"><legend>{{label}}</legend>{% for group in groups_for_grade(grade) %}<label class="game-choice"><input type="checkbox" name="groups" value="{{group.id}}" {% if group.id in selected %}checked{% endif %}><span>{{group.name}} <small>{{group_games(group.id)|length}} 个游戏</small></span></label>{% endfor %}</fieldset>{% endfor %}</div>
+<div class="grade-checkbox-grid">
+  {% for grade,label in grades.items() %}
+    <fieldset class="grade-group">
+      <legend>{{label}}</legend>
+      {% for group in groups_for_grade(grade) %}<label class="game-choice"><input type="checkbox" name="groups" value="{{group.id}}" {% if group.id in selected %}checked{% endif %}><span>{{group.name}} <small>{{group_games(group.id)|length}} 个游戏</small></span></label>{% endfor %}
+    </fieldset>
+  {% endfor %}
+</div>

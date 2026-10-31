@@ -1,1 +1,54 @@
-{% extends 'base.html' %}{% block title %}游戏分组管理 · {{site.title}}{% endblock %}{% block content %}<div class="page-heading"><div><h1>游戏分组管理</h1><p>游戏移动后，访问权限随目标组生效。授权码及设备绑定保留。</p></div><a class="button secondary" href="{{url_for('game_directory')}}">返回游戏目录</a></div><section class="panel"><form method="get"><label>年级／学期 <select name="grade" onchange="this.form.submit()">{% for id,name in grades.items() %}<option value="{{id}}" {% if id==selected_grade %}selected{% endif %}>{{name}}</option>{% endfor %}</select></label></form></section><section class="panel"><h2>创建分组</h2><form method="post"><input type="hidden" name="csrf" value="{{csrf()}}"><input type="hidden" name="action" value="create"><input type="hidden" name="grade" value="{{selected_grade}}"><label>名称 <input name="name" maxlength="30" required></label><label>顺序 <input type="number" name="position" min="0" max="999" value="0" required></label><button>创建分组</button></form></section>{% for group in groups_for_grade(selected_grade) %}<section class="panel"><h2>{{group.name}} · {{group_games(group.id)|length}} 个游戏</h2><form method="post"><input type="hidden" name="csrf" value="{{csrf()}}"><input type="hidden" name="action" value="rename"><input type="hidden" name="grade" value="{{selected_grade}}"><input type="hidden" name="group" value="{{group.id}}"><label>名称 <input name="name" maxlength="30" value="{{group.name}}" required></label><label>顺序 <input type="number" name="position" min="0" max="999" value="{{group.position}}" required></label><button>保存名称与顺序</button></form>{% for game in group_games(group.id) %}<form method="post" style="margin:18px 0"><input type="hidden" name="csrf" value="{{csrf()}}"><input type="hidden" name="action" value="move"><input type="hidden" name="grade" value="{{selected_grade}}"><input type="hidden" name="game" value="{{game}}"><strong>{{games[game]}}</strong> · 从 {{group.name}} 移到 <select name="group">{% for target in groups_for_grade(selected_grade) %}<option value="{{target.id}}" {% if target.id==group.id %}selected{% endif %}>{{target.name}}</option>{% endfor %}</select><button class="secondary">保存归属</button></form>{% endfor %}<form method="post"><input type="hidden" name="csrf" value="{{csrf()}}"><input type="hidden" name="action" value="delete"><input type="hidden" name="grade" value="{{selected_grade}}"><input type="hidden" name="group" value="{{group.id}}"><p class="hint">只有无游戏、无授权及历史批次引用的组可以删除。</p><button class="danger">删除空组</button></form></section>{% endfor %}<section class="panel"><h2>未分组游戏</h2>{% for game in games_for_grades([selected_grade]) %}{% if not game_group_id(game) %}<form method="post"><input type="hidden" name="csrf" value="{{csrf()}}"><input type="hidden" name="action" value="move"><input type="hidden" name="grade" value="{{selected_grade}}"><input type="hidden" name="game" value="{{game}}"><strong>{{games[game]}}</strong><select name="group">{% for target in groups_for_grade(selected_grade) %}<option value="{{target.id}}">{{target.name}}</option>{% endfor %}</select><button>保存归属</button></form>{% endif %}{% endfor %}</section>{% endblock %}
+{% extends 'base.html' %}
+{% block title %}游戏分组管理 · {{site.title}}{% endblock %}
+{% block content %}
+  <div class="page-heading">
+    <div>
+      <h1>游戏分组管理</h1>
+      <p>游戏移动后，访问权限随目标组生效。授权码及设备绑定保留。</p>
+    </div>
+    <a class="button secondary" href="{{url_for('game_directory')}}">返回游戏目录</a>
+  </div>
+  <section class="panel">
+    <form method="get">
+      <label>年级／学期 <select name="grade" onchange="this.form.submit()">{% for id,name in grades.items() %}
+      <option value="{{id}}" {% if id==selected_grade %}selected{% endif %}>{{name}}</option>
+      {% endfor %}</select></label>
+    </form>
+  </section>
+  <section class="panel">
+    <h2>创建分组</h2>
+    <form method="post">
+      <input type="hidden" name="csrf" value="{{csrf()}}"><input type="hidden" name="action" value="create"><input type="hidden" name="grade" value="{{selected_grade}}"><label>名称 <input name="name" maxlength="30" required></label><label>顺序 <input type="number" name="position" min="0" max="999" value="0" required></label><button>创建分组</button>
+    </form>
+  </section>
+  {% for group in groups_for_grade(selected_grade) %}
+    <section class="panel">
+      <h2>{{group.name}} · {{group_games(group.id)|length}} 个游戏</h2>
+      <form method="post">
+        <input type="hidden" name="csrf" value="{{csrf()}}"><input type="hidden" name="action" value="rename"><input type="hidden" name="grade" value="{{selected_grade}}"><input type="hidden" name="group" value="{{group.id}}"><label>名称 <input name="name" maxlength="30" value="{{group.name}}" required></label><label>顺序 <input type="number" name="position" min="0" max="999" value="{{group.position}}" required></label><button>保存名称与顺序</button>
+      </form>
+      {% for game in group_games(group.id) %}
+        <form method="post" style="margin:18px 0">
+          <input type="hidden" name="csrf" value="{{csrf()}}"><input type="hidden" name="action" value="move"><input type="hidden" name="grade" value="{{selected_grade}}"><input type="hidden" name="game" value="{{game}}"><strong>{{games[game]}}</strong> · 从 {{group.name}} 移到 <select name="group">{% for target in groups_for_grade(selected_grade) %}
+          <option value="{{target.id}}" {% if target.id==group.id %}selected{% endif %}>{{target.name}}</option>
+          {% endfor %}</select><button class="secondary">保存归属</button>
+        </form>
+      {% endfor %}
+      <form method="post">
+        <input type="hidden" name="csrf" value="{{csrf()}}"><input type="hidden" name="action" value="delete"><input type="hidden" name="grade" value="{{selected_grade}}"><input type="hidden" name="group" value="{{group.id}}">
+        <p class="hint">只有无游戏、无授权及历史批次引用的组可以删除。</p>
+        <button class="danger">删除空组</button>
+      </form>
+    </section>
+  {% endfor %}
+  <section class="panel">
+    <h2>未分组游戏</h2>
+    {% for game in games_for_grades([selected_grade]) %}{% if not game_group_id(game) %}
+    <form method="post">
+      <input type="hidden" name="csrf" value="{{csrf()}}"><input type="hidden" name="action" value="move"><input type="hidden" name="grade" value="{{selected_grade}}"><input type="hidden" name="game" value="{{game}}"><strong>{{games[game]}}</strong><select name="group">{% for target in groups_for_grade(selected_grade) %}
+      <option value="{{target.id}}">{{target.name}}</option>
+      {% endfor %}</select><button>保存归属</button>
+    </form>
+    {% endif %}{% endfor %}
+  </section>
+{% endblock %}

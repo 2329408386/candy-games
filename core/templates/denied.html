@@ -1,1 +1,8 @@
-{% extends 'base.html' %}{% block content %}<div class="panel"><h2>此游戏需要授权</h2><p>请在首页输入包含该游戏所属学期的授权码。如果授权已被停用、归档、移除该学期或设备已解绑，请联系管理员。</p><a class="button" href="{{url_for('home')}}">返回首页</a></div>{% endblock %}
+{% extends 'base.html' %}
+{% block content %}
+  <div class="panel">
+    <h2>此游戏需要授权</h2>
+    <p>请在首页输入包含该游戏所属学期的授权码。如果授权已被停用、归档、移除该学期或设备已解绑，请联系管理员。</p>
+    <a class="button" href="{{url_for('home')}}">返回首页</a>
+  </div>
+{% endblock %}
