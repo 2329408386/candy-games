@@ -1,0 +1,2011 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>的地得PK</title>
+    <style>
+
+        :root {
+            --p1-color: #4facfe;
+            --p1-bg: #e0f3ff;
+            --p2-color: #ff6b81;
+            --p2-bg: #ffe5e9;
+            --text-dark: #2c3e50;
+            --correct: #2ecc71;
+            --wrong: #e74c3c;
+        }
+
+        body {
+            margin: 0; padding: 0;
+            font-family: 'ZCOOL KuaiLe', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #fff; height: 100vh;
+            display: flex; flex-direction: column;
+            overflow: hidden; user-select: none;
+        }
+
+        .header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 40px; background: rgba(0,0,0,0.2);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            height: 10vh; min-height: 80px;
+        }
+
+        .title { font-size: 2.5rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); color: #FFD700; }
+        .timer-box { font-size: 3rem; background: #fff; color: #ff4757; padding: 5px 30px; border-radius: 50px; box-shadow: 0 0 20px rgba(255, 255, 255, 0.5); font-weight: bold; }
+
+        .game-container { display: flex; flex: 1; padding: 15px; gap: 15px; height: 90vh; }
+        .player-panel { flex: 1; border-radius: 30px; display: flex; flex-direction: column; padding: 15px; position: relative; transition: all 0.3s ease; }
+
+        .player-1 { background: linear-gradient(180deg, #ffffff 0%, var(--p1-bg) 100%); border: 8px solid var(--p1-color); }
+        .player-2 { background: linear-gradient(180deg, #ffffff 0%, var(--p2-bg) 100%); border: 8px solid var(--p2-color); }
+
+        .player-header { display: flex; justify-content: space-between; align-items: center; font-size: 1.8rem; color: var(--text-dark); margin-bottom: 10px; }
+        .score-display { font-size: 2.5rem; font-weight: bold; color: #ff4757; background: #fff; padding: 5px 20px; border-radius: 20px; box-shadow: 0 4px 0 #ddd; }
+
+        .rule-tag { background: #f1c40f; color: #fff; padding: 5px 15px; border-radius: 15px; font-size: 1.2rem; display: inline-block; box-shadow: 0 4px 0 #d4ac0d; text-align: center; margin-bottom: 10px; }
+
+        .question-area {
+            background: white; border-radius: 20px; padding: 20px; font-size: 2rem; 
+            color: var(--text-dark); line-height: 1.8; flex: 1; 
+            display: flex; align-items: center; justify-content: center;
+            text-align: center; box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
+            margin-bottom: 10px; flex-wrap: wrap; align-content: center;
+            position: relative;
+        }
+
+        .waiting-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.9); border-radius: 20px;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            font-size: 2.5rem; color: #f39c12; font-weight: bold; z-index: 10;
+        }
+
+        .blank {
+            display: inline-block; min-width: 50px; height: 50px; border-bottom: 5px solid #aaa;
+            margin: 0 5px; vertical-align: middle; cursor: pointer; position: relative;
+            transition: all 0.2s; border-radius: 10px 10px 0 0;
+            line-height: 50px; font-size: 2rem; padding: 0 5px;
+        }
+        .blank.active { background-color: rgba(255, 215, 0, 0.3); border-bottom-color: #f1c40f; transform: scale(1.1); }
+        .blank.correct { color: var(--correct); border-bottom-color: var(--correct); }
+        .blank.wrong { color: var(--wrong); border-bottom-color: var(--wrong); animation: shake 0.5s; }
+
+        .tray-container { display: flex; flex-direction: column; gap: 8px; }
+        .answer-tray { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+        
+        .answer-btn {
+            width: 60px; height: 60px; font-size: 2rem; background: white; border: none;
+            border-radius: 12px; cursor: pointer; transition: all 0.1s;
+            display: flex; align-items: center; justify-content: center; color: #333;
+        }
+        .player-1 .answer-btn { box-shadow: 0 4px 0 #b3d4fc; }
+        .player-2 .answer-btn { box-shadow: 0 4px 0 #ffb3c1; }
+        .answer-btn:active { transform: translateY(4px); box-shadow: 0 0px 0 #ccc; }
+        .answer-btn:hover { background: #f0f0f0; }
+
+        .action-row { display: flex; gap: 8px; justify-content: center; }
+        .action-btn {
+            color: white; border: none; padding: 8px 15px; border-radius: 12px; 
+            font-size: 1.2rem; font-family: inherit; cursor: pointer; transition: all 0.1s;
+            flex: 1;
+        }
+        .btn-delete { background: #ff9f43; box-shadow: 0 4px 0 #e67e22; }
+        .btn-clear { background: #a4b0be; box-shadow: 0 4px 0 #747d8c; }
+        .btn-submit { background: #2ecc71; box-shadow: 0 4px 0 #27ae60; font-size: 1.4rem; flex: 2; }
+        .action-btn:active { transform: translateY(4px); box-shadow: 0 0px 0 #ccc; }
+
+        .float-score {
+            position: absolute; font-size: 3rem; font-weight: bold; color: #FFD700;
+            text-shadow: 2px 2px 0 #d35400; pointer-events: none;
+            animation: floatUp 1.5s ease-out forwards; z-index: 50;
+        }
+
+        .overlay-screen {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); display: flex; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 100;
+        }
+        .hidden { display: none !important; }
+        .start-btn {
+            font-size: 3rem; padding: 20px 60px; border-radius: 50px; background: #f1c40f;
+            color: #fff; border: none; cursor: pointer; box-shadow: 0 10px 0 #d4ac0d;
+            font-family: inherit; transition: all 0.1s; margin-top: 30px;
+        }
+        .start-btn:active { transform: translateY(10px); box-shadow: 0 0px 0 #d4ac0d; }
+
+        @keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(-8px); } 50% { transform: translateX(8px); } 75% { transform: translateX(-8px); } 100% { transform: translateX(0); } }
+        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0) scale(0.5); } 100% { opacity: 0; transform: translateY(-100px) scale(1.5); } }
+
+        * { box-sizing: border-box; }
+        .header { flex-shrink: 0; height: auto; min-height: 80px; }
+        .game-container { height: auto; min-height: 0; }
+        .player-panel { min-width: 0; min-height: 0; }
+        .question-area { display: block; align-content: center; overflow-y: auto; min-height: 0; }
+        .answer-btn { width: 80px; font-family: inherit; }
+        .feedback { min-height: 28px; text-align: center; color: var(--text-dark); }
+        .instructions { font-size: 1.1rem; line-height: 1.8; text-align: center; }
+        .overlay-screen { position: fixed; overflow-y: auto; padding: 24px; text-align: center; }
+        .overlay-screen h1 { font-size: clamp(2rem, 6vw, 5rem) !important; }
+        button:disabled { cursor: default; opacity: 0.5; }
+        .blank { font-family: inherit; background: transparent; border: 0; border-bottom: 5px solid #aaa; color: inherit; }
+        button:focus-visible { outline: 3px solid #e67e22; outline-offset: 3px; }
+        @media (max-width: 900px), (max-height: 700px) {
+            .header { padding: 8px 18px; min-height: 60px; }
+            .title { font-size: 1.8rem; }
+            .timer-box { font-size: 2rem; }
+            .header > div:last-child { display: none; }
+            .game-container { padding: 8px; gap: 8px; }
+            .player-panel { padding: 10px; border-width: 4px; border-radius: 20px; }
+            .player-header, .question-area { font-size: 1.4rem; }
+            .question-area { padding: 12px; line-height: 2; }
+            .score-display { font-size: 1.8rem; padding: 3px 12px; }
+            .blank { min-width: 38px; height: 42px; line-height: 36px; font-size: 1.4rem; }
+            .action-btn { padding: 8px 4px; font-size: 1rem; }
+            .answer-btn { width: 56px; height: 48px; }
+        }
+        @media (max-width: 550px) {
+            body { overflow-y: auto; height: auto; min-height: 100vh; }
+            .game-container { flex-direction: column; }
+            .player-panel { min-height: 380px; }
+            .question-area { min-height: 120px; }
+        }
+        .question-source { font-size: .9rem; line-height: 1.5; color: #667785; margin-bottom: 10px; }
+    </style>
+<script id="experience-config" type="application/json">{"id": "dedide", "title": "的地得PK", "emblem": "的地得", "description": "读懂句子，分清“的、地、得”。", "instructions": "选择空位，填入恰当的“的、地、得”。", "defaultSeconds": 150, "shared": false, "scoring": "整题全对每空加10分，连续答对额外加5分；答错扣5分，最低0分。"}</script><link rel="stylesheet" href="/static/game-experience.css?v=e6b7c5a6"><script defer src="/static/game-experience-v3.js?v=5520695e"></script></head>
+<body>
+
+
+    <div id="start-screen" class="overlay-screen">
+        <h1 style="font-size: 5rem; color: #FFD700; text-shadow: 4px 4px 0 #d35400; margin-bottom: 20px;">的地得PK</h1>
+        <p style="font-size: 1.8rem; color: #fff;">“的、地、得”专项训练 · 双人对战</p>
+        <p style="font-size: 1.2rem; color: #bbb; margin-top: 10px;">点击空格，再选择“的、地、得”，每空只能填一个字。</p>
+        <p class="instructions">共100题，每人随机20题，限时150秒。<br>整题全对每空得10分，连续答对额外加5分；答错扣5分，最低0分。</p>
+        <button class="start-btn" onclick="startGame()">开始对战 </button>
+    </div>
+
+    <div id="game-screen" class="hidden" style="height: 100%; display: flex; flex-direction: column;">
+        <div class="header">
+            <div class="title"> 的地得PK</div>
+            <div class="timer-box" id="timer">150s</div>
+            <div style="width: 200px;"></div>
+        </div>
+
+        <div class="game-container">
+            <!-- 玩家1 -->
+            <div class="player-panel player-1" id="panel-1">
+                <div class="player-header">
+                    <span> 玩家一</span>
+                    <span class="score-display" id="score-1">0</span>
+                </div>
+                <div style="text-align: center;"><span class="rule-tag" id="rule-1">准备中</span></div>
+                <div class="question-area" id="question-1">
+                    <div class="waiting-overlay hidden" id="waiting-1"> 已完成所有题目<br>等待对手...</div>
+                </div>
+                <div class="feedback" role="status" aria-live="polite" id="feedback-1"></div>
+                <div class="tray-container" id="tray-container-1">
+                    <div class="answer-tray" id="tray-1"></div>
+                    <div class="action-row">
+                        <button class="action-btn btn-delete" onclick="deleteChar(1)">⌫ 删除</button>
+                        <button class="action-btn btn-clear" onclick="clearPlayerAnswers(1)">🧹 清空</button>
+                        <button class="action-btn btn-submit" onclick="submitAnswer(1)">提交答案</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 玩家2 -->
+            <div class="player-panel player-2" id="panel-2">
+                <div class="player-header">
+                    <span> 玩家二</span>
+                    <span class="score-display" id="score-2">0</span>
+                </div>
+                <div style="text-align: center;"><span class="rule-tag" id="rule-2">准备中</span></div>
+                <div class="question-area" id="question-2">
+                    <div class="waiting-overlay hidden" id="waiting-2"> 已完成所有题目<br>等待对手...</div>
+                </div>
+                <div class="feedback" role="status" aria-live="polite" id="feedback-2"></div>
+                <div class="tray-container" id="tray-container-2">
+                    <div class="answer-tray" id="tray-2"></div>
+                    <div class="action-row">
+                        <button class="action-btn btn-delete" onclick="deleteChar(2)">⌫ 删除</button>
+                        <button class="action-btn btn-clear" onclick="clearPlayerAnswers(2)">🧹 清空</button>
+                        <button class="action-btn btn-submit" onclick="submitAnswer(2)">提交答案</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="end-screen" class="overlay-screen hidden">
+        <h1 id="winner-text" style="font-size: 5rem; color: #FFD700;">玩家一获胜！</h1>
+        <div id="final-score" style="font-size: 2rem; color: #fff; margin-top: 20px;"></div>
+        <button class="start-btn" onclick="location.reload()">再来一局 </button>
+    </div>
+
+    <script>
+
+        // 图片原题：前9道词组、前3道句子；其余为同格式补充题。
+        const questionBank = [
+  {
+    "id": "d-2",
+    "rule": "课文填空",
+    "text": "同学们向在校园里欢唱[0]小鸟打招呼，向敬爱的老师问好，向高高飘扬的国旗敬礼。",
+    "answers": [
+      "的"
+    ],
+    "complete": "同学们向在校园里欢唱的小鸟打招呼，向敬爱的老师问好，向高高飘扬的国旗敬礼。",
+    "source": {
+      "lesson": "大青树下的小学",
+      "original": "同学们向在校园里欢唱的小鸟打招呼，向敬爱的老师问好，向高高飘扬的国旗敬礼。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“欢唱的小鸟”中应填“的”。修饰事物，用“的”连接修饰语与所指事物。"
+  },
+  {
+    "id": "d-6",
+    "rule": "课文填空",
+    "text": "这些山林里的朋友，是那样好奇[0]听着。",
+    "answers": [
+      "地"
+    ],
+    "complete": "这些山林里的朋友，是那样好奇地听着。",
+    "source": {
+      "lesson": "大青树下的小学",
+      "original": "这些山林里的朋友，是那样好奇地听着。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“好奇地听”中应填“地”。修饰动作，用“地”连接动作的方式与动作。"
+  },
+  {
+    "id": "d-8",
+    "rule": "课文填空",
+    "text": "这就是我们可爱[0]小学，一所边疆的小学。",
+    "answers": [
+      "的"
+    ],
+    "complete": "这就是我们可爱的小学，一所边疆的小学。",
+    "source": {
+      "lesson": "大青树下的小学",
+      "original": "这就是我们可爱的小学，一所边疆的小学。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“可爱的小学”中应填“的”。修饰事物，用“的”连接修饰语与所指事物。"
+  },
+  {
+    "id": "d-10",
+    "rule": "课文填空",
+    "text": "古老[0]铜钟，挂在大青树粗壮的枝干上。",
+    "answers": [
+      "的"
+    ],
+    "complete": "古老的铜钟，挂在大青树粗壮的枝干上。",
+    "source": {
+      "lesson": "大青树下的小学",
+      "original": "古老的铜钟，挂在大青树粗壮的枝干上。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“古老的铜钟”中应填“的”。修饰事物，用“的”连接修饰语与所指事物。"
+  },
+  {
+    "id": "d-11",
+    "rule": "课文填空",
+    "text": "当雷云在天上轰响，六月的阵雨落下的时候，湿润[0]东风走过荒野，在竹林中吹着风笛。",
+    "answers": [
+      "的"
+    ],
+    "complete": "当雷云在天上轰响，六月的阵雨落下的时候，湿润的东风走过荒野，在竹林中吹着风笛。",
+    "source": {
+      "lesson": "花的学校",
+      "original": "当雷云在天上轰响，六月的阵雨落下的时候，湿润的东风走过荒野，在竹林中吹着风笛。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“湿润的东风”中应填“的”。修饰事物，用“的”连接修饰语与所指事物。"
+  },
+  {
+    "id": "d-12",
+    "rule": "课文填空",
+    "text": "于是，一群一群[0]花从无人知道的地方突然跑出来，在绿草上跳舞，狂欢。",
+    "answers": [
+      "的"
+    ],
+    "complete": "于是，一群一群的花从无人知道的地方突然跑出来，在绿草上跳舞，狂欢。",
+    "source": {
+      "lesson": "花的学校",
+      "original": "于是，一群一群的花从无人知道的地方突然跑出来，在绿草上跳舞，狂欢。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“一群一群的花”中应填“的”。修饰事物，用“的”连接修饰语与所指事物。"
+  },
+  {
+    "id": "d-16",
+    "rule": "课文填空",
+    "text": "树枝在林中互相碰触着，绿叶在狂风里簌簌[0]响，雷云拍着大手。",
+    "answers": [
+      "地"
+    ],
+    "complete": "树枝在林中互相碰触着，绿叶在狂风里簌簌地响，雷云拍着大手。",
+    "source": {
+      "lesson": "花的学校",
+      "original": "树枝在林中互相碰触着，绿叶在狂风里簌簌地响，雷云拍着大手。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“簌簌地响”中应填“地”。修饰动作，用“地”连接动作的方式与动作。"
+  },
+  {
+    "id": "d-18",
+    "rule": "课文填空",
+    "text": "你可知道，妈妈，他们[0]家是在天上，在星星所住的地方。",
+    "answers": [
+      "的"
+    ],
+    "complete": "你可知道，妈妈，他们的家是在天上，在星星所住的地方。",
+    "source": {
+      "lesson": "花的学校",
+      "original": "你可知道，妈妈，他们的家是在天上，在星星所住的地方。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“他们的家”中应填“的”。修饰事物，用“的”连接修饰语与所指事物。"
+  },
+  {
+    "id": "d-19",
+    "rule": "课文填空",
+    "text": "你没有看见他们怎样[0]急着要到那儿去吗？",
+    "answers": [
+      "地"
+    ],
+    "complete": "你没有看见他们怎样地急着要到那儿去吗？",
+    "source": {
+      "lesson": "花的学校",
+      "original": "你没有看见他们怎样地急着要到那儿去吗？",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“怎样地急”中应填“地”。修饰动作，用“地”连接动作的方式与动作。"
+  },
+  {
+    "id": "d-24",
+    "rule": "课文填空",
+    "text": "学生读熟了，先生就让他们一个一个[0]背诵。",
+    "answers": [
+      "地"
+    ],
+    "complete": "学生读熟了，先生就让他们一个一个地背诵。",
+    "source": {
+      "lesson": "不懂就要问",
+      "original": "学生读熟了，先生就让他们一个一个地背诵。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“一个一个地背诵”中应填“地”。修饰动作，用“地”连接动作的方式与动作。"
+  },
+  {
+    "id": "d-25",
+    "rule": "课文填空",
+    "text": "至于书里[0]意思，先生从来不讲。",
+    "answers": [
+      "的"
+    ],
+    "complete": "至于书里的意思，先生从来不讲。",
+    "source": {
+      "lesson": "不懂就要问",
+      "original": "至于书里的意思，先生从来不讲。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“书里的意思”中应填“的”。修饰事物，用“的”连接修饰语与所指事物。"
+  },
+  {
+    "id": "d-26",
+    "rule": "课文填空",
+    "text": "一天，孙中山来到学校，照例把书放到先生面前，流利[0]背出前一天所学的功课。",
+    "answers": [
+      "地"
+    ],
+    "complete": "一天，孙中山来到学校，照例把书放到先生面前，流利地背出前一天所学的功课。",
+    "source": {
+      "lesson": "不懂就要问",
+      "original": "一天，孙中山来到学校，照例把书放到先生面前，流利地背出前一天所学的功课。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“流利地背”中应填“地”。修饰动作，用“地”连接动作的方式与动作。"
+  },
+  {
+    "id": "d-28",
+    "rule": "课文填空",
+    "text": "接着，先生在孙中山[0]书上又圈了一段，他念一句，叫孙中山念一句。",
+    "answers": [
+      "的"
+    ],
+    "complete": "接着，先生在孙中山的书上又圈了一段，他念一句，叫孙中山念一句。",
+    "source": {
+      "lesson": "不懂就要问",
+      "original": "接着，先生在孙中山的书上又圈了一段，他念一句，叫孙中山念一句。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“孙中山的书”中应填“的”。修饰事物，用“的”连接修饰语与所指事物。"
+  },
+  {
+    "id": "d-32",
+    "rule": "课文填空",
+    "text": "孙中山想：这样糊里糊涂[0]背，有什么用呢？",
+    "answers": [
+      "地"
+    ],
+    "complete": "孙中山想：这样糊里糊涂地背，有什么用呢？",
+    "source": {
+      "lesson": "不懂就要问",
+      "original": "孙中山想：这样糊里糊涂地背，有什么用呢？",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“糊里糊涂地背”中应填“地”。修饰动作，用“地”连接动作的方式与动作。"
+  },
+  {
+    "id": "d-33",
+    "rule": "课文填空",
+    "text": "这一问，把正在摇头晃脑高声念书的同学们吓呆了，课堂里霎时变[0]鸦雀无声。",
+    "answers": [
+      "得"
+    ],
+    "complete": "这一问，把正在摇头晃脑高声念书的同学们吓呆了，课堂里霎时变得鸦雀无声。",
+    "source": {
+      "lesson": "不懂就要问",
+      "original": "这一问，把正在摇头晃脑高声念书的同学们吓呆了，课堂里霎时变得鸦雀无声。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“变得鸦雀无声”中应填“得”。说明动作或状态的程度、结果，用“得”连接。"
+  },
+  {
+    "id": "d-35",
+    "rule": "课文填空",
+    "text": "先生讲[0]很详细，大家听得很认真。",
+    "answers": [
+      "得"
+    ],
+    "complete": "先生讲得很详细，大家听得很认真。",
+    "source": {
+      "lesson": "不懂就要问",
+      "original": "先生讲得很详细，大家听得很认真。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“讲得很详细”中应填“得”。说明动作或状态的程度、结果，用“得”连接。"
+  },
+  {
+    "id": "d-38",
+    "rule": "课文填空",
+    "text": "可是，地面还是潮湿的，不时还能看见一个亮晶晶[0]水洼，映着一角小小的蓝天。",
+    "answers": [
+      "的"
+    ],
+    "complete": "可是，地面还是潮湿的，不时还能看见一个亮晶晶的水洼，映着一角小小的蓝天。",
+    "source": {
+      "lesson": "铺满金色巴掌的水泥道",
+      "original": "可是，地面还是潮湿的，不时还能看见一个亮晶晶的水洼，映着一角小小的蓝天。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“亮晶晶的水洼”中应填“的”。修饰事物，用“的”连接修饰语与所指事物。"
+  },
+  {
+    "id": "d-39",
+    "rule": "课文填空",
+    "text": "道路两旁的法国梧桐树，掉下了一片片金黄金黄[0]叶子。",
+    "answers": [
+      "的"
+    ],
+    "complete": "道路两旁的法国梧桐树，掉下了一片片金黄金黄的叶子。",
+    "source": {
+      "lesson": "铺满金色巴掌的水泥道",
+      "original": "道路两旁的法国梧桐树，掉下了一片片金黄金黄的叶子。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“金黄金黄的叶子”中应填“的”。修饰事物，用“的”连接修饰语与所指事物。"
+  },
+  {
+    "id": "d-40",
+    "rule": "课文填空",
+    "text": "这一片片闪着雨珠的叶子，一掉下来，便紧紧[0]粘在湿漉漉的水泥道上了。",
+    "answers": [
+      "地"
+    ],
+    "complete": "这一片片闪着雨珠的叶子，一掉下来，便紧紧地粘在湿漉漉的水泥道上了。",
+    "source": {
+      "lesson": "铺满金色巴掌的水泥道",
+      "original": "这一片片闪着雨珠的叶子，一掉下来，便紧紧地粘在湿漉漉的水泥道上了。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“紧紧地粘”中应填“地”。修饰动作，用“地”连接动作的方式与动作。"
+  },
+  {
+    "id": "d-41",
+    "rule": "课文填空",
+    "text": "我走在院墙外[0]水泥道上。",
+    "answers": [
+      "的"
+    ],
+    "complete": "我走在院墙外的水泥道上。",
+    "source": {
+      "lesson": "铺满金色巴掌的水泥道",
+      "original": "我走在院墙外的水泥道上。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“院墙外的水泥道”中应填“的”。修饰事物，用“的”连接修饰语与所指事物。"
+  },
+  {
+    "id": "d-42",
+    "rule": "课文填空",
+    "text": "水泥道像铺上了一块彩色[0]地毯。",
+    "answers": [
+      "的"
+    ],
+    "complete": "水泥道像铺上了一块彩色的地毯。",
+    "source": {
+      "lesson": "铺满金色巴掌的水泥道",
+      "original": "水泥道像铺上了一块彩色的地毯。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“彩色的地毯”中应填“的”。修饰事物，用“的”连接修饰语与所指事物。"
+  },
+  {
+    "id": "d-43",
+    "rule": "课文填空",
+    "text": "每一片法国梧桐树的落叶，都像一个金色的小巴掌，熨帖地、平展[0]粘在水泥道上。",
+    "answers": [
+      "地"
+    ],
+    "complete": "每一片法国梧桐树的落叶，都像一个金色的小巴掌，熨帖地、平展地粘在水泥道上。",
+    "source": {
+      "lesson": "铺满金色巴掌的水泥道",
+      "original": "每一片法国梧桐树的落叶，都像一个金色的小巴掌，熨帖地、平展地粘在水泥道上。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“平展地粘”中应填“地”。修饰动作，用“地”连接动作的方式与动作。"
+  },
+  {
+    "id": "d-44",
+    "rule": "课文填空",
+    "text": "它们排列[0]并不规则，甚至有些凌乱，然而，这更增添了水泥道的美。",
+    "answers": [
+      "得"
+    ],
+    "complete": "它们排列得并不规则，甚至有些凌乱，然而，这更增添了水泥道的美。",
+    "source": {
+      "lesson": "铺满金色巴掌的水泥道",
+      "original": "它们排列得并不规则，甚至有些凌乱，然而，这更增添了水泥道的美。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“排列得并不规则”中应填“得”。说明动作或状态的程度、结果，用“得”连接。"
+  },
+  {
+    "id": "d-45",
+    "rule": "课文填空",
+    "text": "我一步一步小心[0]走着，一片一片仔细地数着。",
+    "answers": [
+      "地"
+    ],
+    "complete": "我一步一步小心地走着，一片一片仔细地数着。",
+    "source": {
+      "lesson": "铺满金色巴掌的水泥道",
+      "original": "我一步一步小心地走着，一片一片仔细地数着。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“小心地走”中应填“地”。修饰动作，用“地”连接动作的方式与动作。"
+  },
+  {
+    "id": "d-46",
+    "rule": "课文填空",
+    "text": "我穿着一双棕红色[0]小雨靴。",
+    "answers": [
+      "的"
+    ],
+    "complete": "我穿着一双棕红色的小雨靴。",
+    "source": {
+      "lesson": "铺满金色巴掌的水泥道",
+      "original": "我穿着一双棕红色的小雨靴。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“棕红色的小雨靴”中应填“的”。修饰事物，用“的”连接修饰语与所指事物。"
+  },
+  {
+    "id": "d-47",
+    "rule": "课文填空",
+    "text": "要不是怕上课迟到，我会走[0]很慢很慢的。",
+    "answers": [
+      "得"
+    ],
+    "complete": "要不是怕上课迟到，我会走得很慢很慢的。",
+    "source": {
+      "lesson": "铺满金色巴掌的水泥道",
+      "original": "要不是怕上课迟到，我会走得很慢很慢的。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“走得很慢”中应填“得”。说明动作或状态的程度、结果，用“得”连接。"
+  },
+  {
+    "id": "d-49",
+    "rule": "课文填空",
+    "text": "秋天[0]雨，是一把钥匙。",
+    "answers": [
+      "的"
+    ],
+    "complete": "秋天的雨，是一把钥匙。",
+    "source": {
+      "lesson": "秋天的雨",
+      "original": "秋天的雨，是一把钥匙。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“秋天的雨”中应填“的”。修饰事物，用“的”连接修饰语与所指事物。"
+  },
+  {
+    "id": "d-50",
+    "rule": "课文填空",
+    "text": "它带着清凉和温柔，轻轻地，轻轻地，趁你没留意，把秋天[0]大门打开了。",
+    "answers": [
+      "的"
+    ],
+    "complete": "它带着清凉和温柔，轻轻地，轻轻地，趁你没留意，把秋天的大门打开了。",
+    "source": {
+      "lesson": "秋天的雨",
+      "original": "它带着清凉和温柔，轻轻地，轻轻地，趁你没留意，把秋天的大门打开了。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“秋天的大门”中应填“的”。修饰事物，用“的”连接修饰语与所指事物。"
+  },
+  {
+    "id": "d-51",
+    "rule": "课文填空",
+    "text": "秋天的雨，有一盒五彩缤纷[0]颜料。",
+    "answers": [
+      "的"
+    ],
+    "complete": "秋天的雨，有一盒五彩缤纷的颜料。",
+    "source": {
+      "lesson": "秋天的雨",
+      "original": "秋天的雨，有一盒五彩缤纷的颜料。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“五彩缤纷的颜料”中应填“的”。修饰事物，用“的”连接修饰语与所指事物。"
+  },
+  {
+    "id": "d-52",
+    "rule": "课文填空",
+    "text": "你看，它把黄色给了银杏树，黄黄[0]叶子像一把把小扇子，扇哪扇哪，扇走了夏天的炎热。",
+    "answers": [
+      "的"
+    ],
+    "complete": "你看，它把黄色给了银杏树，黄黄的叶子像一把把小扇子，扇哪扇哪，扇走了夏天的炎热。",
+    "source": {
+      "lesson": "秋天的雨",
+      "original": "你看，它把黄色给了银杏树，黄黄的叶子像一把把小扇子，扇哪扇哪，扇走了夏天的炎热。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“黄黄的叶子”中应填“的”。修饰事物，用“的”连接修饰语与所指事物。"
+  },
+  {
+    "id": "d-53",
+    "rule": "课文填空",
+    "text": "它把红色给了枫树，红红[0]枫叶像一枚枚邮票，飘哇飘哇，邮来了秋天的凉爽。",
+    "answers": [
+      "的"
+    ],
+    "complete": "它把红色给了枫树，红红的枫叶像一枚枚邮票，飘哇飘哇，邮来了秋天的凉爽。",
+    "source": {
+      "lesson": "秋天的雨",
+      "original": "它把红色给了枫树，红红的枫叶像一枚枚邮票，飘哇飘哇，邮来了秋天的凉爽。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“红红的枫叶”中应填“的”。修饰事物，用“的”连接修饰语与所指事物。"
+  },
+  {
+    "id": "d-54",
+    "rule": "课文填空",
+    "text": "金黄色是给田野的，看，田野像金色[0]海洋。",
+    "answers": [
+      "的"
+    ],
+    "complete": "金黄色是给田野的，看，田野像金色的海洋。",
+    "source": {
+      "lesson": "秋天的雨",
+      "original": "金黄色是给田野的，看，田野像金色的海洋。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“金色的海洋”中应填“的”。修饰事物，用“的”连接修饰语与所指事物。"
+  },
+  {
+    "id": "d-57",
+    "rule": "课文填空",
+    "text": "秋天的雨，藏着非常好闻[0]气味。",
+    "answers": [
+      "的"
+    ],
+    "complete": "秋天的雨，藏着非常好闻的气味。",
+    "source": {
+      "lesson": "秋天的雨",
+      "original": "秋天的雨，藏着非常好闻的气味。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“好闻的气味”中应填“的”。修饰事物，用“的”连接修饰语与所指事物。"
+  },
+  {
+    "id": "d-58",
+    "rule": "课文填空",
+    "text": "梨香香的，葡萄甜甜的，还有苹果、橘子，好多好多香甜[0]气味，都躲在小雨滴里呢！",
+    "answers": [
+      "的"
+    ],
+    "complete": "梨香香的，葡萄甜甜的，还有苹果、橘子，好多好多香甜的气味，都躲在小雨滴里呢！",
+    "source": {
+      "lesson": "秋天的雨",
+      "original": "梨香香的，葡萄甜甜的，还有苹果、橘子，好多好多香甜的气味，都躲在小雨滴里呢！",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“香甜的气味”中应填“的”。修饰事物，用“的”连接修饰语与所指事物。"
+  },
+  {
+    "id": "d-59",
+    "rule": "课文填空",
+    "text": "小朋友[0]脚，常被那香味勾住。",
+    "answers": [
+      "的"
+    ],
+    "complete": "小朋友的脚，常被那香味勾住。",
+    "source": {
+      "lesson": "秋天的雨",
+      "original": "小朋友的脚，常被那香味勾住。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“小朋友的脚”中应填“的”。修饰事物，用“的”连接修饰语与所指事物。"
+  },
+  {
+    "id": "d-60",
+    "rule": "课文填空",
+    "text": "秋天的雨，吹起了金色[0]小喇叭。",
+    "answers": [
+      "的"
+    ],
+    "complete": "秋天的雨，吹起了金色的小喇叭。",
+    "source": {
+      "lesson": "秋天的雨",
+      "original": "秋天的雨，吹起了金色的小喇叭。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“金色的小喇叭”中应填“的”。修饰事物，用“的”连接修饰语与所指事物。"
+  },
+  {
+    "id": "d-62",
+    "rule": "课文填空",
+    "text": "小松鼠找来松果当粮食，小青蛙在加紧挖洞，准备舒舒服服[0]睡大觉。",
+    "answers": [
+      "地"
+    ],
+    "complete": "小松鼠找来松果当粮食，小青蛙在加紧挖洞，准备舒舒服服地睡大觉。",
+    "source": {
+      "lesson": "秋天的雨",
+      "original": "小松鼠找来松果当粮食，小青蛙在加紧挖洞，准备舒舒服服地睡大觉。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“舒舒服服地睡”中应填“地”。修饰动作，用“地”连接动作的方式与动作。"
+  },
+  {
+    "id": "d-63",
+    "rule": "课文填空",
+    "text": "松柏穿上厚厚的、油亮亮[0]衣裳，杨树、柳树的叶子飘到树妈妈的脚下。",
+    "answers": [
+      "的"
+    ],
+    "complete": "松柏穿上厚厚的、油亮亮的衣裳，杨树、柳树的叶子飘到树妈妈的脚下。",
+    "source": {
+      "lesson": "秋天的雨",
+      "original": "松柏穿上厚厚的、油亮亮的衣裳，杨树、柳树的叶子飘到树妈妈的脚下。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“油亮亮的衣裳”中应填“的”。修饰事物，用“的”连接修饰语与所指事物。"
+  },
+  {
+    "id": "d-67",
+    "rule": "课文填空",
+    "text": "它[0]窗户变成了黑窟窿，门板也破了洞，很久很久没人住了。",
+    "answers": [
+      "的"
+    ],
+    "complete": "它的窗户变成了黑窟窿，门板也破了洞，很久很久没人住了。",
+    "source": {
+      "lesson": "总也倒不了的老屋",
+      "original": "它的窗户变成了黑窟窿，门板也破了洞，很久很久没人住了。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“它的窗户”中应填“的”。修饰事物，用“的”连接修饰语与所指事物。"
+  },
+  {
+    "id": "d-75",
+    "rule": "课文填空",
+    "text": "小蜘蛛飞快[0]爬进屋子，在屋梁上织了一张又大又漂亮的网。",
+    "answers": [
+      "地"
+    ],
+    "complete": "小蜘蛛飞快地爬进屋子，在屋梁上织了一张又大又漂亮的网。",
+    "source": {
+      "lesson": "总也倒不了的老屋",
+      "original": "小蜘蛛飞快地爬进屋子，在屋梁上织了一张又大又漂亮的网。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“飞快地爬”中应填“地”。修饰动作，用“地”连接动作的方式与动作。"
+  },
+  {
+    "id": "d-79",
+    "rule": "课文填空",
+    "text": "小蜘蛛[0]故事一直没讲完，因此，老屋到现在还站在那儿，边晒太阳，边听小蜘蛛讲故事。",
+    "answers": [
+      "的"
+    ],
+    "complete": "小蜘蛛的故事一直没讲完，因此，老屋到现在还站在那儿，边晒太阳，边听小蜘蛛讲故事。",
+    "source": {
+      "lesson": "总也倒不了的老屋",
+      "original": "小蜘蛛的故事一直没讲完，因此，老屋到现在还站在那儿，边晒太阳，边听小蜘蛛讲故事。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“小蜘蛛的故事”中应填“的”。修饰事物，用“的”连接修饰语与所指事物。"
+  },
+  {
+    "id": "d-80",
+    "rule": "课文填空",
+    "text": "这是一个美丽[0]早晨，阳光灿烂。",
+    "answers": [
+      "的"
+    ],
+    "complete": "这是一个美丽的早晨，阳光灿烂。",
+    "source": {
+      "lesson": "犟龟",
+      "original": "这是一个美丽的早晨，阳光灿烂。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“美丽的早晨”中应填“的”。修饰事物，用“的”连接修饰语与所指事物。"
+  },
+  {
+    "id": "d-81",
+    "rule": "课文填空",
+    "text": "乌龟陶陶正坐在她那舒适[0]小洞前，吃着车前草的叶子。",
+    "answers": [
+      "的"
+    ],
+    "complete": "乌龟陶陶正坐在她那舒适的小洞前，吃着车前草的叶子。",
+    "source": {
+      "lesson": "犟龟",
+      "original": "乌龟陶陶正坐在她那舒适的小洞前，吃着车前草的叶子。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“舒适的小洞”中应填“的”。修饰事物，用“的”连接修饰语与所指事物。"
+  },
+  {
+    "id": "d-83",
+    "rule": "课文填空",
+    "text": "狮王[0]宫殿路途遥远，而庆典不久就要开始，必须马上动身。",
+    "answers": [
+      "的"
+    ],
+    "complete": "狮王的宫殿路途遥远，而庆典不久就要开始，必须马上动身。",
+    "source": {
+      "lesson": "犟龟",
+      "original": "狮王的宫殿路途遥远，而庆典不久就要开始，必须马上动身。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“狮王的宫殿”中应填“的”。修饰事物，用“的”连接修饰语与所指事物。"
+  },
+  {
+    "id": "d-85",
+    "rule": "课文填空",
+    "text": "陶陶听见鸽子[0]谈话，陷入了沉思：如果所有动物都被邀请了，当然也包括我，为什么我不去参加这有史以来最热闹的婚礼呢？",
+    "answers": [
+      "的"
+    ],
+    "complete": "陶陶听见鸽子的谈话，陷入了沉思：如果所有动物都被邀请了，当然也包括我，为什么我不去参加这有史以来最热闹的婚礼呢？",
+    "source": {
+      "lesson": "犟龟",
+      "original": "陶陶听见鸽子的谈话，陷入了沉思：如果所有动物都被邀请了，当然也包括我，为什么我不去参加这有史以来最热闹的婚礼呢？",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“鸽子的谈话”中应填“的”。修饰事物，用“的”连接修饰语与所指事物。"
+  },
+  {
+    "id": "d-89",
+    "rule": "课文填空",
+    "text": "得知她要去参加狮王的婚礼，蜘蛛哈哈大笑，巨大的蜘蛛网被笑声震[0]剧烈地颤动起来。",
+    "answers": [
+      "得"
+    ],
+    "complete": "得知她要去参加狮王的婚礼，蜘蛛哈哈大笑，巨大的蜘蛛网被笑声震得剧烈地颤动起来。",
+    "source": {
+      "lesson": "犟龟",
+      "original": "得知她要去参加狮王的婚礼，蜘蛛哈哈大笑，巨大的蜘蛛网被笑声震得剧烈地颤动起来。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“震得剧烈”中应填“得”。说明动作或状态的程度、结果，用“得”连接。"
+  },
+  {
+    "id": "d-90",
+    "rule": "课文填空",
+    "text": "越过种种障碍，穿过树林和沙地，陶陶日夜不停[0]赶路。",
+    "answers": [
+      "地"
+    ],
+    "complete": "越过种种障碍，穿过树林和沙地，陶陶日夜不停地赶路。",
+    "source": {
+      "lesson": "犟龟",
+      "original": "越过种种障碍，穿过树林和沙地，陶陶日夜不停地赶路。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“不停地赶路”中应填“地”。修饰动作，用“地”连接动作的方式与动作。"
+  },
+  {
+    "id": "d-92",
+    "rule": "课文填空",
+    "text": "在一片常春藤[0]叶子上，一只蜗牛正瞪着双眼打量着她。",
+    "answers": [
+      "的"
+    ],
+    "complete": "在一片常春藤的叶子上，一只蜗牛正瞪着双眼打量着她。",
+    "source": {
+      "lesson": "犟龟",
+      "original": "在一片常春藤的叶子上，一只蜗牛正瞪着双眼打量着她。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“常春藤的叶子”中应填“的”。修饰事物，用“的”连接修饰语与所指事物。"
+  },
+  {
+    "id": "d-93",
+    "rule": "课文填空",
+    "text": "陶陶客气[0]跟蜗牛打听去狮王二十八世的宫殿怎么走。",
+    "answers": [
+      "地"
+    ],
+    "complete": "陶陶客气地跟蜗牛打听去狮王二十八世的宫殿怎么走。",
+    "source": {
+      "lesson": "犟龟",
+      "original": "陶陶客气地跟蜗牛打听去狮王二十八世的宫殿怎么走。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“客气地跟”中应填“地”。修饰动作，用“地”连接动作的方式与动作。"
+  },
+  {
+    "id": "d-94",
+    "rule": "课文填空",
+    "text": "蜗牛想了好一会儿，才把自己那迷迷糊糊[0]思绪理清楚。",
+    "answers": [
+      "的"
+    ],
+    "complete": "蜗牛想了好一会儿，才把自己那迷迷糊糊的思绪理清楚。",
+    "source": {
+      "lesson": "犟龟",
+      "original": "蜗牛想了好一会儿，才把自己那迷迷糊糊的思绪理清楚。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“迷迷糊糊的思绪”中应填“的”。修饰事物，用“的”连接修饰语与所指事物。"
+  },
+  {
+    "id": "d-96",
+    "rule": "课文填空",
+    "text": "后来，她遇到了正躺在石头上打盹儿[0]壁虎。",
+    "answers": [
+      "的"
+    ],
+    "complete": "后来，她遇到了正躺在石头上打盹儿的壁虎。",
+    "source": {
+      "lesson": "犟龟",
+      "original": "后来，她遇到了正躺在石头上打盹儿的壁虎。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“打盹儿的壁虎”中应填“的”。修饰事物，用“的”连接修饰语与所指事物。"
+  },
+  {
+    "id": "d-97",
+    "rule": "课文填空",
+    "text": "由于非常突然[0]原因，狮王二十八世不得不和老虎开战。",
+    "answers": [
+      "的"
+    ],
+    "complete": "由于非常突然的原因，狮王二十八世不得不和老虎开战。",
+    "source": {
+      "lesson": "犟龟",
+      "original": "由于非常突然的原因，狮王二十八世不得不和老虎开战。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“突然的原因”中应填“的”。修饰事物，用“的”连接修饰语与所指事物。"
+  },
+  {
+    "id": "d-98",
+    "rule": "课文填空",
+    "text": "从前，有一条不会叫[0]狗。",
+    "answers": [
+      "的"
+    ],
+    "complete": "从前，有一条不会叫的狗。",
+    "source": {
+      "lesson": "小狗学叫",
+      "original": "从前，有一条不会叫的狗。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“不会叫的狗”中应填“的”。修饰事物，用“的”连接修饰语与所指事物。"
+  },
+  {
+    "id": "d-100",
+    "rule": "课文填空",
+    "text": "它是一只孤零零[0]小狗，不知道怎么到了一个陌生的地方。",
+    "answers": [
+      "的"
+    ],
+    "complete": "它是一只孤零零的小狗，不知道怎么到了一个陌生的地方。",
+    "source": {
+      "lesson": "小狗学叫",
+      "original": "它是一只孤零零的小狗，不知道怎么到了一个陌生的地方。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“孤零零的小狗”中应填“的”。修饰事物，用“的”连接修饰语与所指事物。"
+  },
+  {
+    "id": "d-103",
+    "rule": "课文填空",
+    "text": "它们对过路的陌生人叫，对惹人讨厌[0]猫叫，对着满月叫。",
+    "answers": [
+      "的"
+    ],
+    "complete": "它们对过路的陌生人叫，对惹人讨厌的猫叫，对着满月叫。",
+    "source": {
+      "lesson": "小狗学叫",
+      "original": "它们对过路的陌生人叫，对惹人讨厌的猫叫，对着满月叫。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“讨厌的猫”中应填“的”。修饰事物，用“的”连接修饰语与所指事物。"
+  },
+  {
+    "id": "d-105",
+    "rule": "课文填空",
+    "text": "它们白天叫[0]多，但晚上也叫。",
+    "answers": [
+      "得"
+    ],
+    "complete": "它们白天叫得多，但晚上也叫。",
+    "source": {
+      "lesson": "小狗学叫",
+      "original": "它们白天叫得多，但晚上也叫。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“叫得多”中应填“得”。说明动作或状态的程度、结果，用“得”连接。"
+  },
+  {
+    "id": "d-110",
+    "rule": "课文填空",
+    "text": "那只小公鸡喔喔喔[0]叫了几声。",
+    "answers": [
+      "地"
+    ],
+    "complete": "那只小公鸡喔喔喔地叫了几声。",
+    "source": {
+      "lesson": "小狗学叫",
+      "original": "那只小公鸡喔喔喔地叫了几声。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“喔喔喔地叫”中应填“地”。修饰动作，用“地”连接动作的方式与动作。"
+  },
+  {
+    "id": "d-112",
+    "rule": "课文填空",
+    "text": "小狗试着照小公鸡的样子做，但嘴里只发出一种滑稽的咯咯声，吓[0]旁边的小母鸡都逃走了。",
+    "answers": [
+      "得"
+    ],
+    "complete": "小狗试着照小公鸡的样子做，但嘴里只发出一种滑稽的咯咯声，吓得旁边的小母鸡都逃走了。",
+    "source": {
+      "lesson": "小狗学叫",
+      "original": "小狗试着照小公鸡的样子做，但嘴里只发出一种滑稽的咯咯声，吓得旁边的小母鸡都逃走了。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“吓得旁边”中应填“得”。说明动作或状态的程度、结果，用“得”连接。"
+  },
+  {
+    "id": "d-113",
+    "rule": "课文填空",
+    "text": "从此，它天天都练习，从早到晚偷偷[0]练。",
+    "answers": [
+      "地"
+    ],
+    "complete": "从此，它天天都练习，从早到晚偷偷地练。",
+    "source": {
+      "lesson": "小狗学叫",
+      "original": "从此，它天天都练习，从早到晚偷偷地练。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“偷偷地练”中应填“地”。修饰动作，用“地”连接动作的方式与动作。"
+  },
+  {
+    "id": "d-119",
+    "rule": "课文填空",
+    "text": "那只狗蹲坐着，一声又一声[0]喔喔叫着。",
+    "answers": [
+      "地"
+    ],
+    "complete": "那只狗蹲坐着，一声又一声地喔喔叫着。",
+    "source": {
+      "lesson": "小狗学叫",
+      "original": "那只狗蹲坐着，一声又一声地喔喔叫着。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“一声又一声地喔喔叫”中应填“地”。修饰动作，用“地”连接动作的方式与动作。"
+  },
+  {
+    "id": "d-127",
+    "rule": "课文填空",
+    "text": "一个星期过后，它已经学[0]相当不错了。",
+    "answers": [
+      "得"
+    ],
+    "complete": "一个星期过后，它已经学得相当不错了。",
+    "source": {
+      "lesson": "小狗学叫",
+      "original": "一个星期过后，它已经学得相当不错了。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“学得相当不错”中应填“得”。说明动作或状态的程度、结果，用“得”连接。"
+  },
+  {
+    "id": "d-132",
+    "rule": "课文填空",
+    "text": "狗跑啊，跑啊，它跑到了一片草地上，一头小母牛正在那里安详[0]吃草。",
+    "answers": [
+      "地"
+    ],
+    "complete": "狗跑啊，跑啊，它跑到了一片草地上，一头小母牛正在那里安详地吃草。",
+    "source": {
+      "lesson": "小狗学叫",
+      "original": "狗跑啊，跑啊，它跑到了一片草地上，一头小母牛正在那里安详地吃草。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“安详地吃草”中应填“地”。修饰动作，用“地”连接动作的方式与动作。"
+  },
+  {
+    "id": "d-141",
+    "rule": "课文填空",
+    "text": "我和你们一样，是一个平平常常[0]普通人。",
+    "answers": [
+      "的"
+    ],
+    "complete": "我和你们一样，是一个平平常常的普通人。",
+    "source": {
+      "lesson": "宝葫芦的秘密（节选）",
+      "original": "我和你们一样，是一个平平常常的普通人。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“平平常常的普通人”中应填“的”。修饰事物，用“的”连接修饰语与所指事物。"
+  },
+  {
+    "id": "d-159",
+    "rule": "课文填空",
+    "text": "我和同学们比赛种向日葵，我家里的那几棵长[0]又瘦又长，上面顶着一个小脑袋，可怜巴巴的样儿，比谁的也比不上。",
+    "answers": [
+      "得"
+    ],
+    "complete": "我和同学们比赛种向日葵，我家里的那几棵长得又瘦又长，上面顶着一个小脑袋，可怜巴巴的样儿，比谁的也比不上。",
+    "source": {
+      "lesson": "宝葫芦的秘密（节选）",
+      "original": "我和同学们比赛种向日葵，我家里的那几棵长得又瘦又长，上面顶着一个小脑袋，可怜巴巴的样儿，比谁的也比不上。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“长得又瘦又长”中应填“得”。说明动作或状态的程度、结果，用“得”连接。"
+  },
+  {
+    "id": "d-163",
+    "rule": "课文填空",
+    "text": "它们是一对非常要好[0]朋友。",
+    "answers": [
+      "的"
+    ],
+    "complete": "它们是一对非常要好的朋友。",
+    "source": {
+      "lesson": "在牛肚子里旅行",
+      "original": "它们是一对非常要好的朋友。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“要好的朋友”中应填“的”。修饰事物，用“的”连接修饰语与所指事物。"
+  },
+  {
+    "id": "d-164",
+    "rule": "课文填空",
+    "text": "红头向周围看了看，悄悄[0]躲在一个草堆里不作声了。",
+    "answers": [
+      "地"
+    ],
+    "complete": "红头向周围看了看，悄悄地躲在一个草堆里不作声了。",
+    "source": {
+      "lesson": "在牛肚子里旅行",
+      "original": "红头向周围看了看，悄悄地躲在一个草堆里不作声了。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“悄悄地躲”中应填“地”。修饰动作，用“地”连接动作的方式与动作。"
+  },
+  {
+    "id": "d-165",
+    "rule": "课文填空",
+    "text": "红头不说话，只露两只眼睛偷偷[0]看。",
+    "answers": [
+      "地"
+    ],
+    "complete": "红头不说话，只露两只眼睛偷偷地看。",
+    "source": {
+      "lesson": "在牛肚子里旅行",
+      "original": "红头不说话，只露两只眼睛偷偷地看。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“偷偷地看”中应填“地”。修饰动作，用“地”连接动作的方式与动作。"
+  },
+  {
+    "id": "d-185",
+    "rule": "课文填空",
+    "text": "小蚂蚁们嘴叼着它，要做到不趁机舔一下，那要有多大[0]毅力、多强的纪律性啊！",
+    "answers": [
+      "的"
+    ],
+    "complete": "小蚂蚁们嘴叼着它，要做到不趁机舔一下，那要有多大的毅力、多强的纪律性啊！",
+    "source": {
+      "lesson": "一块奶酪",
+      "original": "小蚂蚁们嘴叼着它，要做到不趁机舔一下，那要有多大的毅力、多强的纪律性啊！",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“多大的毅力”中应填“的”。修饰事物，用“的”连接修饰语与所指事物。"
+  },
+  {
+    "id": "d-192",
+    "rule": "课文填空",
+    "text": "小蚂蚁们从四面八方[0]草丛里走拢来了。",
+    "answers": [
+      "的"
+    ],
+    "complete": "小蚂蚁们从四面八方的草丛里走拢来了。",
+    "source": {
+      "lesson": "一块奶酪",
+      "original": "小蚂蚁们从四面八方的草丛里走拢来了。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“四面八方的草丛”中应填“的”。修饰事物，用“的”连接修饰语与所指事物。"
+  },
+  {
+    "id": "d-195",
+    "rule": "课文填空",
+    "text": "我们坐在船舱里，天下着雨，雨点儿打在船篷上，沙啦沙啦[0]响。",
+    "answers": [
+      "地"
+    ],
+    "complete": "我们坐在船舱里，天下着雨，雨点儿打在船篷上，沙啦沙啦地响。",
+    "source": {
+      "lesson": "搭船的鸟",
+      "original": "我们坐在船舱里，天下着雨，雨点儿打在船篷上，沙啦沙啦地响。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“沙啦沙啦地响”中应填“地”。修饰动作，用“地”连接动作的方式与动作。"
+  },
+  {
+    "id": "d-196",
+    "rule": "课文填空",
+    "text": "船夫披着蓑衣在船后用力[0]摇着橹。",
+    "answers": [
+      "地"
+    ],
+    "complete": "船夫披着蓑衣在船后用力地摇着橹。",
+    "source": {
+      "lesson": "搭船的鸟",
+      "original": "船夫披着蓑衣在船后用力地摇着橹。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“用力地摇”中应填“地”。修饰动作，用“地”连接动作的方式与动作。"
+  },
+  {
+    "id": "d-197",
+    "rule": "课文填空",
+    "text": "我看见一只彩色[0]小鸟站在船头，多么美丽啊！",
+    "answers": [
+      "的"
+    ],
+    "complete": "我看见一只彩色的小鸟站在船头，多么美丽啊！",
+    "source": {
+      "lesson": "搭船的鸟",
+      "original": "我看见一只彩色的小鸟站在船头，多么美丽啊！",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“彩色的小鸟”中应填“的”。修饰事物，用“的”连接修饰语与所指事物。"
+  },
+  {
+    "id": "d-199",
+    "rule": "课文填空",
+    "text": "它还有一张红色[0]长嘴。",
+    "answers": [
+      "的"
+    ],
+    "complete": "它还有一张红色的长嘴。",
+    "source": {
+      "lesson": "搭船的鸟",
+      "original": "它还有一张红色的长嘴。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“红色的长嘴”中应填“的”。修饰事物，用“的”连接修饰语与所指事物。"
+  },
+  {
+    "id": "d-201",
+    "rule": "课文填空",
+    "text": "它静悄悄[0]停在船头不知有多久了。",
+    "answers": [
+      "地"
+    ],
+    "complete": "它静悄悄地停在船头不知有多久了。",
+    "source": {
+      "lesson": "搭船的鸟",
+      "original": "它静悄悄地停在船头不知有多久了。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“静悄悄地停”中应填“地”。修饰动作，用“地”连接动作的方式与动作。"
+  },
+  {
+    "id": "d-205",
+    "rule": "课文填空",
+    "text": "可是，没一会儿，它飞起来了，红色[0]长嘴衔着一条小鱼。",
+    "answers": [
+      "的"
+    ],
+    "complete": "可是，没一会儿，它飞起来了，红色的长嘴衔着一条小鱼。",
+    "source": {
+      "lesson": "搭船的鸟",
+      "original": "可是，没一会儿，它飞起来了，红色的长嘴衔着一条小鱼。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“红色的长嘴”中应填“的”。修饰事物，用“的”连接修饰语与所指事物。"
+  },
+  {
+    "id": "d-214",
+    "rule": "课文填空",
+    "text": "就这样，这些并不引人注目[0]蒲公英，给我们带来了不少快乐。",
+    "answers": [
+      "的"
+    ],
+    "complete": "就这样，这些并不引人注目的蒲公英，给我们带来了不少快乐。",
+    "source": {
+      "lesson": "金色的草地",
+      "original": "就这样，这些并不引人注目的蒲公英，给我们带来了不少快乐。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“引人注目的蒲公英”中应填“的”。修饰事物，用“的”连接修饰语与所指事物。"
+  },
+  {
+    "id": "d-215",
+    "rule": "课文填空",
+    "text": "有一天，我起[0]很早去钓鱼，发现草地并不是金色的，而是绿色的。",
+    "answers": [
+      "得"
+    ],
+    "complete": "有一天，我起得很早去钓鱼，发现草地并不是金色的，而是绿色的。",
+    "source": {
+      "lesson": "金色的草地",
+      "original": "有一天，我起得很早去钓鱼，发现草地并不是金色的，而是绿色的。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“起得很早”中应填“得”。说明动作或状态的程度、结果，用“得”连接。"
+  },
+  {
+    "id": "d-219",
+    "rule": "课文填空",
+    "text": "原来，蒲公英的花就像我们[0]手掌，可以张开、合上。",
+    "answers": [
+      "的"
+    ],
+    "complete": "原来，蒲公英的花就像我们的手掌，可以张开、合上。",
+    "source": {
+      "lesson": "金色的草地",
+      "original": "原来，蒲公英的花就像我们的手掌，可以张开、合上。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“我们的手掌”中应填“的”。修饰事物，用“的”连接修饰语与所指事物。"
+  },
+  {
+    "id": "d-222",
+    "rule": "课文填空",
+    "text": "从那时起，蒲公英成了我们最喜爱[0]一种花。",
+    "answers": [
+      "的"
+    ],
+    "complete": "从那时起，蒲公英成了我们最喜爱的一种花。",
+    "source": {
+      "lesson": "金色的草地",
+      "original": "从那时起，蒲公英成了我们最喜爱的一种花。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“最喜爱的一种花”中应填“的”。修饰事物，用“的”连接修饰语与所指事物。"
+  },
+  {
+    "id": "d-223",
+    "rule": "课文填空",
+    "text": "它跑[0]特别快，我总也追不上它。",
+    "answers": [
+      "得"
+    ],
+    "complete": "它跑得特别快，我总也追不上它。",
+    "source": {
+      "lesson": "习作例文·我家的小狗",
+      "original": "它跑得特别快，我总也追不上它。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“跑得特别快”中应填“得”。说明动作或状态的程度、结果，用“得”连接。"
+  },
+  {
+    "id": "d-229",
+    "rule": "课文填空",
+    "text": "细雨如丝，一棵棵杨梅树贪婪[0]吮吸着春天的甘露。",
+    "answers": [
+      "地"
+    ],
+    "complete": "细雨如丝，一棵棵杨梅树贪婪地吮吸着春天的甘露。",
+    "source": {
+      "lesson": "习作例文·我爱故乡的杨梅",
+      "original": "细雨如丝，一棵棵杨梅树贪婪地吮吸着春天的甘露。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“贪婪地吮吸”中应填“地”。修饰动作，用“地”连接动作的方式与动作。"
+  },
+  {
+    "id": "d-239",
+    "rule": "课文填空",
+    "text": "我小时候，有一次杨梅吃[0]太多，感觉牙齿又酸又软，连豆腐也咬不动了。",
+    "answers": [
+      "得"
+    ],
+    "complete": "我小时候，有一次杨梅吃得太多，感觉牙齿又酸又软，连豆腐也咬不动了。",
+    "source": {
+      "lesson": "习作例文·我爱故乡的杨梅",
+      "original": "我小时候，有一次杨梅吃得太多，感觉牙齿又酸又软，连豆腐也咬不动了。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“吃得太多”中应填“得”。说明动作或状态的程度、结果，用“得”连接。"
+  },
+  {
+    "id": "d-248",
+    "rule": "课文填空",
+    "text": "海参到处都是，在海底懒洋洋[0]蠕动。",
+    "answers": [
+      "地"
+    ],
+    "complete": "海参到处都是，在海底懒洋洋地蠕动。",
+    "source": {
+      "lesson": "富饶的西沙群岛",
+      "original": "海参到处都是，在海底懒洋洋地蠕动。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“懒洋洋地蠕动”中应填“地”。修饰动作，用“地”连接动作的方式与动作。"
+  },
+  {
+    "id": "d-250",
+    "rule": "课文填空",
+    "text": "鱼成群结队[0]在珊瑚丛中穿来穿去，好看极了。",
+    "answers": [
+      "地"
+    ],
+    "complete": "鱼成群结队地在珊瑚丛中穿来穿去，好看极了。",
+    "source": {
+      "lesson": "富饶的西沙群岛",
+      "original": "鱼成群结队地在珊瑚丛中穿来穿去，好看极了。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“成群结队地在”中应填“地”。修饰动作，用“地”连接动作的方式与动作。"
+  },
+  {
+    "id": "d-252",
+    "rule": "课文填空",
+    "text": "各种各样的鱼多[0]数不清。",
+    "answers": [
+      "得"
+    ],
+    "complete": "各种各样的鱼多得数不清。",
+    "source": {
+      "lesson": "富饶的西沙群岛",
+      "original": "各种各样的鱼多得数不清。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“多得数不清”中应填“得”。说明动作或状态的程度、结果，用“得”连接。"
+  },
+  {
+    "id": "d-258",
+    "rule": "课文填空",
+    "text": "随着祖国建设事业的发展，可爱的西沙群岛，必将变[0]更加美丽，更加富饶。",
+    "answers": [
+      "得"
+    ],
+    "complete": "随着祖国建设事业的发展，可爱的西沙群岛，必将变得更加美丽，更加富饶。",
+    "source": {
+      "lesson": "富饶的西沙群岛",
+      "original": "随着祖国建设事业的发展，可爱的西沙群岛，必将变得更加美丽，更加富饶。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“变得更加美丽”中应填“得”。说明动作或状态的程度、结果，用“得”连接。"
+  },
+  {
+    "id": "d-267",
+    "rule": "课文填空",
+    "text": "这里的孩子见[0]多了，都不去理睬这些贝壳，贝壳只好寂寞地躺在那里。",
+    "answers": [
+      "得"
+    ],
+    "complete": "这里的孩子见得多了，都不去理睬这些贝壳，贝壳只好寂寞地躺在那里。",
+    "source": {
+      "lesson": "海滨小城",
+      "original": "这里的孩子见得多了，都不去理睬这些贝壳，贝壳只好寂寞地躺在那里。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“见得多”中应填“得”。说明动作或状态的程度、结果，用“得”连接。"
+  },
+  {
+    "id": "d-273",
+    "rule": "课文填空",
+    "text": "初夏，桉树叶子散发出来的香味，飘[0]满街满院都是。",
+    "answers": [
+      "得"
+    ],
+    "complete": "初夏，桉树叶子散发出来的香味，飘得满街满院都是。",
+    "source": {
+      "lesson": "海滨小城",
+      "original": "初夏，桉树叶子散发出来的香味，飘得满街满院都是。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“飘得满街满院”中应填“得”。说明动作或状态的程度、结果，用“得”连接。"
+  },
+  {
+    "id": "d-274",
+    "rule": "课文填空",
+    "text": "凤凰树开了花，开[0]那么热闹，小城好像笼罩在一片片红云中。",
+    "answers": [
+      "得"
+    ],
+    "complete": "凤凰树开了花，开得那么热闹，小城好像笼罩在一片片红云中。",
+    "source": {
+      "lesson": "海滨小城",
+      "original": "凤凰树开了花，开得那么热闹，小城好像笼罩在一片片红云中。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“开得那么热闹”中应填“得”。说明动作或状态的程度、结果，用“得”连接。"
+  },
+  {
+    "id": "d-278",
+    "rule": "课文填空",
+    "text": "除了沥青的大路，都是用细沙铺成的，踩上去咯吱咯吱[0]响，好像踩在沙滩上一样。",
+    "answers": [
+      "地"
+    ],
+    "complete": "除了沥青的大路，都是用细沙铺成的，踩上去咯吱咯吱地响，好像踩在沙滩上一样。",
+    "source": {
+      "lesson": "海滨小城",
+      "original": "除了沥青的大路，都是用细沙铺成的，踩上去咯吱咯吱地响，好像踩在沙滩上一样。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“咯吱咯吱地响”中应填“地”。修饰动作，用“地”连接动作的方式与动作。"
+  },
+  {
+    "id": "d-279",
+    "rule": "课文填空",
+    "text": "人们把街道打扫[0]十分干净，甚至连一片落叶都没有。",
+    "answers": [
+      "得"
+    ],
+    "complete": "人们把街道打扫得十分干净，甚至连一片落叶都没有。",
+    "source": {
+      "lesson": "海滨小城",
+      "original": "人们把街道打扫得十分干净，甚至连一片落叶都没有。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“打扫得十分干净”中应填“得”。说明动作或状态的程度、结果，用“得”连接。"
+  },
+  {
+    "id": "d-283",
+    "rule": "课文填空",
+    "text": "山上的积雪融化了，雪水汇成小溪，淙淙[0]流着。",
+    "answers": [
+      "地"
+    ],
+    "complete": "山上的积雪融化了，雪水汇成小溪，淙淙地流着。",
+    "source": {
+      "lesson": "美丽的小兴安岭",
+      "original": "山上的积雪融化了，雪水汇成小溪，淙淙地流着。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“淙淙地流”中应填“地”。修饰动作，用“地”连接动作的方式与动作。"
+  },
+  {
+    "id": "d-285",
+    "rule": "课文填空",
+    "text": "夏天，树木长[0]葱葱茏茏，密密层层的枝叶把森林封得严严实实的，挡住了人们的视线，遮住了蓝蓝的天空。",
+    "answers": [
+      "得"
+    ],
+    "complete": "夏天，树木长得葱葱茏茏，密密层层的枝叶把森林封得严严实实的，挡住了人们的视线，遮住了蓝蓝的天空。",
+    "source": {
+      "lesson": "美丽的小兴安岭",
+      "original": "夏天，树木长得葱葱茏茏，密密层层的枝叶把森林封得严严实实的，挡住了人们的视线，遮住了蓝蓝的天空。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“长得葱葱茏茏”中应填“得”。说明动作或状态的程度、结果，用“得”连接。"
+  },
+  {
+    "id": "d-294",
+    "rule": "课文填空",
+    "text": "西北风呼呼[0]刮过树梢。",
+    "answers": [
+      "地"
+    ],
+    "complete": "西北风呼呼地刮过树梢。",
+    "source": {
+      "lesson": "美丽的小兴安岭",
+      "original": "西北风呼呼地刮过树梢。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“呼呼地刮”中应填“地”。修饰动作，用“地”连接动作的方式与动作。"
+  },
+  {
+    "id": "d-335",
+    "rule": "课文填空",
+    "text": "竹子长[0]快，雨后春笋，一天长几寸，没几天就长得和我一样高了。",
+    "answers": [
+      "得"
+    ],
+    "complete": "竹子长得快，雨后春笋，一天长几寸，没几天就长得和我一样高了。",
+    "source": {
+      "lesson": "读不完的大书",
+      "original": "竹子长得快，雨后春笋，一天长几寸，没几天就长得和我一样高了。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“长得快”中应填“得”。说明动作或状态的程度、结果，用“得”连接。"
+  },
+  {
+    "id": "d-359",
+    "rule": "课文填空",
+    "text": "童第周不声不响[0]刻苦钻研，反复实践，终于取得成功。",
+    "answers": [
+      "地"
+    ],
+    "complete": "童第周不声不响地刻苦钻研，反复实践，终于取得成功。",
+    "source": {
+      "lesson": "一定要争气",
+      "original": "童第周不声不响地刻苦钻研，反复实践，终于取得成功。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“不声不响地刻苦”中应填“地”。修饰动作，用“地”连接动作的方式与动作。"
+  },
+  {
+    "id": "d-361",
+    "rule": "课文填空",
+    "text": "童第周激动[0]想：一定要争气，中国人并不比外国人笨。",
+    "answers": [
+      "地"
+    ],
+    "complete": "童第周激动地想：一定要争气，中国人并不比外国人笨。",
+    "source": {
+      "lesson": "一定要争气",
+      "original": "童第周激动地想：一定要争气，中国人并不比外国人笨。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“激动地想”中应填“地”。修饰动作，用“地”连接动作的方式与动作。"
+  },
+  {
+    "id": "d-371",
+    "rule": "课文填空",
+    "text": "白求恩仍然镇定[0]站在手术台旁。",
+    "answers": [
+      "地"
+    ],
+    "complete": "白求恩仍然镇定地站在手术台旁。",
+    "source": {
+      "lesson": "手术台就是阵地",
+      "original": "白求恩仍然镇定地站在手术台旁。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“镇定地站”中应填“地”。修饰动作，用“地”连接动作的方式与动作。"
+  },
+  {
+    "id": "d-383",
+    "rule": "课文填空",
+    "text": "白求恩仍然争分夺秒[0]给伤员做手术，做了一个又一个。",
+    "answers": [
+      "地"
+    ],
+    "complete": "白求恩仍然争分夺秒地给伤员做手术，做了一个又一个。",
+    "source": {
+      "lesson": "手术台就是阵地",
+      "original": "白求恩仍然争分夺秒地给伤员做手术，做了一个又一个。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“争分夺秒地给”中应填“地”。修饰动作，用“地”连接动作的方式与动作。"
+  },
+  {
+    "id": "d-398",
+    "rule": "课文填空",
+    "text": "炊事员老李在旁边看[0]清楚，他没吭声，眼里却含着泪花。",
+    "answers": [
+      "得"
+    ],
+    "complete": "炊事员老李在旁边看得清楚，他没吭声，眼里却含着泪花。",
+    "source": {
+      "lesson": "一个粗瓷大碗",
+      "original": "炊事员老李在旁边看得清楚，他没吭声，眼里却含着泪花。",
+      "type": "课文原句",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "“看得清楚”中应填“得”。说明动作或状态的程度、结果，用“得”连接。"
+  }
+];
+        const answerOptions = ['的', '地', '得'];
+        const players = {};
+        let timeLeft = 150;
+        let timerInterval;
+        let gameStarted = false;
+        let isGameOver = false;
+        const pendingTimers = new Set();
+
+        function later(fn, delay) {
+            const id = setTimeout(() => {
+                pendingTimers.delete(id);
+                if (!isGameOver) fn();
+            }, delay);
+            pendingTimers.add(id);
+        }
+        function startGame() {
+            if (gameStarted) return;
+            gameStarted = true;
+            timeLeft=GameExperience.getDuration();
+            const roundDeadline=GameExperience.startRound();
+            document.getElementById('timer').textContent=timeLeft+'s';
+            const shuffled = [...questionBank];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            for (const player of [1, 2]) {
+                players[player] = { questions: shuffled.slice((player - 1) * 20, player * 20), index: 0, score: 0, combo: 0, locked: false, active: null };
+                const tray = document.getElementById(`tray-${player}`);
+                answerOptions.forEach(answer => {
+                    const button = document.createElement('button');
+                    button.className = 'answer-btn';
+                    button.textContent = answer;
+                    button.onclick = () => chooseAnswer(player, answer);
+                    tray.appendChild(button);
+                });
+                loadQuestionForPlayer(player);
+            }
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('game-screen').classList.remove('hidden');
+            timerInterval = setInterval(() => {
+                timeLeft=GameExperience.remaining();
+                document.getElementById('timer').textContent = timeLeft + 's';
+                if (timeLeft <= 0) endGame();
+            }, 1000);
+        }
+        function blanksFor(player) {
+            return [...document.querySelectorAll(`#question-${player} .blank`)];
+        }
+        function setControls(player, disabled) {
+            document.querySelectorAll(`#tray-container-${player} button`).forEach(button => button.disabled = disabled);
+            blanksFor(player).forEach(button => button.disabled = disabled);
+        }
+        function loadQuestionForPlayer(player) {
+            if (isGameOver) return;
+            const state = players[player];
+            const q = state.questions[state.index];
+            state.active = null;
+            document.getElementById(`feedback-${player}`).textContent = '';
+            if (!q) {
+                state.locked = true;
+                document.getElementById(`rule-${player}`).textContent = '已完成 20 / 20 题';
+                document.getElementById(`question-${player}`).innerHTML = '<div class="waiting-overlay">已完成所有题目<br>等待对手…</div>';
+                setControls(player, true);
+                if (players[1].index >= 20 && players[2].index >= 20) endGame();
+                return;
+            }
+            state.locked = false;
+            document.getElementById(`rule-${player}`).textContent = `${q.rule} · 第 ${state.index + 1} / 20 题`;
+            document.getElementById(`question-${player}`).innerHTML = q.text.replace(/\[(\d+)\]/g, (_, index) =>
+                `<button type="button" class="blank" data-index="${index}" aria-label="第${Number(index) + 1}个空" onclick="activateBlank(${player}, this)"></button>`);
+            const source = document.createElement('div');
+            source.className = 'question-source';
+            source.textContent = `第 ${state.index + 1} / ${state.questions.length} 题 · 《${q.source.lesson}》 · 课文原句`;
+            document.getElementById(`question-${player}`).prepend(source);
+            setControls(player, false);
+            activateBlank(player, blanksFor(player)[0]);
+        }
+        function canEdit(player) { if(GameExperience.expired())return false;
+            return gameStarted && !isGameOver && players[player] && !players[player].locked;
+        }
+        function activateBlank(player, blank) {
+            if (!canEdit(player)) return;
+            blanksFor(player).forEach(b => b.classList.remove('active'));
+            blank.classList.add('active');
+            players[player].active = blank;
+        }
+        function chooseAnswer(player, answer) {
+            if (!canEdit(player) || !answerOptions.includes(answer)) return;
+            const blank = players[player].active;
+            if (blank) blank.textContent = answer;
+            document.getElementById(`feedback-${player}`).textContent = '';
+        }
+        function deleteChar(player) {
+            if (canEdit(player) && players[player].active) players[player].active.textContent = '';
+        }
+        function clearPlayerAnswers(player) {
+            if (!canEdit(player)) return;
+            blanksFor(player).forEach(b => b.textContent = '');
+            document.getElementById(`feedback-${player}`).textContent = '';
+            activateBlank(player, blanksFor(player)[0]);
+        }
+        function submitAnswer(player) { if(GameExperience.expired())return;
+            if (!canEdit(player)) return;
+            const state = players[player];
+            const blanks = blanksFor(player);
+            const feedback = document.getElementById(`feedback-${player}`);
+            const empty = blanks.find(b => !b.textContent);
+            if (empty) {
+                feedback.textContent = '还有未填写的空格哦！';
+                activateBlank(player, empty);
+                return;
+            }
+            state.locked = true;
+            setControls(player, true);
+            const q = state.questions[state.index];
+            let allCorrect = true;
+            blanks.forEach(b => {
+                const correct = b.textContent === q.answers[Number(b.dataset.index)];
+                b.classList.remove('active');
+                b.classList.add(correct ? 'correct' : 'wrong');
+                if (!correct) allCorrect = false;
+            });
+            GameExperience.result(allCorrect,{player,combo:allCorrect?state.combo+1:0});
+            if (allCorrect) {
+                state.combo++;
+                const added = 10 * q.answers.length + (state.combo > 1 ? 5 : 0);
+                state.score += added;
+                feedback.textContent = (state.combo > 1 ? '全部正确！连击奖励 +5 分。' : '全部正确！') + q.explanation + '《' + q.source.lesson + '》';
+                showFloatScore(player, `+${added}`, '#FFD700');
+            } else {
+                state.combo = 0;
+                const deducted = Math.min(5, state.score);
+                state.score -= deducted;
+                feedback.textContent = '再接再厉，看看正确答案！';
+                showFloatScore(player, `-${deducted}`, '#e74c3c');
+                later(() => {
+                    blanks.forEach(b => b.textContent = q.answers[Number(b.dataset.index)]);
+                    feedback.textContent = '正确句子：' + q.complete + ' ' + q.explanation + '《' + q.source.lesson + '》';
+                }, 800);
+            }
+            document.getElementById(`score-${player}`).textContent = state.score;
+            later(() => {
+                state.index++;
+                loadQuestionForPlayer(player);
+            }, allCorrect ? 2000 : 3000);
+        }
+        function showFloatScore(player, text, color) {
+            const panel = document.getElementById(`panel-${player}`);
+            const el = document.createElement('div');
+            el.className = 'float-score';
+            el.textContent = text;
+            el.style.color = color;
+            el.style.left = '45%';
+            el.style.top = '40%';
+            panel.appendChild(el);
+            later(() => el.remove(), 1500);
+        }
+        function endGame() { GameExperience.endRound();
+            if (isGameOver) return;
+            isGameOver = true;
+            clearInterval(timerInterval);
+            pendingTimers.forEach(id => clearTimeout(id));
+            pendingTimers.clear();
+            for (const player of [1, 2]) setControls(player, true);
+            document.getElementById('game-screen').classList.add('hidden');
+            document.getElementById('end-screen').classList.remove('hidden');
+            document.getElementById('final-score').textContent = `玩家一：${players[1].score} 分  |  玩家二：${players[2].score} 分`;
+            const winner = document.getElementById('winner-text');
+            if (players[1].score === players[2].score) {
+                winner.textContent = '🤝 势均力敌，平局！';
+                winner.style.color = '#FFD700';
+            } else {
+                const firstWins = players[1].score > players[2].score;
+                winner.textContent = firstWins ? '玩家一获胜！' : '玩家二获胜！';
+                winner.style.color = firstWins ? '#4facfe' : '#ff6b81';
+            }
+        }
+    </script>
+</body>
+</html>

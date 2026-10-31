@@ -1,0 +1,5 @@
+[Unit]
+Description=Health check for Candy Games
+[Service]
+Type=oneshot
+ExecStart=/opt/candy-games/deploy/candy-games-watchdog.sh

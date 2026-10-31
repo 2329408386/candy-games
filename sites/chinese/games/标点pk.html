@@ -1,0 +1,3179 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>标点PK · 中等难度提示语练习</title>
+    <style>
+
+        :root {
+            --p1-color: #4facfe;
+            --p1-bg: #e0f3ff;
+            --p2-color: #ff6b81;
+            --p2-bg: #ffe5e9;
+            --text-dark: #2c3e50;
+            --correct: #2ecc71;
+            --wrong: #e74c3c;
+        }
+
+        body {
+            margin: 0; padding: 0;
+            font-family: 'ZCOOL KuaiLe', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #fff; height: 100vh;
+            display: flex; flex-direction: column;
+            overflow: hidden; user-select: none;
+        }
+
+        .header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 40px; background: rgba(0,0,0,0.2);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            height: 10vh; min-height: 80px;
+        }
+
+        .title { font-size: 2.5rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); color: #FFD700; }
+        .timer-box { font-size: 3rem; background: #fff; color: #ff4757; padding: 5px 30px; border-radius: 50px; box-shadow: 0 0 20px rgba(255, 255, 255, 0.5); font-weight: bold; }
+
+        .game-container { display: flex; flex: 1; padding: 15px; gap: 15px; height: 90vh; }
+        .player-panel { flex: 1; border-radius: 30px; display: flex; flex-direction: column; padding: 15px; position: relative; transition: all 0.3s ease; }
+
+        .player-1 { background: linear-gradient(180deg, #ffffff 0%, var(--p1-bg) 100%); border: 8px solid var(--p1-color); }
+        .player-2 { background: linear-gradient(180deg, #ffffff 0%, var(--p2-bg) 100%); border: 8px solid var(--p2-color); }
+
+        .player-header { display: flex; justify-content: space-between; align-items: center; font-size: 1.8rem; color: var(--text-dark); margin-bottom: 10px; }
+        .score-display { font-size: 2.5rem; font-weight: bold; color: #ff4757; background: #fff; padding: 5px 20px; border-radius: 20px; box-shadow: 0 4px 0 #ddd; }
+
+        .rule-tag { background: #f1c40f; color: #fff; padding: 5px 15px; border-radius: 15px; font-size: 1.2rem; display: inline-block; box-shadow: 0 4px 0 #d4ac0d; text-align: center; margin-bottom: 10px; }
+
+        .question-area {
+            background: white; border-radius: 20px; padding: 20px; font-size: 2rem; 
+            color: var(--text-dark); line-height: 1.8; flex: 1; 
+            display: flex; align-items: center; justify-content: center;
+            text-align: center; box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
+            margin-bottom: 10px; flex-wrap: wrap; align-content: center;
+            position: relative;
+        }
+
+        .waiting-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.9); border-radius: 20px;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            font-size: 2.5rem; color: #f39c12; font-weight: bold; z-index: 10;
+        }
+
+        .blank {
+            display: inline-block; min-width: 50px; height: 50px; border-bottom: 5px solid #aaa;
+            margin: 0 5px; vertical-align: middle; cursor: pointer; position: relative;
+            transition: all 0.2s; border-radius: 10px 10px 0 0;
+            line-height: 50px; font-size: 2rem; padding: 0 5px;
+        }
+        .blank.active { background-color: rgba(255, 215, 0, 0.3); border-bottom-color: #f1c40f; transform: scale(1.1); }
+        .blank.correct { color: var(--correct); border-bottom-color: var(--correct); }
+        .blank.wrong { color: var(--wrong); border-bottom-color: var(--wrong); animation: shake 0.5s; }
+
+        .tray-container { display: flex; flex-direction: column; gap: 8px; }
+        .punctuation-tray { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+        
+        .punctuation-btn {
+            width: 60px; height: 60px; font-size: 2rem; background: white; border: none;
+            border-radius: 12px; cursor: pointer; transition: all 0.1s;
+            display: flex; align-items: center; justify-content: center; color: #333;
+        }
+        .player-1 .punctuation-btn { box-shadow: 0 4px 0 #b3d4fc; }
+        .player-2 .punctuation-btn { box-shadow: 0 4px 0 #ffb3c1; }
+        .punctuation-btn:active { transform: translateY(4px); box-shadow: 0 0px 0 #ccc; }
+        .punctuation-btn:hover { background: #f0f0f0; }
+
+        .action-row { display: flex; gap: 8px; justify-content: center; }
+        .action-btn {
+            color: white; border: none; padding: 8px 15px; border-radius: 12px; 
+            font-size: 1.2rem; font-family: inherit; cursor: pointer; transition: all 0.1s;
+            flex: 1;
+        }
+        .btn-delete { background: #ff9f43; box-shadow: 0 4px 0 #e67e22; }
+        .btn-clear { background: #a4b0be; box-shadow: 0 4px 0 #747d8c; }
+        .btn-submit { background: #2ecc71; box-shadow: 0 4px 0 #27ae60; font-size: 1.4rem; flex: 2; }
+        .action-btn:active { transform: translateY(4px); box-shadow: 0 0px 0 #ccc; }
+
+        .float-score {
+            position: absolute; font-size: 3rem; font-weight: bold; color: #FFD700;
+            text-shadow: 2px 2px 0 #d35400; pointer-events: none;
+            animation: floatUp 1.5s ease-out forwards; z-index: 50;
+        }
+
+        .overlay-screen {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); display: flex; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 100;
+        }
+        .hidden { display: none !important; }
+        .start-btn {
+            font-size: 3rem; padding: 20px 60px; border-radius: 50px; background: #f1c40f;
+            color: #fff; border: none; cursor: pointer; box-shadow: 0 10px 0 #d4ac0d;
+            font-family: inherit; transition: all 0.1s; margin-top: 30px;
+        }
+        .start-btn:active { transform: translateY(10px); box-shadow: 0 0px 0 #d4ac0d; }
+
+        @keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(-8px); } 50% { transform: translateX(8px); } 75% { transform: translateX(-8px); } 100% { transform: translateX(0); } }
+        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0) scale(0.5); } 100% { opacity: 0; transform: translateY(-100px) scale(1.5); } }
+
+        /* 与“的地得PK”保持一致：手机上下排列，电脑左右排列。 */
+        * { box-sizing: border-box; }
+        .header { flex-shrink: 0; height: auto; min-height: 80px; }
+        .game-container { height: auto; min-height: 0; }
+        .player-panel { min-width: 0; min-height: 0; }
+        .question-area { display: block; align-content: center; overflow-y: auto; min-height: 0; }
+        .tray-container { flex-shrink: 0; }
+        .overlay-screen { position: fixed; overflow-y: auto; padding: 24px; text-align: center; }
+        .overlay-screen h1 { font-size: clamp(2rem, 6vw, 5rem) !important; }
+        @media (max-width: 900px), (max-height: 700px) {
+            .header { padding: 8px 18px; min-height: 60px; }
+            .title { font-size: 1.8rem; }
+            .timer-box { font-size: 2rem; }
+            .header > div:last-child { display: none; }
+            .game-container { padding: 8px; gap: 8px; }
+            .player-panel { padding: 10px; border-width: 4px; border-radius: 20px; }
+            .player-header, .question-area { font-size: 1.4rem; }
+            .question-area { padding: 12px; line-height: 2; }
+            .score-display { font-size: 1.8rem; padding: 3px 12px; }
+            .blank { min-width: 38px; height: 42px; line-height: 36px; font-size: 1.4rem; }
+            .action-btn { padding: 8px 4px; font-size: 1rem; }
+            .punctuation-btn { width: 56px; height: 48px; }
+        }
+        @media (max-width: 550px) {
+            body { overflow-y: auto; height: auto; min-height: 100vh; }
+            .game-container { flex-direction: column; }
+            .player-panel { min-height: 380px; }
+            .question-area { min-height: 120px; overflow-y: visible; }
+            .waiting-overlay { font-size: 1.8rem; }
+            .overlay-screen { justify-content: flex-start; }
+            .start-btn { font-size: 2rem; padding: 16px 36px; }
+            .timer-box { padding: 5px 18px; }
+        }
+        .question-source { font-size: .9rem; line-height: 1.5; color: #667785; margin-bottom: 10px; }
+        .answer-feedback { font-size: 1rem; line-height: 1.6; margin-top: 12px; text-align: left; border-radius: 10px; }
+        .answer-feedback:not(:empty) { padding: 10px; }
+        .right-feedback { background: #e8f7e9; color: #245833; }
+        .wrong-feedback { background: #fff2de; color: #754511; }
+        button:disabled { opacity: .55; cursor: default; }
+        .question-area { align-content: start; }
+        .blank { min-width: 86px; white-space: nowrap; }
+        .blank:focus-visible { outline: 2px solid #b98522; outline-offset: 3px; }
+        .input-message { font-size: .85rem; line-height: 1.5; min-height: 1.5em; color: #586c7a; margin-top: 14px; text-align: left; }
+        @media (max-width: 900px), (max-height: 700px) { .blank { min-width: 68px; } }
+    </style>
+<script id="experience-config" type="application/json">{"id": "punctuation", "title": "标点PK", "emblem": "“ ”", "description": "课内原句50题，独立课外例句50题，练习提示语标点。", "instructions": "每人20题，课内、课外各10题；7题在前、6题在中、7题在后。先选横线，再逐个点选标点；需要修改时先点删除。", "defaultSeconds": 150, "shared": false, "scoring": "整题全对每根横线加10分，连续答对额外加5分；答错扣5分，最低0分。未填完整只提示，不扣分。"}</script><link rel="stylesheet" href="/static/game-experience.css?v=e6b7c5a6"><script defer src="/static/game-experience-v3.js?v=5520695e"></script></head>
+<body>
+
+
+    <div id="start-screen" class="overlay-screen">
+        <h1 style="font-size: 5rem; color: #FFD700; text-shadow: 4px 4px 0 #d35400; margin-bottom: 20px;">标点符号大PK</h1>
+        <p style="font-size: 1.8rem; color: #fff;">三年级上册提示语标点专项 · 中等难度</p>
+        <p style="font-size: 1.2rem; color: #bbb; margin-top: 10px;">课内原句50题＋独立课外例句50题 · 每人20题<br>按句意逐个点选标点，需要修改时先点删除。</p>
+        <button class="start-btn" onclick="startGame()">开始对战 </button>
+    </div>
+
+    <div id="game-screen" class="hidden" style="height: 100%; display: flex; flex-direction: column;">
+        <div class="header">
+            <div class="title"> 标点大PK</div>
+            <div class="timer-box" id="timer">150s</div>
+            <div style="width: 200px;"></div>
+        </div>
+
+        <div class="game-container">
+            <!-- 玩家1 -->
+            <div class="player-panel player-1" id="panel-1">
+                <div class="player-header">
+                    <span> 玩家一</span>
+                    <span class="score-display" id="score-1">0</span>
+                </div>
+                <div style="text-align: center;"><span class="rule-tag" id="rule-1">准备中</span></div>
+                <div class="question-area" id="question-1">
+                    <div class="waiting-overlay hidden" id="waiting-1"> 已完成所有题目<br>等待对手...</div>
+                </div>
+                <div class="tray-container" id="tray-container-1">
+                    <div class="punctuation-tray" id="tray-1"></div>
+                    <div class="action-row">
+                        <button class="action-btn btn-delete" onclick="deleteChar(1)">⌫ 删除</button>
+                        <button class="action-btn btn-clear" onclick="clearPlayerAnswers(1)">🧹 清空</button>
+                        <button class="action-btn btn-submit" onclick="submitAnswer(1)">提交答案</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 玩家2 -->
+            <div class="player-panel player-2" id="panel-2">
+                <div class="player-header">
+                    <span> 玩家二</span>
+                    <span class="score-display" id="score-2">0</span>
+                </div>
+                <div style="text-align: center;"><span class="rule-tag" id="rule-2">准备中</span></div>
+                <div class="question-area" id="question-2">
+                    <div class="waiting-overlay hidden" id="waiting-2"> 已完成所有题目<br>等待对手...</div>
+                </div>
+                <div class="tray-container" id="tray-container-2">
+                    <div class="punctuation-tray" id="tray-2"></div>
+                    <div class="action-row">
+                        <button class="action-btn btn-delete" onclick="deleteChar(2)">⌫ 删除</button>
+                        <button class="action-btn btn-clear" onclick="clearPlayerAnswers(2)">🧹 清空</button>
+                        <button class="action-btn btn-submit" onclick="submitAnswer(2)">提交答案</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="end-screen" class="overlay-screen hidden">
+        <h1 id="winner-text" style="font-size: 5rem; color: #FFD700;">玩家一获胜！</h1>
+        <div id="final-score" style="font-size: 2rem; color: #fff; margin-top: 20px;"></div>
+        <button class="start-btn" onclick="location.reload()">再来一局 </button>
+    </div>
+
+    <script>
+        // 50道课内连续原文和50道独立课外例句，逐个输入标点，不显示答案数量。
+        const questionBank = [
+  {
+    "id": "literal-textbook-before-01",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "before",
+    "rule": "提示语在前",
+    "text": "于是，他壮着胆子站起来，问[0]先生，您刚才让我背的这段书是什么意思？请您给我讲讲吧[1]",
+    "answers": [
+      "：“",
+      "！”"
+    ],
+    "slotLimits": [
+      2,
+      2
+    ],
+    "complete": "于是，他壮着胆子站起来，问：“先生，您刚才让我背的这段书是什么意思？请您给我讲讲吧！”",
+    "source": {
+      "lesson": "不懂就要问",
+      "type": "课文原句",
+      "original": "于是，他壮着胆子站起来，问：“先生，您刚才让我背的这段书是什么意思？请您给我讲讲吧！”",
+      "context": "一天，孙中山来到学校，照例把书放到先生面前，流利地背出前一天所学的功课。先生听了，连连点头。接着，先生在孙中山的书上又圈了一段，他念一句，叫孙中山念一句。孙中山会读了，就回到座位上练习背诵。他读了几遍，就背下来了。可是，书里说的是什么意思，他一点儿也不懂。孙中山想：这样糊里糊涂地背，有什么用呢？于是，他壮着胆子站起来，问：“先生，您刚才让我背的这段书是什么意思？请您给我讲讲吧！”",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。"
+  },
+  {
+    "id": "literal-textbook-before-02",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "before",
+    "rule": "提示语在前",
+    "text": "先生拿着戒尺，走到孙中山跟前，厉声问道[0]你会背了吗[1]",
+    "answers": [
+      "：“",
+      "？”"
+    ],
+    "slotLimits": [
+      2,
+      2
+    ],
+    "complete": "先生拿着戒尺，走到孙中山跟前，厉声问道：“你会背了吗？”",
+    "source": {
+      "lesson": "不懂就要问",
+      "type": "课文原句",
+      "original": "先生拿着戒尺，走到孙中山跟前，厉声问道：“你会背了吗？”",
+      "context": "先生拿着戒尺，走到孙中山跟前，厉声问道：“你会背了吗？”",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。"
+  },
+  {
+    "id": "literal-textbook-after-01",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "after",
+    "rule": "提示语在后",
+    "text": "[0]会背了[1]孙中山说着，就把那段书一字不漏地背了出来[2]",
+    "answers": [
+      "“",
+      "。”",
+      "。"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      1
+    ],
+    "complete": "“会背了。”孙中山说着，就把那段书一字不漏地背了出来。",
+    "source": {
+      "lesson": "不懂就要问",
+      "type": "课文原句",
+      "original": "“会背了。”孙中山说着，就把那段书一字不漏地背了出来。",
+      "context": "“会背了。”孙中山说着，就把那段书一字不漏地背了出来。",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。"
+  },
+  {
+    "id": "literal-textbook-before-03",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "before",
+    "rule": "提示语在前",
+    "text": "后来，有个同学问孙中山[0]你向先生提出问题，不怕挨打吗[1]",
+    "answers": [
+      "：“",
+      "？”"
+    ],
+    "slotLimits": [
+      2,
+      2
+    ],
+    "complete": "后来，有个同学问孙中山：“你向先生提出问题，不怕挨打吗？”",
+    "source": {
+      "lesson": "不懂就要问",
+      "type": "课文原句",
+      "original": "后来，有个同学问孙中山：“你向先生提出问题，不怕挨打吗？”",
+      "context": "后来，有个同学问孙中山：“你向先生提出问题，不怕挨打吗？”",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。"
+  },
+  {
+    "id": "literal-textbook-before-04",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "before",
+    "rule": "提示语在前",
+    "text": "孙中山笑了笑，说[0]学问学问，不懂就要问。为了弄清楚道理，就是挨打也值得[1]",
+    "answers": [
+      "：“",
+      "。”"
+    ],
+    "slotLimits": [
+      2,
+      2
+    ],
+    "complete": "孙中山笑了笑，说：“学问学问，不懂就要问。为了弄清楚道理，就是挨打也值得。”",
+    "source": {
+      "lesson": "不懂就要问",
+      "type": "课文原句",
+      "original": "孙中山笑了笑，说：“学问学问，不懂就要问。为了弄清楚道理，就是挨打也值得。”",
+      "context": "孙中山笑了笑，说：“学问学问，不懂就要问。为了弄清楚道理，就是挨打也值得。”",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。"
+  },
+  {
+    "id": "literal-textbook-before-05",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "before",
+    "rule": "提示语在前",
+    "text": "老屋低头看看，吃力地眯起眼睛[0]哦，是小猫啊。好吧，我就再站一个晚上[1]",
+    "answers": [
+      "：“",
+      "。”"
+    ],
+    "slotLimits": [
+      2,
+      2
+    ],
+    "complete": "老屋低头看看，吃力地眯起眼睛：“哦，是小猫啊。好吧，我就再站一个晚上。”",
+    "source": {
+      "lesson": "总也倒不了的老屋",
+      "type": "课文原句",
+      "original": "老屋低头看看，吃力地眯起眼睛：“哦，是小猫啊。好吧，我就再站一个晚上。”",
+      "context": "老屋低头看看，吃力地眯起眼睛：“哦，是小猫啊。好吧，我就再站一个晚上。”",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。"
+  },
+  {
+    "id": "literal-textbook-before-06",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "before",
+    "rule": "提示语在前",
+    "text": "小猫从破窗户里跳了出来[0]喵喵，谢谢[1]",
+    "answers": [
+      "：“",
+      "！”"
+    ],
+    "slotLimits": [
+      2,
+      2
+    ],
+    "complete": "小猫从破窗户里跳了出来：“喵喵，谢谢！”",
+    "source": {
+      "lesson": "总也倒不了的老屋",
+      "type": "课文原句",
+      "original": "小猫从破窗户里跳了出来：“喵喵，谢谢！”",
+      "context": "第二天，天晴了。小猫从破窗户里跳了出来：“喵喵，谢谢！”",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。"
+  },
+  {
+    "id": "literal-textbook-before-07",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "before",
+    "rule": "提示语在前",
+    "text": "老屋说[0]再见！好了，我到了倒下的时候了[1]",
+    "answers": [
+      "：“",
+      "！”"
+    ],
+    "slotLimits": [
+      2,
+      2
+    ],
+    "complete": "老屋说：“再见！好了，我到了倒下的时候了！”",
+    "source": {
+      "lesson": "总也倒不了的老屋",
+      "type": "课文原句",
+      "original": "老屋说：“再见！好了，我到了倒下的时候了！”",
+      "context": "老屋说：“再见！好了，我到了倒下的时候了！”",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。"
+  },
+  {
+    "id": "literal-textbook-before-08",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "before",
+    "rule": "提示语在前",
+    "text": "老屋低头看看，墙壁吱吱呀呀地响[0]哦，是老母鸡啊。好吧，我就再站二十几天[1]",
+    "answers": [
+      "：“",
+      "。”"
+    ],
+    "slotLimits": [
+      2,
+      2
+    ],
+    "complete": "老屋低头看看，墙壁吱吱呀呀地响：“哦，是老母鸡啊。好吧，我就再站二十几天。”",
+    "source": {
+      "lesson": "总也倒不了的老屋",
+      "type": "课文原句",
+      "original": "老屋低头看看，墙壁吱吱呀呀地响：“哦，是老母鸡啊。好吧，我就再站二十几天。”",
+      "context": "老屋低头看看，墙壁吱吱呀呀地响：“哦，是老母鸡啊。好吧，我就再站二十几天。”",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。"
+  },
+  {
+    "id": "literal-textbook-before-09",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "before",
+    "rule": "提示语在前",
+    "text": "二十多天后，老母鸡从门上的破洞里走了出来，九只小鸡从门板下面叽叽叫着钻了出来[0]叽叽，谢谢[1]",
+    "answers": [
+      "：“",
+      "！”"
+    ],
+    "slotLimits": [
+      2,
+      2
+    ],
+    "complete": "二十多天后，老母鸡从门上的破洞里走了出来，九只小鸡从门板下面叽叽叫着钻了出来：“叽叽，谢谢！”",
+    "source": {
+      "lesson": "总也倒不了的老屋",
+      "type": "课文原句",
+      "original": "二十多天后，老母鸡从门上的破洞里走了出来，九只小鸡从门板下面叽叽叫着钻了出来：“叽叽，谢谢！”",
+      "context": "二十多天后，老母鸡从门上的破洞里走了出来，九只小鸡从门板下面叽叽叫着钻了出来：“叽叽，谢谢！”",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。"
+  },
+  {
+    "id": "literal-textbook-before-10",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "before",
+    "rule": "提示语在前",
+    "text": "老屋低头看看，眼睛眯成一条缝[0]哦，是小蜘蛛啊。好吧，我就再站一会儿[1]",
+    "answers": [
+      "：“",
+      "。”"
+    ],
+    "slotLimits": [
+      2,
+      2
+    ],
+    "complete": "老屋低头看看，眼睛眯成一条缝：“哦，是小蜘蛛啊。好吧，我就再站一会儿。”",
+    "source": {
+      "lesson": "总也倒不了的老屋",
+      "type": "课文原句",
+      "original": "老屋低头看看，眼睛眯成一条缝：“哦，是小蜘蛛啊。好吧，我就再站一会儿。”",
+      "context": "老屋低头看看，眼睛眯成一条缝：“哦，是小蜘蛛啊。好吧，我就再站一会儿。”",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。"
+  },
+  {
+    "id": "literal-textbook-after-02",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "after",
+    "rule": "提示语在后",
+    "text": "[0]小蜘蛛，你吃饱了吗[1]老屋问[2]",
+    "answers": [
+      "“",
+      "？”",
+      "。"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      1
+    ],
+    "complete": "“小蜘蛛，你吃饱了吗？”老屋问。",
+    "source": {
+      "lesson": "总也倒不了的老屋",
+      "type": "课文原句",
+      "original": "“小蜘蛛，你吃饱了吗？”老屋问。",
+      "context": "“小蜘蛛，你吃饱了吗？”老屋问。",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。"
+  },
+  {
+    "id": "literal-textbook-middle-01",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "middle",
+    "rule": "提示语在中间",
+    "text": "[0]没有，没有[1]小蜘蛛一边忙着补网，一边回答[2]老屋老屋，我给您讲个故事吧[3]",
+    "answers": [
+      "“",
+      "！”",
+      "，“",
+      "！”"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      2,
+      2
+    ],
+    "complete": "“没有，没有！”小蜘蛛一边忙着补网，一边回答，“老屋老屋，我给您讲个故事吧！”",
+    "source": {
+      "lesson": "总也倒不了的老屋",
+      "type": "课文原句",
+      "original": "“没有，没有！”小蜘蛛一边忙着补网，一边回答，“老屋老屋，我给您讲个故事吧！”",
+      "context": "“没有，没有！”小蜘蛛一边忙着补网，一边回答，“老屋老屋，我给您讲个故事吧！”",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。"
+  },
+  {
+    "id": "literal-textbook-before-11",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "before",
+    "rule": "提示语在前",
+    "text": "她满怀信心地说[0]我会准时赶到那里的[1]",
+    "answers": [
+      "：“",
+      "。”"
+    ],
+    "slotLimits": [
+      2,
+      2
+    ],
+    "complete": "她满怀信心地说：“我会准时赶到那里的。”",
+    "source": {
+      "lesson": "犟龟",
+      "type": "课文原句",
+      "original": "她满怀信心地说：“我会准时赶到那里的。”",
+      "context": "“婚礼两周后就要举行了，你可是慢得出奇呀，怎么可能赶得上呢？”陶陶看了看自己的腿——它们虽然短小，却很结实。她满怀信心地说：“我会准时赶到那里的。”",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。说话内容用句号陈述或用感叹号加强语气都合理，提示语位置不变。",
+    "acceptedAnswers": [
+      [
+        "：“",
+        "。”"
+      ],
+      [
+        "：“",
+        "！”"
+      ]
+    ]
+  },
+  {
+    "id": "literal-textbook-after-03",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "after",
+    "rule": "提示语在后",
+    "text": "[0]很遗憾，我不能这样，我的决定是不可改变的[1]陶陶友好地回答，又哼哧哼哧地开始赶路了[2]",
+    "answers": [
+      "“",
+      "。”",
+      "。"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      1
+    ],
+    "complete": "“很遗憾，我不能这样，我的决定是不可改变的。”陶陶友好地回答，又哼哧哼哧地开始赶路了。",
+    "source": {
+      "lesson": "犟龟",
+      "type": "课文原句",
+      "original": "“很遗憾，我不能这样，我的决定是不可改变的。”陶陶友好地回答，又哼哧哼哧地开始赶路了。",
+      "context": "“很遗憾，我不能这样，我的决定是不可改变的。”陶陶友好地回答，又哼哧哼哧地开始赶路了。",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。"
+  },
+  {
+    "id": "literal-textbook-before-12",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "before",
+    "rule": "提示语在前",
+    "text": "他难过地告诉陶陶[0]太糟了！你完全走反了方向[1]",
+    "answers": [
+      "：“",
+      "。”"
+    ],
+    "slotLimits": [
+      2,
+      2
+    ],
+    "complete": "他难过地告诉陶陶：“太糟了！你完全走反了方向。”",
+    "source": {
+      "lesson": "犟龟",
+      "type": "课文原句",
+      "original": "他难过地告诉陶陶：“太糟了！你完全走反了方向。”",
+      "context": "蜗牛想了好一会儿，才把自己那迷迷糊糊的思绪理清楚。他难过地告诉陶陶：“太糟了！你完全走反了方向。”",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。"
+  },
+  {
+    "id": "literal-textbook-after-04",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "after",
+    "rule": "提示语在后",
+    "text": "[0]非常感谢你给我指路[1]说完，陶陶慢慢掉头往回走[2]",
+    "answers": [
+      "“",
+      "！”",
+      "。"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      1
+    ],
+    "complete": "“非常感谢你给我指路！”说完，陶陶慢慢掉头往回走。",
+    "source": {
+      "lesson": "犟龟",
+      "type": "课文原句",
+      "original": "“非常感谢你给我指路！”说完，陶陶慢慢掉头往回走。",
+      "context": "“非常感谢你给我指路！”说完，陶陶慢慢掉头往回走。",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。"
+  },
+  {
+    "id": "literal-textbook-after-05",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "after",
+    "rule": "提示语在后",
+    "text": "[0]可是，后天就要举行婚礼了呀[1]蜗牛几乎带着哭腔说[2]",
+    "answers": [
+      "“",
+      "！”",
+      "。"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      1
+    ],
+    "complete": "“可是，后天就要举行婚礼了呀！”蜗牛几乎带着哭腔说。",
+    "source": {
+      "lesson": "犟龟",
+      "type": "课文原句",
+      "original": "“可是，后天就要举行婚礼了呀！”蜗牛几乎带着哭腔说。",
+      "context": "“可是，后天就要举行婚礼了呀！”蜗牛几乎带着哭腔说。",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。"
+  },
+  {
+    "id": "literal-textbook-after-06",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "after",
+    "rule": "提示语在后",
+    "text": "[0]只要一步一步坚持走，我会准时赶到的[1]陶陶说[2]",
+    "answers": [
+      "“",
+      "。”",
+      "。"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      1
+    ],
+    "complete": "“只要一步一步坚持走，我会准时赶到的。”陶陶说。",
+    "source": {
+      "lesson": "犟龟",
+      "type": "课文原句",
+      "original": "“只要一步一步坚持走，我会准时赶到的。”陶陶说。",
+      "context": "“只要一步一步坚持走，我会准时赶到的。”陶陶说。",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。说话内容用句号陈述或用感叹号加强语气都合理，提示语位置不变。",
+    "acceptedAnswers": [
+      [
+        "“",
+        "。”",
+        "。"
+      ],
+      [
+        "“",
+        "！”",
+        "。"
+      ]
+    ]
+  },
+  {
+    "id": "literal-textbook-after-07",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "after",
+    "rule": "提示语在后",
+    "text": "[0]你跟我学[1]有一次，一只同情它的小公鸡对它说[2]",
+    "answers": [
+      "“",
+      "。”",
+      "。"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      1
+    ],
+    "complete": "“你跟我学。”有一次，一只同情它的小公鸡对它说。",
+    "source": {
+      "lesson": "小狗学叫",
+      "type": "课文原句",
+      "original": "“你跟我学。”有一次，一只同情它的小公鸡对它说。",
+      "context": "“你跟我学。”有一次，一只同情它的小公鸡对它说。那只小公鸡喔喔喔地叫了几声。",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。"
+  },
+  {
+    "id": "literal-textbook-after-08",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "after",
+    "rule": "提示语在后",
+    "text": "[0]我觉得很难[1]小狗对小公鸡说道[2]",
+    "answers": [
+      "“",
+      "。”",
+      "。"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      1
+    ],
+    "complete": "“我觉得很难。”小狗对小公鸡说道。",
+    "source": {
+      "lesson": "小狗学叫",
+      "type": "课文原句",
+      "original": "“我觉得很难。”小狗对小公鸡说道。",
+      "context": "“我觉得很难。”小狗对小公鸡说道。",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。"
+  },
+  {
+    "id": "literal-textbook-middle-02",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "middle",
+    "rule": "提示语在中间",
+    "text": "[0]不要紧[1]小公鸡说道[2]第一次能这样就很不错了。你再试试，来[3]",
+    "answers": [
+      "“",
+      "，”",
+      "，“",
+      "！”"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      2,
+      2
+    ],
+    "complete": "“不要紧，”小公鸡说道，“第一次能这样就很不错了。你再试试，来！”",
+    "source": {
+      "lesson": "小狗学叫",
+      "type": "课文原句",
+      "original": "“不要紧，”小公鸡说道，“第一次能这样就很不错了。你再试试，来！”",
+      "context": "“不要紧，”小公鸡说道，“第一次能这样就很不错了。你再试试，来！”小狗又试了一次，两次，三次，都没能成功。",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。"
+  },
+  {
+    "id": "literal-textbook-before-13",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "before",
+    "rule": "提示语在前",
+    "text": "你们也许要问[0]什么？宝葫芦？就是传说故事里的那种宝葫芦吗[1]",
+    "answers": [
+      "：“",
+      "？”"
+    ],
+    "slotLimits": [
+      2,
+      2
+    ],
+    "complete": "你们也许要问：“什么？宝葫芦？就是传说故事里的那种宝葫芦吗？”",
+    "source": {
+      "lesson": "宝葫芦的秘密（节选）",
+      "type": "课文原句",
+      "original": "你们也许要问：“什么？宝葫芦？就是传说故事里的那种宝葫芦吗？”",
+      "context": "你们也许要问：“什么？宝葫芦？就是传说故事里的那种宝葫芦吗？”",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。"
+  },
+  {
+    "id": "literal-textbook-after-09",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "after",
+    "rule": "提示语在后",
+    "text": "[0]乖小葆，来，奶奶给你洗个脚[1]奶奶总是一面撵我，一面招手[2]",
+    "answers": [
+      "“",
+      "。”",
+      "。"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      1
+    ],
+    "complete": "“乖小葆，来，奶奶给你洗个脚。”奶奶总是一面撵我，一面招手。",
+    "source": {
+      "lesson": "宝葫芦的秘密（节选）",
+      "type": "课文原句",
+      "original": "“乖小葆，来，奶奶给你洗个脚。”奶奶总是一面撵我，一面招手。",
+      "context": "“乖小葆，来，奶奶给你洗个脚。”奶奶总是一面撵我，一面招手。",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。"
+  },
+  {
+    "id": "literal-textbook-before-14",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "before",
+    "rule": "提示语在前",
+    "text": "有一天，吃过早饭，青头对红头说[0]咱们玩捉迷藏吧[1]",
+    "answers": [
+      "：“",
+      "！”"
+    ],
+    "slotLimits": [
+      2,
+      2
+    ],
+    "complete": "有一天，吃过早饭，青头对红头说：“咱们玩捉迷藏吧！”",
+    "source": {
+      "lesson": "在牛肚子里旅行",
+      "type": "课文原句",
+      "original": "有一天，吃过早饭，青头对红头说：“咱们玩捉迷藏吧！”",
+      "context": "有两只小蟋蟀，一只叫青头，另一只叫红头。它们是一对非常要好的朋友。有一天，吃过早饭，青头对红头说：“咱们玩捉迷藏吧！”",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。"
+  },
+  {
+    "id": "literal-textbook-after-10",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "after",
+    "rule": "提示语在后",
+    "text": "[0]那让我先藏，你来找[1]红头说[2]",
+    "answers": [
+      "“",
+      "。”",
+      "。"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      1
+    ],
+    "complete": "“那让我先藏，你来找。”红头说。",
+    "source": {
+      "lesson": "在牛肚子里旅行",
+      "type": "课文原句",
+      "original": "“那让我先藏，你来找。”红头说。",
+      "context": "“那让我先藏，你来找。”红头说。",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。"
+  },
+  {
+    "id": "literal-textbook-after-11",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "after",
+    "rule": "提示语在后",
+    "text": "[0]好吧[1]青头说完，转过身子闭上眼睛[2]",
+    "answers": [
+      "“",
+      "！”",
+      "。"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      1
+    ],
+    "complete": "“好吧！”青头说完，转过身子闭上眼睛。",
+    "source": {
+      "lesson": "在牛肚子里旅行",
+      "type": "课文原句",
+      "original": "“好吧！”青头说完，转过身子闭上眼睛。",
+      "context": "“好吧！”青头说完，转过身子闭上眼睛。",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。"
+  },
+  {
+    "id": "literal-textbook-after-12",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "after",
+    "rule": "提示语在后",
+    "text": "[0]藏好了吗[1]青头大声问[2]",
+    "answers": [
+      "“",
+      "？”",
+      "。"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      1
+    ],
+    "complete": "“藏好了吗？”青头大声问。",
+    "source": {
+      "lesson": "在牛肚子里旅行",
+      "type": "课文原句",
+      "original": "“藏好了吗？”青头大声问。",
+      "context": "“藏好了吗？”青头大声问。",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。"
+  },
+  {
+    "id": "literal-textbook-after-13",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "after",
+    "rule": "提示语在后",
+    "text": "[0]救命啊！救命啊[1]红头拼命地叫起来[2]",
+    "answers": [
+      "“",
+      "！”",
+      "。"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      1
+    ],
+    "complete": "“救命啊！救命啊！”红头拼命地叫起来。",
+    "source": {
+      "lesson": "在牛肚子里旅行",
+      "type": "课文原句",
+      "original": "“救命啊！救命啊！”红头拼命地叫起来。",
+      "context": "“救命啊！救命啊！”红头拼命地叫起来。",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。"
+  },
+  {
+    "id": "literal-textbook-after-14",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "after",
+    "rule": "提示语在后",
+    "text": "[0]你在哪儿[1]青头急忙问[2]",
+    "answers": [
+      "“",
+      "？”",
+      "。"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      1
+    ],
+    "complete": "“你在哪儿？”青头急忙问。",
+    "source": {
+      "lesson": "在牛肚子里旅行",
+      "type": "课文原句",
+      "original": "“你在哪儿？”青头急忙问。",
+      "context": "“你在哪儿？”青头急忙问。",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。"
+  },
+  {
+    "id": "literal-textbook-after-15",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "after",
+    "rule": "提示语在后",
+    "text": "[0]那我马上就会死掉[1]红头哭起来[2]",
+    "answers": [
+      "“",
+      "。”",
+      "。"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      1
+    ],
+    "complete": "“那我马上就会死掉。”红头哭起来。",
+    "source": {
+      "lesson": "在牛肚子里旅行",
+      "type": "课文原句",
+      "original": "“那我马上就会死掉。”红头哭起来。",
+      "context": "“那我马上就会死掉。”红头哭起来。它和草已经一起进了牛的肚子。",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。"
+  },
+  {
+    "id": "literal-textbook-after-16",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "after",
+    "rule": "提示语在后",
+    "text": "[0]可是你说这些对我有什么用呢[1]红头悲哀地说[2]",
+    "answers": [
+      "“",
+      "？”",
+      "。"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      1
+    ],
+    "complete": "“可是你说这些对我有什么用呢？”红头悲哀地说。",
+    "source": {
+      "lesson": "在牛肚子里旅行",
+      "type": "课文原句",
+      "original": "“可是你说这些对我有什么用呢？”红头悲哀地说。",
+      "context": "“可是你说这些对我有什么用呢？”红头悲哀地说。",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。"
+  },
+  {
+    "id": "literal-textbook-after-17",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "after",
+    "rule": "提示语在后",
+    "text": "[0]谢谢你[1]红头的声音小得几乎听不见了[2]",
+    "answers": [
+      "“",
+      "！”",
+      "。"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      1
+    ],
+    "complete": "“谢谢你！”红头的声音小得几乎听不见了。",
+    "source": {
+      "lesson": "在牛肚子里旅行",
+      "type": "课文原句",
+      "original": "“谢谢你！”红头的声音小得几乎听不见了。",
+      "context": "“谢谢你！”红头的声音小得几乎听不见了。它咬着牙不让自己失去知觉。",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。"
+  },
+  {
+    "id": "literal-textbook-before-15",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "before",
+    "rule": "提示语在前",
+    "text": "红头看见自己的朋友，高兴得流下了眼泪[0]谢谢你……[1]",
+    "answers": [
+      "：“",
+      "”"
+    ],
+    "slotLimits": [
+      2,
+      1
+    ],
+    "complete": "红头看见自己的朋友，高兴得流下了眼泪：“谢谢你……”",
+    "source": {
+      "lesson": "在牛肚子里旅行",
+      "type": "课文原句",
+      "original": "红头看见自己的朋友，高兴得流下了眼泪：“谢谢你……”",
+      "context": "红头看见自己的朋友，高兴得流下了眼泪：“谢谢你……”",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。"
+  },
+  {
+    "id": "literal-textbook-before-16",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "before",
+    "rule": "提示语在前",
+    "text": "青头笑眯眯地说[0]不要哭，就当是一次在牛肚子里的旅行吧[1]",
+    "answers": [
+      "：“",
+      "！”"
+    ],
+    "slotLimits": [
+      2,
+      2
+    ],
+    "complete": "青头笑眯眯地说：“不要哭，就当是一次在牛肚子里的旅行吧！”",
+    "source": {
+      "lesson": "在牛肚子里旅行",
+      "type": "课文原句",
+      "original": "青头笑眯眯地说：“不要哭，就当是一次在牛肚子里的旅行吧！”",
+      "context": "青头笑眯眯地说：“不要哭，就当是一次在牛肚子里的旅行吧！”",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。"
+  },
+  {
+    "id": "literal-textbook-before-17",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "before",
+    "rule": "提示语在前",
+    "text": "蚂蚁队长集合好队伍，向大家宣布[0]今天搬运粮食，只许出力，不许偷嘴。谁偷嘴就要处罚谁[1]",
+    "answers": [
+      "：“",
+      "。”"
+    ],
+    "slotLimits": [
+      2,
+      2
+    ],
+    "complete": "蚂蚁队长集合好队伍，向大家宣布：“今天搬运粮食，只许出力，不许偷嘴。谁偷嘴就要处罚谁。”",
+    "source": {
+      "lesson": "一块奶酪",
+      "type": "课文原句",
+      "original": "蚂蚁队长集合好队伍，向大家宣布：“今天搬运粮食，只许出力，不许偷嘴。谁偷嘴就要处罚谁。”",
+      "context": "蚂蚁队长集合好队伍，向大家宣布：“今天搬运粮食，只许出力，不许偷嘴。谁偷嘴就要处罚谁。”",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。"
+  },
+  {
+    "id": "literal-textbook-before-18",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "before",
+    "rule": "提示语在前",
+    "text": "一只小蚂蚁在队列里嘀咕[0]要是偷嘴的是您呢[1]",
+    "answers": [
+      "：“",
+      "？”"
+    ],
+    "slotLimits": [
+      2,
+      2
+    ],
+    "complete": "一只小蚂蚁在队列里嘀咕：“要是偷嘴的是您呢？”",
+    "source": {
+      "lesson": "一块奶酪",
+      "type": "课文原句",
+      "original": "一只小蚂蚁在队列里嘀咕：“要是偷嘴的是您呢？”",
+      "context": "一只小蚂蚁在队列里嘀咕：“要是偷嘴的是您呢？”蚂蚁队长说：“照样要受处罚。”",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。"
+  },
+  {
+    "id": "literal-textbook-before-19",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "before",
+    "rule": "提示语在前",
+    "text": "蚂蚁队长说[0]照样要受处罚[1]",
+    "answers": [
+      "：“",
+      "。”"
+    ],
+    "slotLimits": [
+      2,
+      2
+    ],
+    "complete": "蚂蚁队长说：“照样要受处罚。”",
+    "source": {
+      "lesson": "一块奶酪",
+      "type": "课文原句",
+      "original": "蚂蚁队长说：“照样要受处罚。”",
+      "context": "一只小蚂蚁在队列里嘀咕：“要是偷嘴的是您呢？”蚂蚁队长说：“照样要受处罚。”",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。"
+  },
+  {
+    "id": "literal-textbook-before-20",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "before",
+    "rule": "提示语在前",
+    "text": "等小蚂蚁们消失在草丛中，它才大叫[0]立——定！原地休息[1]",
+    "answers": [
+      "：“",
+      "！”"
+    ],
+    "slotLimits": [
+      2,
+      2
+    ],
+    "complete": "等小蚂蚁们消失在草丛中，它才大叫：“立——定！原地休息！”",
+    "source": {
+      "lesson": "一块奶酪",
+      "type": "课文原句",
+      "original": "等小蚂蚁们消失在草丛中，它才大叫：“立——定！原地休息！”",
+      "context": "蚂蚁队长生气了。它登上一块大石板，突然下令：“注意啦，全体都有。稍息！立正！向后——转！齐步——走！”等小蚂蚁们消失在草丛中，它才大叫：“立——定！原地休息！”",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。"
+  },
+  {
+    "id": "literal-textbook-before-21",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "before",
+    "rule": "提示语在前",
+    "text": "有一次，弟弟跑在我前面，我装着一本正经的样子，喊[0]谢廖沙[1]",
+    "answers": [
+      "：“",
+      "！”"
+    ],
+    "slotLimits": [
+      2,
+      2
+    ],
+    "complete": "有一次，弟弟跑在我前面，我装着一本正经的样子，喊：“谢廖沙！”",
+    "source": {
+      "lesson": "金色的草地",
+      "type": "课文原句",
+      "original": "有一次，弟弟跑在我前面，我装着一本正经的样子，喊：“谢廖沙！”",
+      "context": "我和弟弟常常在草地上玩耍。有一次，弟弟跑在我前面，我装着一本正经的样子，喊：“谢廖沙！”他回过头来，我就使劲一吹，把蒲公英的茸毛吹到他的脸上。弟弟也假装打哈欠，把蒲公英的茸毛朝我脸上吹。就这样，这些并不引人注目的蒲公英，给我们带来了不少快乐。",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。"
+  },
+  {
+    "id": "literal-textbook-after-18",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "after",
+    "rule": "提示语在后",
+    "text": "[0]现在还想干什么[1]当我们走出院子时，我接着问它[2]",
+    "answers": [
+      "“",
+      "？”",
+      "。"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      1
+    ],
+    "complete": "“现在还想干什么？”当我们走出院子时，我接着问它。",
+    "source": {
+      "lesson": "习作例文·我家的小狗",
+      "type": "课文原句",
+      "original": "“现在还想干什么？”当我们走出院子时，我接着问它。",
+      "context": "“现在还想干什么？”当我们走出院子时，我接着问它。",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。"
+  },
+  {
+    "id": "literal-textbook-before-22",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "before",
+    "rule": "提示语在前",
+    "text": "他们的歌声好像告诉我们[0]我在歌唱，我很快乐[1]",
+    "answers": [
+      "：“",
+      "！”"
+    ],
+    "slotLimits": [
+      2,
+      2
+    ],
+    "complete": "他们的歌声好像告诉我们：“我在歌唱，我很快乐！”",
+    "source": {
+      "lesson": "大自然的声音",
+      "type": "课文原句",
+      "original": "他们的歌声好像告诉我们：“我在歌唱，我很快乐！”",
+      "context": "动物是大自然的歌手。走在公园里，听听树上叽叽喳喳的鸟叫；坐在一棵树下，听听唧哩哩唧哩哩的虫鸣；在水塘边散步，听听青蛙的歌唱。你知道他们唱的是什么吗？他们的歌声好像告诉我们：“我在歌唱，我很快乐！”",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。"
+  },
+  {
+    "id": "literal-textbook-before-23",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "before",
+    "rule": "提示语在前",
+    "text": "教授兴奋地说[0]童第周真行[1]",
+    "answers": [
+      "：“",
+      "！”"
+    ],
+    "slotLimits": [
+      2,
+      2
+    ],
+    "complete": "教授兴奋地说：“童第周真行！”",
+    "source": {
+      "lesson": "一定要争气",
+      "type": "课文原句",
+      "original": "教授兴奋地说：“童第周真行！”",
+      "context": "那位教授要做一项实验，需要剥离青蛙卵的外膜，这是观察卵细胞形态、结构和发育过程的关键环节。工作的难度很大，不但要有熟练的技巧，还要耐心细致，多年来没人能够做成。童第周不声不响地刻苦钻研，反复实践，终于取得成功。教授兴奋地说：“童第周真行！”",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。"
+  },
+  {
+    "id": "literal-textbook-before-24",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "before",
+    "rule": "提示语在前",
+    "text": "师卫生部长匆匆赶来，对白求恩说[0]师长决定让您和一部分伤员离开这里[1]",
+    "answers": [
+      "：“",
+      "。”"
+    ],
+    "slotLimits": [
+      2,
+      2
+    ],
+    "complete": "师卫生部长匆匆赶来，对白求恩说：“师长决定让您和一部分伤员离开这里。”",
+    "source": {
+      "lesson": "手术台就是阵地",
+      "type": "课文原句",
+      "original": "师卫生部长匆匆赶来，对白求恩说：“师长决定让您和一部分伤员离开这里。”",
+      "context": "敌机不断地在上空吼叫，炮弹不断地在周围爆炸。师卫生部长匆匆赶来，对白求恩说：“师长决定让您和一部分伤员离开这里。”白求恩沉思了一会儿，说：“我同意撤走部分伤员。至于我个人，要和战士们在一起，不能离开。”部长恳求说：“白求恩同志，这儿危险，让您离开这里，是战斗形势的需要哇！”白求恩说：“谢谢师长的关心。可是，手术台是医生的阵地。战士们没有离开他们的阵地，我怎么能离开自己的阵地呢？部长同志，请您转告师长，我是一名八路军战士，不是你们的客人。”白求恩低下头，继续给伤员做手术。",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。"
+  },
+  {
+    "id": "literal-textbook-before-25",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "before",
+    "rule": "提示语在前",
+    "text": "白求恩沉思了一会儿，说[0]我同意撤走部分伤员。至于我个人，要和战士们在一起，不能离开[1]",
+    "answers": [
+      "：“",
+      "。”"
+    ],
+    "slotLimits": [
+      2,
+      2
+    ],
+    "complete": "白求恩沉思了一会儿，说：“我同意撤走部分伤员。至于我个人，要和战士们在一起，不能离开。”",
+    "source": {
+      "lesson": "手术台就是阵地",
+      "type": "课文原句",
+      "original": "白求恩沉思了一会儿，说：“我同意撤走部分伤员。至于我个人，要和战士们在一起，不能离开。”",
+      "context": "敌机不断地在上空吼叫，炮弹不断地在周围爆炸。师卫生部长匆匆赶来，对白求恩说：“师长决定让您和一部分伤员离开这里。”白求恩沉思了一会儿，说：“我同意撤走部分伤员。至于我个人，要和战士们在一起，不能离开。”部长恳求说：“白求恩同志，这儿危险，让您离开这里，是战斗形势的需要哇！”白求恩说：“谢谢师长的关心。可是，手术台是医生的阵地。战士们没有离开他们的阵地，我怎么能离开自己的阵地呢？部长同志，请您转告师长，我是一名八路军战士，不是你们的客人。”白求恩低下头，继续给伤员做手术。",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。"
+  },
+  {
+    "id": "literal-textbook-before-26",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "before",
+    "rule": "提示语在前",
+    "text": "部长恳求说[0]白求恩同志，这儿危险，让您离开这里，是战斗形势的需要哇[1]",
+    "answers": [
+      "：“",
+      "！”"
+    ],
+    "slotLimits": [
+      2,
+      2
+    ],
+    "complete": "部长恳求说：“白求恩同志，这儿危险，让您离开这里，是战斗形势的需要哇！”",
+    "source": {
+      "lesson": "手术台就是阵地",
+      "type": "课文原句",
+      "original": "部长恳求说：“白求恩同志，这儿危险，让您离开这里，是战斗形势的需要哇！”",
+      "context": "敌机不断地在上空吼叫，炮弹不断地在周围爆炸。师卫生部长匆匆赶来，对白求恩说：“师长决定让您和一部分伤员离开这里。”白求恩沉思了一会儿，说：“我同意撤走部分伤员。至于我个人，要和战士们在一起，不能离开。”部长恳求说：“白求恩同志，这儿危险，让您离开这里，是战斗形势的需要哇！”白求恩说：“谢谢师长的关心。可是，手术台是医生的阵地。战士们没有离开他们的阵地，我怎么能离开自己的阵地呢？部长同志，请您转告师长，我是一名八路军战士，不是你们的客人。”白求恩低下头，继续给伤员做手术。",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。"
+  },
+  {
+    "id": "literal-textbook-before-27",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "before",
+    "rule": "提示语在前",
+    "text": "赵一曼看着这个碗，对通讯员说[0]哪里拿来的，请你还到哪里去[1]",
+    "answers": [
+      "：“",
+      "！”"
+    ],
+    "slotLimits": [
+      2,
+      2
+    ],
+    "complete": "赵一曼看着这个碗，对通讯员说：“哪里拿来的，请你还到哪里去！”",
+    "source": {
+      "lesson": "一个粗瓷大碗",
+      "type": "课文原句",
+      "original": "赵一曼看着这个碗，对通讯员说：“哪里拿来的，请你还到哪里去！”",
+      "context": "赵一曼看着这个碗，对通讯员说：“哪里拿来的，请你还到哪里去！”",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。"
+  },
+  {
+    "id": "literal-textbook-after-19",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "after",
+    "rule": "提示语在后",
+    "text": "[0]这……这……敌人都被消灭了，往哪里还啊[1]通讯员为难地说[2]",
+    "answers": [
+      "“",
+      "！”",
+      "。"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      1
+    ],
+    "complete": "“这……这……敌人都被消灭了，往哪里还啊！”通讯员为难地说。",
+    "source": {
+      "lesson": "一个粗瓷大碗",
+      "type": "课文原句",
+      "original": "“这……这……敌人都被消灭了，往哪里还啊！”通讯员为难地说。",
+      "context": "“这……这……敌人都被消灭了，往哪里还啊！”通讯员为难地说。",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。"
+  },
+  {
+    "id": "literal-textbook-before-28",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "before",
+    "rule": "提示语在前",
+    "text": "小通讯员急得直叫[0]我说政委同志啊，给你一百个碗也架不住你这么‘丢’啊[1]",
+    "answers": [
+      "：“",
+      "！”"
+    ],
+    "slotLimits": [
+      2,
+      2
+    ],
+    "complete": "小通讯员急得直叫：“我说政委同志啊，给你一百个碗也架不住你这么‘丢’啊！”",
+    "source": {
+      "lesson": "一个粗瓷大碗",
+      "type": "课文原句",
+      "original": "小通讯员急得直叫：“我说政委同志啊，给你一百个碗也架不住你这么‘丢’啊！”",
+      "context": "第二天开饭的时候，赵一曼又没有碗了。小通讯员急得直叫：“我说政委同志啊，给你一百个碗也架不住你这么‘丢’啊！”",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。"
+  },
+  {
+    "id": "literal-textbook-before-29",
+    "origin": "textbook",
+    "difficulty": "medium",
+    "position": "before",
+    "rule": "提示语在前",
+    "text": "赵一曼笑着说[0]是啊，什么时候才能不‘丢’碗呢[1]",
+    "answers": [
+      "：“",
+      "？”"
+    ],
+    "slotLimits": [
+      2,
+      2
+    ],
+    "complete": "赵一曼笑着说：“是啊，什么时候才能不‘丢’碗呢？”",
+    "source": {
+      "lesson": "一个粗瓷大碗",
+      "type": "课文原句",
+      "original": "赵一曼笑着说：“是啊，什么时候才能不‘丢’碗呢？”",
+      "context": "赵一曼笑着说：“是啊，什么时候才能不‘丢’碗呢？”",
+      "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
+    },
+    "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。"
+  },
+  {
+    "id": "literal-extension-before-01",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "before",
+    "rule": "提示语在前",
+    "text": "小红说[0]我很喜欢读书，每天都会读一会儿[1]",
+    "answers": [
+      "：“",
+      "。”"
+    ],
+    "slotLimits": [
+      2,
+      2
+    ],
+    "complete": "小红说：“我很喜欢读书，每天都会读一会儿。”",
+    "source": {
+      "type": "自编例句",
+      "original": "小红说：“我很喜欢读书，每天都会读一会儿。”"
+    },
+    "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。本题也接受语气合理的另一种写法，标点顺序仍须正确。",
+    "acceptedAnswers": [
+      [
+        "：“",
+        "。”"
+      ],
+      [
+        "：“",
+        "！”"
+      ]
+    ]
+  },
+  {
+    "id": "literal-extension-before-02",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "before",
+    "rule": "提示语在前",
+    "text": "小明问[0]明天的美术课要带什么[1]",
+    "answers": [
+      "：“",
+      "？”"
+    ],
+    "slotLimits": [
+      2,
+      2
+    ],
+    "complete": "小明问：“明天的美术课要带什么？”",
+    "source": {
+      "type": "自编例句",
+      "original": "小明问：“明天的美术课要带什么？”"
+    },
+    "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。"
+  },
+  {
+    "id": "literal-extension-before-03",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "before",
+    "rule": "提示语在前",
+    "text": "小刚喊[0]快来呀，风筝飞起来了[1]",
+    "answers": [
+      "：“",
+      "！”"
+    ],
+    "slotLimits": [
+      2,
+      2
+    ],
+    "complete": "小刚喊：“快来呀，风筝飞起来了！”",
+    "source": {
+      "type": "自编例句",
+      "original": "小刚喊：“快来呀，风筝飞起来了！”"
+    },
+    "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。"
+  },
+  {
+    "id": "literal-extension-before-04",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "before",
+    "rule": "提示语在前",
+    "text": "小丽问[0]这本故事书可以借给我吗[1]",
+    "answers": [
+      "：“",
+      "？”"
+    ],
+    "slotLimits": [
+      2,
+      2
+    ],
+    "complete": "小丽问：“这本故事书可以借给我吗？”",
+    "source": {
+      "type": "自编例句",
+      "original": "小丽问：“这本故事书可以借给我吗？”"
+    },
+    "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。"
+  },
+  {
+    "id": "literal-extension-before-05",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "before",
+    "rule": "提示语在前",
+    "text": "小华高兴地说[0]我终于学会骑自行车了[1]",
+    "answers": [
+      "：“",
+      "！”"
+    ],
+    "slotLimits": [
+      2,
+      2
+    ],
+    "complete": "小华高兴地说：“我终于学会骑自行车了！”",
+    "source": {
+      "type": "自编例句",
+      "original": "小华高兴地说：“我终于学会骑自行车了！”"
+    },
+    "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。"
+  },
+  {
+    "id": "literal-extension-middle-01",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "middle",
+    "rule": "提示语在中间",
+    "text": "[0]妈妈[1]小红问[2]我能帮您洗菜吗[3]",
+    "answers": [
+      "“",
+      "，”",
+      "，“",
+      "？”"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      2,
+      2
+    ],
+    "complete": "“妈妈，”小红问，“我能帮您洗菜吗？”",
+    "source": {
+      "type": "自编例句",
+      "original": "“妈妈，”小红问，“我能帮您洗菜吗？”"
+    },
+    "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。"
+  },
+  {
+    "id": "literal-extension-middle-02",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "middle",
+    "rule": "提示语在中间",
+    "text": "[0]今天阳光真好[1]小明说[2]我们去公园走走吧[3]",
+    "answers": [
+      "“",
+      "！”",
+      "，“",
+      "！”"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      2,
+      2
+    ],
+    "complete": "“今天阳光真好！”小明说，“我们去公园走走吧！”",
+    "source": {
+      "type": "自编例句",
+      "original": "“今天阳光真好！”小明说，“我们去公园走走吧！”"
+    },
+    "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。本题也接受语气合理的另一种写法，标点顺序仍须正确。",
+    "acceptedAnswers": [
+      [
+        "“",
+        "！”",
+        "，“",
+        "！”"
+      ],
+      [
+        "“",
+        "！”",
+        "，“",
+        "。”"
+      ],
+      [
+        "“",
+        "，”",
+        "，“",
+        "！”"
+      ],
+      [
+        "“",
+        "，”",
+        "，“",
+        "。”"
+      ]
+    ]
+  },
+  {
+    "id": "literal-extension-middle-03",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "middle",
+    "rule": "提示语在中间",
+    "text": "[0]这道题不难[1]老师说[2]先想想数量关系[3]",
+    "answers": [
+      "“",
+      "，”",
+      "，“",
+      "。”"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      2,
+      2
+    ],
+    "complete": "“这道题不难，”老师说，“先想想数量关系。”",
+    "source": {
+      "type": "自编例句",
+      "original": "“这道题不难，”老师说，“先想想数量关系。”"
+    },
+    "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。"
+  },
+  {
+    "id": "literal-extension-middle-04",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "middle",
+    "rule": "提示语在中间",
+    "text": "[0]我找到了[1]弟弟喊[2]钥匙在沙发下面[3]",
+    "answers": [
+      "“",
+      "！”",
+      "，“",
+      "！”"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      2,
+      2
+    ],
+    "complete": "“我找到了！”弟弟喊，“钥匙在沙发下面！”",
+    "source": {
+      "type": "自编例句",
+      "original": "“我找到了！”弟弟喊，“钥匙在沙发下面！”"
+    },
+    "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。"
+  },
+  {
+    "id": "literal-extension-middle-05",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "middle",
+    "rule": "提示语在中间",
+    "text": "[0]请等一等[1]小丽说[2]我马上就来[3]",
+    "answers": [
+      "“",
+      "，”",
+      "，“",
+      "。”"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      2,
+      2
+    ],
+    "complete": "“请等一等，”小丽说，“我马上就来。”",
+    "source": {
+      "type": "自编例句",
+      "original": "“请等一等，”小丽说，“我马上就来。”"
+    },
+    "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。"
+  },
+  {
+    "id": "literal-extension-middle-06",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "middle",
+    "rule": "提示语在中间",
+    "text": "[0]明天会下雨吗[1]小军问[2]要不要带雨伞[3]",
+    "answers": [
+      "“",
+      "？”",
+      "，“",
+      "？”"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      2,
+      2
+    ],
+    "complete": "“明天会下雨吗？”小军问，“要不要带雨伞？”",
+    "source": {
+      "type": "自编例句",
+      "original": "“明天会下雨吗？”小军问，“要不要带雨伞？”"
+    },
+    "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。"
+  },
+  {
+    "id": "literal-extension-middle-07",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "middle",
+    "rule": "提示语在中间",
+    "text": "[0]别担心[1]爸爸说[2]我会在校门口等你[3]",
+    "answers": [
+      "“",
+      "，”",
+      "，“",
+      "。”"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      2,
+      2
+    ],
+    "complete": "“别担心，”爸爸说，“我会在校门口等你。”",
+    "source": {
+      "type": "自编例句",
+      "original": "“别担心，”爸爸说，“我会在校门口等你。”"
+    },
+    "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。"
+  },
+  {
+    "id": "literal-extension-middle-08",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "middle",
+    "rule": "提示语在中间",
+    "text": "[0]快看[1]妹妹叫起来[2]小猫正在追尾巴[3]",
+    "answers": [
+      "“",
+      "！”",
+      "，“",
+      "！”"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      2,
+      2
+    ],
+    "complete": "“快看！”妹妹叫起来，“小猫正在追尾巴！”",
+    "source": {
+      "type": "自编例句",
+      "original": "“快看！”妹妹叫起来，“小猫正在追尾巴！”"
+    },
+    "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。"
+  },
+  {
+    "id": "literal-extension-middle-09",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "middle",
+    "rule": "提示语在中间",
+    "text": "[0]这朵花真漂亮[1]小刚赞叹道[2]颜色也很鲜艳[3]",
+    "answers": [
+      "“",
+      "！”",
+      "，“",
+      "。”"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      2,
+      2
+    ],
+    "complete": "“这朵花真漂亮！”小刚赞叹道，“颜色也很鲜艳。”",
+    "source": {
+      "type": "自编例句",
+      "original": "“这朵花真漂亮！”小刚赞叹道，“颜色也很鲜艳。”"
+    },
+    "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。本题也接受语气合理的另一种写法，标点顺序仍须正确。",
+    "acceptedAnswers": [
+      [
+        "“",
+        "！”",
+        "，“",
+        "。”"
+      ],
+      [
+        "“",
+        "，”",
+        "，“",
+        "。”"
+      ]
+    ]
+  },
+  {
+    "id": "literal-extension-middle-10",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "middle",
+    "rule": "提示语在中间",
+    "text": "[0]我先扫地[1]小华说[2]你来擦黑板吧[3]",
+    "answers": [
+      "“",
+      "，”",
+      "，“",
+      "。”"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      2,
+      2
+    ],
+    "complete": "“我先扫地，”小华说，“你来擦黑板吧。”",
+    "source": {
+      "type": "自编例句",
+      "original": "“我先扫地，”小华说，“你来擦黑板吧。”"
+    },
+    "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。"
+  },
+  {
+    "id": "literal-extension-middle-11",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "middle",
+    "rule": "提示语在中间",
+    "text": "[0]你饿了吗[1]奶奶问[2]要不要吃个苹果[3]",
+    "answers": [
+      "“",
+      "？”",
+      "，“",
+      "？”"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      2,
+      2
+    ],
+    "complete": "“你饿了吗？”奶奶问，“要不要吃个苹果？”",
+    "source": {
+      "type": "自编例句",
+      "original": "“你饿了吗？”奶奶问，“要不要吃个苹果？”"
+    },
+    "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。"
+  },
+  {
+    "id": "literal-extension-middle-12",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "middle",
+    "rule": "提示语在中间",
+    "text": "[0]今天我值日[1]班长说[2]大家先回家吧[3]",
+    "answers": [
+      "“",
+      "，”",
+      "，“",
+      "。”"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      2,
+      2
+    ],
+    "complete": "“今天我值日，”班长说，“大家先回家吧。”",
+    "source": {
+      "type": "自编例句",
+      "original": "“今天我值日，”班长说，“大家先回家吧。”"
+    },
+    "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。"
+  },
+  {
+    "id": "literal-extension-middle-13",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "middle",
+    "rule": "提示语在中间",
+    "text": "[0]请排好队[1]老师提醒[2]不要推挤[3]",
+    "answers": [
+      "“",
+      "，”",
+      "，“",
+      "。”"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      2,
+      2
+    ],
+    "complete": "“请排好队，”老师提醒，“不要推挤。”",
+    "source": {
+      "type": "自编例句",
+      "original": "“请排好队，”老师提醒，“不要推挤。”"
+    },
+    "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。"
+  },
+  {
+    "id": "literal-extension-middle-14",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "middle",
+    "rule": "提示语在中间",
+    "text": "[0]我喜欢画画[1]小雨说[2]也喜欢唱歌[3]",
+    "answers": [
+      "“",
+      "，”",
+      "，“",
+      "。”"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      2,
+      2
+    ],
+    "complete": "“我喜欢画画，”小雨说，“也喜欢唱歌。”",
+    "source": {
+      "type": "自编例句",
+      "original": "“我喜欢画画，”小雨说，“也喜欢唱歌。”"
+    },
+    "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。"
+  },
+  {
+    "id": "literal-extension-middle-15",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "middle",
+    "rule": "提示语在中间",
+    "text": "[0]太好了[1]同学们欢呼[2]我们的球队赢了[3]",
+    "answers": [
+      "“",
+      "！”",
+      "，“",
+      "！”"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      2,
+      2
+    ],
+    "complete": "“太好了！”同学们欢呼，“我们的球队赢了！”",
+    "source": {
+      "type": "自编例句",
+      "original": "“太好了！”同学们欢呼，“我们的球队赢了！”"
+    },
+    "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。"
+  },
+  {
+    "id": "literal-extension-middle-16",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "middle",
+    "rule": "提示语在中间",
+    "text": "[0]我读完了[1]小红说[2]这本书真有趣[3]",
+    "answers": [
+      "“",
+      "，”",
+      "，“",
+      "。”"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      2,
+      2
+    ],
+    "complete": "“我读完了，”小红说，“这本书真有趣。”",
+    "source": {
+      "type": "自编例句",
+      "original": "“我读完了，”小红说，“这本书真有趣。”"
+    },
+    "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。"
+  },
+  {
+    "id": "literal-extension-after-01",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "after",
+    "rule": "提示语在后",
+    "text": "[0]今天的作业是什么[1]小军问[2]",
+    "answers": [
+      "“",
+      "？”",
+      "。"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      1
+    ],
+    "complete": "“今天的作业是什么？”小军问。",
+    "source": {
+      "type": "自编例句",
+      "original": "“今天的作业是什么？”小军问。"
+    },
+    "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。"
+  },
+  {
+    "id": "literal-extension-after-02",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "after",
+    "rule": "提示语在后",
+    "text": "[0]我把教室打扫干净了[1]小华说[2]",
+    "answers": [
+      "“",
+      "。”",
+      "。"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      1
+    ],
+    "complete": "“我把教室打扫干净了。”小华说。",
+    "source": {
+      "type": "自编例句",
+      "original": "“我把教室打扫干净了。”小华说。"
+    },
+    "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。"
+  },
+  {
+    "id": "literal-extension-after-03",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "after",
+    "rule": "提示语在后",
+    "text": "[0]你能陪我踢球吗[1]小明问[2]",
+    "answers": [
+      "“",
+      "？”",
+      "。"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      1
+    ],
+    "complete": "“你能陪我踢球吗？”小明问。",
+    "source": {
+      "type": "自编例句",
+      "original": "“你能陪我踢球吗？”小明问。"
+    },
+    "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。"
+  },
+  {
+    "id": "literal-extension-after-04",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "after",
+    "rule": "提示语在后",
+    "text": "[0]别跑，小心摔倒[1]老师提醒[2]",
+    "answers": [
+      "“",
+      "！”",
+      "。"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      1
+    ],
+    "complete": "“别跑，小心摔倒！”老师提醒。",
+    "source": {
+      "type": "自编例句",
+      "original": "“别跑，小心摔倒！”老师提醒。"
+    },
+    "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。"
+  },
+  {
+    "id": "literal-extension-after-05",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "after",
+    "rule": "提示语在后",
+    "text": "[0]这幅画是你画的吗[1]妈妈问[2]",
+    "answers": [
+      "“",
+      "？”",
+      "。"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      1
+    ],
+    "complete": "“这幅画是你画的吗？”妈妈问。",
+    "source": {
+      "type": "自编例句",
+      "original": "“这幅画是你画的吗？”妈妈问。"
+    },
+    "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。"
+  },
+  {
+    "id": "literal-extension-after-06",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "after",
+    "rule": "提示语在后",
+    "text": "[0]我想再读一遍这个故事[1]妹妹说[2]",
+    "answers": [
+      "“",
+      "。”",
+      "。"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      1
+    ],
+    "complete": "“我想再读一遍这个故事。”妹妹说。",
+    "source": {
+      "type": "自编例句",
+      "original": "“我想再读一遍这个故事。”妹妹说。"
+    },
+    "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。"
+  },
+  {
+    "id": "literal-extension-after-07",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "after",
+    "rule": "提示语在后",
+    "text": "[0]快来帮我扶住梯子[1]爸爸喊[2]",
+    "answers": [
+      "“",
+      "！”",
+      "。"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      1
+    ],
+    "complete": "“快来帮我扶住梯子！”爸爸喊。",
+    "source": {
+      "type": "自编例句",
+      "original": "“快来帮我扶住梯子！”爸爸喊。"
+    },
+    "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。"
+  },
+  {
+    "id": "literal-extension-after-08",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "after",
+    "rule": "提示语在后",
+    "text": "[0]你的铅笔掉在地上了[1]同桌提醒[2]",
+    "answers": [
+      "“",
+      "。”",
+      "。"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      1
+    ],
+    "complete": "“你的铅笔掉在地上了。”同桌提醒。",
+    "source": {
+      "type": "自编例句",
+      "original": "“你的铅笔掉在地上了。”同桌提醒。"
+    },
+    "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。"
+  },
+  {
+    "id": "literal-extension-after-09",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "after",
+    "rule": "提示语在后",
+    "text": "[0]我们一起爱护花草吧[1]班长提议[2]",
+    "answers": [
+      "“",
+      "！”",
+      "。"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      1
+    ],
+    "complete": "“我们一起爱护花草吧！”班长提议。",
+    "source": {
+      "type": "自编例句",
+      "original": "“我们一起爱护花草吧！”班长提议。"
+    },
+    "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。"
+  },
+  {
+    "id": "literal-extension-after-10",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "after",
+    "rule": "提示语在后",
+    "text": "[0]这碗汤真好喝[1]弟弟赞叹[2]",
+    "answers": [
+      "“",
+      "！”",
+      "。"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      1
+    ],
+    "complete": "“这碗汤真好喝！”弟弟赞叹。",
+    "source": {
+      "type": "自编例句",
+      "original": "“这碗汤真好喝！”弟弟赞叹。"
+    },
+    "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。"
+  },
+  {
+    "id": "literal-extension-after-11",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "after",
+    "rule": "提示语在后",
+    "text": "[0]下午几点到图书馆[1]小丽问[2]",
+    "answers": [
+      "“",
+      "？”",
+      "。"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      1
+    ],
+    "complete": "“下午几点到图书馆？”小丽问。",
+    "source": {
+      "type": "自编例句",
+      "original": "“下午几点到图书馆？”小丽问。"
+    },
+    "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。"
+  },
+  {
+    "id": "literal-extension-after-12",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "after",
+    "rule": "提示语在后",
+    "text": "[0]我已经准备好书包了[1]小红说[2]",
+    "answers": [
+      "“",
+      "。”",
+      "。"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      1
+    ],
+    "complete": "“我已经准备好书包了。”小红说。",
+    "source": {
+      "type": "自编例句",
+      "original": "“我已经准备好书包了。”小红说。"
+    },
+    "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。"
+  },
+  {
+    "id": "literal-extension-after-13",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "after",
+    "rule": "提示语在后",
+    "text": "[0]雨停了，我们可以出门了[1]爷爷说[2]",
+    "answers": [
+      "“",
+      "。”",
+      "。"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      1
+    ],
+    "complete": "“雨停了，我们可以出门了。”爷爷说。",
+    "source": {
+      "type": "自编例句",
+      "original": "“雨停了，我们可以出门了。”爷爷说。"
+    },
+    "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。"
+  },
+  {
+    "id": "literal-extension-after-14",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "after",
+    "rule": "提示语在后",
+    "text": "[0]请把垃圾放进垃圾桶[1]老师说[2]",
+    "answers": [
+      "“",
+      "。”",
+      "。"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      1
+    ],
+    "complete": "“请把垃圾放进垃圾桶。”老师说。",
+    "source": {
+      "type": "自编例句",
+      "original": "“请把垃圾放进垃圾桶。”老师说。"
+    },
+    "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。"
+  },
+  {
+    "id": "literal-extension-middle-17",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "middle",
+    "rule": "提示语在中间",
+    "text": "[0]慢一点[1]妈妈提醒[2]台阶有些湿[3]",
+    "answers": [
+      "“",
+      "，”",
+      "，“",
+      "。”"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      2,
+      2
+    ],
+    "complete": "“慢一点，”妈妈提醒，“台阶有些湿。”",
+    "source": {
+      "type": "自编例句",
+      "original": "“慢一点，”妈妈提醒，“台阶有些湿。”"
+    },
+    "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。"
+  },
+  {
+    "id": "literal-extension-middle-18",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "middle",
+    "rule": "提示语在中间",
+    "text": "[0]我准备好了[1]小华说[2]现在可以出发吗[3]",
+    "answers": [
+      "“",
+      "！”",
+      "，“",
+      "？”"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      2,
+      2
+    ],
+    "complete": "“我准备好了！”小华说，“现在可以出发吗？”",
+    "source": {
+      "type": "自编例句",
+      "original": "“我准备好了！”小华说，“现在可以出发吗？”"
+    },
+    "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。"
+  },
+  {
+    "id": "literal-extension-middle-19",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "middle",
+    "rule": "提示语在中间",
+    "text": "[0]书找到了吗[1]小丽问[2]我帮你一起找吧[3]",
+    "answers": [
+      "“",
+      "？”",
+      "，“",
+      "。”"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      2,
+      2
+    ],
+    "complete": "“书找到了吗？”小丽问，“我帮你一起找吧。”",
+    "source": {
+      "type": "自编例句",
+      "original": "“书找到了吗？”小丽问，“我帮你一起找吧。”"
+    },
+    "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。"
+  },
+  {
+    "id": "literal-extension-middle-20",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "middle",
+    "rule": "提示语在中间",
+    "text": "[0]轮到我了[1]小明说[2]我来给大家讲故事[3]",
+    "answers": [
+      "“",
+      "，”",
+      "，“",
+      "。”"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      2,
+      2
+    ],
+    "complete": "“轮到我了，”小明说，“我来给大家讲故事。”",
+    "source": {
+      "type": "自编例句",
+      "original": "“轮到我了，”小明说，“我来给大家讲故事。”"
+    },
+    "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。"
+  },
+  {
+    "id": "literal-extension-middle-21",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "middle",
+    "rule": "提示语在中间",
+    "text": "[0]这是什么声音[1]弟弟问[2]好像是小鸟在唱歌[3]",
+    "answers": [
+      "“",
+      "？”",
+      "，“",
+      "。”"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      2,
+      2
+    ],
+    "complete": "“这是什么声音？”弟弟问，“好像是小鸟在唱歌。”",
+    "source": {
+      "type": "自编例句",
+      "original": "“这是什么声音？”弟弟问，“好像是小鸟在唱歌。”"
+    },
+    "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。"
+  },
+  {
+    "id": "literal-extension-middle-22",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "middle",
+    "rule": "提示语在中间",
+    "text": "[0]请关上窗户[1]老师说[2]外面起风了[3]",
+    "answers": [
+      "“",
+      "，”",
+      "，“",
+      "。”"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      2,
+      2
+    ],
+    "complete": "“请关上窗户，”老师说，“外面起风了。”",
+    "source": {
+      "type": "自编例句",
+      "original": "“请关上窗户，”老师说，“外面起风了。”"
+    },
+    "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。"
+  },
+  {
+    "id": "literal-extension-middle-23",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "middle",
+    "rule": "提示语在中间",
+    "text": "[0]我有个办法[1]班长说[2]我们分成两组来做[3]",
+    "answers": [
+      "“",
+      "，”",
+      "，“",
+      "。”"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      2,
+      2
+    ],
+    "complete": "“我有个办法，”班长说，“我们分成两组来做。”",
+    "source": {
+      "type": "自编例句",
+      "original": "“我有个办法，”班长说，“我们分成两组来做。”"
+    },
+    "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。"
+  },
+  {
+    "id": "literal-extension-middle-24",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "middle",
+    "rule": "提示语在中间",
+    "text": "[0]真香啊[1]妹妹说[2]是谁在烤面包[3]",
+    "answers": [
+      "“",
+      "！”",
+      "，“",
+      "？”"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      2,
+      2
+    ],
+    "complete": "“真香啊！”妹妹说，“是谁在烤面包？”",
+    "source": {
+      "type": "自编例句",
+      "original": "“真香啊！”妹妹说，“是谁在烤面包？”"
+    },
+    "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。"
+  },
+  {
+    "id": "literal-extension-middle-25",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "middle",
+    "rule": "提示语在中间",
+    "text": "[0]你冷不冷[1]爸爸问[2]要不要穿上外套[3]",
+    "answers": [
+      "“",
+      "？”",
+      "，“",
+      "？”"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      2,
+      2
+    ],
+    "complete": "“你冷不冷？”爸爸问，“要不要穿上外套？”",
+    "source": {
+      "type": "自编例句",
+      "original": "“你冷不冷？”爸爸问，“要不要穿上外套？”"
+    },
+    "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。"
+  },
+  {
+    "id": "literal-extension-middle-26",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "middle",
+    "rule": "提示语在中间",
+    "text": "[0]我来浇水[1]小红说[2]你帮我扶着花盆[3]",
+    "answers": [
+      "“",
+      "，”",
+      "，“",
+      "。”"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      2,
+      2
+    ],
+    "complete": "“我来浇水，”小红说，“你帮我扶着花盆。”",
+    "source": {
+      "type": "自编例句",
+      "original": "“我来浇水，”小红说，“你帮我扶着花盆。”"
+    },
+    "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。"
+  },
+  {
+    "id": "literal-extension-middle-27",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "middle",
+    "rule": "提示语在中间",
+    "text": "[0]别碰热水壶[1]奶奶提醒[2]小心烫手[3]",
+    "answers": [
+      "“",
+      "！”",
+      "，“",
+      "。”"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      2,
+      2
+    ],
+    "complete": "“别碰热水壶！”奶奶提醒，“小心烫手。”",
+    "source": {
+      "type": "自编例句",
+      "original": "“别碰热水壶！”奶奶提醒，“小心烫手。”"
+    },
+    "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。"
+  },
+  {
+    "id": "literal-extension-middle-28",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "middle",
+    "rule": "提示语在中间",
+    "text": "[0]颜色选好了[1]小雨说[2]我想画一片蓝天[3]",
+    "answers": [
+      "“",
+      "，”",
+      "，“",
+      "。”"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      2,
+      2
+    ],
+    "complete": "“颜色选好了，”小雨说，“我想画一片蓝天。”",
+    "source": {
+      "type": "自编例句",
+      "original": "“颜色选好了，”小雨说，“我想画一片蓝天。”"
+    },
+    "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。"
+  },
+  {
+    "id": "literal-extension-middle-29",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "middle",
+    "rule": "提示语在中间",
+    "text": "[0]欢迎你[1]同学们说[2]来和我们一起玩吧[3]",
+    "answers": [
+      "“",
+      "！”",
+      "，“",
+      "。”"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      2,
+      2
+    ],
+    "complete": "“欢迎你！”同学们说，“来和我们一起玩吧。”",
+    "source": {
+      "type": "自编例句",
+      "original": "“欢迎你！”同学们说，“来和我们一起玩吧。”"
+    },
+    "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。"
+  },
+  {
+    "id": "literal-extension-middle-30",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "middle",
+    "rule": "提示语在中间",
+    "text": "[0]作业检查了吗[1]妈妈问[2]请再看一遍[3]",
+    "answers": [
+      "“",
+      "？”",
+      "，“",
+      "。”"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      2,
+      2
+    ],
+    "complete": "“作业检查了吗？”妈妈问，“请再看一遍。”",
+    "source": {
+      "type": "自编例句",
+      "original": "“作业检查了吗？”妈妈问，“请再看一遍。”"
+    },
+    "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。"
+  },
+  {
+    "id": "literal-extension-middle-31",
+    "origin": "extension",
+    "difficulty": "medium",
+    "position": "middle",
+    "rule": "提示语在中间",
+    "text": "[0]不要着急[1]爷爷说[2]先把事情讲清楚[3]",
+    "answers": [
+      "“",
+      "，”",
+      "，“",
+      "。”"
+    ],
+    "slotLimits": [
+      1,
+      2,
+      2,
+      2
+    ],
+    "complete": "“不要着急，”爷爷说，“先把事情讲清楚。”",
+    "source": {
+      "type": "自编例句",
+      "original": "“不要着急，”爷爷说，“先把事情讲清楚。”"
+    },
+    "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。"
+  }
+];
+
+        const punctuationOptions = ["。", "，", "？", "！", "：", "“", "”"];
+
+        // ================= 游戏全局状态 =================
+        let p1Questions = [];
+        let p2Questions = [];
+        let p1Index = 0;
+        let p2Index = 0;
+        
+        let p1Score = 0, p2Score = 0;
+        let p1Combo = 0, p2Combo = 0; 
+        let timeLeft = 150; // 题目增多，时间延长至150秒
+        let timerInterval;
+        let activeBlanks = { 1: null, 2: null }; 
+        let isGameOver = false;
+        let gameStarted = false;
+        let deadline = 0;
+        const submitted = {1: false, 2: false};
+        function shuffle(items) {
+            const result = [...items];
+            for (let i=result.length-1;i>0;i--) {
+                const j=Math.floor(Math.random()*(i+1));
+                [result[i],result[j]]=[result[j],result[i]];
+            }
+            return result;
+        }
+        function sampleRound() {
+            const rounds = [[], []];
+            // The book contains only two suitable middle-position originals. Use either quota equally, for both players.
+            const middleTextbook = Math.random() < .5 ? 0 : 1;
+            const quotas = {before:{textbook:6-middleTextbook,extension:1+middleTextbook},middle:{textbook:middleTextbook,extension:6-middleTextbook},after:{textbook:4,extension:3}};
+            for (const [position, origins] of Object.entries(quotas)) {
+                for (const [origin, count] of Object.entries(origins)) {
+                    const pool = shuffle(questionBank.filter(q => q.position === position && q.origin === origin));
+                    if (pool.length < count * 2) throw new Error('分类题量不足，请刷新页面。');
+                    rounds[0].push(...pool.slice(0,count));
+                    rounds[1].push(...pool.slice(count,count*2));
+                }
+            }
+            return rounds.map(shuffle);
+        }
+
+
+        // ================= 游戏初始化 =================
+        function startGame() {
+            if (gameStarted) return;
+            gameStarted = true;
+            timeLeft=GameExperience.getDuration();
+            const roundDeadline=GameExperience.startRound();
+            document.getElementById('timer').textContent=timeLeft+'s';
+            deadline = roundDeadline;
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('game-screen').classList.remove('hidden');
+            
+            // 双方各20道不同的题，课内、课外各10题；7前6中7后，总计59根横线。
+            [p1Questions, p2Questions] = sampleRound();
+
+            // 初始化双方第一题
+            loadQuestionForPlayer(1);
+            loadQuestionForPlayer(2);
+            
+            startTimer();
+        }
+
+        function loadQuestionForPlayer(player) {
+            if (isGameOver) return;
+
+            const questions = player === 1 ? p1Questions : p2Questions;
+            const index = player === 1 ? p1Index : p2Index;
+            const q = questions[index];
+            submitted[player] = false;
+            activeBlanks[player] = null;
+            document.querySelectorAll(`#tray-container-${player} button`).forEach(b=>b.disabled=!q);
+
+            // 检查该玩家是否已经做完
+            if (!q) {
+                document.getElementById(`question-${player}`).innerHTML = `<div class="waiting-overlay"> 已完成所有题目<br>等待对手...</div>`;
+                document.getElementById(`tray-container-${player}`).style.opacity = '0.3';
+                document.getElementById(`tray-container-${player}`).style.pointerEvents = 'none';
+                checkGameEnd();
+                return;
+            }
+
+            document.getElementById(`rule-${player}`).innerText = q.rule;
+            const questionArea = document.getElementById(`question-${player}`);
+            const tray = document.getElementById(`tray-${player}`);
+
+            // 渲染题目
+            let html = q.text.replace(/\[(\d+)\]/g, (match, blankIndex) => {
+                const capacity = q.slotLimits[Number(blankIndex)];
+                return `<span class="blank" role="button" tabindex="0" data-index="${blankIndex}" data-capacity="${capacity}" aria-label="第${Number(blankIndex)+1}格标点填写横线" onclick="activateBlank(${player}, this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();activateBlank(${player},this)}"></span>`;
+            });
+            questionArea.innerHTML = html;
+            const progress = document.createElement('div');
+            progress.className = 'question-source';
+            progress.textContent = `第 ${index+1} / ${questions.length} 题 · ${q.rule} · ` +
+                (q.origin === 'extension' ? '课外·自编例句' : `课内·《${q.source.lesson}》原句`);
+            questionArea.prepend(progress);
+            const inputMessage = document.createElement('div');
+            inputMessage.id = `input-message-${player}`;
+            inputMessage.className = 'input-message';
+            inputMessage.setAttribute('role','status');
+            inputMessage.textContent = '先选横线，再逐个点选标点。';
+            questionArea.append(inputMessage);
+            const feedback = document.createElement('div');
+            feedback.id = `feedback-${player}`;
+            feedback.className = 'answer-feedback';
+            feedback.setAttribute('role','status');
+            questionArea.append(feedback);
+
+            // 渲染标点按钮
+            tray.innerHTML = '';
+            punctuationOptions.forEach(p => {
+                const btn = document.createElement('button');
+                btn.className = 'punctuation-btn';
+                btn.innerText = p;
+                btn.onclick = () => appendPunctuation(player, p);
+                tray.appendChild(btn);
+            });
+            
+            activeBlanks[player] = null;
+        }
+
+        // ================= 交互逻辑 =================
+        function inputReady(player) {
+            return gameStarted && !isGameOver && !submitted[player] && !GameExperience.expired();
+        }
+        function inputHint(player, message) {
+            const node = document.getElementById(`input-message-${player}`);
+            if (node) node.textContent = message;
+        }
+        function inputCount(player, blank) {
+            inputHint(player, '已选中横线，请逐个点选标点。');
+        }
+        function activateBlank(player, blankElement) {
+            if (!inputReady(player)) return;
+            document.querySelectorAll(`#panel-${player} .blank`).forEach(b => b.classList.remove('active'));
+            blankElement.classList.add('active');
+            activeBlanks[player] = blankElement;
+            inputCount(player,blankElement);
+        }
+        function appendPunctuation(player, punctuation) {
+            if (!inputReady(player) || !activeBlanks[player]) return;
+            if (!punctuationOptions.includes(punctuation) || Array.from(punctuation).length !== 1) return;
+            const blank = activeBlanks[player], capacity = Number(blank.dataset.capacity);
+            const existing = Array.from(blank.textContent);
+            if (capacity === 1) blank.textContent = punctuation;
+            else if (existing.length < capacity) blank.textContent += punctuation;
+            else { inputHint(player,'请先删除，再修改标点。'); return; }
+            inputCount(player,blank);
+        }
+        function deleteChar(player) {
+            if (!inputReady(player) || !activeBlanks[player]) return;
+            const blank = activeBlanks[player];
+            blank.textContent = Array.from(blank.textContent).slice(0,-1).join('');
+            inputCount(player,blank);
+        }
+        function clearPlayerAnswers(player) {
+            if (!inputReady(player)) return;
+            document.querySelectorAll(`#panel-${player} .blank`).forEach(b => b.textContent = '');
+            inputHint(player,'已清空，请逐个点选标点。');
+        }
+
+        // ================= 判定与计分逻辑 =================
+        function submitAnswer(player) { if(GameExperience.expired())return;
+            if (isGameOver || !gameStarted || submitted[player]) return;
+            if (Date.now() >= deadline) { endGame(); return; }
+            const available = player === 1 ? p1Questions : p2Questions;
+            const position = player === 1 ? p1Index : p2Index;
+            if (!available[position]) return;
+            
+            const blanks = document.querySelectorAll(`#panel-${player} .blank`);
+            const incomplete = Array.from(blanks).findIndex(b => Array.from(b.textContent.trim()).length !== Number(b.dataset.capacity));
+            if (incomplete >= 0) {
+                const blank = blanks[incomplete], count = Array.from(blank.textContent.trim()).length, capacity = Number(blank.dataset.capacity);
+                activateBlank(player,blank);
+                inputHint(player,'请检查横线是否填写完整。');
+                blank.focus();
+                return;
+            }
+            inputHint(player,'');
+
+            const questions = player === 1 ? p1Questions : p2Questions;
+            const index = player === 1 ? p1Index : p2Index;
+            const q = questions[index];
+
+            submitted[player] = true;
+            document.querySelectorAll(`#tray-container-${player} button`).forEach(b=>b.disabled=true);
+            const userAnswers = Array.from(blanks, b => b.innerText.trim());
+            const alternatives = q.acceptedAnswers || [q.answers];
+            const matching = alternatives.find(a => a.length === userAnswers.length && a.every((v,i) => v === userAnswers[i]));
+            const matchCount = a => a.reduce((n,v,i) => n + Number(v === userAnswers[i]),0);
+            const expectedAnswers = matching || alternatives.reduce((best,a) => matchCount(a) > matchCount(best) ? a : best,q.answers);
+            let correctCount = 0;
+
+            blanks.forEach((b, i) => {
+                const userAnswer = b.innerText.trim();
+                const correctAnswer = expectedAnswers[i].trim();
+                
+                if (userAnswer === correctAnswer) {
+                    b.classList.add('correct');
+                    correctCount++;
+                } else {
+                    b.classList.add('wrong');
+                }
+            });
+
+            const isAllCorrect = (correctCount === q.answers.length);
+            GameExperience.result(isAllCorrect,{player,combo:isAllCorrect?(player===1?p1Combo:p2Combo)+1:0});
+            const feedback = document.getElementById(`feedback-${player}`);
+            const correctedSentence = q.text.replace(/\[(\d+)\]/g, (_,i) => expectedAnswers[Number(i)]);
+            feedback.textContent = `${isAllCorrect ? '答对啦！' : '正确句子：'+correctedSentence} ${q.explanation}`;
+            const sourceDetails = document.createElement('details');
+            const sourceSummary = document.createElement('summary');
+            sourceSummary.textContent = q.origin === 'textbook' ? '查看课文来源原句' : '查看完整拓展例句';
+            const sourceText = document.createElement('p');
+            sourceText.textContent = q.source.original;
+            sourceDetails.append(sourceSummary,sourceText);
+            feedback.append(sourceDetails);
+            feedback.classList.add(isAllCorrect ? 'right-feedback' : 'wrong-feedback');
+
+            if (isAllCorrect) {
+                if (player === 1) p1Combo++; else p2Combo++;
+                let baseScore = 10 * q.answers.length; 
+                let comboBonus = (player === 1 ? p1Combo : p2Combo) > 1 ? 5 : 0; 
+                let totalAdd = baseScore + comboBonus;
+                
+                if (player === 1) p1Score += totalAdd; else p2Score += totalAdd;
+                showFloatScore(player, `+${totalAdd}`, "#FFD700");
+                if (comboBonus > 0) setTimeout(() => showFloatScore(player, " 连击!", "#ff9f43"), 300);
+            } else {
+                if (player === 1) p1Combo = 0; else p2Combo = 0; 
+                if (player === 1) p1Score = Math.max(0, p1Score - 5); else p2Score = Math.max(0, p2Score - 5);
+                showFloatScore(player, "-5", "#e74c3c");
+
+                setTimeout(() => {
+                    blanks.forEach((b, i) => {
+                        if (b.innerText.trim() !== expectedAnswers[i]) {
+                            b.innerText = expectedAnswers[i];
+                        }
+                    });
+                }, 800);
+            }
+
+            updateScoreboard();
+
+            const tray = document.getElementById(`tray-container-${player}`);
+            tray.style.opacity = '0.3';
+            tray.style.pointerEvents = 'none';
+
+            setTimeout(() => {
+                if (isGameOver) return;
+                tray.style.opacity = '1';
+                tray.style.pointerEvents = 'auto';
+                
+                if (player === 1) p1Index++; else p2Index++;
+                loadQuestionForPlayer(player);
+            }, isAllCorrect ? 2000 : 3000);
+        }
+
+        // ================= 视觉与辅助函数 =================
+        function showFloatScore(player, text, color) {
+            const panel = document.getElementById(`panel-${player}`);
+            const rect = panel.getBoundingClientRect();
+            const el = document.createElement('div');
+            el.className = 'float-score';
+            el.innerText = text;
+            el.style.color = color;
+            el.style.left = `${rect.width / 2 + (Math.random() * 100 - 50)}px`;
+            el.style.top = `40%`;
+            panel.appendChild(el);
+            setTimeout(() => el.remove(), 1500);
+        }
+
+        function updateScoreboard() {
+            document.getElementById('score-1').innerText = p1Score;
+            document.getElementById('score-2').innerText = p2Score;
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeLeft = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
+                document.getElementById('timer').innerText = timeLeft + 's';
+                if (timeLeft <= 10) document.getElementById('timer').style.color = "#ff4757";
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    endGame();
+                }
+            }, 1000);
+        }
+
+        function checkGameEnd() {
+            if (p1Index >= p1Questions.length && p2Index >= p2Questions.length) {
+                endGame();
+            }
+        }
+
+        function endGame() { GameExperience.endRound();
+            if (isGameOver) return;
+            isGameOver = true;
+            clearInterval(timerInterval);
+            
+            document.getElementById('game-screen').classList.add('hidden');
+            document.getElementById('end-screen').classList.remove('hidden');
+
+            const winnerText = document.getElementById('winner-text');
+            const finalScore = document.getElementById('final-score');
+            finalScore.innerText = `玩家一：${p1Score} 分  |  玩家二：${p2Score} 分`;
+            
+            if (p1Score > p2Score) {
+                winnerText.innerText = " 玩家一获胜！";
+                winnerText.style.color = "#4facfe";
+            } else if (p2Score > p1Score) {
+                winnerText.innerText = " 玩家二获胜！";
+                winnerText.style.color = "#ff6b81";
+            } else {
+                winnerText.innerText = "🤝 势均力敌，平局！🤝";
+                winnerText.style.color = "#FFD700";
+            }
+        }
+    </script>
+</body>
+</html>

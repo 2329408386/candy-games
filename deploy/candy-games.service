@@ -1,0 +1,28 @@
+[Unit]
+Description=Candy Games (语文 / 和 数学 /math/)
+After=network.target
+# Never give up restarting, however often it crashes.
+StartLimitIntervalSec=0
+
+[Service]
+User=candy-games
+Group=candy-games
+WorkingDirectory=/opt/candy-games
+EnvironmentFile=/var/lib/candy-games/secret.env
+Environment=GAME_DATA=/var/lib/candy-games
+ExecStart=/opt/candy-games/venv/bin/gunicorn --workers 6 --bind 127.0.0.1:18082 --timeout 30 --graceful-timeout 20 --max-requests 2000 --max-requests-jitter 200 wsgi:app
+# Graceful code reload. Sync workers (no --threads): threaded workers reset queued connections on reload.
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=always
+RestartSec=1
+TimeoutStopSec=25
+OOMScoreAdjust=-500
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/candy-games
+
+[Install]
+WantedBy=multi-user.target

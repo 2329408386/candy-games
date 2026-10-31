@@ -1,0 +1,56 @@
+[
+  {
+    "source": "GameSceneBGM.901e1914.mp3",
+    "file": "GameSceneBGM.901e1914.mp3",
+    "bytes": 698065,
+    "sha256": "901e19142cfffb29fdedc38d1b7a439d1e43e3ac7ca237c90fca18204538660d"
+  },
+  {
+    "source": "音效1.mp3",
+    "file": "effect-1.7f41f014.mp3",
+    "bytes": 28465,
+    "sha256": "7f41f014cfe9f365aee006c01a9e53559610071ac88c88478edd6ad961f71ff9"
+  },
+  {
+    "source": "音效2.mp3",
+    "file": "effect-2.fc93a259.mp3",
+    "bytes": 48318,
+    "sha256": "fc93a259551229ed376acbce3d52fa2f89492463ab7e1f891544875669f3f2c1"
+  },
+  {
+    "source": "音效3.mp3",
+    "file": "effect-3.ab6b19f8.mp3",
+    "bytes": 29741,
+    "sha256": "ab6b19f8a2f696b6327b1a85feeb7485ab989200700a6bfcf7e0ed21ade8780e"
+  },
+  {
+    "source": "音效4.mp3",
+    "file": "effect-4.315e65cd.mp3",
+    "bytes": 25121,
+    "sha256": "315e65cd46864b8857a386454d09e0adb65e2c08566dae0aefdb29b6add22f2d"
+  },
+  {
+    "source": "音效5.mp3",
+    "file": "effect-5.f2efcf54.mp3",
+    "bytes": 25861,
+    "sha256": "f2efcf541f737274871b3984b2d69207197aab9ad7ffe1ceb94929845ef00046"
+  },
+  {
+    "source": "音效6.mp3",
+    "file": "effect-6.f04fbe20.mp3",
+    "bytes": 16270,
+    "sha256": "f04fbe20664deec60139cf281c04a3b69ca5d84fd0e1f3ea5c4d7b4ebfa986c4"
+  },
+  {
+    "source": "音效7.mp3",
+    "file": "effect-7.aec9f8e1.mp3",
+    "bytes": 21691,
+    "sha256": "aec9f8e129eb62b7fa914e62456faae7e6ba9bb0e77e08734a6efd1fd25f68ef"
+  },
+  {
+    "source": "音效8.mp3",
+    "file": "effect-8.c1e4c173.mp3",
+    "bytes": 22942,
+    "sha256": "c1e4c1732ab2c53bf1db79d14fcedfd384d15fe957e6f998c7fa94615beafacc"
+  }
+]

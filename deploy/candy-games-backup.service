@@ -1,0 +1,14 @@
+[Unit]
+Description=Back up Candy Games database
+[Service]
+Type=oneshot
+User=candy-games
+Group=candy-games
+WorkingDirectory=/opt/candy-games
+EnvironmentFile=/var/lib/candy-games/secret.env
+Environment=GAME_DATA=/var/lib/candy-games
+ExecStart=/opt/candy-games/venv/bin/python manage.py backup
+UMask=0077
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/candy-games

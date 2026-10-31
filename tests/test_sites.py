@@ -1,0 +1,134 @@
+import re
+import pytest
+from conftest import SiteClient, KEYS, FLASK
+from sites import SITES
+
+@pytest.fixture(autouse=True)
+def reset_state(db):
+    db.execute('DELETE FROM devices');db.execute('DELETE FROM limits')
+    db.execute("UPDATE licenses SET enabled=1,device_limit=3 WHERE archived_at IS NULL")
+    db.execute("DELETE FROM license_groups WHERE license_id IN (1,2)")
+    db.executemany('INSERT INTO license_groups VALUES(?,?,?)',[(s,lid,'g3-t1-a') for s in ('chinese','math') for lid in (1,2)])
+    db.execute("UPDATE game_memberships SET group_id='g3-t1-a'");db.commit()
+
+def test_home_lists_all_games_and_prefixed_urls(client,site):
+    r=client.get('/');assert r.status_code==200
+    html=r.get_data(as_text=True)
+    for name in SITES[site].games.values():assert name in html
+    if site=='math':
+        assert not re.search(r'(?:href|action)="/(?:admin|api|games|static)',html)
+        assert '/math/static/site.css?v=' in html and '/math/api/csrf' in html
+    assert client.get('/health').get_json()=={'status':'ok'}
+
+def test_session_cookie_names_are_unchanged(client,site):
+    cookies=client.get('/api/csrf').headers.getlist('Set-Cookie')
+    name={'chinese':'session','math':'math_session'}[site]
+    assert any(c.startswith(name+'=') and 'Path=/;' in c for c in cookies),cookies
+
+def test_activation_unlocks_games_and_guard_uses_site_urls(client,site):
+    game=next(iter(SITES[site].games))
+    assert client.get('/games/'+game).status_code==403
+    assert client.post('/api/activate',json={'key':'WRONGKEY'}).status_code==403
+    r=client.activate(KEYS[site].lower()[:4]+'-'+KEYS[site][4:]);assert r.status_code==200,r.get_data(as_text=True)
+    body=r.get_json();assert body['games']==list(SITES[site].games) and body['group_scopes']==[{'id':'g3-t1-a','grade':'g3-t1','name':'A组'}]
+    page=client.get('/games/'+game);assert page.status_code==200
+    prefix='' if site=='chinese' else '/math'
+    assert f"fetch('{prefix}/api/session?game={game}'" in page.get_data(as_text=True)
+    assert f"location.replace('{prefix}/')" in page.get_data(as_text=True)
+    status=client.get('/api/session').get_json();assert status['device_count']==1 and status['device_limit']==3
+    assert client.get('/api/session?game=unknown').status_code==403
+
+def test_sites_are_isolated(site):
+    other='math' if site=='chinese' else 'chinese'
+    c=SiteClient(site)
+    assert c.activate(KEYS[other]).status_code==403,'a code only works on its own site'
+    assert c.activate().status_code==200
+    o=SiteClient(other);o.c=c.c  # same browser
+    assert o.get('/api/session').status_code==403,'activation must not leak to the other site'
+
+def test_device_limit(client,site):
+    assert client.activate().status_code==200
+    for _ in range(2):assert SiteClient(site).activate().status_code==200
+    r=SiteClient(site).activate();assert r.status_code==403 and '设备' in r.get_json()['error']
+    assert client.activate().status_code==200,'already-bound browser may re-activate'
+
+def test_csrf_and_rate_limit(client,site):
+    assert client.c.post(client.prefix+'/api/activate',json={'key':'X'}).status_code==400
+    for _ in range(30):client.post('/api/activate',json={'key':'BAD'})
+    assert client.post('/api/activate',json={'key':'BAD'}).status_code==429
+
+def test_legacy_html_routes_only_on_chinese(client,site):
+    if site=='chinese':
+        assert client.get('/游戏入口.html').headers['Location']=='/'
+        assert client.get('/标点pk.html').status_code==403
+    else:assert client.get('/mental-math.html').status_code==404
+
+def test_admin_pages(admin,site):
+    prefix='' if site=='chinese' else '/math'
+    for path in ['/admin','/admin?archived=1','/admin?q=1','/admin?grade=g3-t1','/admin?group=g3-t1-a','/admin?state=disabled','/admin/games','/admin/groups','/admin/licenses/new','/admin/licenses/1','/admin/password']:
+        r=admin.get(path);assert r.status_code==200,(path,r.status_code)
+        if site=='math':assert not re.search(r'(?:href|action)="/(?:admin|api|games|static)',r.get_data(as_text=True)),path
+    assert '<title>游戏分组管理 · '+SITES[site].title+'</title>' in admin.get('/admin/groups').get_data(as_text=True)
+    assert admin.get('/admin?group=unknown').status_code==400
+    assert admin.get('/admin/licenses/99').status_code==404
+    assert SiteClient(site).get('/admin').headers['Location']==prefix+'/admin/login'
+
+def test_group_permissions_follow_moves(admin,site,db):
+    user=SiteClient(site);assert user.activate().status_code==200
+    games=list(SITES[site].games);moved=games[-1]
+    assert admin.post('/admin/groups',{'action':'create','grade':'g3-t1','name':'B组'+site,'position':'1'}).status_code==302
+    bid=db.execute("SELECT id FROM game_groups WHERE site=? AND name=?",(site,'B组'+site)).fetchone()[0]
+    admin.post('/admin/groups',{'action':'move','grade':'g3-t1','game':moved,'group':bid})
+    assert user.get('/games/'+moved).status_code==403 and user.get('/games/'+games[0]).status_code==200
+    admin.post('/admin/licenses/1/groups',{'groups':['g3-t1-a',bid]})
+    assert user.get('/api/session').get_json()['games']==games
+    admin.post('/admin/licenses/1/groups',{'groups':[bid]})
+    assert user.get('/games/'+games[0]).status_code==403 and user.get('/games/'+moved).status_code==200
+    admin.post('/admin/groups',{'action':'move','grade':'g3-t1','game':moved,'group':'g4-t1-a'})
+    assert db.execute('SELECT group_id FROM game_memberships WHERE site=? AND game=?',(site,moved)).fetchone()[0]==bid,'cannot move across terms'
+    admin.post('/admin/groups',{'action':'rename','grade':'g3-t1','group':bid,'name':'拓展组'+site,'position':'2'})
+    assert user.get('/api/session').get_json()['group_scopes'][0]['name']=='拓展组'+site
+    admin.post('/admin/groups',{'action':'delete','grade':'g3-t1','group':bid})
+    assert db.execute('SELECT 1 FROM game_groups WHERE site=? AND id=?',(site,bid)).fetchone(),'referenced group is kept'
+
+def test_generate_codes_is_idempotent_and_numbered_per_site(admin,site,db):
+    prefix='' if site=='chinese' else '/math'
+    before=db.execute('SELECT max(id) FROM licenses WHERE site=?',(site,)).fetchone()[0]
+    nonce=re.search(r'name="nonce" value="([^"]+)"',admin.get('/admin/licenses/new').get_data(as_text=True)).group(1)
+    form={'nonce':nonce,'groups':['g3-t1-a'],'quantity':'2','device_limit':'2'}
+    r=admin.post('/admin/licenses/new',form);assert r.status_code==302 and r.headers['Location'].startswith(prefix+'/admin?batch=')
+    rows=db.execute('SELECT id,device_limit FROM licenses WHERE site=? AND id>? ORDER BY id',(site,before)).fetchall()
+    assert [tuple(r) for r in rows]==[(before+1,2),(before+2,2)]
+    admin.post('/admin/licenses/new',form)
+    assert db.execute('SELECT max(id) FROM licenses WHERE site=?',(site,)).fetchone()[0]==before+2,'nonce reuse must not regenerate'
+    code=db.execute('SELECT code FROM license_keys WHERE site=? AND license_id=?',(site,before+1)).fetchone()[0]
+    assert SiteClient(site).activate(code).status_code==200
+
+def test_license_edits_export_and_archive_guard(admin,site):
+    user=SiteClient(site);assert user.activate().status_code==200
+    admin.post('/admin/licenses/1/assign',{'buyer':'=1+1'})
+    csv=admin.get('/admin/export').get_data(as_text=True)
+    assert "'=1+1" in csv and KEYS[site] in csv and '三年级上册／A组' in csv
+    assert admin.post('/admin/licenses/3/enable',{}).status_code==403
+    admin.post('/admin/licenses/1/limit',{'device_limit':'0'})
+    admin.post('/admin/licenses/1/disable',{});assert user.get('/api/session').status_code==403
+    admin.post('/admin/licenses/1/enable',{});assert user.get('/api/session').status_code==200
+    assert admin.post('/admin/licenses/1/bogus',{}).status_code==404
+
+def test_admin_password_change_and_logout_keep_device(site,db):
+    from werkzeug.security import generate_password_hash
+    from conftest import PASSWORD
+    a=SiteClient(site);assert a.activate().status_code==200;assert a.login().status_code==302
+    db.execute('UPDATE admin SET must_change=1 WHERE site=?',(site,));db.commit()
+    prefix='' if site=='chinese' else '/math'
+    assert a.get('/admin').headers['Location']==prefix+'/admin/password'
+    r=a.post('/admin/password',{'old':PASSWORD,'password':'new-password-456','confirm':'new-password-456'})
+    assert r.headers['Location']==prefix+'/admin/login'
+    assert a.get('/api/session').status_code==200,'admin sign-in/out keeps the game device'
+    db.execute('UPDATE admin SET password=?,must_change=0 WHERE site=?',(generate_password_hash(PASSWORD),site));db.commit()
+
+def test_static_files(client,site):
+    r=client.get('/static/site.css');assert r.status_code==200 and 'no-store' not in r.headers.get('Cache-Control','')
+    audio=[p.name for p in (SITES[site].static_root.parent.parent.parent/'shared-static'/'game-audio-v3').glob('*.mp3')]
+    assert client.get('/static/game-audio-v3/'+audio[0]).status_code==200
+    assert client.get('/').headers['Cache-Control']=='no-store'
