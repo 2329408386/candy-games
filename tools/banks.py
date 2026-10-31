@@ -81,6 +81,8 @@ def check_choice(q, bank, game):
         start, length = q["focus"]
         if not (0 <= start and length > 0 and start + length <= len(q["prompt"])):
             errors.append(f"focus 越界：{q['focus']}")
+        elif q.get("blank") and q["prompt"].count(q["prompt"][start : start + length]) > 1:
+            errors.append("挖空的字在句中其他位置出现，答案会被看到")
     elif q.get("blank"):
         errors.append("blank 需要 focus")
     if q.get("blank") and q["prompt"][q["focus"][0] : q["focus"][0] + q["focus"][1]] != q["answer"]:
@@ -220,9 +222,8 @@ def check_measure(q, bank, game):
         errors.append("答案各部分加起来不等于长度")
     if len(units) == 2:
         big, small = FACTORS[units[0]], FACTORS[units[1]]
-        # TODO(step5): re-enable once measure-081..100 use adjacent units.
-        # if big // small != 10:
-        #     errors.append(f"复名数应使用相邻单位：{units}")
+        if big // small != 10:
+            errors.append(f"复名数应使用相邻单位：{units}")
         if parts[1] >= big // small:
             errors.append("小单位部分应小于进率")
     if q["answer"] != "".join(f"{v}{u}" for v, u in zip(parts, units)):

@@ -20,7 +20,7 @@
    "targetWord": "晃眼",
    "options": ["huǎng", "huàng"],
    "answer": "huǎng",
-   "explanation": "“晃眼”中，“晃”读huǎng。这里光线太强，眼睛感到不舒服。",
+   "explanation": "“晃眼”中，“晃”读huǎng。这里指光线太强，眼睛感到不舒服。",
    "source": {
     "lesson": "图片多音字资料",
     "type": "配套例句",
@@ -64,7 +64,7 @@
    "targetWord": "摇晃",
    "options": ["huǎng", "huàng"],
    "answer": "huàng",
-   "explanation": "“摇晃”中，“晃”读huàng。这里向两边摆动。",
+   "explanation": "“摇晃”中，“晃”读huàng。这里指向两边摆动。",
    "source": {
     "lesson": "大青树下的小学",
     "type": "课文原句",
@@ -150,7 +150,7 @@
    "targetWord": "放假",
    "options": ["jiǎ", "jià"],
    "answer": "jià",
-   "explanation": "“放假”中，“假”读jià。这里按规定停止上课或工作。",
+   "explanation": "“放假”中，“假”读jià。这里指按规定停止上课或工作。",
    "source": {
     "lesson": "花的学校",
     "type": "课文原句",
@@ -193,7 +193,7 @@
    "targetWord": "挨近",
    "options": ["āi", "ái"],
    "answer": "āi",
-   "explanation": "“挨近”中，“挨”读āi。这里靠近。",
+   "explanation": "“挨近”中，“挨”读āi。这里指靠近。",
    "source": {
     "lesson": "图片多音字资料",
     "type": "配套例句",
@@ -237,7 +237,7 @@
    "targetWord": "挨打",
    "options": ["āi", "ái"],
    "answer": "ái",
-   "explanation": "“挨打”中，“挨”读ái。这里遭受打击。",
+   "explanation": "“挨打”中，“挨”读ái。这里指遭受打击。",
    "source": {
     "lesson": "不懂就要问",
     "type": "课文原句",
@@ -280,7 +280,7 @@
    "targetWord": "磨刀",
    "options": ["mó", "mò"],
    "answer": "mó",
-   "explanation": "“磨刀”中，“磨”读mó。这里摩擦使刀刃锋利。",
+   "explanation": "“磨刀”中，“磨”读mó。这里指摩擦使刀刃锋利。",
    "source": {
     "lesson": "图片多音字资料",
     "type": "配套例句",
@@ -324,7 +324,7 @@
    "targetWord": "磨坊",
    "options": ["mó", "mò"],
    "answer": "mò",
-   "explanation": "“磨坊”中，“磨”读mò。这里用磨加工粮食的作坊。",
+   "explanation": "“磨坊”中，“磨”读mò。这里指用磨加工粮食的作坊。",
    "source": {
     "lesson": "图片多音字资料",
     "type": "配套例句",
@@ -368,7 +368,7 @@
    "targetWord": "挑战",
    "options": ["tiǎo", "tiāo"],
    "answer": "tiǎo",
-   "explanation": "“挑战”中，“挑”读tiǎo。这里主动提出较量，或面对困难。",
+   "explanation": "“挑战”中，“挑”读tiǎo。这里指主动提出较量，或面对困难。",
    "source": {
     "lesson": "图片多音字资料",
     "type": "配套例句",
@@ -412,7 +412,7 @@
    "targetWord": "挑水",
    "options": ["tiǎo", "tiāo"],
    "answer": "tiāo",
-   "explanation": "“挑水”中，“挑”读tiāo。这里用肩膀担着水桶运水。",
+   "explanation": "“挑水”中，“挑”读tiāo。这里指用肩膀担着水桶运水。",
    "source": {
     "lesson": "图片多音字资料",
     "type": "配套例句",
@@ -456,7 +456,7 @@
    "targetWord": "缝补",
    "options": ["féng", "fèng"],
    "answer": "féng",
-   "explanation": "“缝补”中，“缝”读féng。这里用针线修补。",
+   "explanation": "“缝补”中，“缝”读féng。这里指用针线修补。",
    "source": {
     "lesson": "图片多音字资料",
     "type": "配套例句",
@@ -500,7 +500,7 @@
    "targetWord": "门缝",
    "options": ["féng", "fèng"],
    "answer": "fèng",
-   "explanation": "“门缝”中，“缝”读fèng。这里门上的狭长空隙。",
+   "explanation": "“门缝”中，“缝”读fèng。这里指门上的狭长空隙。",
    "source": {
     "lesson": "图片多音字资料",
     "type": "配套例句",
@@ -630,7 +630,7 @@
    "targetWord": "好吗",
    "options": ["ma", "má"],
    "answer": "ma",
-   "explanation": "“好吗”中，“吗”读ma。这里用于疑问句末的语气词，读轻声，不标声调。轻声不标声调。",
+   "explanation": "“好吗”中，“吗”读ma。这里是用于疑问句末的语气词，读轻声，不标声调。",
    "source": {
     "lesson": "图片多音字资料",
     "type": "配套例句",
@@ -675,7 +675,7 @@
    "targetWord": "干吗",
    "options": ["ma", "má"],
    "answer": "má",
-   "explanation": "“干吗”中，“吗”读má。这里口语中表示干什么、为什么。",
+   "explanation": "“干吗”中，“吗”读má。这里是口语中表示干什么、为什么。",
    "source": {
     "lesson": "小狗学叫",
     "type": "课文原句",
@@ -762,7 +762,7 @@
    "targetWord": "中奖",
    "options": ["zhōng", "zhòng"],
    "answer": "zhòng",
-   "explanation": "“中奖”中，“中”读zhòng。这里在抽奖中获得奖项。",
+   "explanation": "“中奖”中，“中”读zhòng。这里指在抽奖中获得奖项。",
    "source": {
     "lesson": "图片多音字资料",
     "type": "配套例句",
@@ -806,7 +806,7 @@
    "targetWord": "弹琴",
    "options": ["tán", "dàn"],
    "answer": "tán",
-   "explanation": "“弹琴”中，“弹”读tán。这里用手指拨弄或按动琴键演奏。",
+   "explanation": "“弹琴”中，“弹”读tán。这里指用手指拨弄或按动琴键演奏。",
    "source": {
     "lesson": "图片多音字资料",
     "type": "配套例句",
@@ -850,7 +850,7 @@
    "targetWord": "子弹",
    "options": ["tán", "dàn"],
    "answer": "dàn",
-   "explanation": "“子弹”中，“弹”读dàn。这里枪射出的弹丸。",
+   "explanation": "“子弹”中，“弹”读dàn。这里指枪射出的弹丸。",
    "source": {
     "lesson": "小狗学叫",
     "type": "课文原句",
@@ -981,7 +981,7 @@
    "targetWord": "冲动",
    "options": ["chōng", "chòng"],
    "answer": "chōng",
-   "explanation": "“冲动”中，“冲”读chōng。这里感情强烈，不能冷静思考。",
+   "explanation": "“冲动”中，“冲”读chōng。这里指感情强烈，不能冷静思考。",
    "source": {
     "lesson": "图片多音字资料",
     "type": "配套例句",
@@ -1068,7 +1068,7 @@
    "targetWord": "关系",
    "options": ["xì", "jì"],
    "answer": "xì",
-   "explanation": "“关系”中，“系”读xì。这里事物之间的联系。",
+   "explanation": "“关系”中，“系”读xì。这里指事物之间的联系。",
    "source": {
     "lesson": "图片多音字资料",
     "type": "配套例句",
@@ -1112,7 +1112,7 @@
    "targetWord": "系鞋带",
    "options": ["xì", "jì"],
    "answer": "jì",
-   "explanation": "“系鞋带”中，“系”读jì。这里打结、扣结使鞋带连起来。",
+   "explanation": "“系鞋带”中，“系”读jì。这里指打结、扣结使鞋带连起来。",
    "source": {
     "lesson": "图片多音字资料",
     "type": "配套例句",
@@ -1156,7 +1156,7 @@
    "targetWord": "回答",
    "options": ["dá", "dā"],
    "answer": "dá",
-   "explanation": "“回答”中，“答”读dá。这里对提出的问题作出回复。",
+   "explanation": "“回答”中，“答”读dá。这里指对提出的问题作出回复。",
    "source": {
     "lesson": "小狗学叫",
     "type": "课文原句",
@@ -1286,7 +1286,7 @@
    "targetWord": "应声",
    "options": ["yīng", "yìng"],
    "answer": "yìng",
-   "explanation": "“应声”中，“应”读yìng。这里听到呼唤后作出回应。",
+   "explanation": "“应声”中，“应”读yìng。这里指听到呼唤后作出回应。",
    "source": {
     "lesson": "图片多音字资料",
     "type": "配套例句",
@@ -1330,7 +1330,7 @@
    "targetWord": "卷起",
    "options": ["juǎn", "juàn"],
    "answer": "juǎn",
-   "explanation": "“卷起”中，“卷”读juǎn。这里把东西弯转裹成筒状。",
+   "explanation": "“卷起”中，“卷”读juǎn。这里指把东西弯转裹成筒状。",
    "source": {
     "lesson": "图片多音字资料",
     "type": "配套例句",
@@ -1356,7 +1356,7 @@
    "targetWord": "试卷",
    "options": ["juǎn", "juàn"],
    "answer": "juàn",
-   "explanation": "“试卷”中，“卷”读juàn。这里考试时使用的题纸。",
+   "explanation": "“试卷”中，“卷”读juàn。这里指考试时使用的题纸。",
    "source": {
     "lesson": "图片多音字资料",
     "type": "配套例句",
@@ -1382,7 +1382,7 @@
    "targetWord": "骨头",
    "options": ["gǔ", "gū"],
    "answer": "gǔ",
-   "explanation": "“骨头”中，“骨”读gǔ。这里支撑身体的坚硬组织。",
+   "explanation": "“骨头”中，“骨”读gǔ。这里指支撑身体的坚硬组织。",
    "source": {
     "lesson": "图片多音字资料",
     "type": "配套例句",
@@ -1408,7 +1408,7 @@
    "targetWord": "花骨朵",
    "options": ["gǔ", "gū"],
    "answer": "gū",
-   "explanation": "“花骨朵”中，“骨”读gū。这里还没有开放的花苞。",
+   "explanation": "“花骨朵”中，“骨”读gū。这里指还没有开放的花苞。",
    "source": {
     "lesson": "图片多音字资料",
     "type": "配套例句",
@@ -1434,7 +1434,7 @@
    "targetWord": "相处",
    "options": ["chǔ", "chù"],
    "answer": "chǔ",
-   "explanation": "“相处”中，“处”读chǔ。这里彼此生活在一起、交往。",
+   "explanation": "“相处”中，“处”读chǔ。这里指彼此生活在一起、交往。",
    "source": {
     "lesson": "图片多音字资料",
     "type": "配套例句",
@@ -1460,7 +1460,7 @@
    "targetWord": "到处",
    "options": ["chǔ", "chù"],
    "answer": "chù",
-   "explanation": "“到处”中，“处”读chù。这里各个地方。",
+   "explanation": "“到处”中，“处”读chù。这里指各个地方。",
    "source": {
     "lesson": "富饶的西沙群岛",
     "type": "课文原句",
@@ -1485,7 +1485,7 @@
    "targetWord": "手臂",
    "options": ["bì", "bei"],
    "answer": "bì",
-   "explanation": "“手臂”中，“臂”读bì。这里上肢的一部分。",
+   "explanation": "“手臂”中，“臂”读bì。这里指上肢的一部分。",
    "source": {
     "lesson": "听听，秋的声音",
     "type": "课文原句",
@@ -1510,7 +1510,7 @@
    "targetWord": "胳臂",
    "options": ["bì", "bei"],
    "answer": "bei",
-   "explanation": "“胳臂”中，“臂”读bei。这里指人的上肢，这个词的后一个字读轻声。轻声不标声调。",
+   "explanation": "“胳臂”中，“臂”读bei。这里指人的上肢，这个词的后一个字读轻声，不标声调。",
    "source": {
     "lesson": "海滨小城",
     "type": "课文原句",
@@ -1535,7 +1535,7 @@
    "targetWord": "兴奋",
    "options": ["xīng", "xìng"],
    "answer": "xīng",
-   "explanation": "“兴奋”中，“兴”读xīng。这里因高兴或激动而情绪振奋。",
+   "explanation": "“兴奋”中，“兴”读xīng。这里指因高兴或激动而情绪振奋。",
    "source": {
     "lesson": "一定要争气",
     "type": "课文原句",
@@ -1560,7 +1560,7 @@
    "targetWord": "高兴",
    "options": ["xīng", "xìng"],
    "answer": "xìng",
-   "explanation": "“高兴”中，“兴”读xìng。这里感到快乐。",
+   "explanation": "“高兴”中，“兴”读xìng。这里指感到快乐。",
    "source": {
     "lesson": "小狗学叫",
     "type": "课文原句",
@@ -1611,7 +1611,7 @@
    "targetWord": "好啦",
    "options": ["lā", "la"],
    "answer": "la",
-   "explanation": "“好啦”中，“啦”读la。这里句末语气词，读轻声，不标声调。轻声不标声调。",
+   "explanation": "“好啦”中，“啦”读la。这里是句末语气词，读轻声，不标声调。",
    "source": {
     "lesson": "图片多音字资料",
     "type": "配套例句",
@@ -1638,7 +1638,7 @@
    "targetWord": "人参",
    "options": ["shēn", "cān", "cēn"],
    "answer": "shēn",
-   "explanation": "“人参”中，“参”读shēn。这里一种植物，根可入药。",
+   "explanation": "“人参”中，“参”读shēn。这里指一种植物，根可入药。",
    "source": {
     "lesson": "美丽的小兴安岭",
     "type": "课文原句",
@@ -1663,7 +1663,7 @@
    "targetWord": "参考",
    "options": ["shēn", "cān", "cēn"],
    "answer": "cān",
-   "explanation": "“参考”中，“参”读cān。这里查阅资料来帮助学习或研究。",
+   "explanation": "“参考”中，“参”读cān。这里指查阅资料来帮助学习或研究。",
    "source": {
     "lesson": "图片多音字资料",
     "type": "配套例句",
@@ -1715,7 +1715,7 @@
    "targetWord": "舍得",
    "options": ["shě", "shè"],
    "answer": "shě",
-   "explanation": "“舍得”中，“舍”读shě。这里愿意割舍，不吝惜。",
+   "explanation": "“舍得”中，“舍”读shě。这里指愿意割舍，不吝惜。",
    "source": {
     "lesson": "图片多音字资料",
     "type": "配套例句",
@@ -1741,7 +1741,7 @@
    "targetWord": "宿舍",
    "options": ["shě", "shè"],
    "answer": "shè",
-   "explanation": "“宿舍”中，“舍”读shè。这里供人住宿的房屋。",
+   "explanation": "“宿舍”中，“舍”读shè。这里指供人住宿的房屋。",
    "source": {
     "lesson": "美丽的小兴安岭",
     "type": "课文原句",
@@ -1766,7 +1766,7 @@
    "targetWord": "记载",
    "options": ["zǎi", "zài"],
    "answer": "zǎi",
-   "explanation": "“记载”中，“载”读zǎi。这里把事情记录下来。",
+   "explanation": "“记载”中，“载”读zǎi。这里指把事情记录下来。",
    "source": {
     "lesson": "图片多音字资料",
     "type": "配套例句",
@@ -1792,7 +1792,7 @@
    "targetWord": "载人",
    "options": ["zǎi", "zài"],
    "answer": "zài",
-   "explanation": "“载人”中，“载”读zài。这里装运、运送人。",
+   "explanation": "“载人”中，“载”读zài。这里指装运、运送人。",
    "source": {
     "lesson": "图片多音字资料",
     "type": "配套例句",
@@ -1818,7 +1818,7 @@
    "targetWord": "牛角",
    "options": ["jiǎo", "jué"],
    "answer": "jiǎo",
-   "explanation": "“牛角”中，“角”读jiǎo。这里牛头上长出的坚硬部分。",
+   "explanation": "“牛角”中，“角”读jiǎo。这里指牛头上长出的坚硬部分。",
    "source": {
     "lesson": "图片多音字资料",
     "type": "配套例句",
@@ -1844,7 +1844,7 @@
    "targetWord": "角色",
    "options": ["jiǎo", "jué"],
    "answer": "jué",
-   "explanation": "“角色”中，“角”读jué。这里戏剧或故事中扮演的人物。",
+   "explanation": "“角色”中，“角”读jué。这里指戏剧或故事中扮演的人物。",
    "source": {
     "lesson": "香港，璀璨的明珠",
     "type": "课文原句",
@@ -1869,7 +1869,7 @@
    "targetWord": "涂抹",
    "options": ["mǒ", "mā", "mò"],
    "answer": "mǒ",
-   "explanation": "“涂抹”中，“抹”读mǒ。这里把液体或膏状物擦到物体上。",
+   "explanation": "“涂抹”中，“抹”读mǒ。这里指把液体或膏状物擦到物体上。",
    "source": {
     "lesson": "图片多音字资料",
     "type": "配套例句",
@@ -1895,7 +1895,7 @@
    "targetWord": "抹布",
    "options": ["mǒ", "mā", "mò"],
    "answer": "mā",
-   "explanation": "“抹布”中，“抹”读mā。这里擦器物或桌子用的布。",
+   "explanation": "“抹布”中，“抹”读mā。这里指擦器物或桌子用的布。",
    "source": {
     "lesson": "图片多音字资料",
     "type": "配套例句",
@@ -1947,7 +1947,7 @@
    "targetWord": "好呢",
    "options": ["ne", "ní"],
    "answer": "ne",
-   "explanation": "“好呢”中，“呢”读ne。这里用于句末表示疑问或语气，读轻声。轻声不标声调。",
+   "explanation": "“好呢”中，“呢”读ne。这里用于句末表示疑问或语气，读轻声，不标声调。",
    "source": {
     "lesson": "图片多音字资料",
     "type": "配套例句",
@@ -1973,7 +1973,7 @@
    "targetWord": "呢喃",
    "options": ["ne", "ní"],
    "answer": "ní",
-   "explanation": "“呢喃”中，“呢”读ní。这里小声说话或鸟儿轻声鸣叫。",
+   "explanation": "“呢喃”中，“呢”读ní。这里指小声说话或鸟儿轻声鸣叫。",
    "source": {
     "lesson": "大自然的声音",
     "type": "课文原句",
@@ -2023,7 +2023,7 @@
    "targetWord": "早哩",
    "options": ["lī", "li"],
    "answer": "li",
-   "explanation": "“早哩”中，“哩”读li。这里用于句末的口语语气词，读轻声。轻声不标声调。",
+   "explanation": "“早哩”中，“哩”读li。这里是用于句末的口语语气词，读轻声，不标声调。",
    "source": {
     "lesson": "图片多音字资料",
     "type": "配套例句",
@@ -2049,7 +2049,7 @@
    "targetWord": "差别",
    "options": ["chā", "chà", "chāi", "cī"],
    "answer": "chā",
-   "explanation": "“差别”中，“差”读chā。这里不同之处。",
+   "explanation": "“差别”中，“差”读chā。这里指不同之处。",
    "source": {
     "lesson": "图片多音字资料",
     "type": "配套例句",
@@ -2075,7 +2075,7 @@
    "targetWord": "差不多",
    "options": ["chā", "chà", "chāi", "cī"],
    "answer": "chà",
-   "explanation": "“差不多”中，“差”读chà。这里相差不大，接近。",
+   "explanation": "“差不多”中，“差”读chà。这里指相差不大，接近。",
    "source": {
     "lesson": "图片多音字资料",
     "type": "配套例句",
@@ -2101,7 +2101,7 @@
    "targetWord": "出差",
    "options": ["chā", "chà", "chāi", "cī"],
    "answer": "chāi",
-   "explanation": "“出差”中，“差”读chāi。这里因工作需要到外地办事。",
+   "explanation": "“出差”中，“差”读chāi。这里指因工作需要到外地办事。",
    "source": {
     "lesson": "图片多音字资料",
     "type": "配套例句",
@@ -2154,7 +2154,7 @@
    "targetWord": "大小",
    "options": ["dà", "dài"],
    "answer": "dà",
-   "explanation": "“大小”中，“大”读dà。这里物体的体积、面积等大小程度。",
+   "explanation": "“大小”中，“大”读dà。这里指物体的体积、面积等大小程度。",
    "source": {
     "lesson": "习作例文·我爱故乡的杨梅",
     "type": "课文原句",
@@ -2179,7 +2179,7 @@
    "targetWord": "大夫",
    "options": ["dà", "dài"],
    "answer": "dài",
-   "explanation": "“大夫”中，“大”读dài。这里对医生的称呼。",
+   "explanation": "“大夫”中，“大”读dài。这里指对医生的称呼。",
    "source": {
     "lesson": "手术台就是阵地",
     "type": "课文原句",
@@ -2204,7 +2204,7 @@
    "targetWord": "担心",
    "options": ["dān", "dàn"],
    "answer": "dān",
-   "explanation": "“担心”中，“担”读dān。这里感到不放心。",
+   "explanation": "“担心”中，“担”读dān。这里指感到不放心。",
    "source": {
     "lesson": "图片多音字资料",
     "type": "配套例句",
@@ -2230,7 +2230,7 @@
    "targetWord": "一担",
    "options": ["dān", "dàn"],
    "answer": "dàn",
-   "explanation": "“一担”中，“担”读dàn。这里用扁担挑起的一副担子，这里表示一担的量。",
+   "explanation": "“一担”中，“担”读dàn。这里是量词，用扁担挑起的一副担子叫一担。",
    "source": {
     "lesson": "图片多音字资料",
     "type": "配套例句",
@@ -2258,7 +2258,7 @@
    "targetWord": "归还",
    "options": ["huán", "hái"],
    "answer": "huán",
-   "explanation": "“归还”中，“还”读huán。这里把借来的东西还给原主。",
+   "explanation": "“归还”中，“还”读huán。这里指把借来的东西还给原主。",
    "source": {
     "lesson": "图片多音字资料",
     "type": "配套例句",
@@ -2309,7 +2309,7 @@
    "targetWord": "情不自禁",
    "options": ["jīn", "jìn"],
    "answer": "jīn",
-   "explanation": "“情不自禁”中，“禁”读jīn。这里感情激动，自己控制不住。",
+   "explanation": "“情不自禁”中，“禁”读jīn。这里指感情激动，自己控制不住。",
    "source": {
     "lesson": "图片多音字资料",
     "type": "配套例句",
@@ -2335,7 +2335,7 @@
    "targetWord": "禁止",
    "options": ["jīn", "jìn"],
    "answer": "jìn",
-   "explanation": "“禁止”中，“禁”读jìn。这里不允许。",
+   "explanation": "“禁止”中，“禁”读jìn。这里指不允许。",
    "source": {
     "lesson": "图片多音字资料",
     "type": "配套例句",
