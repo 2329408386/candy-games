@@ -6,7 +6,7 @@
 Each game has sites/<site>/banks/<game>.json:
   type       renderer in shared-static/pk/ ("choice", "blanks", "tiles", "edit" or "measure")
   draw       how each player's 20 questions are drawn (see draw_plans)
-  ui         per-game options for the renderer (instruction, blankOptions, lettered, allowUnusedCards)
+  ui         per-game options for the renderer (task, instruction, blankOptions, lettered, allowUnusedCards)
   meta       provenance shared by all questions
   questions  every question has id, explanation and source.label (shown above the question);
              source.detailTitle/source.detail are shown under the feedback

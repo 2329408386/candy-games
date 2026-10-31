@@ -5,7 +5,7 @@
   "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c"
  },
  "draw": {"count": 20},
- "ui": {"instruction": "选词卡组成陈述句；原句里的反问词和肯定、否定词也在里面，不需要的可以不用。", "allowUnusedCards": true},
+ "ui": {"task": "给下列句子换个说法，意思不变。", "instruction": "选词卡组成陈述句；原句里的反问词和肯定、否定词也在里面，不需要的可以不用。", "allowUnusedCards": true},
  "questions": [
   {
    "id": "rhetorical-1",

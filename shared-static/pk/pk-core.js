@@ -313,6 +313,11 @@
   const modeNote = el('p', 'pk-mode-note');
   rules.append(el('h2', '', '怎么玩'), el('p', '', cfg.instructions),
     el('p', 'pk-scoring', '答对每题加10分，连续答对额外加5分；答错扣5分，最低0分。提交后看解析，点击“下一题”继续。'), modeNote);
+  if (cfg.tips?.length) {
+    const list = el('ol', 'pk-tips');
+    for (const tip of cfg.tips) list.append(el('li', '', tip));
+    rules.append(el('h2', 'pk-tips-title', '方法技巧'), list);
+  }
   const go = button('正在加载题目…', () => startRound(), 'pk-primary');
   go.disabled = true;
   const loadError = el('p', 'pk-error');
@@ -647,7 +652,8 @@
     }
     const ctx = contextFor(p);
     body.append(el('p', 'pk-source', `第 ${s.index + 1} / ${s.questions.length} 题 · ${q.source.label}`));
-    if (bank.ui?.instruction) body.append(el('p', 'pk-instruction', bank.ui.instruction));
+    if (bank.ui?.task) body.append(el('p', 'pk-task', bank.ui.task));
+    if (bank.ui?.instruction) body.append(el('p', 'pk-instruction', bank.ui.task ? `注意：${bank.ui.instruction}` : bank.ui.instruction));
     const question = renderer.render(q, s.a, ctx);
     body.append(question);
     const notice = el('p', 'pk-notice', s.notice);
