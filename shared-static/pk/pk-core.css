@@ -164,10 +164,7 @@ mark { background: #ffe797; color: inherit; border-bottom: 3px solid #da9c16; pa
 .answer-line { background: #eef3f6; border-radius: 14px; min-height: 4.5rem; padding: 0.75rem; display: flex; flex-wrap: wrap; align-items: center; gap: 0.375rem; font-size: 1.125rem; }
 .q-tiles .options { display: flex; flex-wrap: wrap; }
 .q-tiles .card { font-size: 1.125rem; min-height: 2.875rem; padding: 0.5625rem 0.8125rem; }
-.card.deleted { text-decoration: line-through; color: #9c4b5d; background: #fbe8ec; border-color: #df93a4; }
-.expand-sentence { line-height: 2.3; }
-.insertion-point { display: inline-flex; align-items: center; justify-content: center; vertical-align: middle; width: 1.625rem; height: 2.25rem; padding: 0; margin: 0 1px; border: 1px dashed #7494ad; border-radius: 5px; background: #edf6ff; color: #245ba0; font-size: 1rem; }
-.inserted-word { color: #116c4c; background: #e1f3e5; border-radius: 4px; padding: 2px 0.25rem; }
+.card.kept { color: #14532d; background: #dff1e3; border: 2px solid #4f9a63; font-weight: 600; }
 
 /* edit marks (修改病句) */
 .symbol-tray { display: flex; justify-content: center; gap: 0.625rem; margin-bottom: 0.25rem; }
@@ -187,6 +184,13 @@ mark { background: #ffe797; color: inherit; border-bottom: 3px solid #da9c16; pa
 .mark-svg { position: absolute; width: calc(100% + 0.5rem); height: 4.25rem; left: -0.25rem; top: -1.5625rem; color: #be3832; pointer-events: none; overflow: visible; }
 .annotation { position: absolute; bottom: calc(100% + 0.3125rem); left: 50%; transform: translateX(-50%); background: #fff5e1; border: 1px solid #d58a47; border-radius: 5px; color: #ae3029; font-size: 0.9375rem; white-space: nowrap; padding: 0 0.1875rem; z-index: 3; }
 .correction-label { border: 2px solid #be3832; border-radius: 20px; background: #fff; padding: 0 0.375rem; min-width: 1.625rem; text-align: center; bottom: calc(100% + 0.75rem); }
+/* 扩写: words added with a 增补号 sit in the line above a ∧ */
+.expand-board { align-items: flex-end; }
+.expand-board .word-wrap, .expand-board .gap-wrap { margin-top: 0.5rem; }
+.expand-board .gap-wrap.filled { flex-direction: column; align-items: center; margin: 0.25rem 0.125rem 0.3125rem; }
+.expand-word { border: 2px solid #be3832; border-radius: 20px; background: #fff; color: #ae3029; font-size: 1.0625rem; font-weight: 600; line-height: 1.5; padding: 0.125rem 0.625rem; min-height: 2.25rem; white-space: nowrap; }
+.expand-caret { width: 1.75rem; height: 1.5rem; color: #be3832; margin-top: 0.125rem; }
+.q-expand .symbol-button { cursor: default; }
 .swap-lines { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; color: #bd3833; }
 .word-cards { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; padding: 0.5rem 0; }
 .word-card { min-width: 3.25rem; min-height: 2.75rem; border: 2px solid #cad9e4; border-radius: 9px; background: white; font-size: 1.1875rem; padding: 0.25rem 0.625rem; }

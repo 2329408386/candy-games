@@ -4,7 +4,7 @@ const fs = require('fs'), path = require('path'), vm = require('vm'), assert = r
 const ROOT = path.resolve(__dirname, '..');
 const renderers = {};
 const PK = { register: (type, r) => (renderers[type] = r), el() {}, button() {}, svg() {}, shuffle: a => [...a], figures: {} };
-for (const file of ['choice', 'blanks', 'tiles', 'edit', 'measure']) {
+for (const file of ['choice', 'blanks', 'tiles', 'expand', 'edit', 'measure']) {
   vm.runInNewContext(fs.readFileSync(path.join(ROOT, 'shared-static/pk/types', file + '.js'), 'utf8'), { PK, window: {} });
 }
 const bank = (site, game) => JSON.parse(fs.readFileSync(path.join(ROOT, 'sites', site, 'banks', game + '.json'), 'utf8'));
@@ -27,12 +27,31 @@ for (const q of sentence.questions) {
 }
 assert.ok(doubled > 0, 'no doubled-word deletions found');
 
-// Tiles: every listed answer is right; 缩写 needs at least one deletion before it can be submitted.
-for (const game of ['passive', 'rhetorical', 'expand', 'shorten']) {
+// Tiles: every listed answer is right; 缩写 needs at least one kept card, and keeping every card is wrong.
+for (const game of ['passive', 'rhetorical', 'shorten']) {
   for (const q of bank('chinese', game).questions) for (const ans of q.answers) assert.ok(renderers.tiles.check(q, ans), `${game} ${q.id}`);
 }
-const shorten = bank('chinese', 'shorten').questions[0];
-assert.ok(renderers.tiles.value(shorten, { deleted: [] }, { ui: {} }).incomplete, 'untouched 缩写 accepted');
+for (const q of bank('chinese', 'shorten').questions) {
+  assert.ok(renderers.tiles.value(q, { kept: [] }, { ui: {} }).incomplete, `${q.id} untouched 缩写 accepted`);
+  const all = renderers.tiles.value(q, { kept: q.cards.map(c => c.id) }, { ui: {} }).value;
+  assert.strictEqual(all, q.prompt, `${q.id} keeping every card should rebuild the sentence`);
+  assert.ok(!renderers.tiles.check(q, all), `${q.id} unshortened sentence graded right`);
+}
+
+// 扩写: inserting each slot's first word at its first position is right; fewer insertions are incomplete;
+// moving a word to the wrong gap or using a distractor is wrong.
+for (const q of bank('chinese', 'expand').questions) {
+  const ins = {};
+  for (const s of q.slots) ins[s.positions[0]] = s.words[0];
+  const right = renderers.expand.value(q, { ins });
+  assert.ok(renderers.expand.check(q, right.value), `${q.id} standard expansion graded wrong`);
+  const one = { [q.slots[0].positions[0]]: q.slots[0].words[0] };
+  assert.ok(renderers.expand.value(q, { ins: one }).incomplete, `${q.id} single insertion accepted`);
+  const words = new Set(q.slots.flatMap(s => s.words));
+  const decoy = q.cards.find(c => !words.has(c));
+  const wrong = { ...ins, [q.slots[0].positions[0]]: decoy };
+  assert.ok(!renderers.expand.check(q, renderers.expand.value(q, { ins: wrong }).value), `${q.id} distractor graded right`);
+}
 
 // Blanks: the key and every accepted alternative are right; a wrong mark is not.
 for (const game of ['dedide', 'punctuation']) {

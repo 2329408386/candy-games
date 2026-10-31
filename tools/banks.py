@@ -4,7 +4,7 @@
   python tools/banks.py --fix      rewrite banks in the canonical format and regenerate docs/<site>/*.md
 
 Each game has sites/<site>/banks/<game>.json:
-  type       renderer in shared-static/pk/ ("choice", "blanks", "tiles", "edit" or "measure")
+  type       renderer in shared-static/pk/ ("choice", "blanks", "tiles", "expand", "edit" or "measure")
   draw       how each player's 20 questions are drawn (see draw_plans)
   ui         per-game options for the renderer (task, instruction, blankOptions, lettered, allowUnusedCards)
   meta       provenance shared by all questions
@@ -34,6 +34,7 @@ EIGHT = {
 }
 BLANK = re.compile(r"\[(\d+)\]")
 RHETORICAL_MARKS = ("难道", "怎么", "什么", "吗", "呢", "？")
+NEGATIONS = ("不", "没", "没有", "不能", "不会", "不肯", "从不")
 
 
 def bank_path(site, game):
@@ -160,8 +161,8 @@ def tile_order_ok(cards, answer, use_all):
     return search(answer, texts)
 
 
-def tile_delete_ok(cards, answer):
-    """Can the answer be obtained by deleting some cards (keeping order)?"""
+def tile_keep_ok(cards, answer):
+    """Can the answer be obtained by keeping some cards in their order?"""
     texts = [c["text"] for c in cards]
 
     def search(i, rest):
@@ -172,29 +173,77 @@ def tile_delete_ok(cards, answer):
     return search(0, answer)
 
 
+def expand_answers(q):
+    """Every sentence the slots allow: each slot puts one of its words at one of its positions, positions distinct."""
+    tokens, results = q["tokens"], []
+
+    def walk(i, placed):
+        if i == len(q["slots"]):
+            ins = dict(placed)
+            text = "".join(ins.get(k, "") + t for k, t in enumerate(tokens)) + ins.get(len(tokens), "")
+            if text not in results:
+                results.append(text)
+            return
+        slot = q["slots"][i]
+        for pos in slot["positions"]:
+            for word in slot["words"]:
+                if pos not in dict(placed) and word not in dict(placed).values():
+                    walk(i + 1, placed + [(pos, word)])
+
+    walk(0, [])
+    return results
+
+
+def check_expand(q, bank, game):
+    errors, tokens = [], q.get("tokens", [])
+    if "".join(tokens) != q.get("base"):
+        errors.append("tokens 拼起来不等于原句")
+    slots = q.get("slots", [])
+    if len(slots) < 2:
+        errors.append("至少要扩写两处")
+    words = [w for s in slots for w in s["words"]]
+    for s in slots:
+        if not s["positions"] or not all(0 <= p <= len(tokens) for p in s["positions"]):
+            errors.append(f"插入位置超出范围：{s}")
+    if not set(words) <= set(q.get("cards", [])):
+        errors.append("扩写用词不在词卡中")
+    if len(set(q.get("cards", []))) != len(q.get("cards", [])):
+        errors.append("词卡重复")
+    if len(q.get("cards", [])) - len(set(words)) < 2:
+        errors.append("至少要有两张干扰词卡")
+    expected = expand_answers(q) if not errors else []
+    if not errors and q.get("answers") != expected:
+        errors.append(f"answers 应为 slots 的全部组合：{expected[:3]}…")
+    if not q["source"].get("type") or q.get("origin") not in ("textbook", "extension"):
+        errors.append("缺少 origin 或来源类型")
+    return errors
+
+
 def check_tiles(q, bank, game):
     errors, kind = [], q.get("kind")
     if not q.get("answers"):
         return ["缺少答案"]
-    if kind in ("order", "delete"):
+    if kind in ("order", "keep"):
         ids = [c["id"] for c in q["cards"]]
         if len(set(ids)) != len(ids):
             errors.append("词卡 id 重复")
     for answer in q["answers"]:
         if kind == "order" and not tile_order_ok(q["cards"], answer, not bank["ui"].get("allowUnusedCards")):
             errors.append(f"词卡拼不出答案：{answer}")
-        if kind == "delete" and not tile_delete_ok(q["cards"], answer):
-            errors.append(f"删去词卡得不到答案：{answer}")
-    if kind == "expand":
-        base = list(q["baseSentence"])
-        built = {
-            "".join(base[: a["position"]]) + a["word"] + "".join(base[a["position"] :]) for a in q["acceptedInsertions"]
-        }
-        if built != set(q["answers"]):
-            errors.append(f"acceptedInsertions 与 answers 不一致：{built}")
-        if not {a["word"] for a in q["acceptedInsertions"]} <= set(q["options"]):
-            errors.append("插入词不在词卡中")
-    if kind not in ("order", "delete", "expand"):
+        tail = q.get("tail", "")
+        if kind == "keep" and not (answer.endswith(tail) and tile_keep_ok(q["cards"], answer[: len(answer) - len(tail)])):
+            errors.append(f"按顺序选词卡得不到答案：{answer}")
+        if kind == "keep" and answer == q["prompt"]:
+            errors.append("答案与原句相同，没有缩写")
+    if kind == "keep":
+        if "".join(c["text"] for c in q["cards"]) + q.get("tail", "") != q["prompt"]:
+            errors.append("词卡按顺序拼起来不等于原句")
+        if q.get("origin") not in ("textbook", "extension"):
+            errors.append("缺少 origin")
+        for c in q["cards"]:
+            if c["text"] in NEGATIONS and not all(c["text"] in a for a in q["answers"]):
+                errors.append(f"否定词“{c['text']}”应当保留")
+    if kind not in ("order", "keep"):
         errors.append(f"未知题型 {kind}")
     if game == "rhetorical":
         texts = [c["text"] for c in q["cards"]]
@@ -256,6 +305,7 @@ CHECKS = {
     "choice": check_choice,
     "blanks": check_blanks,
     "tiles": check_tiles,
+    "expand": check_expand,
     "edit": check_edit,
     "measure": check_measure,
 }
@@ -313,8 +363,12 @@ def doc_rows(site, game, bank):
                 else ""
             )
             yield f"- {q['id']}：{BLANK.sub('（ ）', q['text'])} 答案：**{' / '.join(q['answers'])}**{alt}"
+        elif t == "expand":
+            more = f"（共{len(q['answers'])}种正确写法）" if len(q["answers"]) > 1 else ""
+            others = "、".join(w for w in q["cards"] if w not in {x for s in q["slots"] for x in s["words"]})
+            yield f"- {q['id']}：{q['base']} 答案：**{q['answers'][0]}**{more}　干扰词：{others}"
         elif t == "tiles":
-            shown = q.get("baseSentence") or q["prompt"]
+            shown = q["prompt"]
             yield f"- {q['id']}：{shown} 答案：**{'；或 '.join(q['answers'])}**"
         elif t == "edit":
             yield f"- {q['id']}（{q['category']}）：{q['original']} → **{q['corrected']}**"
