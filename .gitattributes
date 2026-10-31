@@ -1,0 +1,4 @@
+# Left out of deploy archives (git archive): not needed on the server.
+docs/** export-ignore
+tests/** export-ignore
+.github/** export-ignore

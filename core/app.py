@@ -517,7 +517,9 @@ def register_public(app):
     @app.get("/health")
     def health():
         db().execute("SELECT count(*) FROM licenses WHERE site=?", (site().key,)).fetchone()
-        return jsonify(status="ok")
+        # Deploys write REVISION into each release; the deploy script waits until every worker reports it.
+        revision = ROOT / "REVISION"
+        return jsonify(status="ok", **({"revision": revision.read_text().strip()} if revision.exists() else {}))
 
 
 def register_api(app):

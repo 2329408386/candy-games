@@ -7,3 +7,4 @@ secret.env
 .env
 ._*
 .DS_Store
+REVISION

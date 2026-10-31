@@ -4,7 +4,7 @@ Description=Back up Candy Games database
 Type=oneshot
 User=candy-games
 Group=candy-games
-WorkingDirectory=/opt/candy-games
+WorkingDirectory=/opt/candy-games/current
 EnvironmentFile=/var/lib/candy-games/secret.env
 Environment=GAME_DATA=/var/lib/candy-games
 ExecStart=/opt/candy-games/venv/bin/python manage.py backup

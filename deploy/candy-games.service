@@ -7,10 +7,10 @@ StartLimitIntervalSec=0
 [Service]
 User=candy-games
 Group=candy-games
-WorkingDirectory=/opt/candy-games
+WorkingDirectory=/opt/candy-games/current
 EnvironmentFile=/var/lib/candy-games/secret.env
 Environment=GAME_DATA=/var/lib/candy-games
-ExecStart=/opt/candy-games/venv/bin/gunicorn --workers 6 --bind 127.0.0.1:18082 --timeout 30 --graceful-timeout 20 --max-requests 2000 --max-requests-jitter 200 wsgi:app
+ExecStart=/opt/candy-games/venv/bin/gunicorn --workers 6 --bind 127.0.0.1:18082 --chdir /opt/candy-games/current --timeout 30 --graceful-timeout 20 --max-requests 2000 --max-requests-jitter 200 wsgi:app
 # Graceful code reload. Sync workers (no --threads): threaded workers reset queued connections on reload.
 ExecReload=/bin/kill -HUP $MAINPID
 Restart=always
