@@ -93,9 +93,13 @@ button:focus-visible, a:focus-visible, input:focus-visible, summary:focus-visibl
 .pk-instruction { color: #53635b; font-size: 0.875rem; margin: 0 0 0.75rem; }
 .pk-task { font-size: 1.0625rem; font-weight: 700; color: #26352d; margin: 0 0 0.25rem; }
 .pk-task + .pk-instruction { margin-bottom: 0.5rem; }
-.pk-rules .pk-tips-title { margin-top: 1rem; }
-.pk-tips { margin: 0; padding-left: 1.5rem; font-size: 0.9375rem; line-height: 1.9; color: #26352d; }
-.pk-tips li::marker { color: var(--green); font-weight: 700; }
+.pk-tips-box { text-align: left; background: #fff8e1; border: 1px solid #f0d98c; border-left: 6px solid var(--gold); border-radius: 16px; padding: 1.125rem 1.375rem 1.25rem; margin-bottom: 1.25rem; box-shadow: 0 6px 18px rgba(176, 132, 20, 0.12); }
+.pk-tips-title { font-size: 1.125rem; font-weight: 800; color: #6d4f05; margin: 0 0 0.75rem; }
+.pk-tips { list-style: none; counter-reset: tip; margin: 0; padding: 0; }
+.pk-tips li { counter-increment: tip; position: relative; padding-left: 2.25rem; margin: 0.5rem 0; font-size: 1.125rem; font-weight: 600; line-height: 1.75; color: #2a2a1f; }
+.pk-tips li::before { content: counter(tip); position: absolute; left: 0; top: 0.2rem; width: 1.5rem; height: 1.5rem; border-radius: 50%; background: var(--green); color: white; font-size: 0.875rem; font-weight: 700; line-height: 1.5rem; text-align: center; }
+.pk-key { color: #b4400e; font-weight: 800; background: linear-gradient(transparent 62%, #ffd98a 62%); padding: 0 0.0625rem; }
+@media (max-width: 600px) { .pk-tips-box { padding: 0.875rem 1rem 1rem; } .pk-tips li { font-size: 1.0625rem; } }
 .pk-notice { min-height: 1.375rem; margin: 0.625rem 0; color: #ab533d; font-size: 0.875rem; }
 .pk-controls { display: flex; gap: 0.5rem; margin-top: 0.875rem; }
 .pk-controls button { flex: 1; min-width: 0; }

@@ -313,17 +313,25 @@
   const modeNote = el('p', 'pk-mode-note');
   rules.append(el('h2', '', '怎么玩'), el('p', '', cfg.instructions),
     el('p', 'pk-scoring', '答对每题加10分，连续答对额外加5分；答错扣5分，最低0分。提交后看解析，点击“下一题”继续。'), modeNote);
+  let tipsBox = null;
   if (cfg.tips?.length) {
+    // "**词**" marks a key word to highlight; everything stays text nodes.
     const list = el('ol', 'pk-tips');
-    for (const tip of cfg.tips) list.append(el('li', '', tip));
-    rules.append(el('h2', 'pk-tips-title', '方法技巧'), list);
+    for (const tip of cfg.tips) {
+      const li = el('li');
+      tip.split('**').forEach((part, i) => part && li.append(i % 2 ? el('strong', 'pk-key', part) : document.createTextNode(part)));
+      list.append(li);
+    }
+    tipsBox = el('section', 'pk-tips-box');
+    tipsBox.setAttribute('aria-label', '方法技巧');
+    tipsBox.append(el('h2', 'pk-tips-title', '💡 方法技巧'), list);
   }
   const go = button('正在加载题目…', () => startRound(), 'pk-primary');
   go.disabled = true;
   const loadError = el('p', 'pk-error');
   loadError.setAttribute('role', 'alert');
   if (TRIAL) card.append(el('p', 'pk-trial-note', '免费试玩：可以完整玩一局。点“开始”后，本游戏的试玩机会就用掉了。'));
-  card.append(stats, modes, rules, go, loadError);
+  card.append(stats, modes, ...(tipsBox ? [tipsBox] : []), rules, go, loadError);
   startScreen.append(top, card);
 
   function selectMode(mode) {
