@@ -57,3 +57,38 @@ button.header-contact:hover{background:var(--green-dark)}
 @media(min-width:1400px){.math-grid .game-card h3{font-size:21px}
 .math-grid .game-card p{font-size:15px}
 }
+/* the note sits centred over the artwork, which is centred in its box */
+.art-note{left:50%;transform:translateX(-50%);white-space:nowrap}
+/* five games per row on both sites; narrower side margins keep each card roomy */
+.student-main{max-width:1520px;padding-left:24px;padding-right:24px}
+.student-body .site-header{max-width:1520px;padding-left:24px;padding-right:24px}
+.hero{max-width:1240px;margin:0 auto}
+.game-grid,.game-grid.math-grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:16px}
+.game-card,.math-grid .game-card{padding:22px 20px}
+.game-card h3,.math-grid .game-card h3{font-size:19px}
+.game-card p,.math-grid .game-card p{min-height:51px}
+.card-bottom .locked,.card-bottom .inline-link{font-size:14px;white-space:nowrap}
+.card-bottom .inline-link{min-height:0;padding:0}
+.locked svg{flex-shrink:0}
+@media(min-width:1400px){.game-card h3,.math-grid .game-card h3{font-size:21px}
+.card-bottom .locked,.card-bottom .inline-link{font-size:15px}
+}
+@media(max-width:1199px){.game-grid,.game-grid.math-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:949px){.game-grid,.game-grid.math-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.game-card p,.math-grid .game-card p{min-height:0}
+}
+@media(max-width:600px){.game-grid,.game-grid.math-grid{grid-template-columns:1fr}
+.student-main{padding-left:20px;padding-right:20px}
+.student-body .site-header{padding-left:20px;padding-right:20px}
+.art-note{top:15px}
+}
+@media(max-width:600px){.student-body .site-header{gap:10px}
+.header-actions{gap:6px}
+.header-link{padding:6px 10px;font-size:13px}
+}
+@media(max-width:420px){.brand small{display:none}
+.brand{font-size:17px;gap:8px}
+}
+.game-card{display:flex;flex-direction:column}
+.game-card .card-bottom{margin-top:auto}
