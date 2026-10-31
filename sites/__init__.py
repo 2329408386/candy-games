@@ -26,6 +26,10 @@ class Site:
         return ROOT / self.key / "games"
 
     @property
+    def bank_root(self):
+        return ROOT / self.key / "banks"
+
+    @property
     def static_root(self):
         return ROOT / self.key / "static"
 

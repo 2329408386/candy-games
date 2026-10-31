@@ -1,0 +1,2045 @@
+{
+ "type": "blanks",
+ "meta": {
+  "textbook": "人教版三年级上册语文课文.md",
+  "textbook_sha256": "bc6d9ce42089c14d4b59101ef2aa51278a3cda923cecdb65a4f0d6016189ce7c",
+  "notes": [
+   "课内50题全部为教材连续原文片段，文字、标点与提示语位置不改写；课外50题独立自编，不套用课文对话扩写。",
+   "不在横线、操作提示或读屏标签中显示每格所需标点数量；保留逐个点选、删除，未填完整只提示不扣分。",
+   "依据《标点符号用法》GB/T 15834—2011：提示语在前用冒号；在中间（同一说话者）后用逗号；在后时提示语末尾用句号。语气两可的句末（。/！）列入 acceptedAnswers。"
+  ]
+ },
+ "draw": {
+  "by": ["position", "origin"],
+  "alternatives": [
+   {
+    "before/textbook": 6,
+    "before/extension": 1,
+    "middle/textbook": 0,
+    "middle/extension": 6,
+    "after/textbook": 4,
+    "after/extension": 3
+   },
+   {
+    "before/textbook": 5,
+    "before/extension": 2,
+    "middle/textbook": 1,
+    "middle/extension": 5,
+    "after/textbook": 4,
+    "after/extension": 3
+   }
+  ]
+ },
+ "ui": {
+  "instruction": "先选横线，再逐个点选标点；需要修改时先点删除。",
+  "blankOptions": ["。", "，", "？", "！", "：", "“", "”"],
+  "hint": "先选横线，再逐个点选标点。"
+ },
+ "questions": [
+  {
+   "id": "literal-textbook-before-01",
+   "position": "before",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在前",
+   "text": "于是，他壮着胆子站起来，问[0]先生，您刚才让我背的这段书是什么意思？请您给我讲讲吧[1]",
+   "answers": ["：“", "！”"],
+   "capacities": [2, 2],
+   "complete": "于是，他壮着胆子站起来，问：“先生，您刚才让我背的这段书是什么意思？请您给我讲讲吧！”",
+   "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。",
+   "source": {
+    "lesson": "不懂就要问",
+    "type": "课文原句",
+    "original": "于是，他壮着胆子站起来，问：“先生，您刚才让我背的这段书是什么意思？请您给我讲讲吧！”",
+    "context": "一天，孙中山来到学校，照例把书放到先生面前，流利地背出前一天所学的功课。先生听了，连连点头。接着，先生在孙中山的书上又圈了一段，他念一句，叫孙中山念一句。孙中山会读了，就回到座位上练习背诵。他读了几遍，就背下来了。可是，书里说的是什么意思，他一点儿也不懂。孙中山想：这样糊里糊涂地背，有什么用呢？于是，他壮着胆子站起来，问：“先生，您刚才让我背的这段书是什么意思？请您给我讲讲吧！”",
+    "label": "提示语在前 · 课内·《不懂就要问》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "于是，他壮着胆子站起来，问：“先生，您刚才让我背的这段书是什么意思？请您给我讲讲吧！”"
+   }
+  },
+  {
+   "id": "literal-textbook-before-02",
+   "position": "before",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在前",
+   "text": "先生拿着戒尺，走到孙中山跟前，厉声问道[0]你会背了吗[1]",
+   "answers": ["：“", "？”"],
+   "capacities": [2, 2],
+   "complete": "先生拿着戒尺，走到孙中山跟前，厉声问道：“你会背了吗？”",
+   "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。",
+   "source": {
+    "lesson": "不懂就要问",
+    "type": "课文原句",
+    "original": "先生拿着戒尺，走到孙中山跟前，厉声问道：“你会背了吗？”",
+    "context": "先生拿着戒尺，走到孙中山跟前，厉声问道：“你会背了吗？”",
+    "label": "提示语在前 · 课内·《不懂就要问》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "先生拿着戒尺，走到孙中山跟前，厉声问道：“你会背了吗？”"
+   }
+  },
+  {
+   "id": "literal-textbook-after-01",
+   "position": "after",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在后",
+   "text": "[0]会背了[1]孙中山说着，就把那段书一字不漏地背了出来[2]",
+   "answers": ["“", "。”", "。"],
+   "capacities": [1, 2, 1],
+   "complete": "“会背了。”孙中山说着，就把那段书一字不漏地背了出来。",
+   "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。",
+   "source": {
+    "lesson": "不懂就要问",
+    "type": "课文原句",
+    "original": "“会背了。”孙中山说着，就把那段书一字不漏地背了出来。",
+    "context": "“会背了。”孙中山说着，就把那段书一字不漏地背了出来。",
+    "label": "提示语在后 · 课内·《不懂就要问》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "“会背了。”孙中山说着，就把那段书一字不漏地背了出来。"
+   }
+  },
+  {
+   "id": "literal-textbook-before-03",
+   "position": "before",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在前",
+   "text": "后来，有个同学问孙中山[0]你向先生提出问题，不怕挨打吗[1]",
+   "answers": ["：“", "？”"],
+   "capacities": [2, 2],
+   "complete": "后来，有个同学问孙中山：“你向先生提出问题，不怕挨打吗？”",
+   "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。",
+   "source": {
+    "lesson": "不懂就要问",
+    "type": "课文原句",
+    "original": "后来，有个同学问孙中山：“你向先生提出问题，不怕挨打吗？”",
+    "context": "后来，有个同学问孙中山：“你向先生提出问题，不怕挨打吗？”",
+    "label": "提示语在前 · 课内·《不懂就要问》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "后来，有个同学问孙中山：“你向先生提出问题，不怕挨打吗？”"
+   }
+  },
+  {
+   "id": "literal-textbook-before-04",
+   "position": "before",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在前",
+   "text": "孙中山笑了笑，说[0]学问学问，不懂就要问。为了弄清楚道理，就是挨打也值得[1]",
+   "answers": ["：“", "。”"],
+   "capacities": [2, 2],
+   "complete": "孙中山笑了笑，说：“学问学问，不懂就要问。为了弄清楚道理，就是挨打也值得。”",
+   "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。",
+   "source": {
+    "lesson": "不懂就要问",
+    "type": "课文原句",
+    "original": "孙中山笑了笑，说：“学问学问，不懂就要问。为了弄清楚道理，就是挨打也值得。”",
+    "context": "孙中山笑了笑，说：“学问学问，不懂就要问。为了弄清楚道理，就是挨打也值得。”",
+    "label": "提示语在前 · 课内·《不懂就要问》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "孙中山笑了笑，说：“学问学问，不懂就要问。为了弄清楚道理，就是挨打也值得。”"
+   }
+  },
+  {
+   "id": "literal-textbook-before-05",
+   "position": "before",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在前",
+   "text": "老屋低头看看，吃力地眯起眼睛[0]哦，是小猫啊。好吧，我就再站一个晚上[1]",
+   "answers": ["：“", "。”"],
+   "capacities": [2, 2],
+   "complete": "老屋低头看看，吃力地眯起眼睛：“哦，是小猫啊。好吧，我就再站一个晚上。”",
+   "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。",
+   "source": {
+    "lesson": "总也倒不了的老屋",
+    "type": "课文原句",
+    "original": "老屋低头看看，吃力地眯起眼睛：“哦，是小猫啊。好吧，我就再站一个晚上。”",
+    "context": "老屋低头看看，吃力地眯起眼睛：“哦，是小猫啊。好吧，我就再站一个晚上。”",
+    "label": "提示语在前 · 课内·《总也倒不了的老屋》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "老屋低头看看，吃力地眯起眼睛：“哦，是小猫啊。好吧，我就再站一个晚上。”"
+   }
+  },
+  {
+   "id": "literal-textbook-before-06",
+   "position": "before",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在前",
+   "text": "小猫从破窗户里跳了出来[0]喵喵，谢谢[1]",
+   "answers": ["：“", "！”"],
+   "capacities": [2, 2],
+   "complete": "小猫从破窗户里跳了出来：“喵喵，谢谢！”",
+   "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。",
+   "source": {
+    "lesson": "总也倒不了的老屋",
+    "type": "课文原句",
+    "original": "小猫从破窗户里跳了出来：“喵喵，谢谢！”",
+    "context": "第二天，天晴了。小猫从破窗户里跳了出来：“喵喵，谢谢！”",
+    "label": "提示语在前 · 课内·《总也倒不了的老屋》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "小猫从破窗户里跳了出来：“喵喵，谢谢！”"
+   }
+  },
+  {
+   "id": "literal-textbook-before-07",
+   "position": "before",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在前",
+   "text": "老屋说[0]再见！好了，我到了倒下的时候了[1]",
+   "answers": ["：“", "！”"],
+   "capacities": [2, 2],
+   "complete": "老屋说：“再见！好了，我到了倒下的时候了！”",
+   "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。",
+   "source": {
+    "lesson": "总也倒不了的老屋",
+    "type": "课文原句",
+    "original": "老屋说：“再见！好了，我到了倒下的时候了！”",
+    "context": "老屋说：“再见！好了，我到了倒下的时候了！”",
+    "label": "提示语在前 · 课内·《总也倒不了的老屋》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "老屋说：“再见！好了，我到了倒下的时候了！”"
+   }
+  },
+  {
+   "id": "literal-textbook-before-08",
+   "position": "before",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在前",
+   "text": "老屋低头看看，墙壁吱吱呀呀地响[0]哦，是老母鸡啊。好吧，我就再站二十几天[1]",
+   "answers": ["：“", "。”"],
+   "capacities": [2, 2],
+   "complete": "老屋低头看看，墙壁吱吱呀呀地响：“哦，是老母鸡啊。好吧，我就再站二十几天。”",
+   "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。",
+   "source": {
+    "lesson": "总也倒不了的老屋",
+    "type": "课文原句",
+    "original": "老屋低头看看，墙壁吱吱呀呀地响：“哦，是老母鸡啊。好吧，我就再站二十几天。”",
+    "context": "老屋低头看看，墙壁吱吱呀呀地响：“哦，是老母鸡啊。好吧，我就再站二十几天。”",
+    "label": "提示语在前 · 课内·《总也倒不了的老屋》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "老屋低头看看，墙壁吱吱呀呀地响：“哦，是老母鸡啊。好吧，我就再站二十几天。”"
+   }
+  },
+  {
+   "id": "literal-textbook-before-09",
+   "position": "before",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在前",
+   "text": "二十多天后，老母鸡从门上的破洞里走了出来，九只小鸡从门板下面叽叽叫着钻了出来[0]叽叽，谢谢[1]",
+   "answers": ["：“", "！”"],
+   "capacities": [2, 2],
+   "complete": "二十多天后，老母鸡从门上的破洞里走了出来，九只小鸡从门板下面叽叽叫着钻了出来：“叽叽，谢谢！”",
+   "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。",
+   "source": {
+    "lesson": "总也倒不了的老屋",
+    "type": "课文原句",
+    "original": "二十多天后，老母鸡从门上的破洞里走了出来，九只小鸡从门板下面叽叽叫着钻了出来：“叽叽，谢谢！”",
+    "context": "二十多天后，老母鸡从门上的破洞里走了出来，九只小鸡从门板下面叽叽叫着钻了出来：“叽叽，谢谢！”",
+    "label": "提示语在前 · 课内·《总也倒不了的老屋》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "二十多天后，老母鸡从门上的破洞里走了出来，九只小鸡从门板下面叽叽叫着钻了出来：“叽叽，谢谢！”"
+   }
+  },
+  {
+   "id": "literal-textbook-before-10",
+   "position": "before",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在前",
+   "text": "老屋低头看看，眼睛眯成一条缝[0]哦，是小蜘蛛啊。好吧，我就再站一会儿[1]",
+   "answers": ["：“", "。”"],
+   "capacities": [2, 2],
+   "complete": "老屋低头看看，眼睛眯成一条缝：“哦，是小蜘蛛啊。好吧，我就再站一会儿。”",
+   "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。",
+   "source": {
+    "lesson": "总也倒不了的老屋",
+    "type": "课文原句",
+    "original": "老屋低头看看，眼睛眯成一条缝：“哦，是小蜘蛛啊。好吧，我就再站一会儿。”",
+    "context": "老屋低头看看，眼睛眯成一条缝：“哦，是小蜘蛛啊。好吧，我就再站一会儿。”",
+    "label": "提示语在前 · 课内·《总也倒不了的老屋》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "老屋低头看看，眼睛眯成一条缝：“哦，是小蜘蛛啊。好吧，我就再站一会儿。”"
+   }
+  },
+  {
+   "id": "literal-textbook-after-02",
+   "position": "after",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在后",
+   "text": "[0]小蜘蛛，你吃饱了吗[1]老屋问[2]",
+   "answers": ["“", "？”", "。"],
+   "capacities": [1, 2, 1],
+   "complete": "“小蜘蛛，你吃饱了吗？”老屋问。",
+   "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。",
+   "source": {
+    "lesson": "总也倒不了的老屋",
+    "type": "课文原句",
+    "original": "“小蜘蛛，你吃饱了吗？”老屋问。",
+    "context": "“小蜘蛛，你吃饱了吗？”老屋问。",
+    "label": "提示语在后 · 课内·《总也倒不了的老屋》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "“小蜘蛛，你吃饱了吗？”老屋问。"
+   }
+  },
+  {
+   "id": "literal-textbook-middle-01",
+   "position": "middle",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在中间",
+   "text": "[0]没有，没有[1]小蜘蛛一边忙着补网，一边回答[2]老屋老屋，我给您讲个故事吧[3]",
+   "answers": ["“", "！”", "，“", "！”"],
+   "capacities": [1, 2, 2, 2],
+   "complete": "“没有，没有！”小蜘蛛一边忙着补网，一边回答，“老屋老屋，我给您讲个故事吧！”",
+   "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。",
+   "source": {
+    "lesson": "总也倒不了的老屋",
+    "type": "课文原句",
+    "original": "“没有，没有！”小蜘蛛一边忙着补网，一边回答，“老屋老屋，我给您讲个故事吧！”",
+    "context": "“没有，没有！”小蜘蛛一边忙着补网，一边回答，“老屋老屋，我给您讲个故事吧！”",
+    "label": "提示语在中间 · 课内·《总也倒不了的老屋》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "“没有，没有！”小蜘蛛一边忙着补网，一边回答，“老屋老屋，我给您讲个故事吧！”"
+   }
+  },
+  {
+   "id": "literal-textbook-before-11",
+   "position": "before",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在前",
+   "text": "她满怀信心地说[0]我会准时赶到那里的[1]",
+   "answers": ["：“", "。”"],
+   "capacities": [2, 2],
+   "complete": "她满怀信心地说：“我会准时赶到那里的。”",
+   "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。说话内容用句号陈述或用感叹号加强语气都合理，提示语位置不变。",
+   "source": {
+    "lesson": "犟龟",
+    "type": "课文原句",
+    "original": "她满怀信心地说：“我会准时赶到那里的。”",
+    "context": "“婚礼两周后就要举行了，你可是慢得出奇呀，怎么可能赶得上呢？”陶陶看了看自己的腿——它们虽然短小，却很结实。她满怀信心地说：“我会准时赶到那里的。”",
+    "label": "提示语在前 · 课内·《犟龟》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "她满怀信心地说：“我会准时赶到那里的。”"
+   },
+   "acceptedAnswers": [["：“", "。”"], ["：“", "！”"]]
+  },
+  {
+   "id": "literal-textbook-after-03",
+   "position": "after",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在后",
+   "text": "[0]很遗憾，我不能这样，我的决定是不可改变的[1]陶陶友好地回答，又哼哧哼哧地开始赶路了[2]",
+   "answers": ["“", "。”", "。"],
+   "capacities": [1, 2, 1],
+   "complete": "“很遗憾，我不能这样，我的决定是不可改变的。”陶陶友好地回答，又哼哧哼哧地开始赶路了。",
+   "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。",
+   "source": {
+    "lesson": "犟龟",
+    "type": "课文原句",
+    "original": "“很遗憾，我不能这样，我的决定是不可改变的。”陶陶友好地回答，又哼哧哼哧地开始赶路了。",
+    "context": "“很遗憾，我不能这样，我的决定是不可改变的。”陶陶友好地回答，又哼哧哼哧地开始赶路了。",
+    "label": "提示语在后 · 课内·《犟龟》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "“很遗憾，我不能这样，我的决定是不可改变的。”陶陶友好地回答，又哼哧哼哧地开始赶路了。"
+   }
+  },
+  {
+   "id": "literal-textbook-before-12",
+   "position": "before",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在前",
+   "text": "他难过地告诉陶陶[0]太糟了！你完全走反了方向[1]",
+   "answers": ["：“", "。”"],
+   "capacities": [2, 2],
+   "complete": "他难过地告诉陶陶：“太糟了！你完全走反了方向。”",
+   "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。",
+   "source": {
+    "lesson": "犟龟",
+    "type": "课文原句",
+    "original": "他难过地告诉陶陶：“太糟了！你完全走反了方向。”",
+    "context": "蜗牛想了好一会儿，才把自己那迷迷糊糊的思绪理清楚。他难过地告诉陶陶：“太糟了！你完全走反了方向。”",
+    "label": "提示语在前 · 课内·《犟龟》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "他难过地告诉陶陶：“太糟了！你完全走反了方向。”"
+   }
+  },
+  {
+   "id": "literal-textbook-after-04",
+   "position": "after",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在后",
+   "text": "[0]非常感谢你给我指路[1]说完，陶陶慢慢掉头往回走[2]",
+   "answers": ["“", "！”", "。"],
+   "capacities": [1, 2, 1],
+   "complete": "“非常感谢你给我指路！”说完，陶陶慢慢掉头往回走。",
+   "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。",
+   "source": {
+    "lesson": "犟龟",
+    "type": "课文原句",
+    "original": "“非常感谢你给我指路！”说完，陶陶慢慢掉头往回走。",
+    "context": "“非常感谢你给我指路！”说完，陶陶慢慢掉头往回走。",
+    "label": "提示语在后 · 课内·《犟龟》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "“非常感谢你给我指路！”说完，陶陶慢慢掉头往回走。"
+   }
+  },
+  {
+   "id": "literal-textbook-after-05",
+   "position": "after",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在后",
+   "text": "[0]可是，后天就要举行婚礼了呀[1]蜗牛几乎带着哭腔说[2]",
+   "answers": ["“", "！”", "。"],
+   "capacities": [1, 2, 1],
+   "complete": "“可是，后天就要举行婚礼了呀！”蜗牛几乎带着哭腔说。",
+   "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。",
+   "source": {
+    "lesson": "犟龟",
+    "type": "课文原句",
+    "original": "“可是，后天就要举行婚礼了呀！”蜗牛几乎带着哭腔说。",
+    "context": "“可是，后天就要举行婚礼了呀！”蜗牛几乎带着哭腔说。",
+    "label": "提示语在后 · 课内·《犟龟》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "“可是，后天就要举行婚礼了呀！”蜗牛几乎带着哭腔说。"
+   }
+  },
+  {
+   "id": "literal-textbook-after-06",
+   "position": "after",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在后",
+   "text": "[0]只要一步一步坚持走，我会准时赶到的[1]陶陶说[2]",
+   "answers": ["“", "。”", "。"],
+   "capacities": [1, 2, 1],
+   "complete": "“只要一步一步坚持走，我会准时赶到的。”陶陶说。",
+   "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。说话内容用句号陈述或用感叹号加强语气都合理，提示语位置不变。",
+   "source": {
+    "lesson": "犟龟",
+    "type": "课文原句",
+    "original": "“只要一步一步坚持走，我会准时赶到的。”陶陶说。",
+    "context": "“只要一步一步坚持走，我会准时赶到的。”陶陶说。",
+    "label": "提示语在后 · 课内·《犟龟》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "“只要一步一步坚持走，我会准时赶到的。”陶陶说。"
+   },
+   "acceptedAnswers": [["“", "。”", "。"], ["“", "！”", "。"]]
+  },
+  {
+   "id": "literal-textbook-after-07",
+   "position": "after",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在后",
+   "text": "[0]你跟我学[1]有一次，一只同情它的小公鸡对它说[2]",
+   "answers": ["“", "。”", "。"],
+   "capacities": [1, 2, 1],
+   "complete": "“你跟我学。”有一次，一只同情它的小公鸡对它说。",
+   "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。",
+   "source": {
+    "lesson": "小狗学叫",
+    "type": "课文原句",
+    "original": "“你跟我学。”有一次，一只同情它的小公鸡对它说。",
+    "context": "“你跟我学。”有一次，一只同情它的小公鸡对它说。那只小公鸡喔喔喔地叫了几声。",
+    "label": "提示语在后 · 课内·《小狗学叫》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "“你跟我学。”有一次，一只同情它的小公鸡对它说。"
+   }
+  },
+  {
+   "id": "literal-textbook-after-08",
+   "position": "after",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在后",
+   "text": "[0]我觉得很难[1]小狗对小公鸡说道[2]",
+   "answers": ["“", "。”", "。"],
+   "capacities": [1, 2, 1],
+   "complete": "“我觉得很难。”小狗对小公鸡说道。",
+   "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。",
+   "source": {
+    "lesson": "小狗学叫",
+    "type": "课文原句",
+    "original": "“我觉得很难。”小狗对小公鸡说道。",
+    "context": "“我觉得很难。”小狗对小公鸡说道。",
+    "label": "提示语在后 · 课内·《小狗学叫》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "“我觉得很难。”小狗对小公鸡说道。"
+   }
+  },
+  {
+   "id": "literal-textbook-middle-02",
+   "position": "middle",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在中间",
+   "text": "[0]不要紧[1]小公鸡说道[2]第一次能这样就很不错了。你再试试，来[3]",
+   "answers": ["“", "，”", "，“", "！”"],
+   "capacities": [1, 2, 2, 2],
+   "complete": "“不要紧，”小公鸡说道，“第一次能这样就很不错了。你再试试，来！”",
+   "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。",
+   "source": {
+    "lesson": "小狗学叫",
+    "type": "课文原句",
+    "original": "“不要紧，”小公鸡说道，“第一次能这样就很不错了。你再试试，来！”",
+    "context": "“不要紧，”小公鸡说道，“第一次能这样就很不错了。你再试试，来！”小狗又试了一次，两次，三次，都没能成功。",
+    "label": "提示语在中间 · 课内·《小狗学叫》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "“不要紧，”小公鸡说道，“第一次能这样就很不错了。你再试试，来！”"
+   }
+  },
+  {
+   "id": "literal-textbook-before-13",
+   "position": "before",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在前",
+   "text": "你们也许要问[0]什么？宝葫芦？就是传说故事里的那种宝葫芦吗[1]",
+   "answers": ["：“", "？”"],
+   "capacities": [2, 2],
+   "complete": "你们也许要问：“什么？宝葫芦？就是传说故事里的那种宝葫芦吗？”",
+   "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。",
+   "source": {
+    "lesson": "宝葫芦的秘密（节选）",
+    "type": "课文原句",
+    "original": "你们也许要问：“什么？宝葫芦？就是传说故事里的那种宝葫芦吗？”",
+    "context": "你们也许要问：“什么？宝葫芦？就是传说故事里的那种宝葫芦吗？”",
+    "label": "提示语在前 · 课内·《宝葫芦的秘密（节选）》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "你们也许要问：“什么？宝葫芦？就是传说故事里的那种宝葫芦吗？”"
+   }
+  },
+  {
+   "id": "literal-textbook-after-09",
+   "position": "after",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在后",
+   "text": "[0]乖小葆，来，奶奶给你洗个脚[1]奶奶总是一面撵我，一面招手[2]",
+   "answers": ["“", "。”", "。"],
+   "capacities": [1, 2, 1],
+   "complete": "“乖小葆，来，奶奶给你洗个脚。”奶奶总是一面撵我，一面招手。",
+   "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。",
+   "source": {
+    "lesson": "宝葫芦的秘密（节选）",
+    "type": "课文原句",
+    "original": "“乖小葆，来，奶奶给你洗个脚。”奶奶总是一面撵我，一面招手。",
+    "context": "“乖小葆，来，奶奶给你洗个脚。”奶奶总是一面撵我，一面招手。",
+    "label": "提示语在后 · 课内·《宝葫芦的秘密（节选）》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "“乖小葆，来，奶奶给你洗个脚。”奶奶总是一面撵我，一面招手。"
+   }
+  },
+  {
+   "id": "literal-textbook-before-14",
+   "position": "before",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在前",
+   "text": "有一天，吃过早饭，青头对红头说[0]咱们玩捉迷藏吧[1]",
+   "answers": ["：“", "！”"],
+   "capacities": [2, 2],
+   "complete": "有一天，吃过早饭，青头对红头说：“咱们玩捉迷藏吧！”",
+   "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。",
+   "source": {
+    "lesson": "在牛肚子里旅行",
+    "type": "课文原句",
+    "original": "有一天，吃过早饭，青头对红头说：“咱们玩捉迷藏吧！”",
+    "context": "有两只小蟋蟀，一只叫青头，另一只叫红头。它们是一对非常要好的朋友。有一天，吃过早饭，青头对红头说：“咱们玩捉迷藏吧！”",
+    "label": "提示语在前 · 课内·《在牛肚子里旅行》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "有一天，吃过早饭，青头对红头说：“咱们玩捉迷藏吧！”"
+   }
+  },
+  {
+   "id": "literal-textbook-after-10",
+   "position": "after",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在后",
+   "text": "[0]那让我先藏，你来找[1]红头说[2]",
+   "answers": ["“", "。”", "。"],
+   "capacities": [1, 2, 1],
+   "complete": "“那让我先藏，你来找。”红头说。",
+   "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。",
+   "source": {
+    "lesson": "在牛肚子里旅行",
+    "type": "课文原句",
+    "original": "“那让我先藏，你来找。”红头说。",
+    "context": "“那让我先藏，你来找。”红头说。",
+    "label": "提示语在后 · 课内·《在牛肚子里旅行》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "“那让我先藏，你来找。”红头说。"
+   }
+  },
+  {
+   "id": "literal-textbook-after-11",
+   "position": "after",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在后",
+   "text": "[0]好吧[1]青头说完，转过身子闭上眼睛[2]",
+   "answers": ["“", "！”", "。"],
+   "capacities": [1, 2, 1],
+   "complete": "“好吧！”青头说完，转过身子闭上眼睛。",
+   "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。",
+   "source": {
+    "lesson": "在牛肚子里旅行",
+    "type": "课文原句",
+    "original": "“好吧！”青头说完，转过身子闭上眼睛。",
+    "context": "“好吧！”青头说完，转过身子闭上眼睛。",
+    "label": "提示语在后 · 课内·《在牛肚子里旅行》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "“好吧！”青头说完，转过身子闭上眼睛。"
+   }
+  },
+  {
+   "id": "literal-textbook-after-12",
+   "position": "after",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在后",
+   "text": "[0]藏好了吗[1]青头大声问[2]",
+   "answers": ["“", "？”", "。"],
+   "capacities": [1, 2, 1],
+   "complete": "“藏好了吗？”青头大声问。",
+   "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。",
+   "source": {
+    "lesson": "在牛肚子里旅行",
+    "type": "课文原句",
+    "original": "“藏好了吗？”青头大声问。",
+    "context": "“藏好了吗？”青头大声问。",
+    "label": "提示语在后 · 课内·《在牛肚子里旅行》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "“藏好了吗？”青头大声问。"
+   }
+  },
+  {
+   "id": "literal-textbook-after-13",
+   "position": "after",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在后",
+   "text": "[0]救命啊！救命啊[1]红头拼命地叫起来[2]",
+   "answers": ["“", "！”", "。"],
+   "capacities": [1, 2, 1],
+   "complete": "“救命啊！救命啊！”红头拼命地叫起来。",
+   "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。",
+   "source": {
+    "lesson": "在牛肚子里旅行",
+    "type": "课文原句",
+    "original": "“救命啊！救命啊！”红头拼命地叫起来。",
+    "context": "“救命啊！救命啊！”红头拼命地叫起来。",
+    "label": "提示语在后 · 课内·《在牛肚子里旅行》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "“救命啊！救命啊！”红头拼命地叫起来。"
+   }
+  },
+  {
+   "id": "literal-textbook-after-14",
+   "position": "after",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在后",
+   "text": "[0]你在哪儿[1]青头急忙问[2]",
+   "answers": ["“", "？”", "。"],
+   "capacities": [1, 2, 1],
+   "complete": "“你在哪儿？”青头急忙问。",
+   "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。",
+   "source": {
+    "lesson": "在牛肚子里旅行",
+    "type": "课文原句",
+    "original": "“你在哪儿？”青头急忙问。",
+    "context": "“你在哪儿？”青头急忙问。",
+    "label": "提示语在后 · 课内·《在牛肚子里旅行》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "“你在哪儿？”青头急忙问。"
+   }
+  },
+  {
+   "id": "literal-textbook-after-15",
+   "position": "after",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在后",
+   "text": "[0]那我马上就会死掉[1]红头哭起来[2]",
+   "answers": ["“", "。”", "。"],
+   "capacities": [1, 2, 1],
+   "complete": "“那我马上就会死掉。”红头哭起来。",
+   "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。",
+   "source": {
+    "lesson": "在牛肚子里旅行",
+    "type": "课文原句",
+    "original": "“那我马上就会死掉。”红头哭起来。",
+    "context": "“那我马上就会死掉。”红头哭起来。它和草已经一起进了牛的肚子。",
+    "label": "提示语在后 · 课内·《在牛肚子里旅行》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "“那我马上就会死掉。”红头哭起来。"
+   }
+  },
+  {
+   "id": "literal-textbook-after-16",
+   "position": "after",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在后",
+   "text": "[0]可是你说这些对我有什么用呢[1]红头悲哀地说[2]",
+   "answers": ["“", "？”", "。"],
+   "capacities": [1, 2, 1],
+   "complete": "“可是你说这些对我有什么用呢？”红头悲哀地说。",
+   "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。",
+   "source": {
+    "lesson": "在牛肚子里旅行",
+    "type": "课文原句",
+    "original": "“可是你说这些对我有什么用呢？”红头悲哀地说。",
+    "context": "“可是你说这些对我有什么用呢？”红头悲哀地说。",
+    "label": "提示语在后 · 课内·《在牛肚子里旅行》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "“可是你说这些对我有什么用呢？”红头悲哀地说。"
+   }
+  },
+  {
+   "id": "literal-textbook-after-17",
+   "position": "after",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在后",
+   "text": "[0]谢谢你[1]红头的声音小得几乎听不见了[2]",
+   "answers": ["“", "！”", "。"],
+   "capacities": [1, 2, 1],
+   "complete": "“谢谢你！”红头的声音小得几乎听不见了。",
+   "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。",
+   "source": {
+    "lesson": "在牛肚子里旅行",
+    "type": "课文原句",
+    "original": "“谢谢你！”红头的声音小得几乎听不见了。",
+    "context": "“谢谢你！”红头的声音小得几乎听不见了。它咬着牙不让自己失去知觉。",
+    "label": "提示语在后 · 课内·《在牛肚子里旅行》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "“谢谢你！”红头的声音小得几乎听不见了。"
+   }
+  },
+  {
+   "id": "literal-textbook-before-15",
+   "position": "before",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在前",
+   "text": "红头看见自己的朋友，高兴得流下了眼泪[0]谢谢你……[1]",
+   "answers": ["：“", "”"],
+   "capacities": [2, 1],
+   "complete": "红头看见自己的朋友，高兴得流下了眼泪：“谢谢你……”",
+   "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。",
+   "source": {
+    "lesson": "在牛肚子里旅行",
+    "type": "课文原句",
+    "original": "红头看见自己的朋友，高兴得流下了眼泪：“谢谢你……”",
+    "context": "红头看见自己的朋友，高兴得流下了眼泪：“谢谢你……”",
+    "label": "提示语在前 · 课内·《在牛肚子里旅行》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "红头看见自己的朋友，高兴得流下了眼泪：“谢谢你……”"
+   }
+  },
+  {
+   "id": "literal-textbook-before-16",
+   "position": "before",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在前",
+   "text": "青头笑眯眯地说[0]不要哭，就当是一次在牛肚子里的旅行吧[1]",
+   "answers": ["：“", "！”"],
+   "capacities": [2, 2],
+   "complete": "青头笑眯眯地说：“不要哭，就当是一次在牛肚子里的旅行吧！”",
+   "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。",
+   "source": {
+    "lesson": "在牛肚子里旅行",
+    "type": "课文原句",
+    "original": "青头笑眯眯地说：“不要哭，就当是一次在牛肚子里的旅行吧！”",
+    "context": "青头笑眯眯地说：“不要哭，就当是一次在牛肚子里的旅行吧！”",
+    "label": "提示语在前 · 课内·《在牛肚子里旅行》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "青头笑眯眯地说：“不要哭，就当是一次在牛肚子里的旅行吧！”"
+   }
+  },
+  {
+   "id": "literal-textbook-before-17",
+   "position": "before",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在前",
+   "text": "蚂蚁队长集合好队伍，向大家宣布[0]今天搬运粮食，只许出力，不许偷嘴。谁偷嘴就要处罚谁[1]",
+   "answers": ["：“", "。”"],
+   "capacities": [2, 2],
+   "complete": "蚂蚁队长集合好队伍，向大家宣布：“今天搬运粮食，只许出力，不许偷嘴。谁偷嘴就要处罚谁。”",
+   "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。",
+   "source": {
+    "lesson": "一块奶酪",
+    "type": "课文原句",
+    "original": "蚂蚁队长集合好队伍，向大家宣布：“今天搬运粮食，只许出力，不许偷嘴。谁偷嘴就要处罚谁。”",
+    "context": "蚂蚁队长集合好队伍，向大家宣布：“今天搬运粮食，只许出力，不许偷嘴。谁偷嘴就要处罚谁。”",
+    "label": "提示语在前 · 课内·《一块奶酪》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "蚂蚁队长集合好队伍，向大家宣布：“今天搬运粮食，只许出力，不许偷嘴。谁偷嘴就要处罚谁。”"
+   }
+  },
+  {
+   "id": "literal-textbook-before-18",
+   "position": "before",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在前",
+   "text": "一只小蚂蚁在队列里嘀咕[0]要是偷嘴的是您呢[1]",
+   "answers": ["：“", "？”"],
+   "capacities": [2, 2],
+   "complete": "一只小蚂蚁在队列里嘀咕：“要是偷嘴的是您呢？”",
+   "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。",
+   "source": {
+    "lesson": "一块奶酪",
+    "type": "课文原句",
+    "original": "一只小蚂蚁在队列里嘀咕：“要是偷嘴的是您呢？”",
+    "context": "一只小蚂蚁在队列里嘀咕：“要是偷嘴的是您呢？”蚂蚁队长说：“照样要受处罚。”",
+    "label": "提示语在前 · 课内·《一块奶酪》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "一只小蚂蚁在队列里嘀咕：“要是偷嘴的是您呢？”"
+   }
+  },
+  {
+   "id": "literal-textbook-before-19",
+   "position": "before",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在前",
+   "text": "蚂蚁队长说[0]照样要受处罚[1]",
+   "answers": ["：“", "。”"],
+   "capacities": [2, 2],
+   "complete": "蚂蚁队长说：“照样要受处罚。”",
+   "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。",
+   "source": {
+    "lesson": "一块奶酪",
+    "type": "课文原句",
+    "original": "蚂蚁队长说：“照样要受处罚。”",
+    "context": "一只小蚂蚁在队列里嘀咕：“要是偷嘴的是您呢？”蚂蚁队长说：“照样要受处罚。”",
+    "label": "提示语在前 · 课内·《一块奶酪》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "蚂蚁队长说：“照样要受处罚。”"
+   }
+  },
+  {
+   "id": "literal-textbook-before-20",
+   "position": "before",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在前",
+   "text": "等小蚂蚁们消失在草丛中，它才大叫[0]立——定！原地休息[1]",
+   "answers": ["：“", "！”"],
+   "capacities": [2, 2],
+   "complete": "等小蚂蚁们消失在草丛中，它才大叫：“立——定！原地休息！”",
+   "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。",
+   "source": {
+    "lesson": "一块奶酪",
+    "type": "课文原句",
+    "original": "等小蚂蚁们消失在草丛中，它才大叫：“立——定！原地休息！”",
+    "context": "蚂蚁队长生气了。它登上一块大石板，突然下令：“注意啦，全体都有。稍息！立正！向后——转！齐步——走！”等小蚂蚁们消失在草丛中，它才大叫：“立——定！原地休息！”",
+    "label": "提示语在前 · 课内·《一块奶酪》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "等小蚂蚁们消失在草丛中，它才大叫：“立——定！原地休息！”"
+   }
+  },
+  {
+   "id": "literal-textbook-before-21",
+   "position": "before",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在前",
+   "text": "有一次，弟弟跑在我前面，我装着一本正经的样子，喊[0]谢廖沙[1]",
+   "answers": ["：“", "！”"],
+   "capacities": [2, 2],
+   "complete": "有一次，弟弟跑在我前面，我装着一本正经的样子，喊：“谢廖沙！”",
+   "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。",
+   "source": {
+    "lesson": "金色的草地",
+    "type": "课文原句",
+    "original": "有一次，弟弟跑在我前面，我装着一本正经的样子，喊：“谢廖沙！”",
+    "context": "我和弟弟常常在草地上玩耍。有一次，弟弟跑在我前面，我装着一本正经的样子，喊：“谢廖沙！”他回过头来，我就使劲一吹，把蒲公英的茸毛吹到他的脸上。弟弟也假装打哈欠，把蒲公英的茸毛朝我脸上吹。就这样，这些并不引人注目的蒲公英，给我们带来了不少快乐。",
+    "label": "提示语在前 · 课内·《金色的草地》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "有一次，弟弟跑在我前面，我装着一本正经的样子，喊：“谢廖沙！”"
+   }
+  },
+  {
+   "id": "literal-textbook-after-18",
+   "position": "after",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在后",
+   "text": "[0]现在还想干什么[1]当我们走出院子时，我接着问它[2]",
+   "answers": ["“", "？”", "。"],
+   "capacities": [1, 2, 1],
+   "complete": "“现在还想干什么？”当我们走出院子时，我接着问它。",
+   "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。",
+   "source": {
+    "lesson": "习作例文·我家的小狗",
+    "type": "课文原句",
+    "original": "“现在还想干什么？”当我们走出院子时，我接着问它。",
+    "context": "“现在还想干什么？”当我们走出院子时，我接着问它。",
+    "label": "提示语在后 · 课内·《习作例文·我家的小狗》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "“现在还想干什么？”当我们走出院子时，我接着问它。"
+   }
+  },
+  {
+   "id": "literal-textbook-before-22",
+   "position": "before",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在前",
+   "text": "他们的歌声好像告诉我们[0]我在歌唱，我很快乐[1]",
+   "answers": ["：“", "！”"],
+   "capacities": [2, 2],
+   "complete": "他们的歌声好像告诉我们：“我在歌唱，我很快乐！”",
+   "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。",
+   "source": {
+    "lesson": "大自然的声音",
+    "type": "课文原句",
+    "original": "他们的歌声好像告诉我们：“我在歌唱，我很快乐！”",
+    "context": "动物是大自然的歌手。走在公园里，听听树上叽叽喳喳的鸟叫；坐在一棵树下，听听唧哩哩唧哩哩的虫鸣；在水塘边散步，听听青蛙的歌唱。你知道他们唱的是什么吗？他们的歌声好像告诉我们：“我在歌唱，我很快乐！”",
+    "label": "提示语在前 · 课内·《大自然的声音》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "他们的歌声好像告诉我们：“我在歌唱，我很快乐！”"
+   }
+  },
+  {
+   "id": "literal-textbook-before-23",
+   "position": "before",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在前",
+   "text": "教授兴奋地说[0]童第周真行[1]",
+   "answers": ["：“", "！”"],
+   "capacities": [2, 2],
+   "complete": "教授兴奋地说：“童第周真行！”",
+   "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。",
+   "source": {
+    "lesson": "一定要争气",
+    "type": "课文原句",
+    "original": "教授兴奋地说：“童第周真行！”",
+    "context": "那位教授要做一项实验，需要剥离青蛙卵的外膜，这是观察卵细胞形态、结构和发育过程的关键环节。工作的难度很大，不但要有熟练的技巧，还要耐心细致，多年来没人能够做成。童第周不声不响地刻苦钻研，反复实践，终于取得成功。教授兴奋地说：“童第周真行！”",
+    "label": "提示语在前 · 课内·《一定要争气》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "教授兴奋地说：“童第周真行！”"
+   }
+  },
+  {
+   "id": "literal-textbook-before-24",
+   "position": "before",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在前",
+   "text": "师卫生部长匆匆赶来，对白求恩说[0]师长决定让您和一部分伤员离开这里[1]",
+   "answers": ["：“", "。”"],
+   "capacities": [2, 2],
+   "complete": "师卫生部长匆匆赶来，对白求恩说：“师长决定让您和一部分伤员离开这里。”",
+   "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。",
+   "source": {
+    "lesson": "手术台就是阵地",
+    "type": "课文原句",
+    "original": "师卫生部长匆匆赶来，对白求恩说：“师长决定让您和一部分伤员离开这里。”",
+    "context": "敌机不断地在上空吼叫，炮弹不断地在周围爆炸。师卫生部长匆匆赶来，对白求恩说：“师长决定让您和一部分伤员离开这里。”白求恩沉思了一会儿，说：“我同意撤走部分伤员。至于我个人，要和战士们在一起，不能离开。”部长恳求说：“白求恩同志，这儿危险，让您离开这里，是战斗形势的需要哇！”白求恩说：“谢谢师长的关心。可是，手术台是医生的阵地。战士们没有离开他们的阵地，我怎么能离开自己的阵地呢？部长同志，请您转告师长，我是一名八路军战士，不是你们的客人。”白求恩低下头，继续给伤员做手术。",
+    "label": "提示语在前 · 课内·《手术台就是阵地》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "师卫生部长匆匆赶来，对白求恩说：“师长决定让您和一部分伤员离开这里。”"
+   }
+  },
+  {
+   "id": "literal-textbook-before-25",
+   "position": "before",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在前",
+   "text": "白求恩沉思了一会儿，说[0]我同意撤走部分伤员。至于我个人，要和战士们在一起，不能离开[1]",
+   "answers": ["：“", "。”"],
+   "capacities": [2, 2],
+   "complete": "白求恩沉思了一会儿，说：“我同意撤走部分伤员。至于我个人，要和战士们在一起，不能离开。”",
+   "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。",
+   "source": {
+    "lesson": "手术台就是阵地",
+    "type": "课文原句",
+    "original": "白求恩沉思了一会儿，说：“我同意撤走部分伤员。至于我个人，要和战士们在一起，不能离开。”",
+    "context": "敌机不断地在上空吼叫，炮弹不断地在周围爆炸。师卫生部长匆匆赶来，对白求恩说：“师长决定让您和一部分伤员离开这里。”白求恩沉思了一会儿，说：“我同意撤走部分伤员。至于我个人，要和战士们在一起，不能离开。”部长恳求说：“白求恩同志，这儿危险，让您离开这里，是战斗形势的需要哇！”白求恩说：“谢谢师长的关心。可是，手术台是医生的阵地。战士们没有离开他们的阵地，我怎么能离开自己的阵地呢？部长同志，请您转告师长，我是一名八路军战士，不是你们的客人。”白求恩低下头，继续给伤员做手术。",
+    "label": "提示语在前 · 课内·《手术台就是阵地》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "白求恩沉思了一会儿，说：“我同意撤走部分伤员。至于我个人，要和战士们在一起，不能离开。”"
+   }
+  },
+  {
+   "id": "literal-textbook-before-26",
+   "position": "before",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在前",
+   "text": "部长恳求说[0]白求恩同志，这儿危险，让您离开这里，是战斗形势的需要哇[1]",
+   "answers": ["：“", "！”"],
+   "capacities": [2, 2],
+   "complete": "部长恳求说：“白求恩同志，这儿危险，让您离开这里，是战斗形势的需要哇！”",
+   "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。",
+   "source": {
+    "lesson": "手术台就是阵地",
+    "type": "课文原句",
+    "original": "部长恳求说：“白求恩同志，这儿危险，让您离开这里，是战斗形势的需要哇！”",
+    "context": "敌机不断地在上空吼叫，炮弹不断地在周围爆炸。师卫生部长匆匆赶来，对白求恩说：“师长决定让您和一部分伤员离开这里。”白求恩沉思了一会儿，说：“我同意撤走部分伤员。至于我个人，要和战士们在一起，不能离开。”部长恳求说：“白求恩同志，这儿危险，让您离开这里，是战斗形势的需要哇！”白求恩说：“谢谢师长的关心。可是，手术台是医生的阵地。战士们没有离开他们的阵地，我怎么能离开自己的阵地呢？部长同志，请您转告师长，我是一名八路军战士，不是你们的客人。”白求恩低下头，继续给伤员做手术。",
+    "label": "提示语在前 · 课内·《手术台就是阵地》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "部长恳求说：“白求恩同志，这儿危险，让您离开这里，是战斗形势的需要哇！”"
+   }
+  },
+  {
+   "id": "literal-textbook-before-27",
+   "position": "before",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在前",
+   "text": "赵一曼看着这个碗，对通讯员说[0]哪里拿来的，请你还到哪里去[1]",
+   "answers": ["：“", "！”"],
+   "capacities": [2, 2],
+   "complete": "赵一曼看着这个碗，对通讯员说：“哪里拿来的，请你还到哪里去！”",
+   "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。",
+   "source": {
+    "lesson": "一个粗瓷大碗",
+    "type": "课文原句",
+    "original": "赵一曼看着这个碗，对通讯员说：“哪里拿来的，请你还到哪里去！”",
+    "context": "赵一曼看着这个碗，对通讯员说：“哪里拿来的，请你还到哪里去！”",
+    "label": "提示语在前 · 课内·《一个粗瓷大碗》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "赵一曼看着这个碗，对通讯员说：“哪里拿来的，请你还到哪里去！”"
+   }
+  },
+  {
+   "id": "literal-textbook-after-19",
+   "position": "after",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在后",
+   "text": "[0]这……这……敌人都被消灭了，往哪里还啊[1]通讯员为难地说[2]",
+   "answers": ["“", "！”", "。"],
+   "capacities": [1, 2, 1],
+   "complete": "“这……这……敌人都被消灭了，往哪里还啊！”通讯员为难地说。",
+   "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。",
+   "source": {
+    "lesson": "一个粗瓷大碗",
+    "type": "课文原句",
+    "original": "“这……这……敌人都被消灭了，往哪里还啊！”通讯员为难地说。",
+    "context": "“这……这……敌人都被消灭了，往哪里还啊！”通讯员为难地说。",
+    "label": "提示语在后 · 课内·《一个粗瓷大碗》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "“这……这……敌人都被消灭了，往哪里还啊！”通讯员为难地说。"
+   }
+  },
+  {
+   "id": "literal-textbook-before-28",
+   "position": "before",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在前",
+   "text": "小通讯员急得直叫[0]我说政委同志啊，给你一百个碗也架不住你这么‘丢’啊[1]",
+   "answers": ["：“", "！”"],
+   "capacities": [2, 2],
+   "complete": "小通讯员急得直叫：“我说政委同志啊，给你一百个碗也架不住你这么‘丢’啊！”",
+   "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。",
+   "source": {
+    "lesson": "一个粗瓷大碗",
+    "type": "课文原句",
+    "original": "小通讯员急得直叫：“我说政委同志啊，给你一百个碗也架不住你这么‘丢’啊！”",
+    "context": "第二天开饭的时候，赵一曼又没有碗了。小通讯员急得直叫：“我说政委同志啊，给你一百个碗也架不住你这么‘丢’啊！”",
+    "label": "提示语在前 · 课内·《一个粗瓷大碗》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "小通讯员急得直叫：“我说政委同志啊，给你一百个碗也架不住你这么‘丢’啊！”"
+   }
+  },
+  {
+   "id": "literal-textbook-before-29",
+   "position": "before",
+   "origin": "textbook",
+   "difficulty": "medium",
+   "rule": "提示语在前",
+   "text": "赵一曼笑着说[0]是啊，什么时候才能不‘丢’碗呢[1]",
+   "answers": ["：“", "？”"],
+   "capacities": [2, 2],
+   "complete": "赵一曼笑着说：“是啊，什么时候才能不‘丢’碗呢？”",
+   "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。",
+   "source": {
+    "lesson": "一个粗瓷大碗",
+    "type": "课文原句",
+    "original": "赵一曼笑着说：“是啊，什么时候才能不‘丢’碗呢？”",
+    "context": "赵一曼笑着说：“是啊，什么时候才能不‘丢’碗呢？”",
+    "label": "提示语在前 · 课内·《一个粗瓷大碗》原句",
+    "detailTitle": "查看课文来源原句",
+    "detail": "赵一曼笑着说：“是啊，什么时候才能不‘丢’碗呢？”"
+   }
+  },
+  {
+   "id": "literal-extension-before-01",
+   "position": "before",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在前",
+   "text": "小红说[0]我很喜欢读书，每天都会读一会儿[1]",
+   "answers": ["：“", "。”"],
+   "capacities": [2, 2],
+   "complete": "小红说：“我很喜欢读书，每天都会读一会儿。”",
+   "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。本题也接受语气合理的另一种写法，标点顺序仍须正确。",
+   "source": {
+    "type": "自编例句",
+    "original": "小红说：“我很喜欢读书，每天都会读一会儿。”",
+    "label": "提示语在前 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "小红说：“我很喜欢读书，每天都会读一会儿。”"
+   },
+   "acceptedAnswers": [["：“", "。”"], ["：“", "！”"]]
+  },
+  {
+   "id": "literal-extension-before-02",
+   "position": "before",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在前",
+   "text": "小明问[0]明天的美术课要带什么[1]",
+   "answers": ["：“", "？”"],
+   "capacities": [2, 2],
+   "complete": "小明问：“明天的美术课要带什么？”",
+   "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。",
+   "source": {
+    "type": "自编例句",
+    "original": "小明问：“明天的美术课要带什么？”",
+    "label": "提示语在前 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "小明问：“明天的美术课要带什么？”"
+   }
+  },
+  {
+   "id": "literal-extension-before-03",
+   "position": "before",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在前",
+   "text": "小刚喊[0]快来呀，风筝飞起来了[1]",
+   "answers": ["：“", "！”"],
+   "capacities": [2, 2],
+   "complete": "小刚喊：“快来呀，风筝飞起来了！”",
+   "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。",
+   "source": {
+    "type": "自编例句",
+    "original": "小刚喊：“快来呀，风筝飞起来了！”",
+    "label": "提示语在前 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "小刚喊：“快来呀，风筝飞起来了！”"
+   }
+  },
+  {
+   "id": "literal-extension-before-04",
+   "position": "before",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在前",
+   "text": "小丽问[0]这本故事书可以借给我吗[1]",
+   "answers": ["：“", "？”"],
+   "capacities": [2, 2],
+   "complete": "小丽问：“这本故事书可以借给我吗？”",
+   "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。",
+   "source": {
+    "type": "自编例句",
+    "original": "小丽问：“这本故事书可以借给我吗？”",
+    "label": "提示语在前 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "小丽问：“这本故事书可以借给我吗？”"
+   }
+  },
+  {
+   "id": "literal-extension-before-05",
+   "position": "before",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在前",
+   "text": "小华高兴地说[0]我终于学会骑自行车了[1]",
+   "answers": ["：“", "！”"],
+   "capacities": [2, 2],
+   "complete": "小华高兴地说：“我终于学会骑自行车了！”",
+   "explanation": "提示语在前，冒号引出说话内容；双引号括住原话，已有的标点保持不变。",
+   "source": {
+    "type": "自编例句",
+    "original": "小华高兴地说：“我终于学会骑自行车了！”",
+    "label": "提示语在前 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "小华高兴地说：“我终于学会骑自行车了！”"
+   }
+  },
+  {
+   "id": "literal-extension-middle-01",
+   "position": "middle",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在中间",
+   "text": "[0]妈妈[1]小红问[2]我能帮您洗菜吗[3]",
+   "answers": ["“", "，”", "，“", "？”"],
+   "capacities": [1, 2, 2, 2],
+   "complete": "“妈妈，”小红问，“我能帮您洗菜吗？”",
+   "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。",
+   "source": {
+    "type": "自编例句",
+    "original": "“妈妈，”小红问，“我能帮您洗菜吗？”",
+    "label": "提示语在中间 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "“妈妈，”小红问，“我能帮您洗菜吗？”"
+   }
+  },
+  {
+   "id": "literal-extension-middle-02",
+   "position": "middle",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在中间",
+   "text": "[0]今天阳光真好[1]小明说[2]我们去公园走走吧[3]",
+   "answers": ["“", "！”", "，“", "！”"],
+   "capacities": [1, 2, 2, 2],
+   "complete": "“今天阳光真好！”小明说，“我们去公园走走吧！”",
+   "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。本题也接受语气合理的另一种写法，标点顺序仍须正确。",
+   "source": {
+    "type": "自编例句",
+    "original": "“今天阳光真好！”小明说，“我们去公园走走吧！”",
+    "label": "提示语在中间 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "“今天阳光真好！”小明说，“我们去公园走走吧！”"
+   },
+   "acceptedAnswers": [["“", "！”", "，“", "！”"], ["“", "！”", "，“", "。”"], ["“", "，”", "，“", "！”"], ["“", "，”", "，“", "。”"]]
+  },
+  {
+   "id": "literal-extension-middle-03",
+   "position": "middle",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在中间",
+   "text": "[0]这道题不难[1]老师说[2]先想想数量关系[3]",
+   "answers": ["“", "，”", "，“", "。”"],
+   "capacities": [1, 2, 2, 2],
+   "complete": "“这道题不难，”老师说，“先想想数量关系。”",
+   "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。",
+   "source": {
+    "type": "自编例句",
+    "original": "“这道题不难，”老师说，“先想想数量关系。”",
+    "label": "提示语在中间 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "“这道题不难，”老师说，“先想想数量关系。”"
+   }
+  },
+  {
+   "id": "literal-extension-middle-04",
+   "position": "middle",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在中间",
+   "text": "[0]我找到了[1]弟弟喊[2]钥匙在沙发下面[3]",
+   "answers": ["“", "！”", "，“", "！”"],
+   "capacities": [1, 2, 2, 2],
+   "complete": "“我找到了！”弟弟喊，“钥匙在沙发下面！”",
+   "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。",
+   "source": {
+    "type": "自编例句",
+    "original": "“我找到了！”弟弟喊，“钥匙在沙发下面！”",
+    "label": "提示语在中间 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "“我找到了！”弟弟喊，“钥匙在沙发下面！”"
+   }
+  },
+  {
+   "id": "literal-extension-middle-05",
+   "position": "middle",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在中间",
+   "text": "[0]请等一等[1]小丽说[2]我马上就来[3]",
+   "answers": ["“", "，”", "，“", "。”"],
+   "capacities": [1, 2, 2, 2],
+   "complete": "“请等一等，”小丽说，“我马上就来。”",
+   "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。",
+   "source": {
+    "type": "自编例句",
+    "original": "“请等一等，”小丽说，“我马上就来。”",
+    "label": "提示语在中间 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "“请等一等，”小丽说，“我马上就来。”"
+   }
+  },
+  {
+   "id": "literal-extension-middle-06",
+   "position": "middle",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在中间",
+   "text": "[0]明天会下雨吗[1]小军问[2]要不要带雨伞[3]",
+   "answers": ["“", "？”", "，“", "？”"],
+   "capacities": [1, 2, 2, 2],
+   "complete": "“明天会下雨吗？”小军问，“要不要带雨伞？”",
+   "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。",
+   "source": {
+    "type": "自编例句",
+    "original": "“明天会下雨吗？”小军问，“要不要带雨伞？”",
+    "label": "提示语在中间 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "“明天会下雨吗？”小军问，“要不要带雨伞？”"
+   }
+  },
+  {
+   "id": "literal-extension-middle-07",
+   "position": "middle",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在中间",
+   "text": "[0]别担心[1]爸爸说[2]我会在校门口等你[3]",
+   "answers": ["“", "，”", "，“", "。”"],
+   "capacities": [1, 2, 2, 2],
+   "complete": "“别担心，”爸爸说，“我会在校门口等你。”",
+   "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。",
+   "source": {
+    "type": "自编例句",
+    "original": "“别担心，”爸爸说，“我会在校门口等你。”",
+    "label": "提示语在中间 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "“别担心，”爸爸说，“我会在校门口等你。”"
+   }
+  },
+  {
+   "id": "literal-extension-middle-08",
+   "position": "middle",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在中间",
+   "text": "[0]快看[1]妹妹叫起来[2]小猫正在追尾巴[3]",
+   "answers": ["“", "！”", "，“", "！”"],
+   "capacities": [1, 2, 2, 2],
+   "complete": "“快看！”妹妹叫起来，“小猫正在追尾巴！”",
+   "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。",
+   "source": {
+    "type": "自编例句",
+    "original": "“快看！”妹妹叫起来，“小猫正在追尾巴！”",
+    "label": "提示语在中间 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "“快看！”妹妹叫起来，“小猫正在追尾巴！”"
+   }
+  },
+  {
+   "id": "literal-extension-middle-09",
+   "position": "middle",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在中间",
+   "text": "[0]这朵花真漂亮[1]小刚赞叹道[2]颜色也很鲜艳[3]",
+   "answers": ["“", "！”", "，“", "。”"],
+   "capacities": [1, 2, 2, 2],
+   "complete": "“这朵花真漂亮！”小刚赞叹道，“颜色也很鲜艳。”",
+   "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。本题也接受语气合理的另一种写法，标点顺序仍须正确。",
+   "source": {
+    "type": "自编例句",
+    "original": "“这朵花真漂亮！”小刚赞叹道，“颜色也很鲜艳。”",
+    "label": "提示语在中间 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "“这朵花真漂亮！”小刚赞叹道，“颜色也很鲜艳。”"
+   },
+   "acceptedAnswers": [["“", "！”", "，“", "。”"], ["“", "，”", "，“", "。”"]]
+  },
+  {
+   "id": "literal-extension-middle-10",
+   "position": "middle",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在中间",
+   "text": "[0]我先扫地[1]小华说[2]你来擦黑板吧[3]",
+   "answers": ["“", "，”", "，“", "。”"],
+   "capacities": [1, 2, 2, 2],
+   "complete": "“我先扫地，”小华说，“你来擦黑板吧。”",
+   "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。",
+   "source": {
+    "type": "自编例句",
+    "original": "“我先扫地，”小华说，“你来擦黑板吧。”",
+    "label": "提示语在中间 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "“我先扫地，”小华说，“你来擦黑板吧。”"
+   }
+  },
+  {
+   "id": "literal-extension-middle-11",
+   "position": "middle",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在中间",
+   "text": "[0]你饿了吗[1]奶奶问[2]要不要吃个苹果[3]",
+   "answers": ["“", "？”", "，“", "？”"],
+   "capacities": [1, 2, 2, 2],
+   "complete": "“你饿了吗？”奶奶问，“要不要吃个苹果？”",
+   "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。",
+   "source": {
+    "type": "自编例句",
+    "original": "“你饿了吗？”奶奶问，“要不要吃个苹果？”",
+    "label": "提示语在中间 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "“你饿了吗？”奶奶问，“要不要吃个苹果？”"
+   }
+  },
+  {
+   "id": "literal-extension-middle-12",
+   "position": "middle",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在中间",
+   "text": "[0]今天我值日[1]班长说[2]大家先回家吧[3]",
+   "answers": ["“", "，”", "，“", "。”"],
+   "capacities": [1, 2, 2, 2],
+   "complete": "“今天我值日，”班长说，“大家先回家吧。”",
+   "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。",
+   "source": {
+    "type": "自编例句",
+    "original": "“今天我值日，”班长说，“大家先回家吧。”",
+    "label": "提示语在中间 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "“今天我值日，”班长说，“大家先回家吧。”"
+   }
+  },
+  {
+   "id": "literal-extension-middle-13",
+   "position": "middle",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在中间",
+   "text": "[0]请排好队[1]老师提醒[2]不要推挤[3]",
+   "answers": ["“", "，”", "，“", "。”"],
+   "capacities": [1, 2, 2, 2],
+   "complete": "“请排好队，”老师提醒，“不要推挤。”",
+   "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。",
+   "source": {
+    "type": "自编例句",
+    "original": "“请排好队，”老师提醒，“不要推挤。”",
+    "label": "提示语在中间 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "“请排好队，”老师提醒，“不要推挤。”"
+   }
+  },
+  {
+   "id": "literal-extension-middle-14",
+   "position": "middle",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在中间",
+   "text": "[0]我喜欢画画[1]小雨说[2]也喜欢唱歌[3]",
+   "answers": ["“", "，”", "，“", "。”"],
+   "capacities": [1, 2, 2, 2],
+   "complete": "“我喜欢画画，”小雨说，“也喜欢唱歌。”",
+   "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。",
+   "source": {
+    "type": "自编例句",
+    "original": "“我喜欢画画，”小雨说，“也喜欢唱歌。”",
+    "label": "提示语在中间 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "“我喜欢画画，”小雨说，“也喜欢唱歌。”"
+   }
+  },
+  {
+   "id": "literal-extension-middle-15",
+   "position": "middle",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在中间",
+   "text": "[0]太好了[1]同学们欢呼[2]我们的球队赢了[3]",
+   "answers": ["“", "！”", "，“", "！”"],
+   "capacities": [1, 2, 2, 2],
+   "complete": "“太好了！”同学们欢呼，“我们的球队赢了！”",
+   "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。",
+   "source": {
+    "type": "自编例句",
+    "original": "“太好了！”同学们欢呼，“我们的球队赢了！”",
+    "label": "提示语在中间 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "“太好了！”同学们欢呼，“我们的球队赢了！”"
+   }
+  },
+  {
+   "id": "literal-extension-middle-16",
+   "position": "middle",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在中间",
+   "text": "[0]我读完了[1]小红说[2]这本书真有趣[3]",
+   "answers": ["“", "，”", "，“", "。”"],
+   "capacities": [1, 2, 2, 2],
+   "complete": "“我读完了，”小红说，“这本书真有趣。”",
+   "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。",
+   "source": {
+    "type": "自编例句",
+    "original": "“我读完了，”小红说，“这本书真有趣。”",
+    "label": "提示语在中间 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "“我读完了，”小红说，“这本书真有趣。”"
+   }
+  },
+  {
+   "id": "literal-extension-after-01",
+   "position": "after",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在后",
+   "text": "[0]今天的作业是什么[1]小军问[2]",
+   "answers": ["“", "？”", "。"],
+   "capacities": [1, 2, 1],
+   "complete": "“今天的作业是什么？”小军问。",
+   "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。",
+   "source": {
+    "type": "自编例句",
+    "original": "“今天的作业是什么？”小军问。",
+    "label": "提示语在后 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "“今天的作业是什么？”小军问。"
+   }
+  },
+  {
+   "id": "literal-extension-after-02",
+   "position": "after",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在后",
+   "text": "[0]我把教室打扫干净了[1]小华说[2]",
+   "answers": ["“", "。”", "。"],
+   "capacities": [1, 2, 1],
+   "complete": "“我把教室打扫干净了。”小华说。",
+   "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。",
+   "source": {
+    "type": "自编例句",
+    "original": "“我把教室打扫干净了。”小华说。",
+    "label": "提示语在后 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "“我把教室打扫干净了。”小华说。"
+   }
+  },
+  {
+   "id": "literal-extension-after-03",
+   "position": "after",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在后",
+   "text": "[0]你能陪我踢球吗[1]小明问[2]",
+   "answers": ["“", "？”", "。"],
+   "capacities": [1, 2, 1],
+   "complete": "“你能陪我踢球吗？”小明问。",
+   "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。",
+   "source": {
+    "type": "自编例句",
+    "original": "“你能陪我踢球吗？”小明问。",
+    "label": "提示语在后 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "“你能陪我踢球吗？”小明问。"
+   }
+  },
+  {
+   "id": "literal-extension-after-04",
+   "position": "after",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在后",
+   "text": "[0]别跑，小心摔倒[1]老师提醒[2]",
+   "answers": ["“", "！”", "。"],
+   "capacities": [1, 2, 1],
+   "complete": "“别跑，小心摔倒！”老师提醒。",
+   "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。",
+   "source": {
+    "type": "自编例句",
+    "original": "“别跑，小心摔倒！”老师提醒。",
+    "label": "提示语在后 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "“别跑，小心摔倒！”老师提醒。"
+   }
+  },
+  {
+   "id": "literal-extension-after-05",
+   "position": "after",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在后",
+   "text": "[0]这幅画是你画的吗[1]妈妈问[2]",
+   "answers": ["“", "？”", "。"],
+   "capacities": [1, 2, 1],
+   "complete": "“这幅画是你画的吗？”妈妈问。",
+   "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。",
+   "source": {
+    "type": "自编例句",
+    "original": "“这幅画是你画的吗？”妈妈问。",
+    "label": "提示语在后 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "“这幅画是你画的吗？”妈妈问。"
+   }
+  },
+  {
+   "id": "literal-extension-after-06",
+   "position": "after",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在后",
+   "text": "[0]我想再读一遍这个故事[1]妹妹说[2]",
+   "answers": ["“", "。”", "。"],
+   "capacities": [1, 2, 1],
+   "complete": "“我想再读一遍这个故事。”妹妹说。",
+   "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。",
+   "source": {
+    "type": "自编例句",
+    "original": "“我想再读一遍这个故事。”妹妹说。",
+    "label": "提示语在后 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "“我想再读一遍这个故事。”妹妹说。"
+   }
+  },
+  {
+   "id": "literal-extension-after-07",
+   "position": "after",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在后",
+   "text": "[0]快来帮我扶住梯子[1]爸爸喊[2]",
+   "answers": ["“", "！”", "。"],
+   "capacities": [1, 2, 1],
+   "complete": "“快来帮我扶住梯子！”爸爸喊。",
+   "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。",
+   "source": {
+    "type": "自编例句",
+    "original": "“快来帮我扶住梯子！”爸爸喊。",
+    "label": "提示语在后 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "“快来帮我扶住梯子！”爸爸喊。"
+   }
+  },
+  {
+   "id": "literal-extension-after-08",
+   "position": "after",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在后",
+   "text": "[0]你的铅笔掉在地上了[1]同桌提醒[2]",
+   "answers": ["“", "。”", "。"],
+   "capacities": [1, 2, 1],
+   "complete": "“你的铅笔掉在地上了。”同桌提醒。",
+   "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。",
+   "source": {
+    "type": "自编例句",
+    "original": "“你的铅笔掉在地上了。”同桌提醒。",
+    "label": "提示语在后 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "“你的铅笔掉在地上了。”同桌提醒。"
+   }
+  },
+  {
+   "id": "literal-extension-after-09",
+   "position": "after",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在后",
+   "text": "[0]我们一起爱护花草吧[1]班长提议[2]",
+   "answers": ["“", "！”", "。"],
+   "capacities": [1, 2, 1],
+   "complete": "“我们一起爱护花草吧！”班长提议。",
+   "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。",
+   "source": {
+    "type": "自编例句",
+    "original": "“我们一起爱护花草吧！”班长提议。",
+    "label": "提示语在后 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "“我们一起爱护花草吧！”班长提议。"
+   }
+  },
+  {
+   "id": "literal-extension-after-10",
+   "position": "after",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在后",
+   "text": "[0]这碗汤真好喝[1]弟弟赞叹[2]",
+   "answers": ["“", "！”", "。"],
+   "capacities": [1, 2, 1],
+   "complete": "“这碗汤真好喝！”弟弟赞叹。",
+   "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。",
+   "source": {
+    "type": "自编例句",
+    "original": "“这碗汤真好喝！”弟弟赞叹。",
+    "label": "提示语在后 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "“这碗汤真好喝！”弟弟赞叹。"
+   }
+  },
+  {
+   "id": "literal-extension-after-11",
+   "position": "after",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在后",
+   "text": "[0]下午几点到图书馆[1]小丽问[2]",
+   "answers": ["“", "？”", "。"],
+   "capacities": [1, 2, 1],
+   "complete": "“下午几点到图书馆？”小丽问。",
+   "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。",
+   "source": {
+    "type": "自编例句",
+    "original": "“下午几点到图书馆？”小丽问。",
+    "label": "提示语在后 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "“下午几点到图书馆？”小丽问。"
+   }
+  },
+  {
+   "id": "literal-extension-after-12",
+   "position": "after",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在后",
+   "text": "[0]我已经准备好书包了[1]小红说[2]",
+   "answers": ["“", "。”", "。"],
+   "capacities": [1, 2, 1],
+   "complete": "“我已经准备好书包了。”小红说。",
+   "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。",
+   "source": {
+    "type": "自编例句",
+    "original": "“我已经准备好书包了。”小红说。",
+    "label": "提示语在后 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "“我已经准备好书包了。”小红说。"
+   }
+  },
+  {
+   "id": "literal-extension-after-13",
+   "position": "after",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在后",
+   "text": "[0]雨停了，我们可以出门了[1]爷爷说[2]",
+   "answers": ["“", "。”", "。"],
+   "capacities": [1, 2, 1],
+   "complete": "“雨停了，我们可以出门了。”爷爷说。",
+   "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。",
+   "source": {
+    "type": "自编例句",
+    "original": "“雨停了，我们可以出门了。”爷爷说。",
+    "label": "提示语在后 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "“雨停了，我们可以出门了。”爷爷说。"
+   }
+  },
+  {
+   "id": "literal-extension-after-14",
+   "position": "after",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在后",
+   "text": "[0]请把垃圾放进垃圾桶[1]老师说[2]",
+   "answers": ["“", "。”", "。"],
+   "capacities": [1, 2, 1],
+   "complete": "“请把垃圾放进垃圾桶。”老师说。",
+   "explanation": "说话内容的句末标点放在后引号内；提示语及后续描写结束后用句号。",
+   "source": {
+    "type": "自编例句",
+    "original": "“请把垃圾放进垃圾桶。”老师说。",
+    "label": "提示语在后 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "“请把垃圾放进垃圾桶。”老师说。"
+   }
+  },
+  {
+   "id": "literal-extension-middle-17",
+   "position": "middle",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在中间",
+   "text": "[0]慢一点[1]妈妈提醒[2]台阶有些湿[3]",
+   "answers": ["“", "，”", "，“", "。”"],
+   "capacities": [1, 2, 2, 2],
+   "complete": "“慢一点，”妈妈提醒，“台阶有些湿。”",
+   "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。",
+   "source": {
+    "type": "自编例句",
+    "original": "“慢一点，”妈妈提醒，“台阶有些湿。”",
+    "label": "提示语在中间 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "“慢一点，”妈妈提醒，“台阶有些湿。”"
+   }
+  },
+  {
+   "id": "literal-extension-middle-18",
+   "position": "middle",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在中间",
+   "text": "[0]我准备好了[1]小华说[2]现在可以出发吗[3]",
+   "answers": ["“", "！”", "，“", "？”"],
+   "capacities": [1, 2, 2, 2],
+   "complete": "“我准备好了！”小华说，“现在可以出发吗？”",
+   "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。",
+   "source": {
+    "type": "自编例句",
+    "original": "“我准备好了！”小华说，“现在可以出发吗？”",
+    "label": "提示语在中间 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "“我准备好了！”小华说，“现在可以出发吗？”"
+   }
+  },
+  {
+   "id": "literal-extension-middle-19",
+   "position": "middle",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在中间",
+   "text": "[0]书找到了吗[1]小丽问[2]我帮你一起找吧[3]",
+   "answers": ["“", "？”", "，“", "。”"],
+   "capacities": [1, 2, 2, 2],
+   "complete": "“书找到了吗？”小丽问，“我帮你一起找吧。”",
+   "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。",
+   "source": {
+    "type": "自编例句",
+    "original": "“书找到了吗？”小丽问，“我帮你一起找吧。”",
+    "label": "提示语在中间 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "“书找到了吗？”小丽问，“我帮你一起找吧。”"
+   }
+  },
+  {
+   "id": "literal-extension-middle-20",
+   "position": "middle",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在中间",
+   "text": "[0]轮到我了[1]小明说[2]我来给大家讲故事[3]",
+   "answers": ["“", "，”", "，“", "。”"],
+   "capacities": [1, 2, 2, 2],
+   "complete": "“轮到我了，”小明说，“我来给大家讲故事。”",
+   "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。",
+   "source": {
+    "type": "自编例句",
+    "original": "“轮到我了，”小明说，“我来给大家讲故事。”",
+    "label": "提示语在中间 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "“轮到我了，”小明说，“我来给大家讲故事。”"
+   }
+  },
+  {
+   "id": "literal-extension-middle-21",
+   "position": "middle",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在中间",
+   "text": "[0]这是什么声音[1]弟弟问[2]好像是小鸟在唱歌[3]",
+   "answers": ["“", "？”", "，“", "。”"],
+   "capacities": [1, 2, 2, 2],
+   "complete": "“这是什么声音？”弟弟问，“好像是小鸟在唱歌。”",
+   "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。",
+   "source": {
+    "type": "自编例句",
+    "original": "“这是什么声音？”弟弟问，“好像是小鸟在唱歌。”",
+    "label": "提示语在中间 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "“这是什么声音？”弟弟问，“好像是小鸟在唱歌。”"
+   }
+  },
+  {
+   "id": "literal-extension-middle-22",
+   "position": "middle",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在中间",
+   "text": "[0]请关上窗户[1]老师说[2]外面起风了[3]",
+   "answers": ["“", "，”", "，“", "。”"],
+   "capacities": [1, 2, 2, 2],
+   "complete": "“请关上窗户，”老师说，“外面起风了。”",
+   "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。",
+   "source": {
+    "type": "自编例句",
+    "original": "“请关上窗户，”老师说，“外面起风了。”",
+    "label": "提示语在中间 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "“请关上窗户，”老师说，“外面起风了。”"
+   }
+  },
+  {
+   "id": "literal-extension-middle-23",
+   "position": "middle",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在中间",
+   "text": "[0]我有个办法[1]班长说[2]我们分成两组来做[3]",
+   "answers": ["“", "，”", "，“", "。”"],
+   "capacities": [1, 2, 2, 2],
+   "complete": "“我有个办法，”班长说，“我们分成两组来做。”",
+   "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。",
+   "source": {
+    "type": "自编例句",
+    "original": "“我有个办法，”班长说，“我们分成两组来做。”",
+    "label": "提示语在中间 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "“我有个办法，”班长说，“我们分成两组来做。”"
+   }
+  },
+  {
+   "id": "literal-extension-middle-24",
+   "position": "middle",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在中间",
+   "text": "[0]真香啊[1]妹妹说[2]是谁在烤面包[3]",
+   "answers": ["“", "！”", "，“", "？”"],
+   "capacities": [1, 2, 2, 2],
+   "complete": "“真香啊！”妹妹说，“是谁在烤面包？”",
+   "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。",
+   "source": {
+    "type": "自编例句",
+    "original": "“真香啊！”妹妹说，“是谁在烤面包？”",
+    "label": "提示语在中间 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "“真香啊！”妹妹说，“是谁在烤面包？”"
+   }
+  },
+  {
+   "id": "literal-extension-middle-25",
+   "position": "middle",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在中间",
+   "text": "[0]你冷不冷[1]爸爸问[2]要不要穿上外套[3]",
+   "answers": ["“", "？”", "，“", "？”"],
+   "capacities": [1, 2, 2, 2],
+   "complete": "“你冷不冷？”爸爸问，“要不要穿上外套？”",
+   "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。",
+   "source": {
+    "type": "自编例句",
+    "original": "“你冷不冷？”爸爸问，“要不要穿上外套？”",
+    "label": "提示语在中间 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "“你冷不冷？”爸爸问，“要不要穿上外套？”"
+   }
+  },
+  {
+   "id": "literal-extension-middle-26",
+   "position": "middle",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在中间",
+   "text": "[0]我来浇水[1]小红说[2]你帮我扶着花盆[3]",
+   "answers": ["“", "，”", "，“", "。”"],
+   "capacities": [1, 2, 2, 2],
+   "complete": "“我来浇水，”小红说，“你帮我扶着花盆。”",
+   "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。",
+   "source": {
+    "type": "自编例句",
+    "original": "“我来浇水，”小红说，“你帮我扶着花盆。”",
+    "label": "提示语在中间 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "“我来浇水，”小红说，“你帮我扶着花盆。”"
+   }
+  },
+  {
+   "id": "literal-extension-middle-27",
+   "position": "middle",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在中间",
+   "text": "[0]别碰热水壶[1]奶奶提醒[2]小心烫手[3]",
+   "answers": ["“", "！”", "，“", "。”"],
+   "capacities": [1, 2, 2, 2],
+   "complete": "“别碰热水壶！”奶奶提醒，“小心烫手。”",
+   "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。",
+   "source": {
+    "type": "自编例句",
+    "original": "“别碰热水壶！”奶奶提醒，“小心烫手。”",
+    "label": "提示语在中间 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "“别碰热水壶！”奶奶提醒，“小心烫手。”"
+   }
+  },
+  {
+   "id": "literal-extension-middle-28",
+   "position": "middle",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在中间",
+   "text": "[0]颜色选好了[1]小雨说[2]我想画一片蓝天[3]",
+   "answers": ["“", "，”", "，“", "。”"],
+   "capacities": [1, 2, 2, 2],
+   "complete": "“颜色选好了，”小雨说，“我想画一片蓝天。”",
+   "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。",
+   "source": {
+    "type": "自编例句",
+    "original": "“颜色选好了，”小雨说，“我想画一片蓝天。”",
+    "label": "提示语在中间 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "“颜色选好了，”小雨说，“我想画一片蓝天。”"
+   }
+  },
+  {
+   "id": "literal-extension-middle-29",
+   "position": "middle",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在中间",
+   "text": "[0]欢迎你[1]同学们说[2]来和我们一起玩吧[3]",
+   "answers": ["“", "！”", "，“", "。”"],
+   "capacities": [1, 2, 2, 2],
+   "complete": "“欢迎你！”同学们说，“来和我们一起玩吧。”",
+   "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。",
+   "source": {
+    "type": "自编例句",
+    "original": "“欢迎你！”同学们说，“来和我们一起玩吧。”",
+    "label": "提示语在中间 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "“欢迎你！”同学们说，“来和我们一起玩吧。”"
+   }
+  },
+  {
+   "id": "literal-extension-middle-30",
+   "position": "middle",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在中间",
+   "text": "[0]作业检查了吗[1]妈妈问[2]请再看一遍[3]",
+   "answers": ["“", "？”", "，“", "。”"],
+   "capacities": [1, 2, 2, 2],
+   "complete": "“作业检查了吗？”妈妈问，“请再看一遍。”",
+   "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。",
+   "source": {
+    "type": "自编例句",
+    "original": "“作业检查了吗？”妈妈问，“请再看一遍。”",
+    "label": "提示语在中间 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "“作业检查了吗？”妈妈问，“请再看一遍。”"
+   }
+  },
+  {
+   "id": "literal-extension-middle-31",
+   "position": "middle",
+   "origin": "extension",
+   "difficulty": "medium",
+   "rule": "提示语在中间",
+   "text": "[0]不要着急[1]爷爷说[2]先把事情讲清楚[3]",
+   "answers": ["“", "，”", "，“", "。”"],
+   "capacities": [1, 2, 2, 2],
+   "complete": "“不要着急，”爷爷说，“先把事情讲清楚。”",
+   "explanation": "提示语在中间，后面用逗号；两段话分别加双引号，前段末尾要看语气。",
+   "source": {
+    "type": "自编例句",
+    "original": "“不要着急，”爷爷说，“先把事情讲清楚。”",
+    "label": "提示语在中间 · 课外·自编例句",
+    "detailTitle": "查看完整拓展例句",
+    "detail": "“不要着急，”爷爷说，“先把事情讲清楚。”"
+   }
+  }
+ ]
+}

@@ -63,7 +63,8 @@ def plan():
                 continue
 
             def version(m):
-                target = base / m["rel"]
+                rel = m["rel"]
+                target = ROOT / "shared-static" / rel[len("shared/") :] if rel.startswith("shared/") else base / rel
                 if not target.is_file():
                     raise SystemExit(f'{p.relative_to(ROOT)} 引用了不存在的文件 static/{m["rel"]}')
                 data = updated[target].encode() if target in updated else target.read_bytes()

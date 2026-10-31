@@ -208,3 +208,15 @@ def test_static_files(client, site):
     ]
     assert client.get("/static/game-audio-v3/" + audio[0]).status_code == 200
     assert client.get("/").headers["Cache-Control"] == "no-store"
+
+
+def test_question_bank_requires_license(client, site):
+    game = next(iter(SITES[site].games))
+    assert client.get(f"/games/{game}/bank.json").status_code == 403
+    assert client.get("/games/unknown/bank.json").status_code == 404
+    client.activate(KEYS[site])
+    r = client.get(f"/games/{game}/bank.json")
+    assert r.status_code == 200 and r.headers["Cache-Control"] == "no-store"
+    assert len(r.get_json()["questions"]) == 100
+    assert client.get("/static/math-banks.js").status_code == 404
+    assert client.get("/static/shared/pk/pk-core.js").status_code == 200

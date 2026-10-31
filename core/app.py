@@ -330,6 +330,18 @@ def game_html(game):
     return cached[1]
 
 
+_banks = {}
+
+
+def bank_json(game):
+    path = site().bank_root / f"{game}.json"
+    mtime = path.stat().st_mtime
+    cached = _banks.get(path)
+    if not cached or cached[0] != mtime:
+        cached = _banks[path] = (mtime, path.read_bytes())
+    return cached[1]
+
+
 GUARD = """<script>(function(){async function check(){const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),5000);try{let r=await fetch('SESSION_URL',{cache:'no-store',signal:controller.signal});if(!r.ok)location.replace('HOME_URL');}catch(e){location.replace('HOME_URL');}finally{clearTimeout(timeout);}}setInterval(check,30000);addEventListener('pageshow',check);document.addEventListener('visibilitychange',()=>{if(!document.hidden)check();});})();</script>"""
 
 
@@ -413,7 +425,7 @@ def create_app(site_config):
     @app.after_request
     def headers(r):
         # Static files are fingerprinted, so only dynamic responses must bypass caches.
-        if request.endpoint not in ("static", "shared_static"):
+        if request.endpoint not in ("static", "shared_static", "shared_audio"):
             r.headers["Cache-Control"] = "no-store"
         r.headers["X-Content-Type-Options"] = "nosniff"
         r.headers["X-Frame-Options"] = "SAMEORIGIN"
@@ -430,8 +442,12 @@ def register_public(app):
     """Game home, game pages, shared media and health check."""
 
     @app.get("/static/game-audio-v3/<path:filename>")
-    def shared_static(filename):
+    def shared_audio(filename):
         return send_from_directory(SHARED_STATIC / "game-audio-v3", filename)
+
+    @app.get("/static/shared/<path:filename>")
+    def shared_static(filename):
+        return send_from_directory(SHARED_STATIC, filename)
 
     @app.get("/")
     def home():
@@ -460,6 +476,15 @@ def register_public(app):
             return render_template("denied.html"), 403
         guard = GUARD.replace("SESSION_URL", url_for("status", game=game)).replace("HOME_URL", url_for("home"))
         return Response(game_html(game).replace("</body>", guard + "</body>"), mimetype="text/html")
+
+    @app.get("/games/<game>/bank.json")
+    def game_bank(game):
+        # Banks hold the answers, so they are served only to browsers licensed for the game.
+        if game not in site().games:
+            abort(404)
+        if not current(game):
+            return jsonify(error="授权已失效，请返回首页重新激活或联系管理员"), 403
+        return Response(bank_json(game), mimetype="application/json")
 
     if app.site.legacy_html_routes:
 

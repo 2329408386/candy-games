@@ -1,0 +1,212 @@
+/* Shared look for every PK game: start screen, settings dialog, arena, feedback, results, and per-type pieces. */
+:root {
+  --paper: #f6f3e9;
+  --card: #fffdf8;
+  --ink: #263e37;
+  --muted: #6b7a69;
+  --green: #497654;
+  --green-dark: #355a3e;
+  --green-soft: #eaf0df;
+  --line: #dfe6d5;
+  --p1: #6f95b0;
+  --p2: #b07f93;
+  --gold: #d9aa35;
+  --gold-soft: #fff1ba;
+  --right: #e2f0dc;
+  --right-line: #6c9b63;
+  --wrong: #fbeee6;
+  --wrong-line: #c47a5b;
+  --focus: #c79d4b;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; line-height: 1.65; }
+button, input { font: inherit; color: inherit; }
+button { cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+button:disabled { cursor: default; opacity: .6; }
+button:focus-visible, a:focus-visible, input:focus-visible, summary:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+[hidden] { display: none !important; }
+.muted { font-size: 13px; color: var(--muted); }
+
+/* ---------- start screen ---------- */
+.pk-start { min-height: 100vh; padding: 24px; }
+.pk-top { max-width: 1100px; margin: auto; min-height: 52px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.pk-home { font-size: 14px; color: var(--green); text-decoration: none; }
+.pk-card { max-width: 650px; margin: 10px auto 30px; padding: 36px 44px; background: var(--card); border: 1px solid #e5e9dc; border-radius: 26px; box-shadow: 0 16px 48px #30442a09; text-align: center; }
+.pk-eyebrow { font-size: 12px; letter-spacing: 2px; color: #6b8067; margin: 0 0 20px; }
+.pk-emblem { width: 80px; height: 80px; display: grid; place-items: center; margin: 0 auto 18px; background: var(--green-soft); color: #57754c; border-radius: 24px; font-weight: 700; font-size: 28px; }
+.pk-title { font-size: clamp(27px, 5vw, 38px); line-height: 1.4; margin: 0 0 12px; }
+.pk-description { font-size: 15px; line-height: 1.8; color: #68776e; margin: 0 0 26px; }
+.pk-stats { display: grid; grid-template-columns: repeat(3, 1fr); padding: 18px 0; background: #f1f4e9; border-radius: 16px; margin-bottom: 22px; }
+.pk-stats strong { display: block; font-size: 25px; line-height: 1.3; color: #47633f; }
+.pk-stats span { display: block; font-size: 12px; color: #73826c; margin-top: 5px; }
+.pk-stats > div + div { border-left: 1px solid #dbe4ce; }
+.pk-modes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; padding: 5px; background: #f1f4e9; border-radius: 14px; margin-bottom: 22px; }
+.pk-mode { border: 0; border-radius: 10px; background: transparent; padding: 10px 6px; font-size: 15px; color: #4b6347; min-height: 44px; }
+.pk-mode[aria-checked="true"] { background: var(--card); color: var(--ink); font-weight: 700; box-shadow: 0 2px 6px #30442a1a; }
+.pk-rules { text-align: left; background: white; border: 1px solid #edf0e5; border-radius: 16px; padding: 18px 22px; margin-bottom: 26px; }
+.pk-rules h2 { font-size: 15px; margin: 0 0 10px; }
+.pk-rules p { font-size: 14px; line-height: 1.85; margin: 6px 0; color: #53635b; }
+.pk-scoring { color: #788278 !important; }
+.pk-mode-note { color: var(--green) !important; }
+.pk-primary { width: 100%; padding: 16px 24px; border: 0; border-radius: 14px; background: var(--green); color: white; font-weight: 700; font-size: 18px; box-shadow: 0 5px 0 var(--green-dark); }
+.pk-error { color: #aa3c46; min-height: 20px; font-size: 14px; margin: 14px 0 0; }
+.pk-settings-toggle { background: var(--card); color: #465f4e; border: 1px solid #d8e2d1; padding: 10px 16px; border-radius: 12px; min-height: 44px; font-size: 14px; white-space: nowrap; }
+
+/* ---------- settings dialog ---------- */
+.pk-dialog { padding: 26px; border: 1px solid #e1e7d6; border-radius: 22px; width: min(430px, calc(100vw - 28px)); color: var(--ink); background: var(--card); font-size: 15px; box-shadow: 0 20px 80px #172d2340; max-height: 90vh; overflow-y: auto; }
+.pk-dialog::backdrop { background: #172d2360; }
+.pk-dialog-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; }
+.pk-dialog-head h2 { font-size: 21px; margin: 0; }
+.pk-close { border: 0; background: transparent; color: #425b4c; font-size: 28px; min-width: 40px; min-height: 40px; }
+.pk-label { display: block; margin-bottom: 8px; }
+.pk-dialog input[type=number] { width: 100%; padding: 12px; border: 1px solid #cdd9c6; border-radius: 10px; font-size: 18px; background: white; }
+.pk-presets { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.pk-preset, .pk-reset { padding: 9px 12px; border: 1px solid #d9e1cf; background: #f3f6ed; border-radius: 9px; color: #4b6347; font-size: 14px; }
+.pk-help { font-size: 12px; color: #7b8774; line-height: 1.7; }
+.pk-switch { display: flex; align-items: center; justify-content: space-between; padding: 16px 0; border-bottom: 1px solid #e7ecdf; }
+.pk-switch input { width: 22px; height: 22px; accent-color: var(--green); }
+.pk-actions { display: flex; gap: 12px; margin-top: 20px; }
+.pk-actions > * { flex: 1; }
+.pk-save { background: var(--green); border: 0; border-radius: 10px; color: white; padding: 12px; font-size: 15px; }
+
+/* ---------- game screen ---------- */
+.pk-header { display: flex; align-items: center; flex-wrap: wrap; gap: 12px 18px; max-width: 1500px; margin: auto; padding: 18px 24px; }
+.pk-header h1 { font-size: 22px; margin: 0; }
+.pk-header .pk-settings-toggle { margin-left: auto; }
+.pk-timer { padding: 6px 15px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; white-space: nowrap; }
+.pk-timer strong { font-size: 24px; color: #976b32; font-variant-numeric: tabular-nums; }
+.pk-arena { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 1500px; padding: 0 24px 24px; margin: auto; align-items: start; }
+.pk-arena.solo { grid-template-columns: minmax(0, 860px); justify-content: center; }
+.pk-player { background: var(--card); border: 1px solid var(--line); border-top: 5px solid var(--p1); border-radius: 22px; padding: 22px; min-width: 0; box-shadow: 0 7px 25px #2b402508; }
+.pk-player.second { border-top-color: var(--p2); }
+.pk-player-head { display: flex; align-items: center; justify-content: space-between; padding-bottom: 14px; border-bottom: 1px solid #e7ecdf; margin-bottom: 16px; }
+.pk-player-head h2 { margin: 0; font-size: 19px; }
+.pk-score { padding: 4px 18px; border-radius: 12px; background: #f0f4e8; font-size: 26px; color: var(--green); font-weight: 700; font-variant-numeric: tabular-nums; }
+.pk-source { color: var(--muted); font-size: 13px; margin: 0 0 6px; }
+.pk-instruction { color: #53635b; font-size: 14px; margin: 0 0 12px; }
+.pk-notice { min-height: 22px; margin: 10px 0; color: #ab533d; font-size: 14px; }
+.pk-controls { display: flex; gap: 8px; margin-top: 14px; }
+.pk-controls button { flex: 1; min-width: 0; }
+.primary { border: 0; border-radius: 12px; background: var(--green); color: white; padding: 13px 20px; font-weight: 600; font-size: 17px; }
+.primary:hover:not(:disabled) { background: #3f6949; }
+.primary.next { background: #3c6488; }
+.secondary { border: 0; border-radius: 12px; background: #e9eee1; color: #3f5546; padding: 12px; font-size: 16px; }
+.pk-feedback { padding: 16px 18px; border-radius: 14px; margin: 12px 0; font-size: 15px; line-height: 1.7; border: 1px solid var(--right-line); background: var(--right); overflow-wrap: anywhere; }
+.pk-feedback.wrong { border-color: var(--wrong-line); background: var(--wrong); }
+.pk-feedback p { margin: 8px 0; }
+.pk-feedback strong { font-size: 17px; }
+.pk-feedback details { font-size: 13px; color: var(--muted); }
+.pk-feedback summary { cursor: pointer; }
+.pk-waiting { text-align: center; padding: 60px 15px; color: var(--muted); }
+
+/* ---------- results ---------- */
+.pk-results { margin: 0 auto 40px; padding: 28px; max-width: 860px; background: var(--card); border: 1px solid var(--line); border-radius: 22px; }
+.pk-results h2 { font-size: 27px; text-align: center; margin: 0 0 18px; }
+.pk-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 18px; }
+.pk-summary-player { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 16px; border-radius: 16px; background: #f1f4e9; border-top: 4px solid var(--p1); }
+.pk-summary-player.second { border-top-color: var(--p2); }
+.pk-summary-player strong { font-size: 28px; color: var(--green); }
+.pk-summary-player span { font-size: 14px; color: var(--muted); }
+.pk-wrong-list { border: 1px solid var(--line); border-radius: 14px; padding: 12px 16px; margin: 12px 0; }
+.pk-wrong-list summary { font-weight: 700; cursor: pointer; }
+.pk-wrong-item { border-top: 1px solid #edf0e5; padding: 10px 0; font-size: 15px; }
+.pk-wrong-item p { margin: 4px 0; }
+.pk-wrong-q { font-weight: 600; }
+.pk-wrong-why { color: var(--muted); font-size: 14px; }
+.pk-result-actions { display: flex; gap: 12px; justify-content: center; margin-top: 18px; }
+.pk-result-actions button { min-width: 160px; }
+
+/* ---------- shared question pieces ---------- */
+.prompt { font-size: clamp(20px, 2vw, 26px); line-height: 1.8; margin: 8px 0 16px; padding: 16px 18px; background: white; border: 1px solid #edf0e5; border-radius: 16px; overflow-wrap: anywhere; white-space: pre-wrap; }
+.options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 14px 0; }
+.options-list { grid-template-columns: 1fr; }
+.options-many { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.card { padding: 12px 14px; border: 1px solid #d4dec9; border-radius: 12px; background: #f7f9f2; font-size: 20px; min-height: 52px; overflow-wrap: anywhere; text-align: center; }
+.options-list .card { text-align: left; font-size: 18px; }
+.card.selected { background: var(--gold-soft); border: 2px solid var(--gold); padding: 11px 13px; }
+.card.right { background: var(--right); border: 2px solid var(--right-line); opacity: 1; }
+.card.wrong { background: var(--wrong); border: 2px solid var(--wrong-line); opacity: 1; }
+mark { background: #ffe797; color: inherit; border-bottom: 3px solid #da9c16; padding: 0 4px; }
+.letter-blank { display: inline-block; min-width: 1.4em; border-bottom: 2px solid currentColor; text-align: center; color: #9a6a12; }
+.preview { font-size: 15px; line-height: 1.7; background: #eef4f6; padding: 8px 10px; border-radius: 8px; margin: 8px 0; overflow-wrap: anywhere; }
+
+/* blanks (的地得、标点) */
+.blank-sentence { line-height: 2.4; }
+.blank { display: inline-block; vertical-align: middle; min-width: 2.2em; height: 1.7em; margin: 0 3px; padding: 0 4px; border: 0; border-bottom: 3px solid #8aa0b4; border-radius: 6px 6px 0 0; background: #f2f6f9; font-size: inherit; line-height: 1.6; color: #1f4f7a; font-weight: 700; }
+.blank.active { background: var(--gold-soft); border-bottom-color: var(--gold); }
+.blank.right { background: var(--right); border-bottom-color: var(--right-line); color: #2f6b33; opacity: 1; }
+.blank.wrong { background: var(--wrong); border-bottom-color: var(--wrong-line); color: #9c3f2a; text-decoration: line-through; opacity: 1; }
+.blank-holder { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; line-height: 1.3; }
+.blank-fix { font-size: .7em; color: #2f6b33; font-weight: 700; }
+.tray { grid-template-columns: repeat(auto-fill, minmax(56px, 1fr)); }
+.tray-key { font-size: 24px; padding: 8px; }
+.tray-back { font-size: 16px; grid-column: span 2; }
+
+/* tiles (缩写、扩写、被字句、陈述句) */
+.answer-line { background: #eef3f6; border-radius: 14px; min-height: 72px; padding: 12px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 18px; }
+.q-tiles .options { display: flex; flex-wrap: wrap; }
+.q-tiles .card { font-size: 18px; min-height: 46px; padding: 9px 13px; }
+.card.deleted { text-decoration: line-through; color: #9c4b5d; background: #fbe8ec; border-color: #df93a4; }
+.expand-sentence { line-height: 2.3; }
+.insertion-point { display: inline-flex; align-items: center; justify-content: center; vertical-align: middle; width: 26px; height: 36px; padding: 0; margin: 0 1px; border: 1px dashed #7494ad; border-radius: 5px; background: #edf6ff; color: #245ba0; font-size: 16px; }
+.inserted-word { color: #116c4c; background: #e1f3e5; border-radius: 4px; padding: 2px 4px; }
+
+/* edit marks (修改病句) */
+.symbol-tray { display: flex; justify-content: center; gap: 10px; margin-bottom: 4px; }
+.symbol-button { display: flex; flex-direction: column; align-items: center; width: 70px; padding: 4px; border: 2px solid #dce5e0; border-radius: 10px; background: white; color: #bf3930; }
+.symbol-button svg { width: 56px; height: 34px; }
+.symbol-button span { font-size: 13px; color: var(--ink); }
+.symbol-button.selected { background: var(--gold-soft); border-color: var(--gold); }
+.edit-hint { font-size: 14px; color: #53635b; margin: 6px 0; min-height: 1.5em; }
+.edit-board { position: relative; display: flex; flex-wrap: wrap; align-content: flex-start; align-items: center; padding: 8px 8px 18px; min-height: 120px; background: white; border: 1px solid #edf0e5; border-radius: 16px; }
+.word-wrap, .gap-wrap { position: relative; display: inline-flex; margin-top: 38px; margin-bottom: 5px; flex: 0 0 auto; }
+.word { min-width: 30px; min-height: 42px; padding: 5px 3px; border: 1px solid #d6e0e9; border-radius: 7px; background: #f7fafc; font-size: 19px; line-height: 1.5; }
+.word.selected { background: var(--gold-soft); border-color: #c58c00; }
+.edit-board button:disabled { opacity: 1; }
+.gap { width: 14px; height: 42px; padding: 0; border: none; background: transparent; position: relative; }
+.gap.insertable::after { content: ''; position: absolute; left: 5px; top: 6px; width: 4px; height: 30px; border-radius: 2px; background: #9fb8d0; }
+.gap.selected::after { background: #dd8623; }
+.mark-svg { position: absolute; width: calc(100% + 8px); height: 68px; left: -4px; top: -25px; color: #be3832; pointer-events: none; overflow: visible; }
+.annotation { position: absolute; bottom: calc(100% + 5px); left: 50%; transform: translateX(-50%); background: #fff5e1; border: 1px solid #d58a47; border-radius: 5px; color: #ae3029; font-size: 15px; white-space: nowrap; padding: 0 3px; z-index: 3; }
+.correction-label { border: 2px solid #be3832; border-radius: 20px; background: #fff; padding: 0 6px; min-width: 26px; text-align: center; bottom: calc(100% + 12px); }
+.swap-lines { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; color: #bd3833; }
+.word-cards { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; padding: 8px 0; }
+.word-card { min-width: 52px; min-height: 44px; border: 2px solid #cad9e4; border-radius: 9px; background: white; font-size: 19px; padding: 4px 10px; }
+.word-card.selected { background: var(--gold-soft); border-color: #cb8d00; }
+
+/* figures and measure (数学) */
+.figure { margin: 4px 0 8px; }
+.map-wrap { max-width: 390px; margin: auto; }
+.map-wrap svg, .measure-visual svg, .ruler-zoom svg { display: block; width: 100%; height: auto; fill: var(--ink); }
+.figure-legend { text-align: center; font-size: 14px; color: #53635b; margin: 6px 0; }
+.ruler-zooms { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.ruler-zoom { background: #f8f8f0; border: 1px solid #e5eadc; border-radius: 10px; }
+.answer-fields { display: flex; justify-content: center; gap: 18px; flex-wrap: wrap; margin: 18px 0 14px; }
+.answer-part { display: flex; align-items: center; gap: 8px; font-size: 18px; }
+.answer-part input { width: 85px; min-height: 48px; background: white; border: 1px solid #cfdac5; border-radius: 10px; text-align: center; font-size: 23px; }
+.answer-part input.active { border: 2px solid var(--green); background: #f7faf2; }
+.keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-width: 340px; margin: 0 auto; }
+.key { border: 1px solid #d5deca; background: #f3f6eb; border-radius: 10px; font-size: 20px; min-height: 46px; }
+.key:active { background: #e3edd9; }
+
+@media (max-width: 800px) {
+  .pk-header { padding: 14px; }
+  .pk-header h1 { font-size: 19px; }
+  .pk-arena { grid-template-columns: 1fr; padding: 0 12px 20px; gap: 18px; }
+  .pk-player { padding: 16px; }
+  .pk-results { margin: 0 12px 30px; padding: 20px; }
+  .options-many { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 600px) {
+  .pk-start { padding: 14px; }
+  .pk-card { padding: 26px 18px; border-radius: 22px; margin-top: 0; }
+  .pk-rules { padding: 14px 16px; }
+  .pk-emblem { width: 64px; height: 64px; font-size: 24px; border-radius: 19px; }
+  .pk-mode { font-size: 14px; }
+  .prompt { padding: 12px 14px; }
+  .ruler-zooms { grid-template-columns: 1fr; }
+  .pk-result-actions { flex-direction: column; }
+  .symbol-button { width: 62px; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto !important; } }

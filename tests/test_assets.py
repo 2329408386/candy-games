@@ -9,12 +9,15 @@ def test_asset_fingerprints_are_current():
     assert r.returncode == 0, r.stdout + r.stderr
 
 
-def test_math_question_banks():
+def test_question_banks():
+    r = subprocess.run([sys.executable, str(ROOT / "tools" / "banks.py"), "--check"], capture_output=True, text=True)
+    assert r.returncode == 0, r.stdout + r.stderr
+
+
+def test_engine_grading():
     import shutil, pytest
 
     if not shutil.which("node"):
         pytest.skip("node not installed")
-    r = subprocess.run(
-        ["node", "test_math_common.cjs"], cwd=ROOT / "sites" / "math" / "tests", capture_output=True, text=True
-    )
+    r = subprocess.run(["node", str(ROOT / "tests" / "test_engine.cjs")], capture_output=True, text=True)
     assert r.returncode == 0, r.stdout + r.stderr
