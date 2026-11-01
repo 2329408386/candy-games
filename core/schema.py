@@ -3,7 +3,7 @@ from pathlib import Path
 from . import ranks
 
 DB_NAME = "games.sqlite3"
-# Every table is scoped by site ('chinese' or 'math'); ids keep their original per-site numbering.
+# Every table is scoped by site ('chinese', 'math' or 'english'); ids keep their original per-site numbering.
 # Permissions and grades come from license_groups -> game_groups. licenses.grade_scopes and
 # generation_batches.grade_scopes are deprecated mirrors: still written so older releases can be rolled back to,
 # never read.

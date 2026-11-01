@@ -1,0 +1,380 @@
+# 情景选择PK题库复核清单
+
+> 本文件由 `python tools/banks.py --fix` 根据 `sites/english/banks/scene.json` 生成，请修改题库后重新生成，不要直接编辑。
+
+共 180 题。每人20题，按分类抽取，双方不重复：U1×4、U2×4、U3×3、U4×3、U5×3、U6×3；或 U1×3、U2×3、U3×4、U4×4、U5×3、U6×3；或 U1×3、U2×3、U3×3、U4×3、U5×4、U6×4；或 U1×4、U2×3、U3×3、U4×4、U5×3、U6×3；或 U1×3、U2×4、U3×3、U4×3、U5×4、U6×3；或 U1×3、U2×3、U3×4、U4×3、U5×3、U6×4。
+
+- 题目依据外研版（三起）2024新版三年级上册各单元核心单词和句型自编，非教材原题。
+- 情景交际、答语选择是单元卷和期末卷的重点题型；正确选项在 A、B、C 中轮换。
+
+| 分类 | 题数 |
+|---|---:|
+| U1 | 30 |
+| U2 | 30 |
+| U3 | 30 |
+| U4 | 30 |
+| U5 | 30 |
+| U6 | 30 |
+
+## 逐题清单
+
+- sc-001：刚认识新朋友，你想和他打招呼，你说：（图：男孩、挥手、女孩） 选项：Hello! / Goodbye! / Thank you. 答案：**Hello!**
+  - 解析：Hello! 意思是“你好！”。考点：见面打招呼用 Hello! 或 Hi!　来源：Unit 1 · 情景交际
+- sc-002：你想告诉新同学“我是莉莉”，你说：（图：女孩） 选项：He's Lily. / I'm Lily. / She's Lily. 答案：**I'm Lily.**
+  - 解析：I'm Lily. 意思是“我是莉莉”。考点：介绍自己用 I'm …（我是……）　来源：Unit 1 · 情景交际
+- sc-003：别人问你 What's your name? 你回答： 选项：It's a pen. / I see red. / My name is Sam. 答案：**My name is Sam.**
+  - 解析：My name is Sam. 意思是“我的名字是萨姆”。考点：What's your name? 的答语是 My name is … 或 I'm …　来源：Unit 1 · 情景交际
+- sc-004：你想问新同学叫什么名字，你说：（图：男孩、问号） 选项：How many? / What's your name? / Nice to meet you. 答案：**What's your name?**
+  - 解析：What's your name? 意思是“你叫什么名字？”。考点：问别人名字用 What's your name?　来源：Unit 1 · 情景交际
+- sc-005：你想介绍旁边的男孩汤姆，你说：（图：男孩） 选项：He's Tom. / She's Tom. / I'm Tom. 答案：**He's Tom.**
+  - 解析：He's Tom. 意思是“他是汤姆”。考点：介绍男孩用 He's …，介绍女孩用 She's …　来源：Unit 1 · 情景交际
+- sc-006：你想介绍旁边的女孩埃米，你说：（图：女孩） 选项：He's Amy. / I'm Amy. / She's Amy. 答案：**She's Amy.**
+  - 解析：She's Amy. 意思是“她是埃米”。考点：介绍女孩用 She's …　来源：Unit 1 · 情景交际
+- sc-007：第一次和别人见面，你想说“很高兴见到你”：（图：握手） 选项：Goodbye. / Thank you. / Nice to meet you. 答案：**Nice to meet you.**
+  - 解析：Nice to meet you. 意思是“很高兴见到你”。考点：初次见面说 Nice to meet you.　来源：Unit 1 · 情景交际
+- sc-008：别人对你说 Nice to meet you. 你回答：（图：握手） 选项：Nice to meet you, too. / Bye. / I'm nine. 答案：**Nice to meet you, too.**
+  - 解析：Nice to meet you, too. 意思是“我也很高兴见到你”。考点：回答 Nice to meet you. 要加 too：Nice to meet you, too.　来源：Unit 1 · 情景交际
+- sc-009：放学了，你和同学道别，你说：（图：学校、挥手） 选项：Hello! / Bye! / Hi! 答案：**Bye!**
+  - 解析：Bye! 意思是“再见！”。考点：道别用 Goodbye! 或 Bye!　来源：Unit 1 · 情景交际
+- sc-010：你想告诉别人你和汤姆是好朋友，你说：（图：两个好朋友） 选项：We're friends. / We're family. / He's my dad. 答案：**We're friends.**
+  - 解析：We're friends. 意思是“我们是朋友”。　来源：Unit 1 · 情景交际
+- sc-011：别人对你说 Hello! 你回答：（图：挥手） 选项：Bye! / Hi! / Thank you. 答案：**Hi!**
+  - 解析：Hi! 意思是“你好！”。考点：回答 Hello! 可以说 Hello! 或 Hi!　来源：Unit 1 · 情景交际
+- sc-012：同学对你说 Goodbye! 你回答：（图：挥手） 选项：Hello! / Nice to meet you. / Goodbye! 答案：**Goodbye!**
+  - 解析：Goodbye! 意思是“再见！”。考点：回答 Goodbye! 也说 Goodbye! 或 Bye!　来源：Unit 1 · 情景交际
+- sc-013：你想告诉别人你九岁了，你说：（图：数字9） 选项：He's nine. / I'm nine. / She's nine. 答案：**I'm nine.**
+  - 解析：I'm nine. 意思是“我九岁了”。考点：说自己的年龄用 I'm + 数字。　来源：Unit 1 · 情景交际
+- sc-014：你想介绍你的好朋友（一个男孩），你说：（图：男孩） 选项：He's my friend. / She's my friend. / I'm your friend. 答案：**He's my friend.**
+  - 解析：He's my friend. 意思是“他是我的朋友”。考点：男孩用 he，女孩用 she。　来源：Unit 1 · 情景交际
+- sc-015：埃米是你的好朋友，你向别人介绍她：（图：女孩） 选项：He's my friend. / I'm my friend. / She's my friend. 答案：**She's my friend.**
+  - 解析：She's my friend. 意思是“她是我的朋友”。考点：介绍女孩用 She's …　来源：Unit 1 · 情景交际
+- sc-016：新同学对你说 Hi! I'm Tom. 你回答：（图：男孩、挥手） 选项：Bye, Tom. / Tom, it's red. / Hi, Tom. I'm Sam. 答案：**Hi, Tom. I'm Sam.**
+  - 解析：Hi, Tom. I'm Sam. 意思是“你好，汤姆。我是萨姆”。考点：别人介绍自己后，先问好，再介绍自己。　来源：Unit 1 · 情景交际
+- sc-017：看图，两个小朋友早上见面了，他们会说：（图：女孩、挥手、男孩） 选项：Hello! / Goodbye! / How many? 答案：**Hello!**
+  - 解析：Hello! 意思是“你好！”。考点：见面问好用 Hello!　来源：Unit 1 · 情景交际
+- sc-018：课间你想和新同学交朋友，你说：（图：男孩、女孩） 选项：Thank you. / Let's be friends! / It's red. 答案：**Let's be friends!**
+  - 解析：Let's be friends! 意思是“我们做朋友吧！”。　来源：Unit 1 · 情景交际
+- sc-019：别人说 Let's be friends! 你很高兴地同意：（图：笑脸） 选项：OK! / Goodbye! / Seven. 答案：**OK!**
+  - 解析：OK! 意思是“好的！”。考点：同意别人的提议说 OK!　来源：Unit 1 · 情景交际
+- sc-020：你想让大家知道你的名字叫埃米，你说：（图：女孩） 选项：Your name is Amy. / My name is Amy. / She's Amy. 答案：**My name is Amy.**
+  - 解析：My name is Amy. 意思是“我的名字是埃米”。考点：my 我的，your 你的。　来源：Unit 1 · 情景交际
+- sc-021：你向妈妈介绍新朋友汤姆（男孩）：（图：妈妈、男孩） 选项：She's Tom. She's my friend. / I'm Tom. I'm your friend. / He's Tom. He's my friend. 答案：**He's Tom. He's my friend.**
+  - 解析：He's Tom. He's my friend. 意思是“他是汤姆。他是我的朋友”。考点：介绍男孩用 He's …　来源：Unit 1 · 情景交际
+- sc-022：下课了，你要回家，和朋友说再见：（图：家、挥手） 选项：Hi! / Goodbye! / Nice to meet you. 答案：**Goodbye!**
+  - 解析：Goodbye! 意思是“再见！”。考点：道别用 Goodbye!　来源：Unit 1 · 情景交际
+- sc-023：同学说 Hi, I'm Amy. 你应该回答：（图：女孩、挥手） 选项：Hi, Amy. I'm Lily. / Bye, Amy. / Amy, it's blue. 答案：**Hi, Amy. I'm Lily.**
+  - 解析：Hi, Amy. I'm Lily. 意思是“你好，埃米。我是莉莉”。考点：回应别人的自我介绍：问好 + 介绍自己。　来源：Unit 1 · 情景交际
+- sc-024：你和新同学成了好朋友，你说：（图：两个好朋友） 选项：We're nine. / We're red. / We're friends. 答案：**We're friends.**
+  - 解析：We're friends. 意思是“我们是朋友”。考点：We're = We are 我们是。　来源：Unit 1 · 情景交际
+- sc-025：下面哪一句是打招呼用语？ 选项：Bye! / Thank you. / Hi! 答案：**Hi!**
+  - 解析：Hi! 意思是“你好！”。　来源：Unit 1 · 情景交际
+- sc-026：下面哪一句是道别用语？ 选项：Goodbye! / Hello! / Nice to meet you. 答案：**Goodbye!**
+  - 解析：Goodbye! 意思是“再见！”。　来源：Unit 1 · 情景交际
+- sc-027：你想问对方的名字，正确的问句是： 选项：What's my name? / What's your name? / What's name? 答案：**What's your name?**
+  - 解析：What's your name? 意思是“你叫什么名字？”。考点：问“你的名字”要用 your：What's your name?　来源：Unit 1 · 情景交际
+- sc-028：你想说“我是汤姆”，正确的是： 选项：I'm Tom. / I Tom. / I'm is Tom. 答案：**I'm Tom.**
+  - 解析：I'm Tom. 意思是“我是汤姆”。考点：I'm = I am，后面直接跟名字。　来源：Unit 1 · 情景交际
+- sc-029：指着一个女孩介绍她，正确的是：（图：女孩） 选项：She Amy. / She's Amy. / He's Amy. 答案：**She's Amy.**
+  - 解析：She's Amy. 意思是“她是埃米”。考点：She's = She is，不能漏掉 's。　来源：Unit 1 · 情景交际
+- sc-030：第一次见面，对方说 Hello! I'm Sam. 你最好回答：（图：男孩） 选项：Goodbye, Sam! / Sam, thank you. / Hello, Sam! Nice to meet you. 答案：**Hello, Sam! Nice to meet you.**
+  - 解析：Hello, Sam! Nice to meet you. 意思是“你好，萨姆！很高兴见到你”。考点：初次见面：问好 + Nice to meet you.　来源：Unit 1 · 情景交际
+- sc-031：你把铅笔递给同学，你说：（图：铅笔、递东西） 选项：Thank you. / Here you are. / Bye. 答案：**Here you are.**
+  - 解析：Here you are. 意思是“给你”。考点：递东西给别人说 Here you are.　来源：Unit 2 · 情景交际
+- sc-032：同学把尺子递给你，你说：（图：尺子、递东西） 选项：Here you are. / Hello. / Thank you. 答案：**Thank you.**
+  - 解析：Thank you. 意思是“谢谢你”。考点：别人给你东西，要说 Thank you.　来源：Unit 2 · 情景交际
+- sc-033：你指着手里的尺子介绍：（图：尺子） 选项：That is a ruler. / This is a ruler. / This is a pen. 答案：**This is a ruler.**
+  - 解析：This is a ruler. 意思是“这是一把尺子”。考点：近处（手里）的东西用 This is …　来源：Unit 2 · 情景交际
+- sc-034：你指着远处桌上的书包介绍：（图：书包） 选项：That is a bag. / This is a bag. / That is a book. 答案：**That is a bag.**
+  - 解析：That is a bag. 意思是“那是一个书包”。考点：远处的东西用 That is …　来源：Unit 2 · 情景交际
+- sc-035：你向同学借橡皮，同学把橡皮递给你时会说：（图：橡皮、递东西） 选项：Thank you. / Goodbye. / Here you are. 答案：**Here you are.**
+  - 解析：Here you are. 意思是“给你”。考点：递东西的人说 Here you are.　来源：Unit 2 · 情景交际
+- sc-036：别人对你说 Here you are. 你回答：（图：递东西） 选项：Here you are. / I'm nine. / Thank you. 答案：**Thank you.**
+  - 解析：Thank you. 意思是“谢谢你”。考点：Here you are. 的答语是 Thank you.　来源：Unit 2 · 情景交际
+- sc-037：你想介绍自己的新书包，你说：（图：书包） 选项：This is my bag. / This is my book. / Here you are. 答案：**This is my bag.**
+  - 解析：This is my bag. 意思是“这是我的书包”。考点：This is my … 这是我的……　来源：Unit 2 · 情景交际
+- sc-038：看图，选出正确的句子：（图：铅笔） 选项：This is a pen. / This is a pencil. / This is a ruler. 答案：**This is a pencil.**
+  - 解析：This is a pencil. 意思是“这是一支铅笔”。考点：pencil 铅笔，pen 钢笔，不要混淆。　来源：Unit 2 · 情景交际
+- sc-039：看图，选出正确的句子：（图：钢笔） 选项：This is a pen. / This is a pencil. / This is a bag. 答案：**This is a pen.**
+  - 解析：This is a pen. 意思是“这是一支钢笔”。考点：pen 钢笔。　来源：Unit 2 · 情景交际
+- sc-040：看图，选出正确的句子：（图：书） 选项：This is a bag. / This is a book. / This is a ruler. 答案：**This is a book.**
+  - 解析：This is a book. 意思是“这是一本书”。考点：book 书，bag 书包。　来源：Unit 2 · 情景交际
+- sc-041：看图，选出正确的句子：（图：橡皮） 选项：This is a eraser. / This is an pen. / This is an eraser. 答案：**This is an eraser.**
+  - 解析：This is an eraser. 意思是“这是一块橡皮”。考点：eraser 以元音音素开头，前面用 an：an eraser。　来源：Unit 2 · 情景交际
+- sc-042：看图，选出正确的句子：（图：铅笔盒） 选项：This is an pencil box. / This is a pencil box. / This is a pencil. 答案：**This is a pencil box.**
+  - 解析：This is a pencil box. 意思是“这是一个铅笔盒”。考点：pencil box 铅笔盒；pencil 前用 a。　来源：Unit 2 · 情景交际
+- sc-043：你想告诉同学“那是我的铅笔盒”，你说：（图：铅笔盒） 选项：That is my pencil box. / This is my pencil box. / That is my pencil. 答案：**That is my pencil box.**
+  - 解析：That is my pencil box. 意思是“那是我的铅笔盒”。考点：“那”用 that，“这”用 this。　来源：Unit 2 · 情景交际
+- sc-044：同学找你借尺子，你把尺子递给他：（图：尺子、递东西） 选项：Thank you. / It's red. / Here you are. 答案：**Here you are.**
+  - 解析：Here you are. 意思是“给你”。考点：递东西说 Here you are.　来源：Unit 2 · 情景交际
+- sc-045：老师发给你一本新书，你说：（图：书、递东西） 选项：Here you are. / Goodbye. / Thank you. 答案：**Thank you.**
+  - 解析：Thank you. 意思是“谢谢您”。考点：收到东西说 Thank you.　来源：Unit 2 · 情景交际
+- sc-046：你指着远处的那支钢笔介绍：（图：钢笔） 选项：That is a pen. / This is a pen. / That is a bag. 答案：**That is a pen.**
+  - 解析：That is a pen. 意思是“那是一支钢笔”。考点：远处用 That is …　来源：Unit 2 · 情景交际
+- sc-047：你指着手边的橡皮介绍：（图：橡皮） 选项：That is an eraser. / This is an eraser. / This is a eraser. 答案：**This is an eraser.**
+  - 解析：This is an eraser. 意思是“这是一块橡皮”。考点：近处用 this；eraser 前用 an。　来源：Unit 2 · 情景交际
+- sc-048：你想说“这是我的书”：（图：书） 选项：This is my book. / That is my book. / This is your book. 答案：**This is my book.**
+  - 解析：This is my book. 意思是“这是我的书”。考点：this 这，my 我的。　来源：Unit 2 · 情景交际
+- sc-049：你想说“那是你的书包”：（图：书包） 选项：That is my bag. / That is your bag. / This is your bag. 答案：**That is your bag.**
+  - 解析：That is your bag. 意思是“那是你的书包”。考点：that 那，your 你的。　来源：Unit 2 · 情景交际
+- sc-050：看图，选出与图片相符的句子：（图：书包） 选项：This is a book. / This is a pen. / This is a bag. 答案：**This is a bag.**
+  - 解析：This is a bag. 意思是“这是一个书包”。考点：bag 书包。　来源：Unit 2 · 情景交际
+- sc-051：看图，选出正确的句子：（图：尺子） 选项：This is an ruler. / This is a ruler. / This is a pencil. 答案：**This is a ruler.**
+  - 解析：This is a ruler. 意思是“这是一把尺子”。考点：ruler 以辅音音素开头，前面用 a。　来源：Unit 2 · 情景交际
+- sc-052：你把书包递给妈妈，你说：（图：妈妈、书包） 选项：Here you are, Mum. / Thank you, Mum. / Bye, Mum. 答案：**Here you are, Mum.**
+  - 解析：Here you are, Mum. 意思是“给您，妈妈”。考点：递东西说 Here you are.　来源：Unit 2 · 情景交际
+- sc-053：妈妈把铅笔盒递给你，你说：（图：妈妈、铅笔盒） 选项：Here you are, Mum. / Hello, Mum. / Thank you, Mum. 答案：**Thank you, Mum.**
+  - 解析：Thank you, Mum. 意思是“谢谢您，妈妈”。考点：收到东西说 Thank you.　来源：Unit 2 · 情景交际
+- sc-054：下面句子书写正确的是： 选项：This is a eraser. / That is a eraser. / This is an eraser. 答案：**This is an eraser.**
+  - 解析：This is an eraser. 意思是“这是一块橡皮”。考点：a 和 an：eraser 前面用 an。　来源：Unit 2 · 情景交际
+- sc-055：下面句子书写正确的是： 选项：This is a pencil. / This is an pencil. / This a pencil. 答案：**This is a pencil.**
+  - 解析：This is a pencil. 意思是“这是一支铅笔”。考点：This is 不能漏掉 is；pencil 前用 a。　来源：Unit 2 · 情景交际
+- sc-056：你在找钢笔，同学指着远处桌上你的钢笔说：（图：钢笔） 选项：This is your pen. / That is your pen. / That is my pen. 答案：**That is your pen.**
+  - 解析：That is your pen. 意思是“那是你的钢笔”。考点：指远处用 that；说对方的东西用 your。　来源：Unit 2 · 情景交际
+- sc-057：你想向同学介绍你手里的钢笔：（图：钢笔） 选项：This is my pen. / That is my pen. / This is my ruler. 答案：**This is my pen.**
+  - 解析：This is my pen. 意思是“这是我的钢笔”。考点：手里的（近处）用 this。　来源：Unit 2 · 情景交际
+- sc-058：你指着手边的书说：（图：书） 选项：That is a book. / This is a book. / This is a bag. 答案：**This is a book.**
+  - 解析：This is a book. 意思是“这是一本书”。考点：近处用 This is …　来源：Unit 2 · 情景交际
+- sc-059：你指着远处的尺子说：（图：尺子） 选项：This is a ruler. / That is a pencil. / That is a ruler. 答案：**That is a ruler.**
+  - 解析：That is a ruler. 意思是“那是一把尺子”。考点：远处用 That is …　来源：Unit 2 · 情景交际
+- sc-060：同学帮你捡起橡皮还给你，你说：（图：橡皮、递东西） 选项：Here you are. / Thank you. / Nice to meet you. 答案：**Thank you.**
+  - 解析：Thank you. 意思是“谢谢你”。考点：别人帮助你，要说 Thank you.　来源：Unit 2 · 情景交际
+- sc-061：你看到一个蓝色的书包，你说：（图：书包、蓝色色块） 选项：It's red. / This is a book. / It's blue. 答案：**It's blue.**
+  - 解析：It's blue. 意思是“它是蓝色的”。考点：说颜色用 It's + 颜色。　来源：Unit 3 · 情景交际
+- sc-062：你想说你看见了黄色，你说：（图：黄色色块） 选项：I see red. / I see yellow. / He's Jack. 答案：**I see yellow.**
+  - 解析：I see yellow. 意思是“我看见了黄色”。考点：I see … 我看见……　来源：Unit 3 · 情景交际
+- sc-063：看图，说一说颜色：（图：红色色块） 选项：It's red. / It's yellow. / It's green. 答案：**It's red.**
+  - 解析：It's red. 意思是“它是红色的”。考点：red 红色。　来源：Unit 3 · 情景交际
+- sc-064：看图，说一说颜色：（图：绿色色块） 选项：It's blue. / It's brown. / It's green. 答案：**It's green.**
+  - 解析：It's green. 意思是“它是绿色的”。考点：green 绿色。　来源：Unit 3 · 情景交际
+- sc-065：看图，说一说颜色：（图：黑色色块） 选项：It's white. / It's brown. / It's black. 答案：**It's black.**
+  - 解析：It's black. 意思是“它是黑色的”。考点：black 黑色，white 白色。　来源：Unit 3 · 情景交际
+- sc-066：看图，说一说颜色：（图：白色色块） 选项：It's white. / It's black. / It's yellow. 答案：**It's white.**
+  - 解析：It's white. 意思是“它是白色的”。考点：white 白色。　来源：Unit 3 · 情景交际
+- sc-067：看图，说一说颜色：（图：橙色色块） 选项：It's brown. / It's orange. / It's red. 答案：**It's orange.**
+  - 解析：It's orange. 意思是“它是橙色的”。考点：orange 橙色。　来源：Unit 3 · 情景交际
+- sc-068：看图，说一说颜色：（图：棕色色块） 选项：It's brown. / It's black. / It's orange. 答案：**It's brown.**
+  - 解析：It's brown. 意思是“它是棕色的”。考点：brown 棕色。　来源：Unit 3 · 情景交际
+- sc-069：你抬头看到蓝蓝的天空，你说：（图：白云、蓝色色块） 选项：I see green. / I see blue. / It's red. 答案：**I see blue.**
+  - 解析：I see blue. 意思是“我看见了蓝色”。考点：I see + 颜色。　来源：Unit 3 · 情景交际
+- sc-070：你看到一大片草地，你说：（图：草地、绿色色块） 选项：I see brown. / I see black. / I see green. 答案：**I see green.**
+  - 解析：I see green. 意思是“我看见了绿色”。考点：草地是绿色的：green。　来源：Unit 3 · 情景交际
+- sc-071：别人问 What colour is it? 你看到一个红苹果，回答：（图：红苹果） 选项：It's blue. / It's red. / Thank you. 答案：**It's red.**
+  - 解析：It's red. 意思是“它是红色的”。考点：问颜色 What colour is it? 答 It's + 颜色。　来源：Unit 3 · 情景交际
+- sc-072：你看到黄色和绿色，你说：（图：黄色色块、绿色色块） 选项：I see yellow and green. / I see red and blue. / I see black and white. 答案：**I see yellow and green.**
+  - 解析：I see yellow and green. 意思是“我看见了黄色和绿色”。考点：两种颜色用 and 连接。　来源：Unit 3 · 情景交际
+- sc-073：看图，香蕉是什么颜色？（图：香蕉） 选项：It's blue. / It's black. / It's yellow. 答案：**It's yellow.**
+  - 解析：It's yellow. 意思是“它是黄色的”。考点：香蕉是黄色的：yellow。　来源：Unit 3 · 情景交际
+- sc-074：看图，熊猫是什么颜色？（图：熊猫） 选项：It's red and yellow. / It's green and blue. / It's black and white. 答案：**It's black and white.**
+  - 解析：It's black and white. 意思是“它是黑白色的”。考点：black and white 黑白相间。　来源：Unit 3 · 情景交际
+- sc-075：看图，橙子是什么颜色？（图：橙子） 选项：It's orange. / It's blue. / It's black. 答案：**It's orange.**
+  - 解析：It's orange. 意思是“它是橙色的”。考点：orange 既是“橙子”也是“橙色”。　来源：Unit 3 · 情景交际
+- sc-076：看图，小熊是什么颜色？（图：玩具熊） 选项：It's white. / It's brown. / It's blue. 答案：**It's brown.**
+  - 解析：It's brown. 意思是“它是棕色的”。考点：brown 棕色。　来源：Unit 3 · 情景交际
+- sc-077：你看到红红的苹果，你说：（图：红苹果） 选项：It's red. / It's blue. / It's black. 答案：**It's red.**
+  - 解析：It's red. 意思是“它是红色的”。考点：red 红色。　来源：Unit 3 · 情景交际
+- sc-078：看图，叶子是什么颜色？（图：绿叶） 选项：It's red. / It's green. / It's white. 答案：**It's green.**
+  - 解析：It's green. 意思是“它是绿色的”。考点：green 绿色。　来源：Unit 3 · 情景交际
+- sc-079：你看到白白的云朵，你说：（图：白云） 选项：It's black. / It's orange. / It's white. 答案：**It's white.**
+  - 解析：It's white. 意思是“它是白色的”。考点：white 白色。　来源：Unit 3 · 情景交际
+- sc-080：你想说“我看见了红色”，正确的是： 选项：I'm red. / I see red. / It's see red. 答案：**I see red.**
+  - 解析：I see red. 意思是“我看见了红色”。考点：我看见……用 I see …　来源：Unit 3 · 情景交际
+- sc-081：下面描述颜色的句子正确的是： 选项：It's blue. / It blue. / It's is blue. 答案：**It's blue.**
+  - 解析：It's blue. 意思是“它是蓝色的”。考点：It's = It is，不要漏掉或重复 is。　来源：Unit 3 · 情景交际
+- sc-082：同学问你 What do you see? 你在看橙色的画，回答：（图：画、橙色色块） 选项：It's a pen. / Thank you. / I see orange. 答案：**I see orange.**
+  - 解析：I see orange. 意思是“我看见了橙色”。考点：What do you see? 用 I see … 回答。　来源：Unit 3 · 情景交际
+- sc-083：看图，消防车是什么颜色？（图：消防车） 选项：It's green. / It's white. / It's red. 答案：**It's red.**
+  - 解析：It's red. 意思是“它是红色的”。考点：red 红色。　来源：Unit 3 · 情景交际
+- sc-084：看图，青蛙是什么颜色？（图：青蛙） 选项：It's green. / It's brown. / It's black. 答案：**It's green.**
+  - 解析：It's green. 意思是“它是绿色的”。考点：green 绿色。　来源：Unit 3 · 情景交际
+- sc-085：看图，足球是什么颜色？（图：足球） 选项：It's red and blue. / It's black and white. / It's brown and green. 答案：**It's black and white.**
+  - 解析：It's black and white. 意思是“它是黑白色的”。考点：black and white 黑白相间。　来源：Unit 3 · 情景交际
+- sc-086：看图，巧克力是什么颜色？（图：巧克力） 选项：It's brown. / It's yellow. / It's white. 答案：**It's brown.**
+  - 解析：It's brown. 意思是“它是棕色的”。考点：brown 棕色。　来源：Unit 3 · 情景交际
+- sc-087：看图，星星是什么颜色？（图：星星） 选项：It's black. / It's yellow. / It's green. 答案：**It's yellow.**
+  - 解析：It's yellow. 意思是“它是黄色的”。考点：yellow 黄色。　来源：Unit 3 · 情景交际
+- sc-088：同学拿着一支蓝色的钢笔问你颜色，你回答：（图：钢笔、蓝色色块） 选项：It's brown. / It's black. / It's blue. 答案：**It's blue.**
+  - 解析：It's blue. 意思是“它是蓝色的”。考点：It's + 颜色。　来源：Unit 3 · 情景交际
+- sc-089：同学拿着一把绿色的尺子问 What colour is it? 你回答：（图：尺子、绿色色块） 选项：It's a ruler. / It's green. / I'm green. 答案：**It's green.**
+  - 解析：It's green. 意思是“它是绿色的”。考点：问颜色就答颜色：It's green.　来源：Unit 3 · 情景交际
+- sc-090：你看到蓝色的大海，你说：（图：大海） 选项：I see blue. / I see brown. / I see orange. 答案：**I see blue.**
+  - 解析：I see blue. 意思是“我看见了蓝色”。　来源：Unit 3 · 情景交际
+- sc-091：数一数，图中有几支铅笔？（图：3个铅笔） 选项：Two. / Three. / Four. 答案：**Three.**
+  - 解析：Three. 意思是“三支”。考点：three 三。　来源：Unit 4 · 情景交际
+- sc-092：你想问有多少个本子，你说：（图：书、问号） 选项：How many? / What's your name? / Nice to meet you. 答案：**How many?**
+  - 解析：How many? 意思是“多少个？”。考点：问数量用 How many?　来源：Unit 4 · 情景交际
+- sc-093：别人问 How many? 图中有几个苹果？（图：5个红苹果） 选项：Four. / Six. / Five. 答案：**Five.**
+  - 解析：Five. 意思是“五个”。考点：five 五。　来源：Unit 4 · 情景交际
+- sc-094：数一数，图中有几本书？（图：7个书） 选项：Six. / Eight. / Seven. 答案：**Seven.**
+  - 解析：Seven. 意思是“七本”。考点：seven 七。　来源：Unit 4 · 情景交际
+- sc-095：数一数，图中有几个书包？（图：2个书包） 选项：Two. / Three. / Ten. 答案：**Two.**
+  - 解析：Two. 意思是“两个”。考点：two 二。　来源：Unit 4 · 情景交际
+- sc-096：数一数，图中有几颗星星？（图：10个星星） 选项：Nine. / Ten. / One. 答案：**Ten.**
+  - 解析：Ten. 意思是“十颗”。考点：ten 十。　来源：Unit 4 · 情景交际
+- sc-097：数一数，图中有几把尺子？（图：尺子） 选项：One. / Nine. / Two. 答案：**One.**
+  - 解析：One. 意思是“一把”。考点：one 一。　来源：Unit 4 · 情景交际
+- sc-098：数一数，图中有几块橡皮？（图：4个橡皮） 选项：Five. / Four. / Nine. 答案：**Four.**
+  - 解析：Four. 意思是“四块”。考点：four 四。　来源：Unit 4 · 情景交际
+- sc-099：数一数，图中有几支钢笔？（图：6个钢笔） 选项：Seven. / Three. / Six. 答案：**Six.**
+  - 解析：Six. 意思是“六支”。考点：six 六。　来源：Unit 4 · 情景交际
+- sc-100：数一数，图中有几只小鸟？（图：8个小鸟） 选项：Three. / Eight. / Nine. 答案：**Eight.**
+  - 解析：Eight. 意思是“八只”。考点：eight 八。　来源：Unit 4 · 情景交际
+- sc-101：你想问同学有几支铅笔，你说：（图：铅笔、问号） 选项：How many pencils? / What's your name? / It's a pencil. 答案：**How many pencils?**
+  - 解析：How many pencils? 意思是“多少支铅笔？”。考点：How many + 复数名词？　来源：Unit 4 · 情景交际
+- sc-102：同学问 How many pens? 你有两支钢笔，你回答：（图：2个钢笔） 选项：Ten. / Thank you. / Two. 答案：**Two.**
+  - 解析：Two. 意思是“两支”。考点：two 二。　来源：Unit 4 · 情景交际
+- sc-103：2 + 3 = ? 用英语说出得数： 选项：Six. / Four. / Five. 答案：**Five.**
+  - 解析：Five. 意思是“五”。考点：two and three is five.　来源：Unit 4 · 情景交际
+- sc-104：4 + 4 = ? 用英语说出得数： 选项：Eight. / Nine. / Seven. 答案：**Eight.**
+  - 解析：Eight. 意思是“八”。考点：four and four is eight.　来源：Unit 4 · 情景交际
+- sc-105：10 − 1 = ? 用英语说出得数： 选项：Ten. / Nine. / One. 答案：**Nine.**
+  - 解析：Nine. 意思是“九”。考点：nine 九。　来源：Unit 4 · 情景交际
+- sc-106：3 + 3 = ? 用英语说出得数： 选项：Six. / Three. / Nine. 答案：**Six.**
+  - 解析：Six. 意思是“六”。考点：six 六。　来源：Unit 4 · 情景交际
+- sc-107：5 + 2 = ? 用英语说出得数： 选项：Five. / Seven. / Two. 答案：**Seven.**
+  - 解析：Seven. 意思是“七”。考点：seven 七。　来源：Unit 4 · 情景交际
+- sc-108：1 + 1 = ? 用英语说出得数： 选项：One. / Three. / Two. 答案：**Two.**
+  - 解析：Two. 意思是“二”。考点：two 二。　来源：Unit 4 · 情景交际
+- sc-109：6 + 4 = ? 用英语说出得数： 选项：Six. / Ten. / Four. 答案：**Ten.**
+  - 解析：Ten. 意思是“十”。考点：ten 十。　来源：Unit 4 · 情景交际
+- sc-110：7 − 6 = ? 用英语说出得数： 选项：One. / Seven. / Six. 答案：**One.**
+  - 解析：One. 意思是“一”。考点：one 一。　来源：Unit 4 · 情景交际
+- sc-111：你想问“有多少个书包？”，正确的是：（图：书包、问号） 选项：How many bag? / How bags? / How many bags? 答案：**How many bags?**
+  - 解析：How many bags? 意思是“有多少个书包？”。考点：How many 后面的名词要用复数：bags。　来源：Unit 4 · 情景交际
+- sc-112：数字“3”的英语单词，拼写正确的是： 选项：there / tree / three 答案：**three**
+  - 解析：three 意思是“三”。　来源：Unit 4 · 情景交际
+- sc-113：数字“8”的英语单词，拼写正确的是： 选项：eight / eihgt / aight 答案：**eight**
+  - 解析：eight 意思是“八”。　来源：Unit 4 · 情景交际
+- sc-114：数字“4”的英语单词，拼写正确的是： 选项：for / four / fuor 答案：**four**
+  - 解析：four 意思是“四”。　来源：Unit 4 · 情景交际
+- sc-115：比 nine 大 1 的数是： 选项：Ten. / Eight. / Five. 答案：**Ten.**
+  - 解析：Ten. 意思是“十”。考点：9 + 1 = 10，ten。　来源：Unit 4 · 情景交际
+- sc-116：比 six 大 1 的数是： 选项：Five. / Seven. / Eight. 答案：**Seven.**
+  - 解析：Seven. 意思是“七”。考点：6 + 1 = 7，seven。　来源：Unit 4 · 情景交际
+- sc-117：老师指着4个女孩问 How many? 你回答：（图：4个女孩） 选项：Five. / Nine. / Four. 答案：**Four.**
+  - 解析：Four. 意思是“四个”。考点：four 四。　来源：Unit 4 · 情景交际
+- sc-118：你想问有多少本书，正确的是：（图：书、问号） 选项：How many book? / How many books? / What's a book? 答案：**How many books?**
+  - 解析：How many books? 意思是“有多少本书？”。考点：How many + 复数：books。　来源：Unit 4 · 情景交际
+- sc-119：数一数，图中有几只猫？（图：3个小猫） 选项：Three. / Two. / Eight. 答案：**Three.**
+  - 解析：Three. 意思是“三只”。考点：three 三。　来源：Unit 4 · 情景交际
+- sc-120：数一数，图中有几个苹果？（图：9个红苹果） 选项：Five. / Ten. / Nine. 答案：**Nine.**
+  - 解析：Nine. 意思是“九个”。考点：nine 九。　来源：Unit 4 · 情景交际
+- sc-121：你向朋友介绍你的妈妈，你说：（图：妈妈） 选项：This is my mum. / This is my dad. / It's red. 答案：**This is my mum.**
+  - 解析：This is my mum. 意思是“这是我的妈妈”。考点：介绍家人用 This is my …　来源：Unit 5 · 情景交际
+- sc-122：你想说“我们是一家人”：（图：一家人） 选项：We're friends. / Thank you. / We're family. 答案：**We're family.**
+  - 解析：We're family. 意思是“我们是一家人”。　来源：Unit 5 · 情景交际
+- sc-123：你向朋友介绍你的爸爸，你说：（图：爸爸） 选项：This is my mum. / This is my sister. / This is my dad. 答案：**This is my dad.**
+  - 解析：This is my dad. 意思是“这是我的爸爸”。考点：dad 爸爸，mum 妈妈。　来源：Unit 5 · 情景交际
+- sc-124：你向朋友介绍你的奶奶，你说：（图：奶奶） 选项：This is my grandma. / This is my grandpa. / This is my mum. 答案：**This is my grandma.**
+  - 解析：This is my grandma. 意思是“这是我的奶奶”。考点：grandma 奶奶；外婆。　来源：Unit 5 · 情景交际
+- sc-125：你向朋友介绍你的爷爷，你说：（图：爷爷） 选项：This is my grandma. / This is my grandpa. / This is my brother. 答案：**This is my grandpa.**
+  - 解析：This is my grandpa. 意思是“这是我的爷爷”。考点：grandpa 爷爷；外公。　来源：Unit 5 · 情景交际
+- sc-126：你向朋友介绍你的妹妹，你说：（图：女孩） 选项：This is my sister. / This is my brother. / This is my dad. 答案：**This is my sister.**
+  - 解析：This is my sister. 意思是“这是我的妹妹”。考点：sister 姐姐；妹妹。　来源：Unit 5 · 情景交际
+- sc-127：你向朋友介绍你的弟弟，你说：（图：男孩） 选项：This is my sister. / This is my brother. / This is my grandpa. 答案：**This is my brother.**
+  - 解析：This is my brother. 意思是“这是我的弟弟”。考点：brother 哥哥；弟弟。　来源：Unit 5 · 情景交际
+- sc-128：你给朋友看全家福照片，你说：（图：一家人） 选项：We're nine. / It's a book. / We're family. 答案：**We're family.**
+  - 解析：We're family. 意思是“我们是一家人”。　来源：Unit 5 · 情景交际
+- sc-129：外婆（妈妈的妈妈）用英语怎么说？（图：奶奶） 选项：grandpa / grandma / mum 答案：**grandma**
+  - 解析：grandma 意思是“外婆”。　来源：Unit 5 · 情景交际
+- sc-130：爷爷（爸爸的爸爸）用英语怎么说？（图：爷爷） 选项：grandpa / grandma / dad 答案：**grandpa**
+  - 解析：grandpa 意思是“爷爷”。　来源：Unit 5 · 情景交际
+- sc-131：你想说“他是我的爸爸”：（图：爸爸） 选项：She's my dad. / He's my mum. / He's my dad. 答案：**He's my dad.**
+  - 解析：He's my dad. 意思是“他是我的爸爸”。考点：男性用 he，dad 爸爸。　来源：Unit 5 · 情景交际
+- sc-132：你想说“她是我的妈妈”：（图：妈妈） 选项：He's my mum. / She's my dad. / She's my mum. 答案：**She's my mum.**
+  - 解析：She's my mum. 意思是“她是我的妈妈”。考点：女性用 she，mum 妈妈。　来源：Unit 5 · 情景交际
+- sc-133：你想说“她是我的姐姐”：（图：女孩） 选项：She's my sister. / He's my sister. / She's my brother. 答案：**She's my sister.**
+  - 解析：She's my sister. 意思是“她是我的姐姐”。考点：sister 姐姐；妹妹。　来源：Unit 5 · 情景交际
+- sc-134：你想说“他是我的哥哥”：（图：男孩） 选项：She's my brother. / He's my brother. / He's my sister. 答案：**He's my brother.**
+  - 解析：He's my brother. 意思是“他是我的哥哥”。考点：brother 哥哥；弟弟。　来源：Unit 5 · 情景交际
+- sc-135：朋友向你介绍 This is my mum. 你向阿姨问好：（图：妈妈） 选项：Hello! Nice to meet you. / Goodbye! / Thank you. 答案：**Hello! Nice to meet you.**
+  - 解析：Hello! Nice to meet you. 意思是“您好！很高兴见到您”。考点：初次见面：Hello! Nice to meet you.　来源：Unit 5 · 情景交际
+- sc-136：你把爸爸介绍给老师，你说：（图：爸爸） 选项：This is my desk. / This is my dad. / I'm your dad. 答案：**This is my dad.**
+  - 解析：This is my dad. 意思是“这是我的爸爸”。　来源：Unit 5 · 情景交际
+- sc-137：下面哪个词表示女性家庭成员？ 选项：brother / dad / sister 答案：**sister**
+  - 解析：sister 意思是“姐姐；妹妹”。　来源：Unit 5 · 情景交际
+- sc-138：下面哪个词表示男性家庭成员？ 选项：grandma / grandpa / mum 答案：**grandpa**
+  - 解析：grandpa 意思是“爷爷；外公”。　来源：Unit 5 · 情景交际
+- sc-139：你和家人在一起拍照，你说：（图：一家人、照相机） 选项：We're family. / Here you are. / How many? 答案：**We're family.**
+  - 解析：We're family. 意思是“我们是一家人”。　来源：Unit 5 · 情景交际
+- sc-140：“妈妈”用英语怎么说？（图：妈妈） 选项：dad / sister / mum 答案：**mum**
+  - 解析：mum 意思是“妈妈”。　来源：Unit 5 · 情景交际
+- sc-141：“爸爸”用英语怎么说？（图：爸爸） 选项：mum / brother / dad 答案：**dad**
+  - 解析：dad 意思是“爸爸”。　来源：Unit 5 · 情景交际
+- sc-142：“哥哥；弟弟”用英语怎么说？（图：男孩） 选项：brother / sister / grandpa 答案：**brother**
+  - 解析：brother 意思是“哥哥；弟弟”。　来源：Unit 5 · 情景交际
+- sc-143：“姐姐；妹妹”用英语怎么说？（图：女孩） 选项：brother / sister / grandma 答案：**sister**
+  - 解析：sister 意思是“姐姐；妹妹”。　来源：Unit 5 · 情景交际
+- sc-144：“家庭；家人”用英语怎么说？（图：一家人） 选项：family / friend / room 答案：**family**
+  - 解析：family 意思是“家庭；家人”。　来源：Unit 5 · 情景交际
+- sc-145：你向同学介绍你的奶奶，同学会对奶奶说：（图：奶奶） 选项：Here you are. / Nice to meet you. / It's brown. 答案：**Nice to meet you.**
+  - 解析：Nice to meet you. 意思是“很高兴见到您”。考点：初次见面说 Nice to meet you.　来源：Unit 5 · 情景交际
+- sc-146：下面句子书写正确的是： 选项：This my mum. / This is I mum. / This is my mum. 答案：**This is my mum.**
+  - 解析：This is my mum. 意思是“这是我的妈妈”。考点：This is my …，is 和 my 都不能少。　来源：Unit 5 · 情景交际
+- sc-147：下面句子书写正确的是： 选项：We family. / We're family. / We's family. 答案：**We're family.**
+  - 解析：We're family. 意思是“我们是一家人”。考点：We're = We are。　来源：Unit 5 · 情景交际
+- sc-148：照片上有爸爸、妈妈和我，How many? 你回答：（图：爸爸、妈妈、男孩） 选项：Three. / Two. / Four. 答案：**Three.**
+  - 解析：Three. 意思是“三个”。考点：爸爸 + 妈妈 + 我 = 3，three。　来源：Unit 5 · 情景交际
+- sc-149：你向妈妈介绍你的好朋友埃米：（图：妈妈、女孩） 选项：Mum, this is my sister. / Mum, here you are. / Mum, this is my friend Amy. 答案：**Mum, this is my friend Amy.**
+  - 解析：Mum, this is my friend Amy. 意思是“妈妈，这是我的朋友埃米”。考点：介绍朋友：This is my friend …　来源：Unit 5 · 情景交际
+- sc-150：你指着全家福说“这是我的家人”：（图：一家人） 选项：This is my friend. / That is my bag. / This is my family. 答案：**This is my family.**
+  - 解析：This is my family. 意思是“这是我的家人”。考点：family 家人。　来源：Unit 5 · 情景交际
+- sc-151：看图，书在哪里？（图：书在书桌上面） 选项：It's in the bag. / It's red. / It's on the desk. 答案：**It's on the desk.**
+  - 解析：It's on the desk. 意思是“它在书桌上”。考点：on 在……上面，in 在……里面。　来源：Unit 6 · 情景交际
+- sc-152：你向朋友介绍“这是我的家”：（图：房子） 选项：How many? / Nice to meet you. / This is my home. 答案：**This is my home.**
+  - 解析：This is my home. 意思是“这是我的家”。　来源：Unit 6 · 情景交际
+- sc-153：看图，铅笔在哪里？（图：铅笔在铅笔盒里面） 选项：It's in the pencil box. / It's on the pencil box. / It's a pencil. 答案：**It's in the pencil box.**
+  - 解析：It's in the pencil box. 意思是“它在铅笔盒里”。考点：in 在……里面。　来源：Unit 6 · 情景交际
+- sc-154：看图，书在哪里？（图：书在书包里面） 选项：It's on the bag. / It's in the bag. / It's on the desk. 答案：**It's in the bag.**
+  - 解析：It's in the bag. 意思是“它在书包里”。考点：in the bag 在书包里。　来源：Unit 6 · 情景交际
+- sc-155：看图，小猫在哪里？（图：小猫在床上面） 选项：It's on the bed. / It's in the bed. / It's on the chair. 答案：**It's on the bed.**
+  - 解析：It's on the bed. 意思是“它在床上”。考点：on the bed 在床上。　来源：Unit 6 · 情景交际
+- sc-156：看图，尺子在哪里？（图：尺子在椅子上面） 选项：It's on the desk. / It's on the chair. / It's in the bag. 答案：**It's on the chair.**
+  - 解析：It's on the chair. 意思是“它在椅子上”。考点：on the chair 在椅子上。　来源：Unit 6 · 情景交际
+- sc-157：你向朋友介绍“这是我的房间”：（图：房间） 选项：This is my desk. / That is a door. / This is my room. 答案：**This is my room.**
+  - 解析：This is my room. 意思是“这是我的房间”。考点：room 房间。　来源：Unit 6 · 情景交际
+- sc-158：你指着门说：（图：门） 选项：This is a window. / This is a door. / This is a desk. 答案：**This is a door.**
+  - 解析：This is a door. 意思是“这是一扇门”。考点：door 门，window 窗户。　来源：Unit 6 · 情景交际
+- sc-159：你指着窗户说：（图：窗户） 选项：This is a window. / This is a door. / This is a bed. 答案：**This is a window.**
+  - 解析：This is a window. 意思是“这是一扇窗户”。考点：window 窗户。　来源：Unit 6 · 情景交际
+- sc-160：你指着书桌说：（图：书桌） 选项：This is a chair. / This is a bed. / This is a desk. 答案：**This is a desk.**
+  - 解析：This is a desk. 意思是“这是一张书桌”。考点：desk 书桌，chair 椅子。　来源：Unit 6 · 情景交际
+- sc-161：你指着椅子说：（图：椅子） 选项：This is a desk. / This is a door. / This is a chair. 答案：**This is a chair.**
+  - 解析：This is a chair. 意思是“这是一把椅子”。考点：chair 椅子。　来源：Unit 6 · 情景交际
+- sc-162：你指着床说：（图：床） 选项：This is a bed. / This is a room. / This is a window. 答案：**This is a bed.**
+  - 解析：This is a bed. 意思是“这是一张床”。考点：bed 床。　来源：Unit 6 · 情景交际
+- sc-163：同学问 Where's my pen? 看图回答：（图：钢笔在书桌上面） 选项：It's a pen. / It's on the desk. / Here you are. 答案：**It's on the desk.**
+  - 解析：It's on the desk. 意思是“它在书桌上”。考点：问位置 Where's …? 答 It's on/in …　来源：Unit 6 · 情景交际
+- sc-164：妈妈问 Where's the cat? 看图回答：（图：小猫在椅子上面） 选项：It's on the chair. / It's in the chair. / It's a cat. 答案：**It's on the chair.**
+  - 解析：It's on the chair. 意思是“它在椅子上”。考点：on the chair 在椅子上。　来源：Unit 6 · 情景交际
+- sc-165：同学问 Where's my eraser? 看图回答：（图：橡皮在铅笔盒里面） 选项：It's on the door. / It's in the pencil box. / Thank you. 答案：**It's in the pencil box.**
+  - 解析：It's in the pencil box. 意思是“它在铅笔盒里”。考点：in the pencil box 在铅笔盒里。　来源：Unit 6 · 情景交际
+- sc-166：朋友第一次来你家，你说：（图：房子、挥手） 选项：This is my bag. / That is a window. / This is my home. 答案：**This is my home.**
+  - 解析：This is my home. 意思是“这是我的家”。　来源：Unit 6 · 情景交际
+- sc-167：看图，足球在哪里？（图：足球在床上面） 选项：It's in the bag. / It's on the bed. / It's on the desk. 答案：**It's on the bed.**
+  - 解析：It's on the bed. 意思是“它在床上”。考点：on the bed 在床上。　来源：Unit 6 · 情景交际
+- sc-168：看图，橡皮在哪里？（图：橡皮在书包里面） 选项：It's in the bag. / It's on the bag. / It's on the bed. 答案：**It's in the bag.**
+  - 解析：It's in the bag. 意思是“它在书包里”。考点：in the bag 在书包里；on the bag 在书包上。　来源：Unit 6 · 情景交际
+- sc-169：下面哪个词表示“在……上面”？ 选项：in / is / on 答案：**on**
+  - 解析：on 意思是“在……上面”。　来源：Unit 6 · 情景交际
+- sc-170：下面哪个词表示“在……里面”？ 选项：on / it / in 答案：**in**
+  - 解析：in 意思是“在……里面”。　来源：Unit 6 · 情景交际
+- sc-171：下面句子书写正确的是： 选项：It's on the desk. / It on the desk. / It's on desk. 答案：**It's on the desk.**
+  - 解析：It's on the desk. 意思是“它在书桌上”。考点：It's 不能漏掉 's；desk 前要加 the。　来源：Unit 6 · 情景交际
+- sc-172：下面句子书写正确的是： 选项：This my home. / This is my home. / This is me home. 答案：**This is my home.**
+  - 解析：This is my home. 意思是“这是我的家”。考点：my 我的；is 不能漏掉。　来源：Unit 6 · 情景交际
+- sc-173：看图，选出正确的句子：（图：房子） 选项：This is my home. / This is my room. / This is my desk. 答案：**This is my home.**
+  - 解析：This is my home. 意思是“这是我的家”。考点：home 家。　来源：Unit 6 · 情景交际
+- sc-174：看图，选出正确的句子：（图：房间） 选项：This is my bag. / This is my room. / This is my door. 答案：**This is my room.**
+  - 解析：This is my room. 意思是“这是我的房间”。考点：room 房间。　来源：Unit 6 · 情景交际
+- sc-175：你想说“我的书包在椅子上”：（图：书包在椅子上面） 选项：My bag is in the chair. / My bag is on the bed. / My bag is on the chair. 答案：**My bag is on the chair.**
+  - 解析：My bag is on the chair. 意思是“我的书包在椅子上”。考点：on the chair 在椅子上。　来源：Unit 6 · 情景交际
+- sc-176：你想说“我的钢笔在书包里”：（图：钢笔在书包里面） 选项：My pen is on the bag. / My pen is in the bag. / My pen is on the door. 答案：**My pen is in the bag.**
+  - 解析：My pen is in the bag. 意思是“我的钢笔在书包里”。考点：in the bag 在书包里。　来源：Unit 6 · 情景交际
+- sc-177：数一数，房间里有几扇窗户？How many windows?（图：2个窗户） 选项：Two. / Three. / Four. 答案：**Two.**
+  - 解析：Two. 意思是“两扇”。考点：two 二。　来源：Unit 6 · 情景交际
+- sc-178：妈妈问你的书在哪里，看图回答：（图：书在床上面） 选项：It's in the bag. / It's my book. / It's on the bed. 答案：**It's on the bed.**
+  - 解析：It's on the bed. 意思是“它在床上”。考点：on the bed 在床上。　来源：Unit 6 · 情景交际
+- sc-179：看图，门是什么颜色？What colour is the door?（图：门） 选项：It's a door. / It's on the desk. / It's brown. 答案：**It's brown.**
+  - 解析：It's brown. 意思是“它是棕色的”。考点：问颜色就答颜色：It's brown.　来源：Unit 6 · 情景交际
+- sc-180：下面哪个单词表示“窗户”？（图：窗户） 选项：window / door / desk 答案：**window**
+  - 解析：window 意思是“窗户”。　来源：Unit 6 · 情景交际

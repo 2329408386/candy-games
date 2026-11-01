@@ -1,0 +1,62 @@
+{% set is_admin = request.path.startswith('/admin') %}
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="theme-color" content="#f8f5ec">
+    <link rel="icon" href="data:,">
+    <title>{% block title %}英语小游戏{% endblock %}</title>
+    <link rel="stylesheet" href="{{asset('site.css')}}">
+    {% if not is_admin %}<link rel="stylesheet" href="{{url_for('home')}}static/shared/social/social.css?v=3d8997ae">{% endif %}
+  </head>
+  <body class="{{'admin-body' if is_admin else 'student-body'}}">
+    <svg xmlns="http://www.w3.org/2000/svg" style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
+    <defs>
+      <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 6v15M3 4c4-1 6 0 9 2 3-2 5-3 9-2v15c-4-1-6 0-9 2-3-2-5-3-9-2z"/></symbol>
+      <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M20 3C5 1 1 9 6 16s15 1 14-13ZM4 21 16 9"/></symbol>
+      <symbol id="i-pen" viewBox="0 0 24 24"><path d="m15 4 5 5M3 21l2-7L17 2l5 5L10 19zM5 14l5 5"/></symbol>
+      <symbol id="i-lock" viewBox="0 0 24 24">
+        <rect x="5" y="10" width="14" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 5v2"/>
+      </symbol>
+      <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"/></symbol>
+      <symbol id="i-grid" viewBox="0 0 24 24">
+        <rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>
+      </symbol>
+      <symbol id="i-ruler" viewBox="0 0 24 24"><path d="m3 15 12-12 6 6L9 21zM7 11l2 2m2-6 2 2m2-6 2 2"/></symbol>
+      <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m15 9-2 5-4 2 2-5z"/></symbol>
+      <symbol id="i-calc" viewBox="0 0 24 24">
+        <rect x="5" y="2" width="14" height="20" rx="2"/><path d="M8 6h8M8 11h.01M12 11h.01M16 11h.01M8 15h.01M12 15h.01M16 15h.01M8 19h.01M12 19h.01M16 19h.01"/>
+      </symbol>
+      <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 9h8M8 12h5"/></symbol>
+      <symbol id="i-ear" viewBox="0 0 24 24"><path d="M7 9a5 5 0 0 1 10 0c0 3-3 4-3 7a3 3 0 0 1-6 0"/><path d="M10 9a2 2 0 0 1 4 0"/></symbol>
+      <symbol id="i-shapes" viewBox="0 0 24 24">
+        <circle cx="8" cy="8" r="4"/><rect x="13" y="4" width="8" height="8" rx="1"/><path d="m8 14 5 8H3z"/>
+      </symbol>
+    </defs>
+    </svg>
+    <header class="site-header">
+      <a class="brand" href="{{url_for('dashboard') if is_admin else url_for('home')}}"><span class="brand-icon"><svg><use href="#i-chat"/></svg></span><span>英语小游戏<small>{{'管理工作台' if is_admin else '听说读写，一起闯关'}}</small></span></a>
+      {% if is_admin %}
+        <nav aria-label="管理导航">
+          <a href="{{url_for('home')}}">游戏首页 <span aria-hidden="true">↗</span></a>{% if session.get('admin_version') %}<a href="{{url_for('dashboard')}}">授权管理</a><a href="{{url_for('game_directory')}}">游戏目录</a><a href="{{url_for('group_admin')}}">游戏分组</a><a href="{{url_for('password')}}">修改密码</a>
+          <form method="post" action="{{url_for('admin_logout')}}">
+            <input type="hidden" name="csrf" value="{{csrf()}}"><button class="text-button">退出后台</button>
+          </form>
+        {% endif %}
+      </nav>
+      {% else %}<span class="header-actions"><a class="header-link" href="{{url_for('mistakes')}}">错题本</a>{% set me = header_profile() %}{% if me %}{% set on_rank = request.endpoint == 'ranking_page' %}<a class="header-rank top{{' active' if on_rank and board == 'top'}}" href="{{url_for('ranking_page')}}" title="全国用户总排行榜"><span aria-hidden="true">🏆</span><span class="label">总榜</span></a>{% if me.in_class %}<a class="header-rank class{{' active' if on_rank and board == 'class'}}" href="{{url_for('ranking_page', board='class')}}" title="班级排行榜"><span aria-hidden="true">🏅</span><span class="label">班级榜</span></a>{% endif %}<a class="header-avatar" href="{{url_for('me_page')}}" title="我的资料和班级">{% include 'avatar.html' %}<span class="name">{{me.name}}</span></a>{% else %}<button type="button" class="header-link header-contact" data-contact>获取授权码</button>{% endif %}<span class="header-note"><span class="status-dot"></span> 一起听，一起说</span></span>{% endif %}
+    </header>
+    <main class="{{'admin-main' if is_admin else 'student-main'}}">
+      {% with messages=get_flashed_messages(with_categories=true) %}{% for category,message in messages %}
+      <div class="notice {{category}}" role="status">{{message}}</div>
+      {% endfor %}{% endwith %}
+      {% block content %}
+      {% endblock %}
+    </main>
+    <footer class="site-footer">
+      英语小游戏 <span>·</span> {{'用心管理，让学习更简单' if is_admin else '每天说一句，英语更自信'}}{% if not is_admin %}<a href="{{url_for('login')}}">管理员入口</a>{% endif %}
+    </footer>
+    {% if not is_admin %}{% include 'contact.html' %}{% endif %}
+  </body>
+</html>

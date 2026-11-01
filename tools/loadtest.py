@@ -3,7 +3,7 @@
 Never point it at the live data. Run a throwaway instance with its own database instead:
 
     python3 tools/loadtest.py seed /tmp/lt              # database with 1000 licenses (one per simulated player), keys in /tmp/lt/keys.json
-    GAME_DATA=/tmp/lt CHINESE_SECRET=x MATH_SECRET=y gunicorn --workers 6 --bind 127.0.0.1:18099 wsgi:app
+    GAME_DATA=/tmp/lt CHINESE_SECRET=x MATH_SECRET=y ENGLISH_SECRET=z gunicorn --workers 6 --bind 127.0.0.1:18099 wsgi:app
     python3 tools/loadtest.py run http://127.0.0.1:18099 /tmp/lt/keys.json --players 200 --seconds 90
 
 It talks to gunicorn directly and gives every player its own X-Forwarded-For address, so the per-IP rate limits
@@ -69,7 +69,7 @@ class Stats:
 
 class Player:
     def __init__(self, base, site, key, n, stats):
-        self.base, self.key, self.stats = base.rstrip("/") + ("/math" if site == "math" else ""), key, stats
+        self.base, self.key, self.stats = base.rstrip("/") + ({"math": "/math", "english": "/english"}.get(site, "")), key, stats
         self.ip = f"10.{n // 65536 % 256}.{n // 256 % 256}.{n % 256}"
         self.opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
         self.csrf = ""
@@ -173,7 +173,7 @@ if __name__ == "__main__":
     r.add_argument("keys")
     r.add_argument("--players", type=int, default=100)
     r.add_argument("--seconds", type=int, default=90)
-    r.add_argument("--site", default="chinese", choices=["chinese", "math"])
+    r.add_argument("--site", default="chinese", choices=["chinese", "math", "english"])
     a = parser.parse_args()
     if a.cmd == "seed":
         seed(a.data, a.licenses)

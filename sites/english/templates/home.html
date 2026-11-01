@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% block content %}
+  <section class="hero">
+    <div class="hero-art" role="img" aria-label="字母积木、对话气泡和彩色铅笔组成的英语乐园"><span class="art-note">小伙伴们一起出发！</span></div>
+    <div class="hero-copy">
+      <span class="eyebrow">外研版三起 · 同步单元，以学助考</span>
+      <h1>
+        和小伙伴一起，
+        <br>
+        <em>开口说英语。</em>
+      </h1>
+      <p class="intro">
+        听音识词、情景对话、字母和句子，按单元一关关闯。
+        <br>
+        课堂上投屏双人PK，课后一个人也能练；答错的题会自动收进错题本。
+      </p>
+      <section class="activate-panel{{' licensed' if license}}" aria-label="{{'我的授权' if license else '激活游戏'}}">
+        {% set activate_form %}
+        <form id="activate">
+          <input type="hidden" name="csrf" value="{{csrf()}}"><label for="key">{{'换一个授权码' if license else '🔑 已有授权码？在这里激活'}}</label>
+          <div class="activate-row">
+            <input id="key" name="key" placeholder="输入你的16位授权码" maxlength="32" required autocomplete="off" autocapitalize="characters"><button id="submit">{{'激活' if license else '激活游戏'}} <span aria-hidden="true">↗</span></button>
+          </div>
+        </form>
+        <p id="message" role="status"></p>
+        {% endset %}
+        {% if license %}{% set me = header_profile() %}
+          <a class="license-who" href="{{url_for('me_page')}}" title="我的资料和班级">
+            {% include 'avatar.html' %}
+            <span class="license-name"><strong>{{me.name}}</strong><span class="license-badges"><span class="license-ok">✓ 已激活</span><span class="tier t-{{me.tier.key}}">{{me.tier.name}}</span></span></span>
+          </a>
+          <p class="hint">授权学期：{{license_grades(license.id)|grade_names}}</p>
+          <p class="hint">已绑定 {{device_count}} / {{license.device_limit}} 个浏览器 · 授权永久有效</p>
+          <div class="license-links">
+            <a class="button secondary" href="{{url_for('me_page')}}"><span aria-hidden="true">👤</span>我的</a><a class="button secondary" href="{{url_for('ranking_page')}}"><span aria-hidden="true">🏆</span>总榜</a><a class="button secondary" href="{{url_for('mistakes')}}"><span aria-hidden="true">📒</span>错题本</a>
+          </div>
+          <div class="activation-state">
+            <details class="license-switch">
+              <summary>更换授权码</summary>
+              {{activate_form}}
+            </details>
+            <form method="post" action="{{url_for('logout')}}">
+              <input type="hidden" name="csrf" value="{{csrf()}}"><button class="text-button">退出当前授权</button>
+            </form>
+          </div>
+        {% else %}
+          {{activate_form}}
+          <p class="hint">还没有授权码？每个游戏都可以免费试玩一局。<button type="button" class="text-button inline-link" data-contact>扫码获取授权码</button></p>
+          <p class="hint">每个授权码可在限定数量的浏览器上使用，换浏览器或清除浏览器数据会占用新名额。</p>
+        {% endif %}
+      </section>
+    </div>
+  </section>
+  <section aria-labelledby="games-heading">
+    <div class="section-heading">
+      <div>
+        <h2 id="games-heading">今天，想挑战什么？</h2>
+        <p>选一个喜欢的，和小伙伴一起开始吧。</p>
+      </div>
+      <span class="count-label">{{grades[selected_grade]}} · {{grade_games|length}} 个游戏</span>
+    </div>
+    <form class="grade-picker" method="get" action="{{url_for('home')}}#games-heading">
+      <div>
+        <label for="year">选择年级</label><select id="year" name="year" onchange="this.form.submit()">{% for year in range(1,7) %}
+        <option value="{{year}}" {% if year==selected_year %}selected{% endif %}>{{grade_names[year-1]}}年级</option>
+        {% endfor %}</select>
+      </div>
+      <div>
+        <label for="term">选择学期</label><select id="term" name="term" onchange="this.form.submit()">
+        <option value="1" {% if selected_term==1 %}selected{% endif %}>上册</option>
+        <option value="2" {% if selected_term==2 %}selected{% endif %}>下册</option>
+        </select>
+      </div>
+      <button class="secondary">查看游戏</button>
+    </form>
+    {% if not grade_games %}
+      <div class="grade-empty">
+        <span class="game-icon"><svg><use href="#i-shapes"/></svg></span>
+        <h3>{{grades[selected_grade]}} · 游戏准备中</h3>
+        <p>新的英语小挑战正在路上，敬请期待。</p>
+        {% if license and selected_grade in license_grades(license.id) %}<span class="tag">你已获得对应组授权，后续可访问该组内的游戏</span>{% endif %}
+      </div>
+    {% else %}
+      {% if license %}<p class="hint">已授权组：{{group_labels(license_group_ids(license.id))|join("、")}}</p>{% endif %}
+      {% for group in groups_for_grade(selected_grade) %}
+        <h3>{{group.name}} · {{group_games(group.id)|length}} 个游戏</h3>
+        <div class="game-grid en-grid">
+          {% for id in group_games(group.id) %}
+            {% set name=games[id] %}
+            <article class="game-card">
+              <div class="game-top">
+                <span class="game-icon en-icon" aria-hidden="true">{{ {'listen-word':'🎧','scene':'🎬','letters':'Aa','sentence':'🧩','listen-judge':'👂'}[id] }}</span><span class="game-number">{{'%02d'|format(grade_games.index(id)+1)}}</span>
+              </div>
+              <h3>{{name}}</h3>
+              <p>
+                {{ {'listen-word':'听录音，选出听到的单词或图片，全册单词一网打尽。','scene':'看图看情景，选出最合适的应答，单元卷、口语必考。','letters':'26个字母认读、大小写配对、字母顺序和首字母。','sentence':'打乱的单词排一排，拼出每个单元的核心句型。','listen-judge':'听句子，判断和图片是否相符，练出好耳朵。'}[id] }}
+              </p>
+              <div class="card-bottom">
+                {% if license and id in unlocked %}<a class="game-link" href="{{url_for('game_page',game=id)}}">开始游戏<svg aria-hidden="true"><use href="#i-arrow"/></svg></a>{% elif id not in trials_used %}<a class="game-link trial-link" href="{{url_for('game_page',game=id)}}">免费试玩一局<svg aria-hidden="true"><use href="#i-arrow"/></svg></a>{% else %}<span class="locked"><svg aria-hidden="true"><use href="#i-lock"/></svg>试玩已结束</span><button type="button" class="text-button inline-link" data-contact>获取授权码</button>{% endif %}
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+        {% endfor %}{% endif %}
+      </section>
+      <script>
+document.getElementById('activate').addEventListener('submit',async e=>{
+    e.preventDefault();
+    const b=document.getElementById('submit'),m=document.getElementById('message');
+    const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),30000);
+    b.disabled=true;m.className='';m.textContent='正在验证…';
+    async function requestJSON(url,options={}){
+        const r=await fetch(url,{...options,credentials:'same-origin',cache:'no-store',signal:controller.signal});
+        const data=await r.json().catch(()=>null);
+        if(!data||typeof data!=='object')throw new Error('服务器返回异常（HTTP '+r.status+'），请稍后重试');
+        return {r,data};
+    }
+    try{
+        let result;
+        for(let attempt=0;attempt<2;attempt++){
+            const token=await requestJSON('{{url_for("csrf_token")}}');
+            if(!token.r.ok||!token.data.csrf)throw new Error(token.data.error||'无法更新页面验证信息，请刷新后重试');
+            result=await requestJSON('{{url_for("activate")}}',{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':token.data.csrf},body:JSON.stringify({key:document.getElementById('key').value})});
+            if(result.data.code!=='csrf_expired')break;
+        }
+        if(result.r.ok&&result.data.ok)location.reload();
+        else throw new Error(result.data.error||'激活失败，请重试');
+    }catch(error){
+        m.className='error';
+        m.textContent=error.name==='AbortError'?'请求超时，请检查网络后重试':error instanceof TypeError?'网络连接失败，请检查网络后重试':error.message;
+    }finally{clearTimeout(timer);b.disabled=false;}
+});
+</script>
+    {% endblock %}

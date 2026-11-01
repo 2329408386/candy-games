@@ -6,7 +6,10 @@
 Each game has sites/<site>/banks/<game>.json:
   type       renderer in shared-static/pk/ ("choice", "blanks", "tiles", "expand", "edit" or "measure")
   draw       how each player's 20 questions are drawn (see draw_plans)
-  ui         per-game options for the renderer (task, instruction, blankOptions, lettered, allowUnusedCards)
+  ui         per-game options for the renderer (task, instruction, blankOptions, lettered, allowUnusedCards,
+             joiner: text between word cards, units/unitNames: the start page offers 期末综合 or one unit)
+English questions may add unit (one of ui.units), audio (a recording in sites/<site>/static/audio/, transcript
+audioText), pictures (options shown as pictures) and figure "pic" with pic (pictures drawn under the question).
   meta       provenance shared by all questions
   questions  every question has id, explanation and source.label (shown above the question);
              source.detailTitle/source.detail are shown under the feedback
@@ -79,6 +82,26 @@ def draw_plans(bank):
 
 
 # ---- per-type checks; each returns a list of problems for one question ----
+def audio_dir(site):
+    return ROOT / "sites" / site / "static" / "audio"
+
+
+def check_english(q, bank, site):
+    """Fields shared by the English games: unit, audio and pictures (picture names are checked in test_engine.cjs)."""
+    errors = []
+    units = bank["ui"].get("units")
+    if units and q.get("unit") not in units:
+        errors.append(f"unit 不在 ui.units 中：{q.get('unit')}")
+    if "audio" in q:
+        if not q.get("audioText"):
+            errors.append("有录音但缺少 audioText")
+        if not (audio_dir(site) / q["audio"]).is_file():
+            errors.append(f"缺少录音文件 {q['audio']}（运行 tools/english_audio.py）")
+    if q.get("figure") == "pic" and not q.get("pic"):
+        errors.append("figure 为 pic 但缺少 pic")
+    return errors
+
+
 def check_choice(q, bank, game):
     errors = []
     options = q.get("options") or []
@@ -154,16 +177,20 @@ def check_blanks(q, bank, game):
     return errors
 
 
-def tile_order_ok(cards, answer, use_all):
-    """Can the answer be spelled by concatenating distinct cards (all of them when use_all)?"""
+def tile_order_ok(cards, answer, use_all, joiner=""):
+    """Can the answer be spelled by joining distinct cards with joiner (all of them when use_all)?"""
     texts = [c["text"] for c in cards]
 
-    def search(rest, left):
+    def search(rest, left, first):
         if not rest:
             return not use_all or not left
-        return any(rest.startswith(t) and search(rest[len(t) :], left[:i] + left[i + 1 :]) for i, t in enumerate(left))
+        if not first:
+            if not rest.startswith(joiner):
+                return False
+            rest = rest[len(joiner) :]
+        return any(rest.startswith(t) and search(rest[len(t) :], left[:i] + left[i + 1 :], False) for i, t in enumerate(left))
 
-    return search(answer, texts)
+    return search(answer, texts, True)
 
 
 def tile_keep_ok(cards, answer):
@@ -233,9 +260,14 @@ def check_tiles(q, bank, game):
         if len(set(ids)) != len(ids):
             errors.append("词卡 id 重复")
     for answer in q["answers"]:
-        if kind == "order" and not tile_order_ok(q["cards"], answer, not bank["ui"].get("allowUnusedCards")):
-            errors.append(f"词卡拼不出答案：{answer}")
         tail = q.get("tail", "")
+        if kind == "order" and not (
+            answer.endswith(tail)
+            and tile_order_ok(
+                q["cards"], answer[: len(answer) - len(tail)], not bank["ui"].get("allowUnusedCards"), bank["ui"].get("joiner", "")
+            )
+        ):
+            errors.append(f"词卡拼不出答案：{answer}")
         if kind == "keep" and not (answer.endswith(tail) and tile_keep_ok(q["cards"], answer[: len(answer) - len(tail)])):
             errors.append(f"按顺序选词卡得不到答案：{answer}")
         if kind == "keep" and answer == q["prompt"]:
@@ -339,7 +371,15 @@ def check_bank(site, game, bank):
         if bool(q.get("source", {}).get("detail")) != bool(q.get("source", {}).get("detailTitle")):
             problems.append("source.detail 与 detailTitle 必须同时出现")
         problems += CHECKS[bank["type"]](q, bank, game)
+        if site == "english":
+            problems += check_english(q, bank, site)
         errors += [f"{q.get('id')}：{p}" for p in problems]
+    units = bank["ui"].get("units")
+    if units:
+        pools = Counter(q.get("unit") for q in questions)
+        for unit in units:
+            if pools[unit] < PER_PLAYER:
+                errors.append(f"单元 {unit} 只有 {pools[unit]} 题，单元闯关不够一人20题")
     for plan in draw_plans(bank):
         if plan is None:
             if len(questions) < 2 * PER_PLAYER:
@@ -365,7 +405,12 @@ def doc_rows(site, game, bank):
                 s, n = q["focus"]
                 prompt = prompt[:s] + ("（ ）" if q.get("blank") else f"【{prompt[s:s + n]}】") + prompt[s + n :]
             answer = q.get("answerText", q["answer"])
-            yield f"- {q['id']}：{prompt} 选项：{' / '.join(map(str, q['options']))} 答案：**{answer}**"
+            if q.get("audioText"):
+                prompt += f"（录音：{q['audioText']}）"
+            if q.get("picText"):
+                prompt += f"（{q['picText']}）"
+            shown = "图片：" if q.get("pictures") else "选项："
+            yield f"- {q['id']}：{prompt} {shown}{' / '.join(map(str, q['options']))} 答案：**{answer}**"
         elif t == "blanks":
             alt = (
                 "；也接受 " + " 或 ".join(" / ".join(a) for a in q["acceptedAnswers"][1:])
@@ -378,7 +423,7 @@ def doc_rows(site, game, bank):
             others = "、".join(w for w in q["cards"] if w not in {x for s in q["slots"] for x in s["words"]})
             yield f"- {q['id']}：{q['base']} 答案：**{q['answers'][0]}**{more}　干扰词：{others}"
         elif t == "tiles":
-            shown = q["prompt"]
+            shown = q["prompt"] + ("（词卡：" + " / ".join(c["text"] for c in q["cards"]) + "）" if bank["ui"].get("joiner") else "")
             yield f"- {q['id']}：{shown} 答案：**{'；或 '.join(q['answers'])}**"
         elif t == "edit":
             others = [apply_edit(q, e) for e in q["accepted"][1:]]

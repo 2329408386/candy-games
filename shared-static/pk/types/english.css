@@ -1,0 +1,38 @@
+/* English games: 🔊 replay button, picture options and the picture row (types/english.js). */
+.pk-say { display: inline-flex; align-items: center; gap: 0.375rem; margin: 0 0 0.75rem; padding: 0.625rem 1.25rem; min-height: 3rem; border: 2px solid #9db6d6; border-radius: 999px; background: #eef4fb; color: #2f568c; font-size: 1.125rem; font-weight: 700; }
+.pk-say:active { transform: translateY(1px); }
+.q-choice .prompt { font-size: 1.25rem; }
+.q-choice .card { font-family: Arial, "Helvetica Neue", system-ui, sans-serif; }
+.options-pictures { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.options-pictures .card { position: relative; display: grid; place-items: center; min-height: 7rem; padding: 0.5rem; }
+.options-pictures .card .mark { position: absolute; top: 0.25rem; right: 0.5rem; font-size: 1.25rem; font-weight: 800; }
+.options-pictures .card .caption { position: absolute; bottom: 0.125rem; left: 0; right: 0; font-size: 0.875rem; color: var(--muted); }
+.pic { display: inline-grid; place-items: center; line-height: 1; }
+.pic-emoji { font-size: 3.5rem; }
+.pic-svg svg, .pic-colour svg { width: 4.5rem; height: 4.5rem; }
+.pic-count { grid-template-columns: repeat(3, 1.6rem); gap: 0.125rem; font-size: 1.375rem; }
+.pic-count.many { grid-template-columns: repeat(5, 1.3rem); font-size: 1.125rem; }
+.pic-count i { font-style: normal; }
+.pic-row { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-end; gap: 1rem; margin: 0.5rem 0 0.25rem; padding: 0.875rem; background: #f4f7fb; border-radius: 16px; }
+.pic-row .pic-emoji { font-size: 4rem; }
+.pic-row .pic-svg svg, .pic-row .pic-colour svg { width: 5.5rem; height: 5.5rem; }
+.pic-row.many { gap: 0.5rem; }
+.pic-row.many .pic-emoji { font-size: 2.5rem; }
+.pic-row.many .pic-svg svg { width: 3.25rem; height: 3.25rem; }
+.pic-place { position: relative; display: inline-grid; place-items: center; padding-top: 2.5rem; }
+.pic-place .pic-at.pic-emoji { font-size: 5.5rem; }
+.pic-place .pic-at svg { width: 7rem; height: 7rem; }
+.pic-place .pic-item { position: absolute; left: 50%; transform: translateX(-50%); }
+.pic-place .pic-item.pic-emoji { font-size: 2.5rem; }
+.pic-place .pic-item svg { width: 3rem; height: 3rem; }
+.pic-place.on .pic-item { top: 0.25rem; }
+/* in: the item sticks out of the container (its lower half hidden behind it); on: it sits on top, fully visible */
+.pic-place.in .pic-item { top: 1.375rem; z-index: 0; }
+.pic-place.in .pic-at { position: relative; z-index: 1; }
+.q-tiles .card { font-family: "Arial Rounded MT Bold", Arial, system-ui, sans-serif; }
+.answer-line .tail { font-size: 1.375rem; font-weight: 700; }
+@media (max-width: 560px) {
+  .options-pictures { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pk-arena:not(.solo) .options-pictures .card { min-height: 5.5rem; }
+}
+.pk-arena:not(.solo) .options-pictures { grid-template-columns: repeat(2, minmax(0, 1fr)); }

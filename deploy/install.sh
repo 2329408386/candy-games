@@ -14,12 +14,12 @@ KEEP=5
 running() { basename "$(readlink -f $APP/current)"; }
 releases() { ls -1 $APP/releases | sort; }
 
-health() { # waits until both sites answer with the expected revision on every worker
+health() { # waits until every site answers with the expected revision on every worker
     local want=$1
     for _ in $(seq 1 30); do
         local ok=1
         for _ in 1 2 3 4 5 6; do
-            for path in /health /math/health; do
+            for path in /health /math/health /english/health; do
                 curl -fsS -m 3 "http://127.0.0.1:18082$path" 2>/dev/null | grep -q "\"revision\":\"$want\"" || ok=0
             done
         done
@@ -33,7 +33,7 @@ prepare() { # installs units, nginx config and the virtualenv for a release; pri
     local dir=$APP/releases/$1
     id candy-games >/dev/null 2>&1 || useradd --system --home $DATA --shell /usr/sbin/nologin candy-games
     install -d -o candy-games -g candy-games -m 700 $DATA
-    test -f $DATA/secret.env || { echo "缺少 $DATA/secret.env（CHINESE_SECRET / MATH_SECRET）" >&2; exit 1; }
+    test -f $DATA/secret.env || { echo "缺少 $DATA/secret.env（CHINESE_SECRET / MATH_SECRET / ENGLISH_SECRET）" >&2; exit 1; }
     local venv=$APP/venvs/$(sha256sum "$dir/requirements.txt" | cut -c1-12)
     if [ ! -f "$venv/.complete" ]; then
         # Built in place: a virtualenv cannot be renamed (its scripts hard-code their own path).
@@ -47,7 +47,7 @@ prepare() { # installs units, nginx config and the virtualenv for a release; pri
     # Import the app with this venv before switching, so a broken release never replaces a working one.
     local scratch
     scratch=$(mktemp -d)
-    (cd "$dir" && GAME_DATA=$scratch CHINESE_SECRET=check MATH_SECRET=check "$venv/bin/python" -c "import wsgi" >&2) ||
+    (cd "$dir" && GAME_DATA=$scratch CHINESE_SECRET=check MATH_SECRET=check ENGLISH_SECRET=check "$venv/bin/python" -c "import wsgi" >&2) ||
         { rm -rf "$scratch"; echo "新版本无法启动（import wsgi 失败）" >&2; exit 1; }
     rm -rf "$scratch"
     [ -x "$venv/bin/gunicorn" ] && "$venv/bin/gunicorn" --version >/dev/null

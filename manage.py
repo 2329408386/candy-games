@@ -5,7 +5,7 @@ from core.app import create_app, data_dir, db, csv_response, group_map, group_la
 from sites import SITES
 
 os.umask(0o077)
-SITE_URLS = {"chinese": "http://39.106.16.99", "math": "http://39.106.16.99/math"}
+SITE_URLS = {"chinese": "http://39.106.16.99", "math": "http://39.106.16.99/math", "english": "http://39.106.16.99/english"}
 
 
 def site_dir(site):

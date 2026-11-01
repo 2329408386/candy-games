@@ -4,7 +4,7 @@ import pytest
 
 ROOT = Path(__file__).resolve().parent.parent
 TMP = tempfile.TemporaryDirectory(prefix="candy-games-test-")
-os.environ.update(GAME_DATA=TMP.name, CHINESE_SECRET="c" * 64, MATH_SECRET="m" * 64)
+os.environ.update(GAME_DATA=TMP.name, CHINESE_SECRET="c" * 64, MATH_SECRET="m" * 64, ENGLISH_SECRET="e" * 64)
 sys.path.insert(0, str(ROOT))
 
 from werkzeug.security import generate_password_hash
@@ -15,9 +15,9 @@ import wsgi
 from sites import SITES
 
 PASSWORD = "test-password-123"
-KEYS = {"chinese": "CHINESEKEYAAAAAA", "math": "MATHKEYAAAAAAAAA"}
-PREFIX = {"chinese": "", "math": "/math"}
-FLASK = {"chinese": wsgi.chinese, "math": wsgi.math}
+KEYS = {"chinese": "CHINESEKEYAAAAAA", "math": "MATHKEYAAAAAAAAA", "english": "ENGLISHKEYAAAAAA"}
+PREFIX = {"chinese": "", "math": "/math", "english": "/english"}
+FLASK = {"chinese": wsgi.chinese, "math": wsgi.math, "english": wsgi.english}
 
 
 def _seed():
@@ -63,7 +63,7 @@ def _app_with_addr(environ, start):
 
 
 class SiteClient:
-    """Talks to the merged WSGI app exactly as nginx does: real '/math' prefix, one process."""
+    """Talks to the merged WSGI app exactly as nginx does: real '/math' and '/english' prefixes, one process."""
 
     def __init__(self, site):
         self.site = site
@@ -89,7 +89,16 @@ class SiteClient:
         return self.post("/admin/login", {"username": "admin", "password": PASSWORD})
 
 
-@pytest.fixture(params=["chinese", "math"])
+def other_site(site):
+    """Some other site than this one (for isolation checks)."""
+    return "math" if site == "chinese" else "chinese"
+
+
+def bank_size(site, game):
+    return len(json.loads((ROOT / "sites" / site / "banks" / f"{game}.json").read_text(encoding="utf-8"))["questions"])
+
+
+@pytest.fixture(params=["chinese", "math", "english"])
 def site(request):
     return request.param
 

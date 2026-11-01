@@ -1,33 +1,35 @@
-# candy-games：语文 / 数学小游戏
+# candy-games：语文 / 数学 / 英语小游戏
 
-一个服务同时提供两个站点，网址与合并前完全一致：
+一个服务同时提供三个站点（语文、数学的网址与合并前完全一致）：
 
 | 站点 | 网址 | 后台 |
 |---|---|---|
 | 语文 | `http://39.106.16.99/` | `/admin` |
 | 数学 | `http://39.106.16.99/math/` | `/math/admin` |
+| 英语 | `http://39.106.16.99/english/` | `/english/admin` |
 
 ## 结构
-- `wsgi.py`：一个 gunicorn 进程里挂两个 Flask 站点（语文在 `/`，数学在 `/math`）。
+- `wsgi.py`：一个 gunicorn 进程里挂三个 Flask 站点（语文在 `/`，数学在 `/math`，英语在 `/english`）。
 - `core/app.py`：共享的路由、授权、后台逻辑；`core/schema.py`：数据库表结构。
-- `sites/<chinese|math>/`：站点配置 `sites/__init__.py`、题库 `banks/<游戏>.json`、游戏页外壳 `games/`、静态资源 `static/`、站点专属模板（首页、外框）。
+- `sites/<chinese|math|english>/`：站点配置 `sites/__init__.py`、题库 `banks/<游戏>.json`、游戏页外壳 `games/`、静态资源 `static/`、站点专属模板（首页、外框）。
 - `core/templates/`：两站共用的后台模板。
-- `shared-static/pk/`：两站共用的游戏引擎 `pk-core.js`/`pk-core.css` 和各题型渲染器 `types/`；`shared-static/game-audio-v3/`：共用音效。
-- `tools/assets.py`：静态资源指纹；`tools/banks.py`：题库校验并生成复核清单。
+- `shared-static/pk/`：各站共用的游戏引擎 `pk-core.js`/`pk-core.css` 和各题型渲染器 `types/`；`shared-static/game-audio-v3/`：共用音效。
+- `tools/assets.py`：静态资源指纹；`tools/banks.py`：题库校验并生成复核清单；`tools/english_audio.py`：合成英语听力录音。
 - `docs/`：由题库生成的复核清单（不要手改）。
 - `deploy/`：systemd、nginx 配置和发布脚本。
 
-两站各自保留独立的密钥（`CHINESE_SECRET`、`MATH_SECRET`）、Cookie 名（`session`、`math_session`）、管理员账号和授权编号。所有数据存在同一个数据库 `/var/lib/candy-games/games.sqlite3` 里，每张表都按 `site` 列区分站点。
+各站各自保留独立的密钥（`CHINESE_SECRET`、`MATH_SECRET`、`ENGLISH_SECRET`）、Cookie 名（`session`、`math_session`、`english_session`）、管理员账号和授权编号。所有数据存在同一个数据库 `/var/lib/candy-games/games.sqlite3` 里，每张表都按 `site` 列区分站点。
 
 ## 游戏规则
-- 每款游戏题库 100 题，每局每人抽 20 题（按题型均衡抽取），同局双方不重复。可选双人PK、单人练习、错题重练。
+- 语文、数学每款游戏题库 100 题，每局每人抽 20 题（按题型均衡抽取），同局双方不重复。可选双人PK、单人练习、错题重练。
+- 英语（外研版三起 2024 三年级上册，A组 5 款：听音识词、情景选择、字母奇妙屋、句子拼图、听力判断）：除字母奇妙屋外，题库按单元标 `unit`（U1—U6），开始页可选「期末综合」（各单元按 4/3 题混合抽 20 题）或单个单元（只抽该单元：单人 20 题，同屏双人平分、最多各 20 题）；联网PK 用房主选的单元。听音题带录音（`sites/english/static/audio/`），单人、联网和错题模式出题时自动播放一次，同屏双人PK点「再听一遍」播放。
 - 题库只能在授权后通过 `/games/<游戏>/bank.json` 获取。
 - 免费试玩：未授权的浏览器每个游戏可玩一局（点开始即用掉，记录在 `trials` 表，按会话里的设备令牌区分），试玩只下发够一局的题；结束后弹出管理员微信二维码（`shared-static/contact/`）。首页右上角「获取授权码」也会打开这个二维码。
 - 游戏页右上角「投屏」：整体放大字号并全屏，适合教室投影；按 Esc 退出全屏时同时退出投屏。
-- 答错的题记入本机错题本（localStorage `chinese-mistakes-v1` / `math-mistakes-v1`，最多 300 条），首页右上角「错题本」查看；错题重练答对即移出。
-- 默认时长：语文标点PK、的地得PK 150 秒，其余语文游戏 180 秒；数学 150 秒。开始页右上角可设 30—1800 秒，开局后锁定。
+- 答错的题记入本机错题本（localStorage `<站点>-mistakes-v1`，如 `chinese-mistakes-v1`，最多 300 条），首页右上角「错题本」查看；错题重练答对即移出。
+- 默认时长：语文标点PK、的地得PK 150 秒，其余语文游戏 180 秒；数学 150 秒；英语字母奇妙屋 150 秒，其余英语游戏 180 秒。开始页右上角可设 30—1800 秒，开局后锁定。
 - 计分（两站相同）：答对 +10，连对额外 +5，答错 −5（最低 0）。
-- 时长与声音开关保存在浏览器 localStorage：语文 `chinese-pk-settings-v1`，数学 `math-pk-settings-v1`。
+- 时长、声音开关和英语的单元选择保存在浏览器 localStorage `<站点>-pk-settings-v1`。
 - 音效素材与许可见 `shared-static/game-audio-v3/SOURCES.md`。
 
 ## 个人资料、班级与排行
@@ -51,6 +53,13 @@
 ```bash
 python3 tools/banks.py --fix     # 格式化 JSON，并重新生成 docs/ 下的复核清单
 python3 tools/banks.py --check   # 校验答案、选项、抽题配额和清单是否最新（测试和发布时自动检查）
+```
+
+英语题库新增或改动了带 `audio` 的题时，在开发机上合成录音（Kokoro-82M，安装方法见 `tools/english_audio.py` 开头），再加指纹：
+
+```bash
+<装了 kokoro 的 python> tools/english_audio.py   # 只合成还不存在的录音；--all 全部重新合成
+python3 tools/assets.py --fix                     # 给新录音加哈希并改写题库里的文件名
 ```
 
 ## 修改静态资源后
@@ -80,6 +89,7 @@ deploy/deploy.sh rollback   # 切回上一个版本
 
 ## 服务器运维
 - 服务：`systemctl status candy-games`；日志：`journalctl -u candy-games`。
+- 新增站点（如英语站）：先在 `/var/lib/candy-games/secret.env` 加上该站的密钥（如 `ENGLISH_SECRET=<随机64位>`）再发布；发布后运行 `manage.py seed --site <站点>`，建好各学期「A组」并把管理员初始密码写到 `/var/lib/candy-games/<站点>/管理员初始凭据.txt`。
 - 自动恢复：进程退出后 1 秒内由 systemd 重新拉起（不限次数）；`candy-games-watchdog.timer` 每 30 秒检查两个站点的 `/health`，卡死时自动重启服务；nginx 也设置了自动重启。
 - 备份：`candy-games-backup.timer` 每天 03:15 备份到 `/var/lib/candy-games/backups/`，保留 30 天；每次发布前也备份一次。
 - 异地备份：在开发机上运行 `deploy/pull-backups.sh`，把服务器备份（含 secret.env）拉到 `~/candy-games-backups/`；需要每天自动拉取时，按脚本开头的说明加入开发机 crontab。

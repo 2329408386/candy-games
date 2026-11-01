@@ -95,4 +95,26 @@ MATH = Site(
     admin_hint="按学期和游戏组分配授权，填写备注后将授权码发送给用户。",
     admin_scope_header="授权年级／学期／组",
 )
-SITES = {"chinese": CHINESE, "math": MATH}
+ENGLISH = Site(
+    key="english",
+    title="英语小游戏",
+    cookie_name="english_session",
+    secret_env="ENGLISH_SECRET",
+    games={
+        "listen-word": "听音识词PK",
+        "scene": "情景选择PK",
+        "letters": "字母奇妙屋",
+        "sentence": "句子拼图PK",
+        "listen-judge": "听力判断PK",
+    },
+    files={
+        "listen-word": "listen-word.html",
+        "scene": "scene.html",
+        "letters": "letters.html",
+        "sentence": "sentence.html",
+        "listen-judge": "listen-judge.html",
+    },
+    admin_hint="按学期和游戏组分配授权，填写备注后将授权码发送给用户。",
+    admin_scope_header="授权年级／学期／组",
+)
+SITES = {"chinese": CHINESE, "math": MATH, "english": ENGLISH}

@@ -1,6 +1,6 @@
 import re
 import pytest
-from conftest import SiteClient, KEYS, FLASK
+from conftest import SiteClient, KEYS, FLASK, PREFIX, other_site, bank_size
 from sites import SITES
 
 
@@ -12,7 +12,7 @@ def reset_state(db):
     db.execute("UPDATE licenses SET enabled=1,device_limit=3 WHERE archived_at IS NULL")
     db.execute("DELETE FROM license_groups WHERE license_id IN (1,2)")
     db.executemany(
-        "INSERT INTO license_groups VALUES(?,?,?)", [(s, lid, "g3-t1-a") for s in ("chinese", "math") for lid in (1, 2)]
+        "INSERT INTO license_groups VALUES(?,?,?)", [(s, lid, "g3-t1-a") for s in SITES for lid in (1, 2)]
     )
     db.execute("UPDATE game_memberships SET group_id='g3-t1-a'")
     db.commit()
@@ -30,15 +30,16 @@ def test_home_lists_all_games_and_prefixed_urls(client, site):
     html = r.get_data(as_text=True)
     for name in SITES[site].games.values():
         assert name in html
-    if site == "math":
+    if site != "chinese":
+        prefix = PREFIX[site]
         assert not re.search(r'(?:href|action)="/(?:admin|api|games|static)', html)
-        assert "/math/static/site.css?v=" in html and "/math/api/csrf" in html
+        assert f"{prefix}/static/site.css?v=" in html and f"{prefix}/api/csrf" in html
     assert client.get("/health").get_json() == {"status": "ok"}
 
 
 def test_session_cookie_names_are_unchanged(client, site):
     cookies = client.get("/api/csrf").headers.getlist("Set-Cookie")
-    name = {"chinese": "session", "math": "math_session"}[site]
+    name = {"chinese": "session", "math": "math_session", "english": "english_session"}[site]
     assert any(c.startswith(name + "=") and "Path=/;" in c for c in cookies), cookies
 
 
@@ -54,7 +55,7 @@ def test_activation_unlocks_games_and_guard_uses_site_urls(client, site):
     ]
     page = client.get("/games/" + game)
     assert page.status_code == 200
-    prefix = "" if site == "chinese" else "/math"
+    prefix = PREFIX[site]
     assert f"fetch('{prefix}/api/session?game={game}'" in page.get_data(as_text=True)
     assert f"location.replace('{prefix}/')" in page.get_data(as_text=True)
     status = client.get("/api/session").get_json()
@@ -63,7 +64,7 @@ def test_activation_unlocks_games_and_guard_uses_site_urls(client, site):
 
 
 def test_sites_are_isolated(site):
-    other = "math" if site == "chinese" else "chinese"
+    other = other_site(site)
     c = SiteClient(site)
     assert c.activate(KEYS[other]).status_code == 403, "a code only works on its own site"
     assert c.activate().status_code == 200
@@ -93,11 +94,11 @@ def test_legacy_html_routes_only_on_chinese(client, site):
         assert client.get("/游戏入口.html").headers["Location"] == "/"
         assert "window.PK_PAGE" in client.get("/标点pk.html").get_data(as_text=True)
     else:
-        assert client.get("/mental-math.html").status_code == 404
+        assert client.get("/mental-math.html" if site == "math" else "/scene.html").status_code == 404
 
 
 def test_admin_pages(admin, site):
-    prefix = "" if site == "chinese" else "/math"
+    prefix = PREFIX[site]
     for path in [
         "/admin",
         "/admin?archived=1",
@@ -113,7 +114,7 @@ def test_admin_pages(admin, site):
     ]:
         r = admin.get(path)
         assert r.status_code == 200, (path, r.status_code)
-        if site == "math":
+        if site != "chinese":
             assert not re.search(r'(?:href|action)="/(?:admin|api|games|static)', r.get_data(as_text=True)), path
     assert "<title>游戏分组管理 · " + SITES[site].title + "</title>" in admin.get("/admin/groups").get_data(
         as_text=True
@@ -156,7 +157,7 @@ def test_group_permissions_follow_moves(admin, site, db):
 
 
 def test_generate_codes_is_idempotent_and_numbered_per_site(admin, site, db):
-    prefix = "" if site == "chinese" else "/math"
+    prefix = PREFIX[site]
     before = db.execute("SELECT max(id) FROM licenses WHERE site=?", (site,)).fetchone()[0]
     nonce = re.search(r'name="nonce" value="([^"]+)"', admin.get("/admin/licenses/new").get_data(as_text=True)).group(1)
     form = {"nonce": nonce, "groups": ["g3-t1-a"], "quantity": "2", "device_limit": "2"}
@@ -198,7 +199,7 @@ def test_admin_password_change_and_logout_keep_device(site, db):
     assert a.login().status_code == 302
     db.execute("UPDATE admin SET must_change=1 WHERE site=?", (site,))
     db.commit()
-    prefix = "" if site == "chinese" else "/math"
+    prefix = PREFIX[site]
     assert a.get("/admin").headers["Location"] == prefix + "/admin/password"
     r = a.post("/admin/password", {"old": PASSWORD, "password": "new-password-456", "confirm": "new-password-456"})
     assert r.headers["Location"] == prefix + "/admin/login"
@@ -220,12 +221,13 @@ def test_static_files(client, site):
 def test_question_bank_requires_license(client, site):
     game = next(iter(SITES[site].games))
     trial = client.get(f"/games/{game}/bank.json").get_json()
-    assert trial["total"] == 100 and len(trial["questions"]) <= 40, "an unlicensed browser only gets one round"
+    total = bank_size(site, game)
+    assert trial["total"] == total and len(trial["questions"]) <= 40, "an unlicensed browser only gets one round"
     assert client.get("/games/unknown/bank.json").status_code == 404
     client.activate(KEYS[site])
     r = client.get(f"/games/{game}/bank.json")
     assert r.status_code == 200 and r.headers["Cache-Control"] == "no-store"
-    assert len(r.get_json()["questions"]) == 100
+    assert len(r.get_json()["questions"]) == total
     assert client.get("/static/math-banks.js").status_code == 404
     assert client.get("/static/shared/pk/pk-core.js").status_code == 200
 
@@ -277,8 +279,8 @@ def test_trial_does_not_touch_licensed_play_or_the_other_site(client, site):
     game = next(iter(SITES[site].games))
     assert client.activate().status_code == 200
     assert start_trial(client, game).status_code == 200 and licensed(client, game)
-    assert len(client.get(f"/games/{game}/bank.json").get_json()["questions"]) == 100
-    other = "math" if site == "chinese" else "chinese"
+    assert len(client.get(f"/games/{game}/bank.json").get_json()["questions"]) == bank_size(site, game)
+    other = other_site(site)
     o = SiteClient(other)
     o.c = client.c  # same browser
     client.post("/api/logout", json={})
@@ -293,7 +295,7 @@ def test_trial_bank_fills_a_two_player_round(client, site):
         for game in SITES[site].games:
             bank = trial_bank(game)
             draw, questions = bank["draw"], bank["questions"]
-            assert bank["total"] == 100 and len({q["id"] for q in questions}) == len(questions)
+            assert bank["total"] == bank_size(site, game) and len({q["id"] for q in questions}) == len(questions)
             if draw.get("count"):
                 assert len(questions) == 2 * draw["count"], game
             else:
@@ -301,3 +303,18 @@ def test_trial_bank_fills_a_two_player_round(client, site):
                 for key, take in draw["counts"].items():
                     found = [q for q in questions if "/".join(str(q[f]) for f in draw["by"]) == key]
                     assert len(found) == 2 * take, (game, key)
+
+
+def test_english_pages_audio_and_units():
+    client = SiteClient("english")
+    assert client.activate().status_code == 200
+    for game in SITES["english"].games:
+        page = client.get("/games/" + game).get_data(as_text=True)
+        assert "/pk/types/english.js?v=" in page and "/pk/types/english.css?v=" in page, game
+        bank = client.get(f"/games/{game}/bank.json").get_json()
+        if game != "letters":
+            assert bank["ui"]["units"] == ["U1", "U2", "U3", "U4", "U5", "U6"], game
+        audio = next((q["audio"] for q in bank["questions"] if "audio" in q), None)
+        if audio:
+            r = client.get("/static/audio/" + audio)
+            assert r.status_code == 200 and r.mimetype == "audio/mpeg", game

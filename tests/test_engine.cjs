@@ -68,11 +68,39 @@ for (const q of bank('math', 'measure').questions) {
   }
 }
 // Choice: the key is right, every other option is wrong.
-for (const [site, games] of [['chinese', ['reading', 'similar-char', 'polyphone']], ['math', ['conversion', 'mental', 'units', 'directions']]]) {
+for (const [site, games] of [['chinese', ['reading', 'similar-char', 'polyphone']], ['math', ['conversion', 'mental', 'units', 'directions']],
+  ['english', ['listen-word', 'scene', 'letters', 'listen-judge']]]) {
   for (const game of games) {
     for (const q of bank(site, game).questions) {
       for (const o of q.options) assert.strictEqual(renderers.choice.check(q, o), String(o) === String(q.answer), `${game} ${q.id} ${o}`);
     }
   }
+}
+
+// English pictures: every picture a bank names is drawn by types/english.js (plain text counts only for emoji).
+vm.runInNewContext(fs.readFileSync(path.join(ROOT, 'shared-static/pk/types/english.js'), 'utf8'), { PK, window: {} });
+const known = name => PK.pictureKeys.has(name) || !/[A-Za-z]/.test(name);
+for (const game of ['listen-word', 'scene', 'letters', 'listen-judge']) {
+  for (const q of bank('english', game).questions) {
+    if (q.pictures) for (const o of q.options) assert.ok(PK.pictureKeys.has(o), `${game} ${q.id}: no picture for option ${o}`);
+    for (const item of q.pic || []) {
+      for (const name of typeof item === 'object' ? [item.item, item.at] : [item]) assert.ok(known(name), `${game} ${q.id}: no picture ${name}`);
+    }
+  }
+}
+
+// 句子拼图: cards tapped in the answer's order, joined with spaces plus the tail, are graded right; a swapped pair is not.
+const sentences = bank('english', 'sentence');
+for (const q of sentences.questions) {
+  const ctx = { ui: sentences.ui };
+  const order = [], words = q.answers[0].slice(0, -q.tail.length).split(' '), left = [...q.cards];
+  for (const w of words) order.push(left.splice(left.findIndex(c => c.text === w), 1)[0].id);
+  const built = renderers.tiles.value(q, { selection: order, kept: [] }, ctx);
+  assert.strictEqual(built.value, q.answers[0], q.id);
+  assert.ok(renderers.tiles.check(q, built.value), q.id);
+  assert.ok(renderers.tiles.value(q, { selection: order.slice(1), kept: [] }, ctx).incomplete, `${q.id} unused card accepted`);
+  const swapped = [order[1], order[0], ...order.slice(2)];
+  const text = renderers.tiles.value(q, { selection: swapped, kept: [] }, ctx).value;
+  if (text !== q.answers[0]) assert.ok(!renderers.tiles.check(q, text), `${q.id} swapped words graded right`);
 }
 console.log('engine ok');

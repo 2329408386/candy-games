@@ -15,10 +15,10 @@
   const TRIAL = PAGE.trial || null;
   const ROOM = PAGE.room || null;
   const QR = 'static/shared/contact/wechat-qr.0736f95e.jpeg';
-  const SUBJECT = { chinese: '语文', math: '数学' }[cfg.site];
+  const SUBJECT = { chinese: '语文', math: '数学', english: '英语' }[cfg.site];
   const PER_PLAYER = 20;
   const NAMES = ['玩家一', '玩家二'];
-  const base = new URL('../', document.baseURI); // site root for /games/<id>, /math/games/<id> and legacy /<name>.html
+  const base = new URL('../', document.baseURI); // site root for /games/<id>, /math/games/<id>, /english/games/<id> and legacy /<name>.html
   const url = path => new URL(path, base).href;
 
   // ---------- small DOM helpers (also used by the renderers) ----------
@@ -107,6 +107,8 @@
   let musicOn = settings.music !== false, fxOn = settings.fx !== false, voiceOn = settings.voice !== false;
   let presentOn = settings.present === true;
   let duration = validSeconds(settings.durations?.[cfg.id]) ? settings.durations[cfg.id] : cfg.defaultSeconds;
+  // Banks with ui.units can be played one unit at a time ('' = every unit, the 期末综合 draw).
+  let unit = typeof settings.units?.[cfg.id] === 'string' ? settings.units[cfg.id] : '';
   function saveSettings() {
     settings = readStore(SETTINGS_KEY, {});
     settings.music = musicOn;
@@ -117,6 +119,9 @@
     // Only a changed time is remembered, so a new default for the game still reaches everybody else.
     if (duration === cfg.defaultSeconds) delete settings.durations[cfg.id];
     else settings.durations[cfg.id] = duration;
+    if (!settings.units || typeof settings.units !== 'object' || Array.isArray(settings.units)) settings.units = {};
+    if (unit) settings.units[cfg.id] = unit;
+    else delete settings.units[cfg.id];
     writeStore(SETTINGS_KEY, settings);
   }
 
@@ -157,9 +162,11 @@
     bg.preload = 'none';
     bg.volume = 0.45;
     const effects = {}, playing = new Map();
+    const speech = new Audio();
+    speech.onended = speech.onerror = () => duck();
     let voice = null, volumeFrame = 0, unlocked = false, lastClick = 0, lastVoice = -Infinity;
     function duck() {
-      const target = voice && !voice.paused ? 0.06 : playing.size ? 0.12 : 0.45;
+      const target = (voice && !voice.paused) || !speech.paused ? 0.06 : playing.size ? 0.12 : 0.45;
       cancelAnimationFrame(volumeFrame);
       const step = () => {
         bg.volume += (target - bg.volume) * 0.25;
@@ -241,6 +248,7 @@
       stop() {
         bg.pause();
         halt();
+        speech.pause();
       },
       settingsChanged() {
         if (!fxOn) halt();
@@ -253,6 +261,16 @@
       },
       unlock() {
         unlocked = true;
+      },
+      // Listening questions: plays even with effects muted (the recording is the question, not decoration).
+      speak(src) {
+        try {
+          speech.pause();
+          if (!speech.src.endsWith(src)) speech.src = src;
+          speech.currentTime = 0;
+          speech.play().then(duck).catch(duck);
+          duck();
+        } catch {}
       },
       resetCheer() {
         lastVoice = -Infinity;
@@ -283,6 +301,11 @@
       const wanted = new Set(mistakes.ids());
       return [shuffle(questions.filter(q => wanted.has(q.id))).slice(0, PER_PLAYER)];
     }
+    if (unit) {
+      const pool = shuffle(unitPool()), per = perPlayer(count);
+      if (!per) throw Error('本单元题目不足，请换一个单元。');
+      return Array.from({ length: count }, (_, p) => pool.slice(p * per, (p + 1) * per));
+    }
     const draw = bank.draw;
     if (draw.count) {
       const pool = shuffle(questions);
@@ -298,6 +321,35 @@
       rounds.forEach((r, p) => r.push(...pool.slice(p * take, (p + 1) * take)));
     }
     return rounds.map(shuffle);
+  }
+
+  // Unit rounds draw only that unit's questions: up to 20 each, fewer when two players split a small unit.
+  const unitPool = () => bank.questions.filter(q => q.unit === unit);
+  const perPlayer = count => (bank && unit ? Math.min(PER_PLAYER, Math.floor(unitPool().length / count)) : PER_PLAYER);
+  function showUnits() {
+    const units = bank.ui?.units;
+    // A trial bank only holds one round's questions, so it always plays the 期末综合 draw.
+    if (!units?.length || bank.total !== undefined) {
+      unit = '';
+      return;
+    }
+    if (unit && !units.includes(unit)) unit = '';
+    unitPicker.replaceChildren();
+    for (const value of ['', ...units]) {
+      const b = button(value ? value : (bank.ui.allUnitsLabel || '期末综合'), () => {
+        unit = value;
+        saveSettings();
+        showUnits();
+        selectMode(round.mode);
+      }, 'pk-unit');
+      b.setAttribute('role', 'radio');
+      b.setAttribute('aria-checked', String(value === unit));
+      if (value) b.title = bank.ui.unitNames?.[value] || value;
+      unitPicker.append(b);
+    }
+    unitPicker.hidden = false;
+    unitNote.hidden = false;
+    unitNote.textContent = unit ? `单元闯关：${bank.ui.unitNames?.[unit] || unit}（只抽本单元的题）` : '期末综合：各单元的题按比例混合抽取，适合期末复习。';
   }
 
   // ---------- page skeleton ----------
@@ -340,6 +392,12 @@
     box.append(strong, el('span', '', label));
     stats.append(box);
   }
+  const unitPicker = el('div', 'pk-units');
+  unitPicker.setAttribute('role', 'radiogroup');
+  unitPicker.setAttribute('aria-label', '练习范围');
+  unitPicker.hidden = true;
+  const unitNote = el('p', 'pk-unit-note');
+  unitNote.hidden = true;
   const modes = el('div', 'pk-modes');
   modes.setAttribute('role', 'radiogroup');
   modes.setAttribute('aria-label', '游戏模式');
@@ -386,7 +444,7 @@
   if (TRIAL) card.append(el('p', 'pk-trial-note', '免费试玩：可以完整玩一局。点“开始”后，本游戏的试玩机会就用掉了。'));
   const onlinePanel = el('section', 'pk-online');
   onlinePanel.hidden = true;
-  card.append(stats, modes, ...(tipsBox ? [tipsBox] : []), rules, go, onlinePanel, loadError);
+  card.append(stats, unitPicker, unitNote, modes, ...(tipsBox ? [tipsBox] : []), rules, go, onlinePanel, loadError);
   startScreen.append(top, card);
 
   function selectMode(mode) {
@@ -406,7 +464,7 @@
     onlinePanel.hidden = mode !== 'online';
     if (mode === 'online') online.showPanel();
     else online.hidePanel();
-    statPer.textContent = mode === 'mistakes' ? String(Math.min(count, PER_PLAYER)) : String(PER_PLAYER);
+    statPer.textContent = mode === 'mistakes' ? String(Math.min(count, PER_PLAYER)) : String(perPlayer(mode === 'pk' ? 2 : 1));
     if (bank && !trial.claiming) go.textContent = (mode === 'pk' ? '开始PK' : '开始练习') + (TRIAL ? ' · 试玩' : '');
   }
 
@@ -624,6 +682,7 @@
       score.id = 'score-' + p;
       head.append(el('h2', '', round.players.length === 1 ? modeLabel[round.mode] : NAMES[p]), score);
       if (round.mode === 'online') head.firstChild.textContent = `联网PK · 房间 ${online.code}`;
+      else if (unit && round.mode !== 'mistakes') head.firstChild.textContent += ' · ' + unit;
       const body = el('div', 'pk-body');
       body.id = 'body-' + p;
       panel.append(head, body);
@@ -677,6 +736,8 @@
     return {
       player: p,
       ui: bank.ui || {},
+      mode: round.mode,
+      players: round.players.length,
       view: s.view,
       get locked() {
         return !!s.result || !round.running;
@@ -1340,6 +1401,7 @@
       return;
     }
     statBank.textContent = bank.total ?? bank.questions.length;
+    showUnits();
     go.disabled = false;
     const invited = new URLSearchParams(location.search).get('room');
     if (ROOM && /^\d{6}$/.test(invited || '')) {
@@ -1355,6 +1417,9 @@
     },
     el, button, shuffle, svg,
     figures: {},
+    url,
+    // Plays a recording from the site's static/audio/ folder (english listening questions).
+    say: name => audio.speak(url('static/audio/' + name)),
     // test hooks
     _round: round, _submit: submit, _next: next, _current: current,
   };

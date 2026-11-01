@@ -1,0 +1,380 @@
+# 句子拼图PK题库复核清单
+
+> 本文件由 `python tools/banks.py --fix` 根据 `sites/english/banks/sentence.json` 生成，请修改题库后重新生成，不要直接编辑。
+
+共 180 题。每人20题，按分类抽取，双方不重复：U1×4、U2×4、U3×3、U4×3、U5×3、U6×3；或 U1×3、U2×3、U3×4、U4×4、U5×3、U6×3；或 U1×3、U2×3、U3×3、U4×3、U5×4、U6×4；或 U1×4、U2×3、U3×3、U4×4、U5×3、U6×3；或 U1×3、U2×4、U3×3、U4×3、U5×4、U6×3；或 U1×3、U2×3、U3×4、U4×3、U5×3、U6×4。
+
+- 题目依据外研版（三起）2024新版三年级上册各单元核心单词和句型自编，非教材原题。
+- 句末标点已给出；颜色互换顺序（如 red and blue / blue and red）两种都算对。
+
+| 分类 | 题数 |
+|---|---:|
+| U1 | 30 |
+| U2 | 30 |
+| U3 | 30 |
+| U4 | 30 |
+| U5 | 30 |
+| U6 | 30 |
+
+## 逐题清单
+
+- st-001：连词成句：你好，我是莉莉。（词卡：Hello, / I'm / Lily） 答案：**Hello, I'm Lily.**
+  - 解析：正确的句子是 Hello, I'm Lily. 意思是“你好，我是莉莉”。句首单词的首字母要大写，句末用“.”。　来源：Unit 1 · 连词成句
+- st-002：连词成句：你好，我是汤姆。（词卡：Hi, / I'm / Tom） 答案：**Hi, I'm Tom.**
+  - 解析：正确的句子是 Hi, I'm Tom. 意思是“你好，我是汤姆”。句首单词的首字母要大写，句末用“.”。　来源：Unit 1 · 连词成句
+- st-003：连词成句：我是萨姆。（词卡：I'm / Sam） 答案：**I'm Sam.**
+  - 解析：正确的句子是 I'm Sam. 意思是“我是萨姆”。句首单词的首字母要大写，句末用“.”。　来源：Unit 1 · 连词成句
+- st-004：连词成句：他是汤姆。（词卡：He's / Tom） 答案：**He's Tom.**
+  - 解析：正确的句子是 He's Tom. 意思是“他是汤姆”。句首单词的首字母要大写，句末用“.”。　来源：Unit 1 · 连词成句
+- st-005：连词成句：她是埃米。（词卡：She's / Amy） 答案：**She's Amy.**
+  - 解析：正确的句子是 She's Amy. 意思是“她是埃米”。句首单词的首字母要大写，句末用“.”。　来源：Unit 1 · 连词成句
+- st-006：连词成句：我们是朋友。（词卡：We're / friends） 答案：**We're friends.**
+  - 解析：正确的句子是 We're friends. 意思是“我们是朋友”。句首单词的首字母要大写，句末用“.”。　来源：Unit 1 · 连词成句
+- st-007：连词成句：你叫什么名字？（词卡：What's / your / name） 答案：**What's your name?**
+  - 解析：正确的句子是 What's your name? 意思是“你叫什么名字？”。句首单词的首字母要大写，句末用“?”。　来源：Unit 1 · 连词成句
+- st-008：连词成句：我的名字是莉莉。（词卡：My / name / is / Lily） 答案：**My name is Lily.**
+  - 解析：正确的句子是 My name is Lily. 意思是“我的名字是莉莉”。句首单词的首字母要大写，句末用“.”。　来源：Unit 1 · 连词成句
+- st-009：连词成句：很高兴见到你。（词卡：Nice / to / meet / you） 答案：**Nice to meet you.**
+  - 解析：正确的句子是 Nice to meet you. 意思是“很高兴见到你”。句首单词的首字母要大写，句末用“.”。　来源：Unit 1 · 连词成句
+- st-010：连词成句：我也很高兴见到你。（词卡：Nice / to / meet / you, / too） 答案：**Nice to meet you, too.**
+  - 解析：正确的句子是 Nice to meet you, too. 意思是“我也很高兴见到你”。句首单词的首字母要大写，句末用“.”。　来源：Unit 1 · 连词成句
+- st-011：连词成句：再见，埃米！（词卡：Goodbye, / Amy） 答案：**Goodbye, Amy!**
+  - 解析：正确的句子是 Goodbye, Amy! 意思是“再见，埃米！”。句首单词的首字母要大写，句末用“!”。　来源：Unit 1 · 连词成句
+- st-012：连词成句：再见，汤姆！（词卡：Bye, / Tom） 答案：**Bye, Tom!**
+  - 解析：正确的句子是 Bye, Tom! 意思是“再见，汤姆！”。句首单词的首字母要大写，句末用“!”。　来源：Unit 1 · 连词成句
+- st-013：连词成句：他是我的朋友。（词卡：He's / my / friend） 答案：**He's my friend.**
+  - 解析：正确的句子是 He's my friend. 意思是“他是我的朋友”。句首单词的首字母要大写，句末用“.”。　来源：Unit 1 · 连词成句
+- st-014：连词成句：她是我的朋友。（词卡：She's / my / friend） 答案：**She's my friend.**
+  - 解析：正确的句子是 She's my friend. 意思是“她是我的朋友”。句首单词的首字母要大写，句末用“.”。　来源：Unit 1 · 连词成句
+- st-015：连词成句：我九岁了。（词卡：I'm / nine） 答案：**I'm nine.**
+  - 解析：正确的句子是 I'm nine. 意思是“我九岁了”。句首单词的首字母要大写，句末用“.”。　来源：Unit 1 · 连词成句
+- st-016：连词成句：我们做朋友吧！（词卡：Let's / be / friends） 答案：**Let's be friends!**
+  - 解析：正确的句子是 Let's be friends! 意思是“我们做朋友吧！”。句首单词的首字母要大写，句末用“!”。　来源：Unit 1 · 连词成句
+- st-017：连词成句：我的名字是杰克。（词卡：My / name / is / Jack） 答案：**My name is Jack.**
+  - 解析：正确的句子是 My name is Jack. 意思是“我的名字是杰克”。句首单词的首字母要大写，句末用“.”。　来源：Unit 1 · 连词成句
+- st-018：连词成句：他是杰克。（词卡：He's / Jack） 答案：**He's Jack.**
+  - 解析：正确的句子是 He's Jack. 意思是“他是杰克”。句首单词的首字母要大写，句末用“.”。　来源：Unit 1 · 连词成句
+- st-019：连词成句：她是莉莉。（词卡：She's / Lily） 答案：**She's Lily.**
+  - 解析：正确的句子是 She's Lily. 意思是“她是莉莉”。句首单词的首字母要大写，句末用“.”。　来源：Unit 1 · 连词成句
+- st-020：连词成句：你好，萨姆！（词卡：Hello, / Sam） 答案：**Hello, Sam!**
+  - 解析：正确的句子是 Hello, Sam! 意思是“你好，萨姆！”。句首单词的首字母要大写，句末用“!”。　来源：Unit 1 · 连词成句
+- st-021：连词成句：你好，我是埃米。（词卡：Hi, / I'm / Amy） 答案：**Hi, I'm Amy.**
+  - 解析：正确的句子是 Hi, I'm Amy. 意思是“你好，我是埃米”。句首单词的首字母要大写，句末用“.”。　来源：Unit 1 · 连词成句
+- st-022：连词成句：他是我的朋友萨姆。（词卡：He's / my / friend / Sam） 答案：**He's my friend Sam.**
+  - 解析：正确的句子是 He's my friend Sam. 意思是“他是我的朋友萨姆”。句首单词的首字母要大写，句末用“.”。　来源：Unit 1 · 连词成句
+- st-023：连词成句：她是我的朋友莉莉。（词卡：She's / my / friend / Lily） 答案：**She's my friend Lily.**
+  - 解析：正确的句子是 She's my friend Lily. 意思是“她是我的朋友莉莉”。句首单词的首字母要大写，句末用“.”。　来源：Unit 1 · 连词成句
+- st-024：连词成句：我们是好朋友。（词卡：We're / good / friends） 答案：**We're good friends.**
+  - 解析：正确的句子是 We're good friends. 意思是“我们是好朋友”。句首单词的首字母要大写，句末用“.”。　来源：Unit 1 · 连词成句
+- st-025：连词成句：你好，我的名字是汤姆。（词卡：Hello, / my / name / is / Tom） 答案：**Hello, my name is Tom.**
+  - 解析：正确的句子是 Hello, my name is Tom. 意思是“你好，我的名字是汤姆”。句首单词的首字母要大写，句末用“.”。　来源：Unit 1 · 连词成句
+- st-026：连词成句：你好，我的名字是埃米。（词卡：Hi, / my / name / is / Amy） 答案：**Hi, my name is Amy.**
+  - 解析：正确的句子是 Hi, my name is Amy. 意思是“你好，我的名字是埃米”。句首单词的首字母要大写，句末用“.”。　来源：Unit 1 · 连词成句
+- st-027：连词成句：我是杰克。（词卡：I'm / Jack） 答案：**I'm Jack.**
+  - 解析：正确的句子是 I'm Jack. 意思是“我是杰克”。句首单词的首字母要大写，句末用“.”。　来源：Unit 1 · 连词成句
+- st-028：连词成句：再见，莉莉！（词卡：Goodbye, / Lily） 答案：**Goodbye, Lily!**
+  - 解析：正确的句子是 Goodbye, Lily! 意思是“再见，莉莉！”。句首单词的首字母要大写，句末用“!”。　来源：Unit 1 · 连词成句
+- st-029：连词成句：他九岁了。（词卡：He's / nine） 答案：**He's nine.**
+  - 解析：正确的句子是 He's nine. 意思是“他九岁了”。句首单词的首字母要大写，句末用“.”。　来源：Unit 1 · 连词成句
+- st-030：连词成句：她九岁了。（词卡：She's / nine） 答案：**She's nine.**
+  - 解析：正确的句子是 She's nine. 意思是“她九岁了”。句首单词的首字母要大写，句末用“.”。　来源：Unit 1 · 连词成句
+- st-031：连词成句：这是一支钢笔。（词卡：This / is / a / pen） 答案：**This is a pen.**
+  - 解析：正确的句子是 This is a pen. 意思是“这是一支钢笔”。句首单词的首字母要大写，句末用“.”。　来源：Unit 2 · 连词成句
+- st-032：连词成句：这是一支铅笔。（词卡：This / is / a / pencil） 答案：**This is a pencil.**
+  - 解析：正确的句子是 This is a pencil. 意思是“这是一支铅笔”。句首单词的首字母要大写，句末用“.”。　来源：Unit 2 · 连词成句
+- st-033：连词成句：那是一本书。（词卡：That / is / a / book） 答案：**That is a book.**
+  - 解析：正确的句子是 That is a book. 意思是“那是一本书”。句首单词的首字母要大写，句末用“.”。　来源：Unit 2 · 连词成句
+- st-034：连词成句：这是一把尺子。（词卡：This / is / a / ruler） 答案：**This is a ruler.**
+  - 解析：正确的句子是 This is a ruler. 意思是“这是一把尺子”。句首单词的首字母要大写，句末用“.”。　来源：Unit 2 · 连词成句
+- st-035：连词成句：那是一块橡皮。（词卡：That / is / an / eraser） 答案：**That is an eraser.**
+  - 解析：正确的句子是 That is an eraser. 意思是“那是一块橡皮”。句首单词的首字母要大写，句末用“.”。　来源：Unit 2 · 连词成句
+- st-036：连词成句：这是我的书包。（词卡：This / is / my / bag） 答案：**This is my bag.**
+  - 解析：正确的句子是 This is my bag. 意思是“这是我的书包”。句首单词的首字母要大写，句末用“.”。　来源：Unit 2 · 连词成句
+- st-037：连词成句：那是我的铅笔盒。（词卡：That / is / my / pencil / box） 答案：**That is my pencil box.**
+  - 解析：正确的句子是 That is my pencil box. 意思是“那是我的铅笔盒”。句首单词的首字母要大写，句末用“.”。　来源：Unit 2 · 连词成句
+- st-038：连词成句：给你。（词卡：Here / you / are） 答案：**Here you are.**
+  - 解析：正确的句子是 Here you are. 意思是“给你”。句首单词的首字母要大写，句末用“.”。　来源：Unit 2 · 连词成句
+- st-039：连词成句：谢谢你。（词卡：Thank / you） 答案：**Thank you.**
+  - 解析：正确的句子是 Thank you. 意思是“谢谢你”。句首单词的首字母要大写，句末用“.”。　来源：Unit 2 · 连词成句
+- st-040：连词成句：这是我的书。（词卡：This / is / my / book） 答案：**This is my book.**
+  - 解析：正确的句子是 This is my book. 意思是“这是我的书”。句首单词的首字母要大写，句末用“.”。　来源：Unit 2 · 连词成句
+- st-041：连词成句：那是你的钢笔。（词卡：That / is / your / pen） 答案：**That is your pen.**
+  - 解析：正确的句子是 That is your pen. 意思是“那是你的钢笔”。句首单词的首字母要大写，句末用“.”。　来源：Unit 2 · 连词成句
+- st-042：连词成句：这是一块橡皮。（词卡：This / is / an / eraser） 答案：**This is an eraser.**
+  - 解析：正确的句子是 This is an eraser. 意思是“这是一块橡皮”。句首单词的首字母要大写，句末用“.”。　来源：Unit 2 · 连词成句
+- st-043：连词成句：那是一个书包。（词卡：That / is / a / bag） 答案：**That is a bag.**
+  - 解析：正确的句子是 That is a bag. 意思是“那是一个书包”。句首单词的首字母要大写，句末用“.”。　来源：Unit 2 · 连词成句
+- st-044：连词成句：这是你的尺子。（词卡：This / is / your / ruler） 答案：**This is your ruler.**
+  - 解析：正确的句子是 This is your ruler. 意思是“这是你的尺子”。句首单词的首字母要大写，句末用“.”。　来源：Unit 2 · 连词成句
+- st-045：连词成句：那是我的铅笔。（词卡：That / is / my / pencil） 答案：**That is my pencil.**
+  - 解析：正确的句子是 That is my pencil. 意思是“那是我的铅笔”。句首单词的首字母要大写，句末用“.”。　来源：Unit 2 · 连词成句
+- st-046：连词成句：这是一个铅笔盒。（词卡：This / is / a / pencil / box） 答案：**This is a pencil box.**
+  - 解析：正确的句子是 This is a pencil box. 意思是“这是一个铅笔盒”。句首单词的首字母要大写，句末用“.”。　来源：Unit 2 · 连词成句
+- st-047：连词成句：谢谢你，汤姆。（词卡：Thank / you, / Tom） 答案：**Thank you, Tom.**
+  - 解析：正确的句子是 Thank you, Tom. 意思是“谢谢你，汤姆”。句首单词的首字母要大写，句末用“.”。　来源：Unit 2 · 连词成句
+- st-048：连词成句：给你，埃米。（词卡：Here / you / are, / Amy） 答案：**Here you are, Amy.**
+  - 解析：正确的句子是 Here you are, Amy. 意思是“给你，埃米”。句首单词的首字母要大写，句末用“.”。　来源：Unit 2 · 连词成句
+- st-049：连词成句：那是一把尺子。（词卡：That / is / a / ruler） 答案：**That is a ruler.**
+  - 解析：正确的句子是 That is a ruler. 意思是“那是一把尺子”。句首单词的首字母要大写，句末用“.”。　来源：Unit 2 · 连词成句
+- st-050：连词成句：这是我的钢笔。（词卡：This / is / my / pen） 答案：**This is my pen.**
+  - 解析：正确的句子是 This is my pen. 意思是“这是我的钢笔”。句首单词的首字母要大写，句末用“.”。　来源：Unit 2 · 连词成句
+- st-051：连词成句：那是你的书包。（词卡：That / is / your / bag） 答案：**That is your bag.**
+  - 解析：正确的句子是 That is your bag. 意思是“那是你的书包”。句首单词的首字母要大写，句末用“.”。　来源：Unit 2 · 连词成句
+- st-052：连词成句：这是你的书。（词卡：This / is / your / book） 答案：**This is your book.**
+  - 解析：正确的句子是 This is your book. 意思是“这是你的书”。句首单词的首字母要大写，句末用“.”。　来源：Unit 2 · 连词成句
+- st-053：连词成句：那是我的橡皮。（词卡：That / is / my / eraser） 答案：**That is my eraser.**
+  - 解析：正确的句子是 That is my eraser. 意思是“那是我的橡皮”。句首单词的首字母要大写，句末用“.”。　来源：Unit 2 · 连词成句
+- st-054：连词成句：这是我的铅笔盒。（词卡：This / is / my / pencil / box） 答案：**This is my pencil box.**
+  - 解析：正确的句子是 This is my pencil box. 意思是“这是我的铅笔盒”。句首单词的首字母要大写，句末用“.”。　来源：Unit 2 · 连词成句
+- st-055：连词成句：那是一支铅笔。（词卡：That / is / a / pencil） 答案：**That is a pencil.**
+  - 解析：正确的句子是 That is a pencil. 意思是“那是一支铅笔”。句首单词的首字母要大写，句末用“.”。　来源：Unit 2 · 连词成句
+- st-056：连词成句：这是一本书。（词卡：This / is / a / book） 答案：**This is a book.**
+  - 解析：正确的句子是 This is a book. 意思是“这是一本书”。句首单词的首字母要大写，句末用“.”。　来源：Unit 2 · 连词成句
+- st-057：连词成句：那是一支钢笔。（词卡：That / is / a / pen） 答案：**That is a pen.**
+  - 解析：正确的句子是 That is a pen. 意思是“那是一支钢笔”。句首单词的首字母要大写，句末用“.”。　来源：Unit 2 · 连词成句
+- st-058：连词成句：这是你的橡皮。（词卡：This / is / your / eraser） 答案：**This is your eraser.**
+  - 解析：正确的句子是 This is your eraser. 意思是“这是你的橡皮”。句首单词的首字母要大写，句末用“.”。　来源：Unit 2 · 连词成句
+- st-059：连词成句：谢谢您，妈妈。（词卡：Thank / you, / Mum） 答案：**Thank you, Mum.**
+  - 解析：正确的句子是 Thank you, Mum. 意思是“谢谢您，妈妈”。句首单词的首字母要大写，句末用“.”。　来源：Unit 2 · 连词成句
+- st-060：连词成句：给你，莉莉。（词卡：Here / you / are, / Lily） 答案：**Here you are, Lily.**
+  - 解析：正确的句子是 Here you are, Lily. 意思是“给你，莉莉”。句首单词的首字母要大写，句末用“.”。　来源：Unit 2 · 连词成句
+- st-061：连词成句：它是红色的。（词卡：It's / red） 答案：**It's red.**
+  - 解析：正确的句子是 It's red. 意思是“它是红色的”。句首单词的首字母要大写，句末用“.”。　来源：Unit 3 · 连词成句
+- st-062：连词成句：它是蓝色的。（词卡：It's / blue） 答案：**It's blue.**
+  - 解析：正确的句子是 It's blue. 意思是“它是蓝色的”。句首单词的首字母要大写，句末用“.”。　来源：Unit 3 · 连词成句
+- st-063：连词成句：我看见了黄色。（词卡：I / see / yellow） 答案：**I see yellow.**
+  - 解析：正确的句子是 I see yellow. 意思是“我看见了黄色”。句首单词的首字母要大写，句末用“.”。　来源：Unit 3 · 连词成句
+- st-064：连词成句：我看见了绿色。（词卡：I / see / green） 答案：**I see green.**
+  - 解析：正确的句子是 I see green. 意思是“我看见了绿色”。句首单词的首字母要大写，句末用“.”。　来源：Unit 3 · 连词成句
+- st-065：连词成句：它是黑白色的。（词卡：It's / black / and / white） 答案：**It's black and white.**
+  - 解析：正确的句子是 It's black and white. 意思是“它是黑白色的”。句首单词的首字母要大写，句末用“.”。　来源：Unit 3 · 连词成句
+- st-066：连词成句：我看见了红色和蓝色。（词卡：I / see / red / and / blue） 答案：**I see red and blue.；或 I see blue and red.**
+  - 解析：正确的句子是 I see red and blue. 意思是“我看见了红色和蓝色”。句首单词的首字母要大写，句末用“.”。　来源：Unit 3 · 连词成句
+- st-067：连词成句：它是橙色的。（词卡：It's / orange） 答案：**It's orange.**
+  - 解析：正确的句子是 It's orange. 意思是“它是橙色的”。句首单词的首字母要大写，句末用“.”。　来源：Unit 3 · 连词成句
+- st-068：连词成句：它是棕色的。（词卡：It's / brown） 答案：**It's brown.**
+  - 解析：正确的句子是 It's brown. 意思是“它是棕色的”。句首单词的首字母要大写，句末用“.”。　来源：Unit 3 · 连词成句
+- st-069：连词成句：我看见了白色。（词卡：I / see / white） 答案：**I see white.**
+  - 解析：正确的句子是 I see white. 意思是“我看见了白色”。句首单词的首字母要大写，句末用“.”。　来源：Unit 3 · 连词成句
+- st-070：连词成句：它是绿色的。（词卡：It's / green） 答案：**It's green.**
+  - 解析：正确的句子是 It's green. 意思是“它是绿色的”。句首单词的首字母要大写，句末用“.”。　来源：Unit 3 · 连词成句
+- st-071：连词成句：我看见了黑色。（词卡：I / see / black） 答案：**I see black.**
+  - 解析：正确的句子是 I see black. 意思是“我看见了黑色”。句首单词的首字母要大写，句末用“.”。　来源：Unit 3 · 连词成句
+- st-072：连词成句：它是黄色的。（词卡：It's / yellow） 答案：**It's yellow.**
+  - 解析：正确的句子是 It's yellow. 意思是“它是黄色的”。句首单词的首字母要大写，句末用“.”。　来源：Unit 3 · 连词成句
+- st-073：连词成句：我看见了橙色。（词卡：I / see / orange） 答案：**I see orange.**
+  - 解析：正确的句子是 I see orange. 意思是“我看见了橙色”。句首单词的首字母要大写，句末用“.”。　来源：Unit 3 · 连词成句
+- st-074：连词成句：它是白色的。（词卡：It's / white） 答案：**It's white.**
+  - 解析：正确的句子是 It's white. 意思是“它是白色的”。句首单词的首字母要大写，句末用“.”。　来源：Unit 3 · 连词成句
+- st-075：连词成句：我看见了棕色。（词卡：I / see / brown） 答案：**I see brown.**
+  - 解析：正确的句子是 I see brown. 意思是“我看见了棕色”。句首单词的首字母要大写，句末用“.”。　来源：Unit 3 · 连词成句
+- st-076：连词成句：它是红黄色的。（词卡：It's / red / and / yellow） 答案：**It's red and yellow.；或 It's yellow and red.**
+  - 解析：正确的句子是 It's red and yellow. 意思是“它是红黄色的”。句首单词的首字母要大写，句末用“.”。　来源：Unit 3 · 连词成句
+- st-077：连词成句：我看见了蓝色和绿色。（词卡：I / see / blue / and / green） 答案：**I see blue and green.；或 I see green and blue.**
+  - 解析：正确的句子是 I see blue and green. 意思是“我看见了蓝色和绿色”。句首单词的首字母要大写，句末用“.”。　来源：Unit 3 · 连词成句
+- st-078：连词成句：它是一支红色的钢笔。（词卡：It's / a / red / pen） 答案：**It's a red pen.**
+  - 解析：正确的句子是 It's a red pen. 意思是“它是一支红色的钢笔”。句首单词的首字母要大写，句末用“.”。　来源：Unit 3 · 连词成句
+- st-079：连词成句：它是一个蓝色的书包。（词卡：It's / a / blue / bag） 答案：**It's a blue bag.**
+  - 解析：正确的句子是 It's a blue bag. 意思是“它是一个蓝色的书包”。句首单词的首字母要大写，句末用“.”。　来源：Unit 3 · 连词成句
+- st-080：连词成句：它是一本绿色的书。（词卡：It's / a / green / book） 答案：**It's a green book.**
+  - 解析：正确的句子是 It's a green book. 意思是“它是一本绿色的书”。句首单词的首字母要大写，句末用“.”。　来源：Unit 3 · 连词成句
+- st-081：连词成句：我看见一支黄色的铅笔。（词卡：I / see / a / yellow / pencil） 答案：**I see a yellow pencil.**
+  - 解析：正确的句子是 I see a yellow pencil. 意思是“我看见一支黄色的铅笔”。句首单词的首字母要大写，句末用“.”。　来源：Unit 3 · 连词成句
+- st-082：连词成句：它是一个黑色的书包。（词卡：It's / a / black / bag） 答案：**It's a black bag.**
+  - 解析：正确的句子是 It's a black bag. 意思是“它是一个黑色的书包”。句首单词的首字母要大写，句末用“.”。　来源：Unit 3 · 连词成句
+- st-083：连词成句：我的书包是红色的。（词卡：My / bag / is / red） 答案：**My bag is red.**
+  - 解析：正确的句子是 My bag is red. 意思是“我的书包是红色的”。句首单词的首字母要大写，句末用“.”。　来源：Unit 3 · 连词成句
+- st-084：连词成句：我的钢笔是蓝色的。（词卡：My / pen / is / blue） 答案：**My pen is blue.**
+  - 解析：正确的句子是 My pen is blue. 意思是“我的钢笔是蓝色的”。句首单词的首字母要大写，句末用“.”。　来源：Unit 3 · 连词成句
+- st-085：连词成句：它是一把橙色的尺子。（词卡：It's / an / orange / ruler） 答案：**It's an orange ruler.**
+  - 解析：正确的句子是 It's an orange ruler. 意思是“它是一把橙色的尺子”。句首单词的首字母要大写，句末用“.”。　来源：Unit 3 · 连词成句
+- st-086：连词成句：我的书是绿色的。（词卡：My / book / is / green） 答案：**My book is green.**
+  - 解析：正确的句子是 My book is green. 意思是“我的书是绿色的”。句首单词的首字母要大写，句末用“.”。　来源：Unit 3 · 连词成句
+- st-087：连词成句：它是黑色的。（词卡：It's / black） 答案：**It's black.**
+  - 解析：正确的句子是 It's black. 意思是“它是黑色的”。句首单词的首字母要大写，句末用“.”。　来源：Unit 3 · 连词成句
+- st-088：连词成句：这支铅笔是黄色的。（词卡：The / pencil / is / yellow） 答案：**The pencil is yellow.**
+  - 解析：正确的句子是 The pencil is yellow. 意思是“这支铅笔是黄色的”。句首单词的首字母要大写，句末用“.”。　来源：Unit 3 · 连词成句
+- st-089：连词成句：我看见了红色。（词卡：I / see / red） 答案：**I see red.**
+  - 解析：正确的句子是 I see red. 意思是“我看见了红色”。句首单词的首字母要大写，句末用“.”。　来源：Unit 3 · 连词成句
+- st-090：连词成句：我看见了蓝色。（词卡：I / see / blue） 答案：**I see blue.**
+  - 解析：正确的句子是 I see blue. 意思是“我看见了蓝色”。句首单词的首字母要大写，句末用“.”。　来源：Unit 3 · 连词成句
+- st-091：连词成句：多少个？（词卡：How / many） 答案：**How many?**
+  - 解析：正确的句子是 How many? 意思是“多少个？”。句首单词的首字母要大写，句末用“?”。　来源：Unit 4 · 连词成句
+- st-092：连词成句：多少支钢笔？（词卡：How / many / pens） 答案：**How many pens?**
+  - 解析：正确的句子是 How many pens? 意思是“多少支钢笔？”。句首单词的首字母要大写，句末用“?”。　来源：Unit 4 · 连词成句
+- st-093：连词成句：多少本书？（词卡：How / many / books） 答案：**How many books?**
+  - 解析：正确的句子是 How many books? 意思是“多少本书？”。句首单词的首字母要大写，句末用“?”。　来源：Unit 4 · 连词成句
+- st-094：连词成句：我看见三支钢笔。（词卡：I / see / three / pens） 答案：**I see three pens.**
+  - 解析：正确的句子是 I see three pens. 意思是“我看见三支钢笔”。句首单词的首字母要大写，句末用“.”。　来源：Unit 4 · 连词成句
+- st-095：连词成句：我看见五本书。（词卡：I / see / five / books） 答案：**I see five books.**
+  - 解析：正确的句子是 I see five books. 意思是“我看见五本书”。句首单词的首字母要大写，句末用“.”。　来源：Unit 4 · 连词成句
+- st-096：连词成句：多少支铅笔？（词卡：How / many / pencils） 答案：**How many pencils?**
+  - 解析：正确的句子是 How many pencils? 意思是“多少支铅笔？”。句首单词的首字母要大写，句末用“?”。　来源：Unit 4 · 连词成句
+- st-097：连词成句：一，二，三。（词卡：One, / two, / three） 答案：**One, two, three.**
+  - 解析：正确的句子是 One, two, three. 意思是“一，二，三”。句首单词的首字母要大写，句末用“.”。　来源：Unit 4 · 连词成句
+- st-098：连词成句：我十岁了。（词卡：I'm / ten） 答案：**I'm ten.**
+  - 解析：正确的句子是 I'm ten. 意思是“我十岁了”。句首单词的首字母要大写，句末用“.”。　来源：Unit 4 · 连词成句
+- st-099：连词成句：我看见七把尺子。（词卡：I / see / seven / rulers） 答案：**I see seven rulers.**
+  - 解析：正确的句子是 I see seven rulers. 意思是“我看见七把尺子”。句首单词的首字母要大写，句末用“.”。　来源：Unit 4 · 连词成句
+- st-100：连词成句：多少个书包？（词卡：How / many / bags） 答案：**How many bags?**
+  - 解析：正确的句子是 How many bags? 意思是“多少个书包？”。句首单词的首字母要大写，句末用“?”。　来源：Unit 4 · 连词成句
+- st-101：连词成句：我看见四块橡皮。（词卡：I / see / four / erasers） 答案：**I see four erasers.**
+  - 解析：正确的句子是 I see four erasers. 意思是“我看见四块橡皮”。句首单词的首字母要大写，句末用“.”。　来源：Unit 4 · 连词成句
+- st-102：连词成句：我看见六本书。（词卡：I / see / six / books） 答案：**I see six books.**
+  - 解析：正确的句子是 I see six books. 意思是“我看见六本书”。句首单词的首字母要大写，句末用“.”。　来源：Unit 4 · 连词成句
+- st-103：连词成句：多少把尺子？（词卡：How / many / rulers） 答案：**How many rulers?**
+  - 解析：正确的句子是 How many rulers? 意思是“多少把尺子？”。句首单词的首字母要大写，句末用“?”。　来源：Unit 4 · 连词成句
+- st-104：连词成句：我看见八支钢笔。（词卡：I / see / eight / pens） 答案：**I see eight pens.**
+  - 解析：正确的句子是 I see eight pens. 意思是“我看见八支钢笔”。句首单词的首字母要大写，句末用“.”。　来源：Unit 4 · 连词成句
+- st-105：连词成句：多少块橡皮？（词卡：How / many / erasers） 答案：**How many erasers?**
+  - 解析：正确的句子是 How many erasers? 意思是“多少块橡皮？”。句首单词的首字母要大写，句末用“?”。　来源：Unit 4 · 连词成句
+- st-106：连词成句：我看见两个书包。（词卡：I / see / two / bags） 答案：**I see two bags.**
+  - 解析：正确的句子是 I see two bags. 意思是“我看见两个书包”。句首单词的首字母要大写，句末用“.”。　来源：Unit 4 · 连词成句
+- st-107：连词成句：我八岁了。（词卡：I'm / eight） 答案：**I'm eight.**
+  - 解析：正确的句子是 I'm eight. 意思是“我八岁了”。句首单词的首字母要大写，句末用“.”。　来源：Unit 4 · 连词成句
+- st-108：连词成句：我七岁了。（词卡：I'm / seven） 答案：**I'm seven.**
+  - 解析：正确的句子是 I'm seven. 意思是“我七岁了”。句首单词的首字母要大写，句末用“.”。　来源：Unit 4 · 连词成句
+- st-109：连词成句：我看见一个铅笔盒。（词卡：I / see / one / pencil / box） 答案：**I see one pencil box.**
+  - 解析：正确的句子是 I see one pencil box. 意思是“我看见一个铅笔盒”。句首单词的首字母要大写，句末用“.”。　来源：Unit 4 · 连词成句
+- st-110：连词成句：我看见九支钢笔。（词卡：I / see / nine / pens） 答案：**I see nine pens.**
+  - 解析：正确的句子是 I see nine pens. 意思是“我看见九支钢笔”。句首单词的首字母要大写，句末用“.”。　来源：Unit 4 · 连词成句
+- st-111：连词成句：二加三等于五。（词卡：Two / and / three / is / five） 答案：**Two and three is five.**
+  - 解析：正确的句子是 Two and three is five. 意思是“二加三等于五”。句首单词的首字母要大写，句末用“.”。　来源：Unit 4 · 连词成句
+- st-112：连词成句：一加一等于二。（词卡：One / and / one / is / two） 答案：**One and one is two.**
+  - 解析：正确的句子是 One and one is two. 意思是“一加一等于二”。句首单词的首字母要大写，句末用“.”。　来源：Unit 4 · 连词成句
+- st-113：连词成句：五加五等于十。（词卡：Five / and / five / is / ten） 答案：**Five and five is ten.**
+  - 解析：正确的句子是 Five and five is ten. 意思是“五加五等于十”。句首单词的首字母要大写，句末用“.”。　来源：Unit 4 · 连词成句
+- st-114：连词成句：我看见十支铅笔。（词卡：I / see / ten / pencils） 答案：**I see ten pencils.**
+  - 解析：正确的句子是 I see ten pencils. 意思是“我看见十支铅笔”。句首单词的首字母要大写，句末用“.”。　来源：Unit 4 · 连词成句
+- st-115：连词成句：多少个朋友？（词卡：How / many / friends） 答案：**How many friends?**
+  - 解析：正确的句子是 How many friends? 意思是“多少个朋友？”。句首单词的首字母要大写，句末用“?”。　来源：Unit 4 · 连词成句
+- st-116：连词成句：六加二等于八。（词卡：Six / and / two / is / eight） 答案：**Six and two is eight.**
+  - 解析：正确的句子是 Six and two is eight. 意思是“六加二等于八”。句首单词的首字母要大写，句末用“.”。　来源：Unit 4 · 连词成句
+- st-117：连词成句：我看见三个书包。（词卡：I / see / three / bags） 答案：**I see three bags.**
+  - 解析：正确的句子是 I see three bags. 意思是“我看见三个书包”。句首单词的首字母要大写，句末用“.”。　来源：Unit 4 · 连词成句
+- st-118：连词成句：三加四等于七。（词卡：Three / and / four / is / seven） 答案：**Three and four is seven.**
+  - 解析：正确的句子是 Three and four is seven. 意思是“三加四等于七”。句首单词的首字母要大写，句末用“.”。　来源：Unit 4 · 连词成句
+- st-119：连词成句：四，五，六。（词卡：Four, / five, / six） 答案：**Four, five, six.**
+  - 解析：正确的句子是 Four, five, six. 意思是“四，五，六”。句首单词的首字母要大写，句末用“.”。　来源：Unit 4 · 连词成句
+- st-120：连词成句：我看见九支铅笔。（词卡：I / see / nine / pencils） 答案：**I see nine pencils.**
+  - 解析：正确的句子是 I see nine pencils. 意思是“我看见九支铅笔”。句首单词的首字母要大写，句末用“.”。　来源：Unit 4 · 连词成句
+- st-121：连词成句：这是我的妈妈。（词卡：This / is / my / mum） 答案：**This is my mum.**
+  - 解析：正确的句子是 This is my mum. 意思是“这是我的妈妈”。句首单词的首字母要大写，句末用“.”。　来源：Unit 5 · 连词成句
+- st-122：连词成句：这是我的爸爸。（词卡：This / is / my / dad） 答案：**This is my dad.**
+  - 解析：正确的句子是 This is my dad. 意思是“这是我的爸爸”。句首单词的首字母要大写，句末用“.”。　来源：Unit 5 · 连词成句
+- st-123：连词成句：我们是一家人。（词卡：We're / family） 答案：**We're family.**
+  - 解析：正确的句子是 We're family. 意思是“我们是一家人”。句首单词的首字母要大写，句末用“.”。　来源：Unit 5 · 连词成句
+- st-124：连词成句：这是我的奶奶。（词卡：This / is / my / grandma） 答案：**This is my grandma.**
+  - 解析：正确的句子是 This is my grandma. 意思是“这是我的奶奶”。句首单词的首字母要大写，句末用“.”。　来源：Unit 5 · 连词成句
+- st-125：连词成句：这是我的爷爷。（词卡：This / is / my / grandpa） 答案：**This is my grandpa.**
+  - 解析：正确的句子是 This is my grandpa. 意思是“这是我的爷爷”。句首单词的首字母要大写，句末用“.”。　来源：Unit 5 · 连词成句
+- st-126：连词成句：这是我的姐姐。（词卡：This / is / my / sister） 答案：**This is my sister.**
+  - 解析：正确的句子是 This is my sister. 意思是“这是我的姐姐”。句首单词的首字母要大写，句末用“.”。　来源：Unit 5 · 连词成句
+- st-127：连词成句：这是我的弟弟。（词卡：This / is / my / brother） 答案：**This is my brother.**
+  - 解析：正确的句子是 This is my brother. 意思是“这是我的弟弟”。句首单词的首字母要大写，句末用“.”。　来源：Unit 5 · 连词成句
+- st-128：连词成句：她是我的妈妈。（词卡：She's / my / mum） 答案：**She's my mum.**
+  - 解析：正确的句子是 She's my mum. 意思是“她是我的妈妈”。句首单词的首字母要大写，句末用“.”。　来源：Unit 5 · 连词成句
+- st-129：连词成句：他是我的爸爸。（词卡：He's / my / dad） 答案：**He's my dad.**
+  - 解析：正确的句子是 He's my dad. 意思是“他是我的爸爸”。句首单词的首字母要大写，句末用“.”。　来源：Unit 5 · 连词成句
+- st-130：连词成句：她是我的妹妹。（词卡：She's / my / sister） 答案：**She's my sister.**
+  - 解析：正确的句子是 She's my sister. 意思是“她是我的妹妹”。句首单词的首字母要大写，句末用“.”。　来源：Unit 5 · 连词成句
+- st-131：连词成句：他是我的哥哥。（词卡：He's / my / brother） 答案：**He's my brother.**
+  - 解析：正确的句子是 He's my brother. 意思是“他是我的哥哥”。句首单词的首字母要大写，句末用“.”。　来源：Unit 5 · 连词成句
+- st-132：连词成句：她是我的外婆。（词卡：She's / my / grandma） 答案：**She's my grandma.**
+  - 解析：正确的句子是 She's my grandma. 意思是“她是我的外婆”。句首单词的首字母要大写，句末用“.”。　来源：Unit 5 · 连词成句
+- st-133：连词成句：他是我的外公。（词卡：He's / my / grandpa） 答案：**He's my grandpa.**
+  - 解析：正确的句子是 He's my grandpa. 意思是“他是我的外公”。句首单词的首字母要大写，句末用“.”。　来源：Unit 5 · 连词成句
+- st-134：连词成句：这是我的家人。（词卡：This / is / my / family） 答案：**This is my family.**
+  - 解析：正确的句子是 This is my family. 意思是“这是我的家人”。句首单词的首字母要大写，句末用“.”。　来源：Unit 5 · 连词成句
+- st-135：连词成句：您好，奶奶！（词卡：Hello, / Grandma） 答案：**Hello, Grandma!**
+  - 解析：正确的句子是 Hello, Grandma! 意思是“您好，奶奶！”。句首单词的首字母要大写，句末用“!”。　来源：Unit 5 · 连词成句
+- st-136：连词成句：嗨，爸爸！（词卡：Hi, / Dad） 答案：**Hi, Dad!**
+  - 解析：正确的句子是 Hi, Dad! 意思是“嗨，爸爸！”。句首单词的首字母要大写，句末用“!”。　来源：Unit 5 · 连词成句
+- st-137：连词成句：再见，妈妈！（词卡：Goodbye, / Mum） 答案：**Goodbye, Mum!**
+  - 解析：正确的句子是 Goodbye, Mum! 意思是“再见，妈妈！”。句首单词的首字母要大写，句末用“!”。　来源：Unit 5 · 连词成句
+- st-138：连词成句：我爱我的家人。（词卡：I / love / my / family） 答案：**I love my family.**
+  - 解析：正确的句子是 I love my family. 意思是“我爱我的家人”。句首单词的首字母要大写，句末用“.”。　来源：Unit 5 · 连词成句
+- st-139：连词成句：妈妈，这是埃米。（词卡：Mum, / this / is / Amy） 答案：**Mum, this is Amy.**
+  - 解析：正确的句子是 Mum, this is Amy. 意思是“妈妈，这是埃米”。句首单词的首字母要大写，句末用“.”。　来源：Unit 5 · 连词成句
+- st-140：连词成句：爸爸，这是我的朋友。（词卡：Dad, / this / is / my / friend） 答案：**Dad, this is my friend.**
+  - 解析：正确的句子是 Dad, this is my friend. 意思是“爸爸，这是我的朋友”。句首单词的首字母要大写，句末用“.”。　来源：Unit 5 · 连词成句
+- st-141：连词成句：这是我的妹妹莉莉。（词卡：This / is / my / sister / Lily） 答案：**This is my sister Lily.**
+  - 解析：正确的句子是 This is my sister Lily. 意思是“这是我的妹妹莉莉”。句首单词的首字母要大写，句末用“.”。　来源：Unit 5 · 连词成句
+- st-142：连词成句：这是我的弟弟汤姆。（词卡：This / is / my / brother / Tom） 答案：**This is my brother Tom.**
+  - 解析：正确的句子是 This is my brother Tom. 意思是“这是我的弟弟汤姆”。句首单词的首字母要大写，句末用“.”。　来源：Unit 5 · 连词成句
+- st-143：连词成句：很高兴见到您，爷爷。（词卡：Nice / to / meet / you, / Grandpa） 答案：**Nice to meet you, Grandpa.**
+  - 解析：正确的句子是 Nice to meet you, Grandpa. 意思是“很高兴见到您，爷爷”。句首单词的首字母要大写，句末用“.”。　来源：Unit 5 · 连词成句
+- st-144：连词成句：给您，奶奶。（词卡：Here / you / are, / Grandma） 答案：**Here you are, Grandma.**
+  - 解析：正确的句子是 Here you are, Grandma. 意思是“给您，奶奶”。句首单词的首字母要大写，句末用“.”。　来源：Unit 5 · 连词成句
+- st-145：连词成句：谢谢您，爸爸。（词卡：Thank / you, / Dad） 答案：**Thank you, Dad.**
+  - 解析：正确的句子是 Thank you, Dad. 意思是“谢谢您，爸爸”。句首单词的首字母要大写，句末用“.”。　来源：Unit 5 · 连词成句
+- st-146：连词成句：他是我的哥哥萨姆。（词卡：He's / my / brother / Sam） 答案：**He's my brother Sam.**
+  - 解析：正确的句子是 He's my brother Sam. 意思是“他是我的哥哥萨姆”。句首单词的首字母要大写，句末用“.”。　来源：Unit 5 · 连词成句
+- st-147：连词成句：她是我的姐姐埃米。（词卡：She's / my / sister / Amy） 答案：**She's my sister Amy.**
+  - 解析：正确的句子是 She's my sister Amy. 意思是“她是我的姐姐埃米”。句首单词的首字母要大写，句末用“.”。　来源：Unit 5 · 连词成句
+- st-148：连词成句：再见，爷爷！（词卡：Bye, / Grandpa） 答案：**Bye, Grandpa!**
+  - 解析：正确的句子是 Bye, Grandpa! 意思是“再见，爷爷！”。句首单词的首字母要大写，句末用“!”。　来源：Unit 5 · 连词成句
+- st-149：连词成句：看，这是我的家人。（词卡：Look, / this / is / my / family） 答案：**Look, this is my family.**
+  - 解析：正确的句子是 Look, this is my family. 意思是“看，这是我的家人”。句首单词的首字母要大写，句末用“.”。　来源：Unit 5 · 连词成句
+- st-150：连词成句：我们是幸福的一家人。（词卡：We're / a / happy / family） 答案：**We're a happy family.**
+  - 解析：正确的句子是 We're a happy family. 意思是“我们是幸福的一家人”。句首单词的首字母要大写，句末用“.”。　来源：Unit 5 · 连词成句
+- st-151：连词成句：这是我的家。（词卡：This / is / my / home） 答案：**This is my home.**
+  - 解析：正确的句子是 This is my home. 意思是“这是我的家”。句首单词的首字母要大写，句末用“.”。　来源：Unit 6 · 连词成句
+- st-152：连词成句：这是我的房间。（词卡：This / is / my / room） 答案：**This is my room.**
+  - 解析：正确的句子是 This is my room. 意思是“这是我的房间”。句首单词的首字母要大写，句末用“.”。　来源：Unit 6 · 连词成句
+- st-153：连词成句：它在书桌上。（词卡：It's / on / the / desk） 答案：**It's on the desk.**
+  - 解析：正确的句子是 It's on the desk. 意思是“它在书桌上”。句首单词的首字母要大写，句末用“.”。　来源：Unit 6 · 连词成句
+- st-154：连词成句：它在书包里。（词卡：It's / in / the / bag） 答案：**It's in the bag.**
+  - 解析：正确的句子是 It's in the bag. 意思是“它在书包里”。句首单词的首字母要大写，句末用“.”。　来源：Unit 6 · 连词成句
+- st-155：连词成句：它在床上。（词卡：It's / on / the / bed） 答案：**It's on the bed.**
+  - 解析：正确的句子是 It's on the bed. 意思是“它在床上”。句首单词的首字母要大写，句末用“.”。　来源：Unit 6 · 连词成句
+- st-156：连词成句：它在铅笔盒里。（词卡：It's / in / the / pencil / box） 答案：**It's in the pencil box.**
+  - 解析：正确的句子是 It's in the pencil box. 意思是“它在铅笔盒里”。句首单词的首字母要大写，句末用“.”。　来源：Unit 6 · 连词成句
+- st-157：连词成句：它在椅子上。（词卡：It's / on / the / chair） 答案：**It's on the chair.**
+  - 解析：正确的句子是 It's on the chair. 意思是“它在椅子上”。句首单词的首字母要大写，句末用“.”。　来源：Unit 6 · 连词成句
+- st-158：连词成句：我的书在书桌上。（词卡：My / book / is / on / the / desk） 答案：**My book is on the desk.**
+  - 解析：正确的句子是 My book is on the desk. 意思是“我的书在书桌上”。句首单词的首字母要大写，句末用“.”。　来源：Unit 6 · 连词成句
+- st-159：连词成句：我的钢笔在书包里。（词卡：My / pen / is / in / the / bag） 答案：**My pen is in the bag.**
+  - 解析：正确的句子是 My pen is in the bag. 意思是“我的钢笔在书包里”。句首单词的首字母要大写，句末用“.”。　来源：Unit 6 · 连词成句
+- st-160：连词成句：这是我的床。（词卡：This / is / my / bed） 答案：**This is my bed.**
+  - 解析：正确的句子是 This is my bed. 意思是“这是我的床”。句首单词的首字母要大写，句末用“.”。　来源：Unit 6 · 连词成句
+- st-161：连词成句：这是我的书桌。（词卡：This / is / my / desk） 答案：**This is my desk.**
+  - 解析：正确的句子是 This is my desk. 意思是“这是我的书桌”。句首单词的首字母要大写，句末用“.”。　来源：Unit 6 · 连词成句
+- st-162：连词成句：这是一扇门。（词卡：This / is / a / door） 答案：**This is a door.**
+  - 解析：正确的句子是 This is a door. 意思是“这是一扇门”。句首单词的首字母要大写，句末用“.”。　来源：Unit 6 · 连词成句
+- st-163：连词成句：那是一扇窗户。（词卡：That / is / a / window） 答案：**That is a window.**
+  - 解析：正确的句子是 That is a window. 意思是“那是一扇窗户”。句首单词的首字母要大写，句末用“.”。　来源：Unit 6 · 连词成句
+- st-164：连词成句：我的书包在椅子上。（词卡：My / bag / is / on / the / chair） 答案：**My bag is on the chair.**
+  - 解析：正确的句子是 My bag is on the chair. 意思是“我的书包在椅子上”。句首单词的首字母要大写，句末用“.”。　来源：Unit 6 · 连词成句
+- st-165：连词成句：猫在床上。（词卡：The / cat / is / on / the / bed） 答案：**The cat is on the bed.**
+  - 解析：正确的句子是 The cat is on the bed. 意思是“猫在床上”。句首单词的首字母要大写，句末用“.”。　来源：Unit 6 · 连词成句
+- st-166：连词成句：它在书桌里。（词卡：It's / in / the / desk） 答案：**It's in the desk.**
+  - 解析：正确的句子是 It's in the desk. 意思是“它在书桌里”。句首单词的首字母要大写，句末用“.”。　来源：Unit 6 · 连词成句
+- st-167：连词成句：我的尺子在哪里？（词卡：Where's / my / ruler） 答案：**Where's my ruler?**
+  - 解析：正确的句子是 Where's my ruler? 意思是“我的尺子在哪里？”。句首单词的首字母要大写，句末用“?”。　来源：Unit 6 · 连词成句
+- st-168：连词成句：我的钢笔在哪里？（词卡：Where's / my / pen） 答案：**Where's my pen?**
+  - 解析：正确的句子是 Where's my pen? 意思是“我的钢笔在哪里？”。句首单词的首字母要大写，句末用“?”。　来源：Unit 6 · 连词成句
+- st-169：连词成句：猫在哪里？（词卡：Where's / the / cat） 答案：**Where's the cat?**
+  - 解析：正确的句子是 Where's the cat? 意思是“猫在哪里？”。句首单词的首字母要大写，句末用“?”。　来源：Unit 6 · 连词成句
+- st-170：连词成句：这是我的椅子。（词卡：This / is / my / chair） 答案：**This is my chair.**
+  - 解析：正确的句子是 This is my chair. 意思是“这是我的椅子”。句首单词的首字母要大写，句末用“.”。　来源：Unit 6 · 连词成句
+- st-171：连词成句：我的尺子在铅笔盒里。（词卡：My / ruler / is / in / the / pencil / box） 答案：**My ruler is in the pencil box.**
+  - 解析：正确的句子是 My ruler is in the pencil box. 意思是“我的尺子在铅笔盒里”。句首单词的首字母要大写，句末用“.”。　来源：Unit 6 · 连词成句
+- st-172：连词成句：那本书在书包里。（词卡：The / book / is / in / the / bag） 答案：**The book is in the bag.**
+  - 解析：正确的句子是 The book is in the bag. 意思是“那本书在书包里”。句首单词的首字母要大写，句末用“.”。　来源：Unit 6 · 连词成句
+- st-173：连词成句：我的橡皮在书桌上。（词卡：My / eraser / is / on / the / desk） 答案：**My eraser is on the desk.**
+  - 解析：正确的句子是 My eraser is on the desk. 意思是“我的橡皮在书桌上”。句首单词的首字母要大写，句末用“.”。　来源：Unit 6 · 连词成句
+- st-174：连词成句：这是我温馨的家。（词卡：This / is / my / sweet / home） 答案：**This is my sweet home.**
+  - 解析：正确的句子是 This is my sweet home. 意思是“这是我温馨的家”。句首单词的首字母要大写，句末用“.”。　来源：Unit 6 · 连词成句
+- st-175：连词成句：那是我的房间。（词卡：That / is / my / room） 答案：**That is my room.**
+  - 解析：正确的句子是 That is my room. 意思是“那是我的房间”。句首单词的首字母要大写，句末用“.”。　来源：Unit 6 · 连词成句
+- st-176：连词成句：它在房间里。（词卡：It's / in / the / room） 答案：**It's in the room.**
+  - 解析：正确的句子是 It's in the room. 意思是“它在房间里”。句首单词的首字母要大写，句末用“.”。　来源：Unit 6 · 连词成句
+- st-177：连词成句：看看我的房间。（词卡：Look / at / my / room） 答案：**Look at my room.**
+  - 解析：正确的句子是 Look at my room. 意思是“看看我的房间”。句首单词的首字母要大写，句末用“.”。　来源：Unit 6 · 连词成句
+- st-178：连词成句：铅笔在书上。（词卡：The / pencil / is / on / the / book） 答案：**The pencil is on the book.**
+  - 解析：正确的句子是 The pencil is on the book. 意思是“铅笔在书上”。句首单词的首字母要大写，句末用“.”。　来源：Unit 6 · 连词成句
+- st-179：连词成句：我看见一扇门和一扇窗户。（词卡：I / see / a / door / and / a / window） 答案：**I see a door and a window.；或 I see a window and a door.**
+  - 解析：正确的句子是 I see a door and a window. 意思是“我看见一扇门和一扇窗户”。句首单词的首字母要大写，句末用“.”。　来源：Unit 6 · 连词成句
+- st-180：连词成句：我的书包在房间里。（词卡：My / bag / is / in / the / room） 答案：**My bag is in the room.**
+  - 解析：正确的句子是 My bag is in the room. 意思是“我的书包在房间里”。句首单词的首字母要大写，句末用“.”。　来源：Unit 6 · 连词成句

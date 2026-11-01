@@ -1,0 +1,380 @@
+# 听音识词PK题库复核清单
+
+> 本文件由 `python tools/banks.py --fix` 根据 `sites/english/banks/listen-word.json` 生成，请修改题库后重新生成，不要直接编辑。
+
+共 180 题。每人20题，按分类抽取，双方不重复：U1×4、U2×4、U3×3、U4×3、U5×3、U6×3；或 U1×3、U2×3、U3×4、U4×4、U5×3、U6×3；或 U1×3、U2×3、U3×3、U4×3、U5×4、U6×4；或 U1×4、U2×3、U3×3、U4×4、U5×3、U6×3；或 U1×3、U2×4、U3×3、U4×3、U5×4、U6×3；或 U1×3、U2×3、U3×4、U4×3、U5×3、U6×4。
+
+- 题目依据外研版（三起）2024新版三年级上册各单元核心单词和句型自编，非教材原题。
+- 每题都有录音：单人练习和联网PK出题时自动播放一次，双人同屏PK时点“再听一遍”播放。
+
+| 分类 | 题数 |
+|---|---:|
+| U1 | 30 |
+| U2 | 30 |
+| U3 | 30 |
+| U4 | 30 |
+| U5 | 30 |
+| U6 | 30 |
+
+## 逐题清单
+
+- lw-001：听录音，选出相应的图片。（录音：hello） 图片：friend / he / she / hello 答案：**hello**
+  - 解析：录音读的是 hello，意思是“你好”。　来源：Unit 1 · 单词听辨
+- lw-002：听录音，选出相应的图片。（录音：he） 图片：hello / nine / he / friend 答案：**he**
+  - 解析：录音读的是 he，意思是“他”。　来源：Unit 1 · 单词听辨
+- lw-003：听录音，选出相应的图片。（录音：she） 图片：he / hello / she / nine 答案：**she**
+  - 解析：录音读的是 she，意思是“她”。　来源：Unit 1 · 单词听辨
+- lw-004：听录音，选出相应的图片。（录音：friend） 图片：nine / friend / she / hello 答案：**friend**
+  - 解析：录音读的是 friend，意思是“朋友”。　来源：Unit 1 · 单词听辨
+- lw-005：听录音，选出相应的图片。（录音：nine） 图片：friend / she / hello / nine 答案：**nine**
+  - 解析：录音读的是 nine，意思是“九”。　来源：Unit 1 · 单词听辨
+- lw-006：听录音，选出相应的图片。（录音：hello） 图片：friend / nine / he / hello 答案：**hello**
+  - 解析：录音读的是 hello，意思是“你好”。　来源：Unit 1 · 单词听辨
+- lw-007：听录音，选出相应的图片。（录音：he） 图片：he / she / nine / friend 答案：**he**
+  - 解析：录音读的是 he，意思是“他”。　来源：Unit 1 · 单词听辨
+- lw-008：听录音，选出相应的图片。（录音：she） 图片：hello / she / he / friend 答案：**she**
+  - 解析：录音读的是 she，意思是“她”。　来源：Unit 1 · 单词听辨
+- lw-009：听录音，选出相应的图片。（录音：friend） 图片：friend / she / hello / he 答案：**friend**
+  - 解析：录音读的是 friend，意思是“朋友”。　来源：Unit 1 · 单词听辨
+- lw-010：听录音，选出相应的图片。（录音：nine） 图片：she / nine / he / hello 答案：**nine**
+  - 解析：录音读的是 nine，意思是“九”。　来源：Unit 1 · 单词听辨
+- lw-011：听录音，选出你听到的单词。（录音：hello） 选项：yellow / hi / he / hello 答案：**hello**
+  - 解析：录音读的是 hello，意思是“你好”。注意和 yellow、hi、he 区分。　来源：Unit 1 · 单词听辨
+- lw-012：听录音，选出你听到的单词。（录音：hi） 选项：hi / he / nine / she 答案：**hi**
+  - 解析：录音读的是 hi，意思是“你好；嗨”。注意和 he、nine、she 区分。　来源：Unit 1 · 单词听辨
+- lw-013：听录音，选出你听到的单词。（录音：I'm） 选项：hi / nine / I'm / he 答案：**I'm**
+  - 解析：录音读的是 I'm，意思是“我是”。注意和 hi、nine、he 区分。　来源：Unit 1 · 单词听辨
+- lw-014：听录音，选出你听到的单词。（录音：he） 选项：hi / she / three / he 答案：**he**
+  - 解析：录音读的是 he，意思是“他”。注意和 hi、she、three 区分。　来源：Unit 1 · 单词听辨
+- lw-015：听录音，选出你听到的单词。（录音：she） 选项：she / he / six / three 答案：**she**
+  - 解析：录音读的是 she，意思是“她”。注意和 he、six、three 区分。　来源：Unit 1 · 单词听辨
+- lw-016：听录音，选出你听到的单词。（录音：friend） 选项：red / four / five / friend 答案：**friend**
+  - 解析：录音读的是 friend，意思是“朋友”。注意和 red、four、five 区分。　来源：Unit 1 · 单词听辨
+- lw-017：听录音，选出你听到的单词。（录音：nine） 选项：ten / one / nine / five 答案：**nine**
+  - 解析：录音读的是 nine，意思是“九”。注意和 ten、one、five 区分。　来源：Unit 1 · 单词听辨
+- lw-018：听录音，选出你听到的单词。（录音：goodbye） 选项：goodbye / bye / book / hello 答案：**goodbye**
+  - 解析：录音读的是 goodbye，意思是“再见”。注意和 bye、book、hello 区分。　来源：Unit 1 · 单词听辨
+- lw-019：听录音，选出你听到的单词。（录音：bye） 选项：bye / hi / nine / bag 答案：**bye**
+  - 解析：录音读的是 bye，意思是“再见”。注意和 hi、nine、bag 区分。　来源：Unit 1 · 单词听辨
+- lw-020：听录音，选出你听到的单词。（录音：hello） 选项：hello / he / goodbye / hi 答案：**hello**
+  - 解析：录音读的是 hello，意思是“你好”。注意和 he、goodbye、hi 区分。　来源：Unit 1 · 单词听辨
+- lw-021：听录音，选出你听到的单词。（录音：hi） 选项：hello / nine / hi / she 答案：**hi**
+  - 解析：录音读的是 hi，意思是“你好；嗨”。注意和 hello、nine、she 区分。　来源：Unit 1 · 单词听辨
+- lw-022：听录音，选出你听到的单词。（录音：I'm） 选项：I'm / nine / bye / he 答案：**I'm**
+  - 解析：录音读的是 I'm，意思是“我是”。注意和 nine、bye、he 区分。　来源：Unit 1 · 单词听辨
+- lw-023：听录音，选出你听到的单词。（录音：he） 选项：she / goodbye / he / hi 答案：**he**
+  - 解析：录音读的是 he，意思是“他”。注意和 she、goodbye、hi 区分。　来源：Unit 1 · 单词听辨
+- lw-024：听录音，选出你听到的单词。（录音：she） 选项：friend / six / he / she 答案：**she**
+  - 解析：录音读的是 she，意思是“她”。注意和 friend、six、he 区分。　来源：Unit 1 · 单词听辨
+- lw-025：听录音，选出你听到的单词。（录音：friend） 选项：red / bye / friend / four 答案：**friend**
+  - 解析：录音读的是 friend，意思是“朋友”。注意和 red、bye、four 区分。　来源：Unit 1 · 单词听辨
+- lw-026：听录音，选出你听到的单词。（录音：nine） 选项：one / I'm / ten / nine 答案：**nine**
+  - 解析：录音读的是 nine，意思是“九”。注意和 one、I'm、ten 区分。　来源：Unit 1 · 单词听辨
+- lw-027：听录音，选出你听到的单词。（录音：goodbye） 选项：goodbye / I'm / bye / book 答案：**goodbye**
+  - 解析：录音读的是 goodbye，意思是“再见”。注意和 I'm、bye、book 区分。　来源：Unit 1 · 单词听辨
+- lw-028：听录音，选出你听到的单词。（录音：bye） 选项：bye / nine / bag / she 答案：**bye**
+  - 解析：录音读的是 bye，意思是“再见”。注意和 nine、bag、she 区分。　来源：Unit 1 · 单词听辨
+- lw-029：听录音，选出你听到的单词。（录音：hello） 选项：bye / hello / he / hi 答案：**hello**
+  - 解析：录音读的是 hello，意思是“你好”。注意和 bye、he、hi 区分。　来源：Unit 1 · 单词听辨
+- lw-030：听录音，选出你听到的单词。（录音：hi） 选项：I'm / nine / she / hi 答案：**hi**
+  - 解析：录音读的是 hi，意思是“你好；嗨”。注意和 I'm、nine、she 区分。　来源：Unit 1 · 单词听辨
+- lw-031：听录音，选出相应的图片。（录音：pen） 图片：ruler / pencil box / pen / pencil 答案：**pen**
+  - 解析：录音读的是 pen，意思是“钢笔”。　来源：Unit 2 · 单词听辨
+- lw-032：听录音，选出相应的图片。（录音：pencil） 图片：ruler / pencil / bag / book 答案：**pencil**
+  - 解析：录音读的是 pencil，意思是“铅笔”。　来源：Unit 2 · 单词听辨
+- lw-033：听录音，选出相应的图片。（录音：book） 图片：book / pencil box / eraser / pencil 答案：**book**
+  - 解析：录音读的是 book，意思是“书”。　来源：Unit 2 · 单词听辨
+- lw-034：听录音，选出相应的图片。（录音：ruler） 图片：ruler / bag / book / pen 答案：**ruler**
+  - 解析：录音读的是 ruler，意思是“尺子”。　来源：Unit 2 · 单词听辨
+- lw-035：听录音，选出相应的图片。（录音：eraser） 图片：eraser / pencil / bag / book 答案：**eraser**
+  - 解析：录音读的是 eraser，意思是“橡皮”。　来源：Unit 2 · 单词听辨
+- lw-036：听录音，选出相应的图片。（录音：bag） 图片：pen / book / pencil / bag 答案：**bag**
+  - 解析：录音读的是 bag，意思是“书包”。　来源：Unit 2 · 单词听辨
+- lw-037：听录音，选出相应的图片。（录音：pencil box） 图片：pencil / pencil box / book / bag 答案：**pencil box**
+  - 解析：录音读的是 pencil box，意思是“铅笔盒”。　来源：Unit 2 · 单词听辨
+- lw-038：听录音，选出相应的图片。（录音：pen） 图片：ruler / pencil / eraser / pen 答案：**pen**
+  - 解析：录音读的是 pen，意思是“钢笔”。　来源：Unit 2 · 单词听辨
+- lw-039：听录音，选出相应的图片。（录音：pencil） 图片：pencil box / eraser / pencil / book 答案：**pencil**
+  - 解析：录音读的是 pencil，意思是“铅笔”。　来源：Unit 2 · 单词听辨
+- lw-040：听录音，选出相应的图片。（录音：book） 图片：pen / pencil box / book / eraser 答案：**book**
+  - 解析：录音读的是 book，意思是“书”。　来源：Unit 2 · 单词听辨
+- lw-041：听录音，选出相应的图片。（录音：ruler） 图片：ruler / eraser / pencil / pen 答案：**ruler**
+  - 解析：录音读的是 ruler，意思是“尺子”。　来源：Unit 2 · 单词听辨
+- lw-042：听录音，选出相应的图片。（录音：eraser） 图片：pencil / book / eraser / pencil box 答案：**eraser**
+  - 解析：录音读的是 eraser，意思是“橡皮”。　来源：Unit 2 · 单词听辨
+- lw-043：听录音，选出相应的图片。（录音：bag） 图片：pencil box / pen / bag / pencil 答案：**bag**
+  - 解析：录音读的是 bag，意思是“书包”。　来源：Unit 2 · 单词听辨
+- lw-044：听录音，选出相应的图片。（录音：pencil box） 图片：pen / pencil box / pencil / book 答案：**pencil box**
+  - 解析：录音读的是 pencil box，意思是“铅笔盒”。　来源：Unit 2 · 单词听辨
+- lw-045：听录音，选出相应的图片。（录音：pen） 图片：bag / ruler / pen / pencil box 答案：**pen**
+  - 解析：录音读的是 pen，意思是“钢笔”。　来源：Unit 2 · 单词听辨
+- lw-046：听录音，选出你听到的单词。（录音：pen） 选项：pen / ten / pencil / bed 答案：**pen**
+  - 解析：录音读的是 pen，意思是“钢笔”。注意和 ten、pencil、bed 区分。　来源：Unit 2 · 单词听辨
+- lw-047：听录音，选出你听到的单词。（录音：pencil） 选项：seven / pencil / pen / pencil box 答案：**pencil**
+  - 解析：录音读的是 pencil，意思是“铅笔”。注意和 seven、pen、pencil box 区分。　来源：Unit 2 · 单词听辨
+- lw-048：听录音，选出你听到的单词。（录音：book） 选项：black / bag / brown / book 答案：**book**
+  - 解析：录音读的是 book，意思是“书”。注意和 black、bag、brown 区分。　来源：Unit 2 · 单词听辨
+- lw-049：听录音，选出你听到的单词。（录音：ruler） 选项：eraser / red / room / ruler 答案：**ruler**
+  - 解析：录音读的是 ruler，意思是“尺子”。注意和 eraser、red、room 区分。　来源：Unit 2 · 单词听辨
+- lw-050：听录音，选出你听到的单词。（录音：eraser） 选项：eight / ruler / pencil / eraser 答案：**eraser**
+  - 解析：录音读的是 eraser，意思是“橡皮”。注意和 eight、ruler、pencil 区分。　来源：Unit 2 · 单词听辨
+- lw-051：听录音，选出你听到的单词。（录音：bag） 选项：dad / black / bag / book 答案：**bag**
+  - 解析：录音读的是 bag，意思是“书包”。注意和 dad、black、book 区分。　来源：Unit 2 · 单词听辨
+- lw-052：听录音，选出你听到的单词。（录音：pencil box） 选项：pen / pencil / book / pencil box 答案：**pencil box**
+  - 解析：录音读的是 pencil box，意思是“铅笔盒”。注意和 pen、pencil、book 区分。　来源：Unit 2 · 单词听辨
+- lw-053：听录音，选出你听到的单词。（录音：pen） 选项：ten / pen / pencil / bag 答案：**pen**
+  - 解析：录音读的是 pen，意思是“钢笔”。注意和 ten、pencil、bag 区分。　来源：Unit 2 · 单词听辨
+- lw-054：听录音，选出你听到的单词。（录音：pencil） 选项：pen / pencil / bag / pencil box 答案：**pencil**
+  - 解析：录音读的是 pencil，意思是“铅笔”。注意和 pen、bag、pencil box 区分。　来源：Unit 2 · 单词听辨
+- lw-055：听录音，选出你听到的单词。（录音：book） 选项：black / bag / book / pencil 答案：**book**
+  - 解析：录音读的是 book，意思是“书”。注意和 black、bag、pencil 区分。　来源：Unit 2 · 单词听辨
+- lw-056：听录音，选出你听到的单词。（录音：ruler） 选项：eraser / ruler / book / room 答案：**ruler**
+  - 解析：录音读的是 ruler，意思是“尺子”。注意和 eraser、book、room 区分。　来源：Unit 2 · 单词听辨
+- lw-057：听录音，选出你听到的单词。（录音：eraser） 选项：ruler / eight / eraser / pencil box 答案：**eraser**
+  - 解析：录音读的是 eraser，意思是“橡皮”。注意和 ruler、eight、pencil box 区分。　来源：Unit 2 · 单词听辨
+- lw-058：听录音，选出你听到的单词。（录音：bag） 选项：dad / black / bag / ruler 答案：**bag**
+  - 解析：录音读的是 bag，意思是“书包”。注意和 dad、black、ruler 区分。　来源：Unit 2 · 单词听辨
+- lw-059：听录音，选出你听到的单词。（录音：pencil box） 选项：pencil box / pencil / ruler / pen 答案：**pencil box**
+  - 解析：录音读的是 pencil box，意思是“铅笔盒”。注意和 pencil、ruler、pen 区分。　来源：Unit 2 · 单词听辨
+- lw-060：听录音，选出你听到的单词。（录音：pen） 选项：ten / pen / pencil box / bed 答案：**pen**
+  - 解析：录音读的是 pen，意思是“钢笔”。注意和 ten、pencil box、bed 区分。　来源：Unit 2 · 单词听辨
+- lw-061：听录音，选出相应的图片。（录音：red） 图片：brown / green / yellow / red 答案：**red**
+  - 解析：录音读的是 red，意思是“红色”。　来源：Unit 3 · 单词听辨
+- lw-062：听录音，选出相应的图片。（录音：yellow） 图片：yellow / green / blue / red 答案：**yellow**
+  - 解析：录音读的是 yellow，意思是“黄色”。　来源：Unit 3 · 单词听辨
+- lw-063：听录音，选出相应的图片。（录音：green） 图片：green / black / yellow / white 答案：**green**
+  - 解析：录音读的是 green，意思是“绿色”。　来源：Unit 3 · 单词听辨
+- lw-064：听录音，选出相应的图片。（录音：blue） 图片：green / blue / brown / red 答案：**blue**
+  - 解析：录音读的是 blue，意思是“蓝色”。　来源：Unit 3 · 单词听辨
+- lw-065：听录音，选出相应的图片。（录音：black） 图片：green / orange / black / red 答案：**black**
+  - 解析：录音读的是 black，意思是“黑色”。　来源：Unit 3 · 单词听辨
+- lw-066：听录音，选出相应的图片。（录音：white） 图片：green / red / white / brown 答案：**white**
+  - 解析：录音读的是 white，意思是“白色”。　来源：Unit 3 · 单词听辨
+- lw-067：听录音，选出相应的图片。（录音：orange） 图片：green / blue / orange / black 答案：**orange**
+  - 解析：录音读的是 orange，意思是“橙色”。　来源：Unit 3 · 单词听辨
+- lw-068：听录音，选出相应的图片。（录音：brown） 图片：red / yellow / green / brown 答案：**brown**
+  - 解析：录音读的是 brown，意思是“棕色”。　来源：Unit 3 · 单词听辨
+- lw-069：听录音，选出相应的图片。（录音：red） 图片：red / orange / brown / blue 答案：**red**
+  - 解析：录音读的是 red，意思是“红色”。　来源：Unit 3 · 单词听辨
+- lw-070：听录音，选出相应的图片。（录音：yellow） 图片：green / yellow / white / orange 答案：**yellow**
+  - 解析：录音读的是 yellow，意思是“黄色”。　来源：Unit 3 · 单词听辨
+- lw-071：听录音，选出相应的图片。（录音：green） 图片：blue / orange / red / green 答案：**green**
+  - 解析：录音读的是 green，意思是“绿色”。　来源：Unit 3 · 单词听辨
+- lw-072：听录音，选出相应的图片。（录音：blue） 图片：black / white / blue / yellow 答案：**blue**
+  - 解析：录音读的是 blue，意思是“蓝色”。　来源：Unit 3 · 单词听辨
+- lw-073：听录音，选出相应的图片。（录音：black） 图片：black / orange / blue / white 答案：**black**
+  - 解析：录音读的是 black，意思是“黑色”。　来源：Unit 3 · 单词听辨
+- lw-074：听录音，选出相应的图片。（录音：white） 图片：orange / brown / white / yellow 答案：**white**
+  - 解析：录音读的是 white，意思是“白色”。　来源：Unit 3 · 单词听辨
+- lw-075：听录音，选出相应的图片。（录音：orange） 图片：red / green / orange / blue 答案：**orange**
+  - 解析：录音读的是 orange，意思是“橙色”。　来源：Unit 3 · 单词听辨
+- lw-076：听录音，选出你听到的单词。（录音：red） 选项：bed / ruler / red / ten 答案：**red**
+  - 解析：录音读的是 red，意思是“红色”。注意和 bed、ruler、ten 区分。　来源：Unit 3 · 单词听辨
+- lw-077：听录音，选出你听到的单词。（录音：yellow） 选项：window / yellow / hello / orange 答案：**yellow**
+  - 解析：录音读的是 yellow，意思是“黄色”。注意和 window、hello、orange 区分。　来源：Unit 3 · 单词听辨
+- lw-078：听录音，选出你听到的单词。（录音：green） 选项：grandpa / three / grandma / green 答案：**green**
+  - 解析：录音读的是 green，意思是“绿色”。注意和 grandpa、three、grandma 区分。　来源：Unit 3 · 单词听辨
+- lw-079：听录音，选出你听到的单词。（录音：blue） 选项：brown / two / blue / black 答案：**blue**
+  - 解析：录音读的是 blue，意思是“蓝色”。注意和 brown、two、black 区分。　来源：Unit 3 · 单词听辨
+- lw-080：听录音，选出你听到的单词。（录音：black） 选项：bag / blue / black / brown 答案：**black**
+  - 解析：录音读的是 black，意思是“黑色”。注意和 bag、blue、brown 区分。　来源：Unit 3 · 单词听辨
+- lw-081：听录音，选出你听到的单词。（录音：white） 选项：five / nine / white / window 答案：**white**
+  - 解析：录音读的是 white，意思是“白色”。注意和 five、nine、window 区分。　来源：Unit 3 · 单词听辨
+- lw-082：听录音，选出你听到的单词。（录音：orange） 选项：door / one / yellow / orange 答案：**orange**
+  - 解析：录音读的是 orange，意思是“橙色”。注意和 door、one、yellow 区分。　来源：Unit 3 · 单词听辨
+- lw-083：听录音，选出你听到的单词。（录音：brown） 选项：black / brown / blue / brother 答案：**brown**
+  - 解析：录音读的是 brown，意思是“棕色”。注意和 black、blue、brother 区分。　来源：Unit 3 · 单词听辨
+- lw-084：听录音，选出你听到的单词。（录音：red） 选项：ten / black / ruler / red 答案：**red**
+  - 解析：录音读的是 red，意思是“红色”。注意和 ten、black、ruler 区分。　来源：Unit 3 · 单词听辨
+- lw-085：听录音，选出你听到的单词。（录音：yellow） 选项：yellow / red / hello / orange 答案：**yellow**
+  - 解析：录音读的是 yellow，意思是“黄色”。注意和 red、hello、orange 区分。　来源：Unit 3 · 单词听辨
+- lw-086：听录音，选出你听到的单词。（录音：green） 选项：grandpa / orange / green / three 答案：**green**
+  - 解析：录音读的是 green，意思是“绿色”。注意和 grandpa、orange、three 区分。　来源：Unit 3 · 单词听辨
+- lw-087：听录音，选出你听到的单词。（录音：blue） 选项：orange / black / blue / brown 答案：**blue**
+  - 解析：录音读的是 blue，意思是“蓝色”。注意和 orange、black、brown 区分。　来源：Unit 3 · 单词听辨
+- lw-088：听录音，选出你听到的单词。（录音：black） 选项：blue / black / bag / red 答案：**black**
+  - 解析：录音读的是 black，意思是“黑色”。注意和 blue、bag、red 区分。　来源：Unit 3 · 单词听辨
+- lw-089：听录音，选出你听到的单词。（录音：white） 选项：blue / nine / white / window 答案：**white**
+  - 解析：录音读的是 white，意思是“白色”。注意和 blue、nine、window 区分。　来源：Unit 3 · 单词听辨
+- lw-090：听录音，选出你听到的单词。（录音：orange） 选项：yellow / orange / door / brown 答案：**orange**
+  - 解析：录音读的是 orange，意思是“橙色”。注意和 yellow、door、brown 区分。　来源：Unit 3 · 单词听辨
+- lw-091：听录音，选出相应的图片。（录音：one） 图片：five / seven / one / six 答案：**one**
+  - 解析：录音读的是 one，意思是“一”。　来源：Unit 4 · 单词听辨
+- lw-092：听录音，选出相应的图片。（录音：two） 图片：two / nine / eight / one 答案：**two**
+  - 解析：录音读的是 two，意思是“二”。　来源：Unit 4 · 单词听辨
+- lw-093：听录音，选出相应的图片。（录音：three） 图片：three / five / ten / one 答案：**three**
+  - 解析：录音读的是 three，意思是“三”。　来源：Unit 4 · 单词听辨
+- lw-094：听录音，选出相应的图片。（录音：four） 图片：three / six / four / one 答案：**four**
+  - 解析：录音读的是 four，意思是“四”。　来源：Unit 4 · 单词听辨
+- lw-095：听录音，选出相应的图片。（录音：five） 图片：five / seven / two / six 答案：**five**
+  - 解析：录音读的是 five，意思是“五”。　来源：Unit 4 · 单词听辨
+- lw-096：听录音，选出相应的图片。（录音：six） 图片：ten / six / five / four 答案：**six**
+  - 解析：录音读的是 six，意思是“六”。　来源：Unit 4 · 单词听辨
+- lw-097：听录音，选出相应的图片。（录音：seven） 图片：four / three / ten / seven 答案：**seven**
+  - 解析：录音读的是 seven，意思是“七”。　来源：Unit 4 · 单词听辨
+- lw-098：听录音，选出相应的图片。（录音：eight） 图片：eight / nine / five / one 答案：**eight**
+  - 解析：录音读的是 eight，意思是“八”。　来源：Unit 4 · 单词听辨
+- lw-099：听录音，选出相应的图片。（录音：nine） 图片：ten / four / one / nine 答案：**nine**
+  - 解析：录音读的是 nine，意思是“九”。　来源：Unit 4 · 单词听辨
+- lw-100：听录音，选出相应的图片。（录音：ten） 图片：five / six / ten / three 答案：**ten**
+  - 解析：录音读的是 ten，意思是“十”。　来源：Unit 4 · 单词听辨
+- lw-101：听录音，选出相应的图片。（录音：one） 图片：five / nine / one / ten 答案：**one**
+  - 解析：录音读的是 one，意思是“一”。　来源：Unit 4 · 单词听辨
+- lw-102：听录音，选出相应的图片。（录音：two） 图片：two / nine / one / seven 答案：**two**
+  - 解析：录音读的是 two，意思是“二”。　来源：Unit 4 · 单词听辨
+- lw-103：听录音，选出相应的图片。（录音：three） 图片：eight / three / four / ten 答案：**three**
+  - 解析：录音读的是 three，意思是“三”。　来源：Unit 4 · 单词听辨
+- lw-104：听录音，选出相应的图片。（录音：four） 图片：three / four / seven / one 答案：**four**
+  - 解析：录音读的是 four，意思是“四”。　来源：Unit 4 · 单词听辨
+- lw-105：听录音，选出相应的图片。（录音：five） 图片：five / seven / four / one 答案：**five**
+  - 解析：录音读的是 five，意思是“五”。　来源：Unit 4 · 单词听辨
+- lw-106：听录音，选出你听到的单词。（录音：one） 选项：home / one / orange / nine 答案：**one**
+  - 解析：录音读的是 one，意思是“一”。注意和 home、orange、nine 区分。　来源：Unit 4 · 单词听辨
+- lw-107：听录音，选出你听到的单词。（录音：two） 选项：ten / blue / two / door 答案：**two**
+  - 解析：录音读的是 two，意思是“二”。注意和 ten、blue、door 区分。　来源：Unit 4 · 单词听辨
+- lw-108：听录音，选出你听到的单词。（录音：three） 选项：she / three / he / green 答案：**three**
+  - 解析：录音读的是 three，意思是“三”。注意和 she、he、green 区分。　来源：Unit 4 · 单词听辨
+- lw-109：听录音，选出你听到的单词。（录音：four） 选项：four / friend / five / door 答案：**four**
+  - 解析：录音读的是 four，意思是“四”。注意和 friend、five、door 区分。　来源：Unit 4 · 单词听辨
+- lw-110：听录音，选出你听到的单词。（录音：five） 选项：four / white / five / nine 答案：**five**
+  - 解析：录音读的是 five，意思是“五”。注意和 four、white、nine 区分。　来源：Unit 4 · 单词听辨
+- lw-111：听录音，选出你听到的单词。（录音：six） 选项：seven / sister / she / six 答案：**six**
+  - 解析：录音读的是 six，意思是“六”。注意和 seven、sister、she 区分。　来源：Unit 4 · 单词听辨
+- lw-112：听录音，选出你听到的单词。（录音：seven） 选项：pencil / seven / ten / six 答案：**seven**
+  - 解析：录音读的是 seven，意思是“七”。注意和 pencil、ten、six 区分。　来源：Unit 4 · 单词听辨
+- lw-113：听录音，选出你听到的单词。（录音：eight） 选项：eight / eraser / seven / nine 答案：**eight**
+  - 解析：录音读的是 eight，意思是“八”。注意和 eraser、seven、nine 区分。　来源：Unit 4 · 单词听辨
+- lw-114：听录音，选出你听到的单词。（录音：nine） 选项：nine / ten / five / one 答案：**nine**
+  - 解析：录音读的是 nine，意思是“九”。注意和 ten、five、one 区分。　来源：Unit 4 · 单词听辨
+- lw-115：听录音，选出你听到的单词。（录音：ten） 选项：ten / two / red / pen 答案：**ten**
+  - 解析：录音读的是 ten，意思是“十”。注意和 two、red、pen 区分。　来源：Unit 4 · 单词听辨
+- lw-116：听录音，选出你听到的单词。（录音：one） 选项：one / three / nine / orange 答案：**one**
+  - 解析：录音读的是 one，意思是“一”。注意和 three、nine、orange 区分。　来源：Unit 4 · 单词听辨
+- lw-117：听录音，选出你听到的单词。（录音：two） 选项：blue / door / two / nine 答案：**two**
+  - 解析：录音读的是 two，意思是“二”。注意和 blue、door、nine 区分。　来源：Unit 4 · 单词听辨
+- lw-118：听录音，选出你听到的单词。（录音：three） 选项：she / ten / green / three 答案：**three**
+  - 解析：录音读的是 three，意思是“三”。注意和 she、ten、green 区分。　来源：Unit 4 · 单词听辨
+- lw-119：听录音，选出你听到的单词。（录音：four） 选项：four / door / five / one 答案：**four**
+  - 解析：录音读的是 four，意思是“四”。注意和 door、five、one 区分。　来源：Unit 4 · 单词听辨
+- lw-120：听录音，选出你听到的单词。（录音：five） 选项：three / white / nine / five 答案：**five**
+  - 解析：录音读的是 five，意思是“五”。注意和 three、white、nine 区分。　来源：Unit 4 · 单词听辨
+- lw-121：听录音，选出相应的图片。（录音：mum） 图片：grandpa / grandma / mum / brother 答案：**mum**
+  - 解析：录音读的是 mum，意思是“妈妈”。　来源：Unit 5 · 单词听辨
+- lw-122：听录音，选出相应的图片。（录音：dad） 图片：dad / sister / grandma / brother 答案：**dad**
+  - 解析：录音读的是 dad，意思是“爸爸”。　来源：Unit 5 · 单词听辨
+- lw-123：听录音，选出相应的图片。（录音：grandma） 图片：grandma / mum / dad / family 答案：**grandma**
+  - 解析：录音读的是 grandma，意思是“奶奶；外婆”。　来源：Unit 5 · 单词听辨
+- lw-124：听录音，选出相应的图片。（录音：grandpa） 图片：mum / sister / brother / grandpa 答案：**grandpa**
+  - 解析：录音读的是 grandpa，意思是“爷爷；外公”。　来源：Unit 5 · 单词听辨
+- lw-125：听录音，选出相应的图片。（录音：sister） 图片：mum / dad / sister / grandpa 答案：**sister**
+  - 解析：录音读的是 sister，意思是“姐姐；妹妹”。　来源：Unit 5 · 单词听辨
+- lw-126：听录音，选出相应的图片。（录音：brother） 图片：sister / grandpa / mum / brother 答案：**brother**
+  - 解析：录音读的是 brother，意思是“哥哥；弟弟”。　来源：Unit 5 · 单词听辨
+- lw-127：听录音，选出相应的图片。（录音：family） 图片：sister / mum / dad / family 答案：**family**
+  - 解析：录音读的是 family，意思是“家庭；家人”。　来源：Unit 5 · 单词听辨
+- lw-128：听录音，选出相应的图片。（录音：mum） 图片：grandma / grandpa / sister / mum 答案：**mum**
+  - 解析：录音读的是 mum，意思是“妈妈”。　来源：Unit 5 · 单词听辨
+- lw-129：听录音，选出相应的图片。（录音：dad） 图片：brother / dad / grandpa / grandma 答案：**dad**
+  - 解析：录音读的是 dad，意思是“爸爸”。　来源：Unit 5 · 单词听辨
+- lw-130：听录音，选出相应的图片。（录音：grandma） 图片：grandma / family / brother / mum 答案：**grandma**
+  - 解析：录音读的是 grandma，意思是“奶奶；外婆”。　来源：Unit 5 · 单词听辨
+- lw-131：听录音，选出相应的图片。（录音：grandpa） 图片：sister / grandpa / dad / grandma 答案：**grandpa**
+  - 解析：录音读的是 grandpa，意思是“爷爷；外公”。　来源：Unit 5 · 单词听辨
+- lw-132：听录音，选出相应的图片。（录音：sister） 图片：mum / grandpa / grandma / sister 答案：**sister**
+  - 解析：录音读的是 sister，意思是“姐姐；妹妹”。　来源：Unit 5 · 单词听辨
+- lw-133：听录音，选出相应的图片。（录音：brother） 图片：mum / grandpa / brother / family 答案：**brother**
+  - 解析：录音读的是 brother，意思是“哥哥；弟弟”。　来源：Unit 5 · 单词听辨
+- lw-134：听录音，选出相应的图片。（录音：family） 图片：grandpa / grandma / dad / family 答案：**family**
+  - 解析：录音读的是 family，意思是“家庭；家人”。　来源：Unit 5 · 单词听辨
+- lw-135：听录音，选出相应的图片。（录音：mum） 图片：family / sister / mum / grandpa 答案：**mum**
+  - 解析：录音读的是 mum，意思是“妈妈”。　来源：Unit 5 · 单词听辨
+- lw-136：听录音，选出你听到的单词。（录音：mum） 选项：dad / mum / room / one 答案：**mum**
+  - 解析：录音读的是 mum，意思是“妈妈”。注意和 dad、room、one 区分。　来源：Unit 5 · 单词听辨
+- lw-137：听录音，选出你听到的单词。（录音：dad） 选项：bag / dad / desk / mum 答案：**dad**
+  - 解析：录音读的是 dad，意思是“爸爸”。注意和 bag、desk、mum 区分。　来源：Unit 5 · 单词听辨
+- lw-138：听录音，选出你听到的单词。（录音：grandma） 选项：green / grandpa / mum / grandma 答案：**grandma**
+  - 解析：录音读的是 grandma，意思是“奶奶；外婆”。注意和 green、grandpa、mum 区分。　来源：Unit 5 · 单词听辨
+- lw-139：听录音，选出你听到的单词。（录音：grandpa） 选项：grandpa / grandma / dad / green 答案：**grandpa**
+  - 解析：录音读的是 grandpa，意思是“爷爷；外公”。注意和 grandma、dad、green 区分。　来源：Unit 5 · 单词听辨
+- lw-140：听录音，选出你听到的单词。（录音：sister） 选项：six / sister / brother / seven 答案：**sister**
+  - 解析：录音读的是 sister，意思是“姐姐；妹妹”。注意和 six、brother、seven 区分。　来源：Unit 5 · 单词听辨
+- lw-141：听录音，选出你听到的单词。（录音：brother） 选项：mum / brother / brown / sister 答案：**brother**
+  - 解析：录音读的是 brother，意思是“哥哥；弟弟”。注意和 mum、brown、sister 区分。　来源：Unit 5 · 单词听辨
+- lw-142：听录音，选出你听到的单词。（录音：family） 选项：family / friend / home / five 答案：**family**
+  - 解析：录音读的是 family，意思是“家庭；家人”。注意和 friend、home、five 区分。　来源：Unit 5 · 单词听辨
+- lw-143：听录音，选出你听到的单词。（录音：mum） 选项：dad / mum / grandma / room 答案：**mum**
+  - 解析：录音读的是 mum，意思是“妈妈”。注意和 dad、grandma、room 区分。　来源：Unit 5 · 单词听辨
+- lw-144：听录音，选出你听到的单词。（录音：dad） 选项：dad / brother / mum / desk 答案：**dad**
+  - 解析：录音读的是 dad，意思是“爸爸”。注意和 brother、mum、desk 区分。　来源：Unit 5 · 单词听辨
+- lw-145：听录音，选出你听到的单词。（录音：grandma） 选项：brother / mum / green / grandma 答案：**grandma**
+  - 解析：录音读的是 grandma，意思是“奶奶；外婆”。注意和 brother、mum、green 区分。　来源：Unit 5 · 单词听辨
+- lw-146：听录音，选出你听到的单词。（录音：grandpa） 选项：grandma / dad / grandpa / brother 答案：**grandpa**
+  - 解析：录音读的是 grandpa，意思是“爷爷；外公”。注意和 grandma、dad、brother 区分。　来源：Unit 5 · 单词听辨
+- lw-147：听录音，选出你听到的单词。（录音：sister） 选项：seven / brother / sister / family 答案：**sister**
+  - 解析：录音读的是 sister，意思是“姐姐；妹妹”。注意和 seven、brother、family 区分。　来源：Unit 5 · 单词听辨
+- lw-148：听录音，选出你听到的单词。（录音：brother） 选项：sister / mum / brother / grandma 答案：**brother**
+  - 解析：录音读的是 brother，意思是“哥哥；弟弟”。注意和 sister、mum、grandma 区分。　来源：Unit 5 · 单词听辨
+- lw-149：听录音，选出你听到的单词。（录音：family） 选项：grandma / family / home / five 答案：**family**
+  - 解析：录音读的是 family，意思是“家庭；家人”。注意和 grandma、home、five 区分。　来源：Unit 5 · 单词听辨
+- lw-150：听录音，选出你听到的单词。（录音：mum） 选项：sister / one / dad / mum 答案：**mum**
+  - 解析：录音读的是 mum，意思是“妈妈”。注意和 sister、one、dad 区分。　来源：Unit 5 · 单词听辨
+- lw-151：听录音，选出相应的图片。（录音：home） 图片：chair / window / room / home 答案：**home**
+  - 解析：录音读的是 home，意思是“家”。　来源：Unit 6 · 单词听辨
+- lw-152：听录音，选出相应的图片。（录音：room） 图片：room / bed / home / door 答案：**room**
+  - 解析：录音读的是 room，意思是“房间”。　来源：Unit 6 · 单词听辨
+- lw-153：听录音，选出相应的图片。（录音：desk） 图片：room / window / desk / bed 答案：**desk**
+  - 解析：录音读的是 desk，意思是“书桌”。　来源：Unit 6 · 单词听辨
+- lw-154：听录音，选出相应的图片。（录音：chair） 图片：chair / door / window / room 答案：**chair**
+  - 解析：录音读的是 chair，意思是“椅子”。　来源：Unit 6 · 单词听辨
+- lw-155：听录音，选出相应的图片。（录音：bed） 图片：door / bed / home / desk 答案：**bed**
+  - 解析：录音读的是 bed，意思是“床”。　来源：Unit 6 · 单词听辨
+- lw-156：听录音，选出相应的图片。（录音：door） 图片：home / chair / room / door 答案：**door**
+  - 解析：录音读的是 door，意思是“门”。　来源：Unit 6 · 单词听辨
+- lw-157：听录音，选出相应的图片。（录音：window） 图片：chair / home / room / window 答案：**window**
+  - 解析：录音读的是 window，意思是“窗户”。　来源：Unit 6 · 单词听辨
+- lw-158：听录音，选出相应的图片。（录音：home） 图片：home / desk / room / bed 答案：**home**
+  - 解析：录音读的是 home，意思是“家”。　来源：Unit 6 · 单词听辨
+- lw-159：听录音，选出相应的图片。（录音：room） 图片：window / room / desk / door 答案：**room**
+  - 解析：录音读的是 room，意思是“房间”。　来源：Unit 6 · 单词听辨
+- lw-160：听录音，选出相应的图片。（录音：desk） 图片：desk / home / window / door 答案：**desk**
+  - 解析：录音读的是 desk，意思是“书桌”。　来源：Unit 6 · 单词听辨
+- lw-161：听录音，选出相应的图片。（录音：chair） 图片：chair / door / window / desk 答案：**chair**
+  - 解析：录音读的是 chair，意思是“椅子”。　来源：Unit 6 · 单词听辨
+- lw-162：听录音，选出相应的图片。（录音：bed） 图片：window / chair / bed / room 答案：**bed**
+  - 解析：录音读的是 bed，意思是“床”。　来源：Unit 6 · 单词听辨
+- lw-163：听录音，选出相应的图片。（录音：door） 图片：window / room / door / desk 答案：**door**
+  - 解析：录音读的是 door，意思是“门”。　来源：Unit 6 · 单词听辨
+- lw-164：听录音，选出相应的图片。（录音：window） 图片：bed / desk / room / window 答案：**window**
+  - 解析：录音读的是 window，意思是“窗户”。　来源：Unit 6 · 单词听辨
+- lw-165：听录音，选出相应的图片。（录音：home） 图片：window / room / home / door 答案：**home**
+  - 解析：录音读的是 home，意思是“家”。　来源：Unit 6 · 单词听辨
+- lw-166：听录音，选出你听到的单词。（录音：home） 选项：door / one / home / room 答案：**home**
+  - 解析：录音读的是 home，意思是“家”。注意和 door、one、room 区分。　来源：Unit 6 · 单词听辨
+- lw-167：听录音，选出你听到的单词。（录音：room） 选项：red / ruler / room / home 答案：**room**
+  - 解析：录音读的是 room，意思是“房间”。注意和 red、ruler、home 区分。　来源：Unit 6 · 单词听辨
+- lw-168：听录音，选出你听到的单词。（录音：desk） 选项：desk / bed / dad / ten 答案：**desk**
+  - 解析：录音读的是 desk，意思是“书桌”。注意和 bed、dad、ten 区分。　来源：Unit 6 · 单词听辨
+- lw-169：听录音，选出你听到的单词。（录音：chair） 选项：bed / desk / she / chair 答案：**chair**
+  - 解析：录音读的是 chair，意思是“椅子”。注意和 bed、desk、she 区分。　来源：Unit 6 · 单词听辨
+- lw-170：听录音，选出你听到的单词。（录音：bed） 选项：red / bed / pen / desk 答案：**bed**
+  - 解析：录音读的是 bed，意思是“床”。注意和 red、pen、desk 区分。　来源：Unit 6 · 单词听辨
+- lw-171：听录音，选出你听到的单词。（录音：door） 选项：window / four / door / orange 答案：**door**
+  - 解析：录音读的是 door，意思是“门”。注意和 window、four、orange 区分。　来源：Unit 6 · 单词听辨
+- lw-172：听录音，选出你听到的单词。（录音：window） 选项：window / door / yellow / white 答案：**window**
+  - 解析：录音读的是 window，意思是“窗户”。注意和 door、yellow、white 区分。　来源：Unit 6 · 单词听辨
+- lw-173：听录音，选出你听到的单词。（录音：home） 选项：home / one / door / desk 答案：**home**
+  - 解析：录音读的是 home，意思是“家”。注意和 one、door、desk 区分。　来源：Unit 6 · 单词听辨
+- lw-174：听录音，选出你听到的单词。（录音：room） 选项：window / room / home / red 答案：**room**
+  - 解析：录音读的是 room，意思是“房间”。注意和 window、home、red 区分。　来源：Unit 6 · 单词听辨
+- lw-175：听录音，选出你听到的单词。（录音：desk） 选项：desk / dad / door / ten 答案：**desk**
+  - 解析：录音读的是 desk，意思是“书桌”。注意和 dad、door、ten 区分。　来源：Unit 6 · 单词听辨
+- lw-176：听录音，选出你听到的单词。（录音：chair） 选项：bed / she / chair / window 答案：**chair**
+  - 解析：录音读的是 chair，意思是“椅子”。注意和 bed、she、window 区分。　来源：Unit 6 · 单词听辨
+- lw-177：听录音，选出你听到的单词。（录音：bed） 选项：desk / room / red / bed 答案：**bed**
+  - 解析：录音读的是 bed，意思是“床”。注意和 desk、room、red 区分。　来源：Unit 6 · 单词听辨
+- lw-178：听录音，选出你听到的单词。（录音：door） 选项：bed / door / orange / window 答案：**door**
+  - 解析：录音读的是 door，意思是“门”。注意和 bed、orange、window 区分。　来源：Unit 6 · 单词听辨
+- lw-179：听录音，选出你听到的单词。（录音：window） 选项：chair / yellow / door / window 答案：**window**
+  - 解析：录音读的是 window，意思是“窗户”。注意和 chair、yellow、door 区分。　来源：Unit 6 · 单词听辨
+- lw-180：听录音，选出你听到的单词。（录音：home） 选项：bed / home / one / door 答案：**home**
+  - 解析：录音读的是 home，意思是“家”。注意和 bed、one、door 区分。　来源：Unit 6 · 单词听辨
