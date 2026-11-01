@@ -124,16 +124,29 @@ def test_answers_score_in_order_and_room_ends(alice, bob, site, db):
     assert answer(bob, code, 3, True, db, site).status_code == 409
 
 
-def test_deadline_ends_the_room_and_ties_share_the_bonus(alice, bob, site, db):
+def test_deadline_ends_the_room_after_a_grace_period(alice, bob, site, db):
+    code = started(alice, bob, site, db)
+    answer(alice, code, 0, True, db, site)
+    answer(bob, code, 0, True, db, site)
+    db.execute("UPDATE rooms SET deadline=? WHERE site=? AND code=?", (int(time.time()) - 1, site, code))
+    db.commit()
+    assert bob.get(f"/api/rooms/{code}").get_json()["status"] == "running", "still open for late answers"
+    assert answer(alice, code, 1, True, db, site).status_code == 200, "an answer sent in time may arrive late"
+    db.execute("UPDATE rooms SET deadline=? WHERE site=? AND code=?", (int(time.time()) - 10, site, code))
+    db.commit()
+    assert answer(alice, code, 2, True, db, site).status_code == 409, "too late"
+    st = alice.get(f"/api/rooms/{code}").get_json()
+    assert st["status"] == "ended" and [(p["id"], p["bonus"]) for p in st["players"]] == [(1, 20), (2, 0)]
+
+
+def test_tied_winners_share_the_bonus(alice, bob, site, db):
     code = started(alice, bob, site, db)
     answer(alice, code, 0, True, db, site)
     answer(bob, code, 0, True, db, site)
     db.execute("UPDATE rooms SET deadline=? WHERE site=? AND code=?", (int(time.time()) - 10, site, code))
     db.commit()
-    assert answer(alice, code, 1, True, db, site).status_code == 409, "too late"
     st = alice.get(f"/api/rooms/{code}").get_json()
-    assert st["status"] == "ended" and [p["bonus"] for p in st["players"]] == [20, 20]
-    assert [p["rank"] for p in st["players"]] == [1, 1]
+    assert [(p["rank"], p["bonus"]) for p in st["players"]] == [(1, 20), (1, 20)]
 
 
 def test_class_lobby_lists_classmates_rooms(alice, bob, site, db):

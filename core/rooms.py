@@ -89,7 +89,8 @@ def settle(code, now):
     if room and room["status"] == "running":
         total = len(json.loads(room["question_ids"]))
         rows = players(code)
-        if now >= room["deadline"] or all(r["answered"] >= total for r in rows):
+        # Answers sent in the last second may arrive up to GRACE seconds late, so the room stays open that long.
+        if now >= room["deadline"] + GRACE or all(r["answered"] >= total for r in rows):
             d = begin()
             room = room_row(code)
             if room["status"] == "running":
