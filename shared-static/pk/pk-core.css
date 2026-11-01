@@ -270,3 +270,48 @@ mark { background: #ffe797; color: inherit; border-bottom: 3px solid #da9c16; pa
 .pk-contact .pk-actions { margin-top: 1rem; }
 .pk-home-button { display: inline-flex; align-items: center; justify-content: center; min-height: 2.75rem; text-decoration: none; }
 .pk-result-actions .pk-home-button { min-width: 10rem; }
+
+/* ---------- online PK rooms ---------- */
+.pk-modes.four { grid-template-columns: repeat(4, 1fr); }
+@media (max-width: 480px) { .pk-modes.four { grid-template-columns: repeat(2, 1fr); } }
+.pk-av { --av: 2.5rem; width: var(--av); height: var(--av); border-radius: 50%; flex-shrink: 0; display: inline-grid; place-items: center; overflow: hidden; font-weight: 700; font-size: calc(var(--av) * 0.42); line-height: 1; color: #fff; background: #8ba182; }
+.pk-av img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pk-av.c0 { background: #7c9a6d; } .pk-av.c1 { background: #c39a4b; } .pk-av.c2 { background: #6c8fa7; } .pk-av.c3 { background: #b47e66; } .pk-av.c4 { background: #8d7fb0; } .pk-av.c5 { background: #5f9c94; }
+.pk-online { text-align: left; }
+.pk-online-or { text-align: center; color: var(--muted); font-size: 0.875rem; margin: 1rem 0 0.5rem; }
+.pk-online-join { display: flex; gap: 0.5rem; }
+.pk-online-join input { flex: 1; min-width: 0; font-size: 1.125rem; letter-spacing: 0.2em; text-align: center; padding: 0.625rem 0.75rem; border: 1px solid var(--line); border-radius: 12px; background: #fff; min-height: 2.75rem; }
+.pk-online-join button, .pk-online-room button { border-radius: 12px; padding: 0.625rem 1.125rem; min-height: 2.75rem; border: 1px solid var(--line); background: var(--card); color: var(--green-dark); font-weight: 650; white-space: nowrap; }
+.pk-online-room button { background: var(--green); border-color: var(--green); color: #fff; }
+.pk-online-class h3 { font-size: 0.9375rem; margin: 1.25rem 0 0.5rem; color: var(--muted); font-weight: 600; }
+.pk-online-room { display: flex; align-items: center; gap: 0.75rem; padding: 0.625rem 0.75rem; border: 1px solid var(--line); border-radius: 14px; margin-top: 0.5rem; background: #fbfcf7; }
+.pk-online-who { flex: 1; min-width: 0; display: flex; flex-direction: column; text-align: left; }
+.pk-online-who strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pk-online-who small { color: var(--muted); font-size: 0.8125rem; }
+.pk-lobby-label { color: var(--muted); margin: 0; font-size: 0.9375rem; }
+.pk-lobby-code { font: 800 clamp(2.75rem, 2rem + 4vw, 4.5rem)/1.15 ui-monospace, SFMono-Regular, Consolas, monospace; letter-spacing: 0.18em; color: var(--green-dark); margin: 0.25rem 0 0.75rem; padding-left: 0.18em; }
+.pk-lobby .secondary { border-radius: 12px; padding: 0.625rem 1.25rem; min-height: 2.75rem; border: 1px solid var(--line); background: var(--card); color: var(--green-dark); font-weight: 650; }
+.pk-lobby-count { font-size: 1.125rem; margin: 1.5rem 0 0.75rem; }
+.pk-lobby-players { list-style: none; padding: 0; margin: 0 0 1.25rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr)); gap: 0.625rem; }
+.pk-lobby-players li { display: flex; flex-direction: column; align-items: center; gap: 0.375rem; padding: 0.75rem 0.5rem; border-radius: 14px; background: #f1f4e9; font-size: 0.9375rem; overflow-wrap: anywhere; }
+.pk-lobby-players li.me { outline: 2px solid var(--green); }
+.pk-lobby-players .pk-av { --av: 3.25rem; }
+.pk-lobby-status { font-size: 1.125rem; font-weight: 650; color: var(--muted); margin: 0.5rem 0; }
+.pk-lobby-status.go { font-size: 2rem; color: var(--green); }
+.pk-online-bar { max-width: 93.75rem; margin: 0 auto 0.75rem; padding: 0 1.5rem; display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; justify-content: center; }
+.pk-online-chip { display: inline-flex; align-items: center; gap: 0.4375rem; padding: 0.25rem 0.75rem 0.25rem 0.25rem; border-radius: 999px; background: var(--card); border: 1px solid var(--line); font-size: 0.9375rem; max-width: 12rem; }
+.pk-online-chip .pk-av { --av: 1.875rem; }
+.pk-online-chip.me { border-color: var(--green); background: var(--green-soft); }
+.pk-online-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.pk-online-chip strong { color: var(--green-dark); }
+.pk-online-notice { flex-basis: 100%; text-align: center; color: #aa3c46; font-size: 0.875rem; margin: 0; }
+.pk-online-rank { list-style: none; margin: 0 0 1rem; padding: 0; }
+.pk-online-rank li { display: flex; align-items: center; gap: 0.75rem; padding: 0.625rem 0.75rem; border-top: 1px solid var(--line); }
+.pk-online-rank li:first-child { border-top: 0; }
+.pk-online-rank li.me { background: var(--green-soft); border-radius: 14px; }
+.pk-online-rankno { width: 2rem; text-align: center; font-size: 1.25rem; font-weight: 800; color: var(--muted); }
+.pk-online-rank li:nth-child(-n+3) .pk-online-rankno { color: var(--gold); }
+.pk-online-points { font-size: 1.25rem; font-weight: 750; color: var(--green-dark); white-space: nowrap; text-align: right; }
+.pk-online-points small { display: block; font-size: 0.75rem; color: #9a7413; font-weight: 600; }
+@media (max-width: 600px) { .pk-online-bar { padding: 0 0.75rem; } .pk-online-chip { max-width: 9rem; font-size: 0.875rem; } }
+button.pk-home { border: 0; background: transparent; padding: 0; }

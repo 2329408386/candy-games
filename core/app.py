@@ -485,9 +485,11 @@ def create_app(site_config):
     register_public(app)
     register_api(app)
     register_admin(app)
-    from .social import register_social  # imports this module, so it is loaded once create_app runs
+    from .social import register_social  # these import this module, so they are loaded once create_app runs
+    from .rooms import register_rooms
 
     register_social(app)
+    register_rooms(app)
     return app
 
 
@@ -539,6 +541,17 @@ def register_public(app):
                 "start": url_for("round_start", game=game),
                 "finish": url_for("round_finish", game=game),
                 "csrf": url_for("csrf_token"),
+            }
+            # Online PK rooms (core/rooms.py); CODE is replaced by the room code in the browser.
+            page["room"] = {
+                "create": url_for("room_create", game=game),
+                "join": url_for("room_join", code="CODE"),
+                "leave": url_for("room_leave", code="CODE"),
+                "state": url_for("room_state", code="CODE"),
+                "start": url_for("room_start", code="CODE"),
+                "answer": url_for("room_answer", code="CODE"),
+                "lobby": url_for("class_rooms", game=game),
+                "me": url_for("me_page"),
             }
         elif trial_open(game):
             # No session guard here: /api/session refuses unlicensed browsers and would send them home mid-round.

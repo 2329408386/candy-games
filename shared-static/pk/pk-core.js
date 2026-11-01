@@ -6,12 +6,14 @@
 // Renderers register with PK.register(type, renderer); see the contract above `register` below.
 // The server injects window.PK_PAGE = {grade, trial, score}: trial is null for licensed browsers, or {start, csrf} URLs when
 // this browser may play one free round of the game (starting the round uses it up). score ({start, finish, csrf} URLs,
-// licensed browsers only) reports each solo round's right/wrong sequence for the class rankings.
+// licensed browsers only) reports each solo round's right/wrong sequence for the class rankings. room (licensed only)
+// holds the online PK room URLs (CODE stands for the room code); see "online PK rooms" below and core/rooms.py.
 (() => {
   'use strict';
   const cfg = JSON.parse(document.getElementById('game-config').textContent);
   const PAGE = window.PK_PAGE || {};
   const TRIAL = PAGE.trial || null;
+  const ROOM = PAGE.room || null;
   const QR = 'static/shared/contact/wechat-qr.0736f95e.jpeg';
   const SUBJECT = { chinese: '语文', math: '数学' }[cfg.site];
   const PER_PLAYER = 20;
@@ -235,7 +237,7 @@
 
   // ---------- round state ----------
   const round = { running: false, ended: false, deadline: 0, timer: 0, mode: 'pk', players: [] };
-  const modeLabel = { pk: '双人PK', solo: '单人练习', mistakes: '错题重练' };
+  const modeLabel = { pk: '双人PK', solo: '单人练习', mistakes: '错题重练', online: '联网PK' };
 
   function drawQuestions(count) {
     const questions = bank.questions;
@@ -304,7 +306,8 @@
   modes.setAttribute('role', 'radiogroup');
   modes.setAttribute('aria-label', '游戏模式');
   const modeButtons = {};
-  for (const mode of ['pk', 'solo', 'mistakes']) {
+  if (ROOM) modes.classList.add('four');
+  for (const mode of ROOM ? ['pk', 'solo', 'mistakes', 'online'] : ['pk', 'solo', 'mistakes']) {
     const b = button(modeLabel[mode], () => selectMode(mode), 'pk-mode');
     b.setAttribute('role', 'radio');
     modeButtons[mode] = b;
@@ -343,7 +346,9 @@
   const loadError = el('p', 'pk-error');
   loadError.setAttribute('role', 'alert');
   if (TRIAL) card.append(el('p', 'pk-trial-note', '免费试玩：可以完整玩一局。点“开始”后，本游戏的试玩机会就用掉了。'));
-  card.append(stats, modes, ...(tipsBox ? [tipsBox] : []), rules, go, loadError);
+  const onlinePanel = el('section', 'pk-online');
+  onlinePanel.hidden = true;
+  card.append(stats, modes, ...(tipsBox ? [tipsBox] : []), rules, go, onlinePanel, loadError);
   startScreen.append(top, card);
 
   function selectMode(mode) {
@@ -357,7 +362,12 @@
       pk: '两位玩家同时作答，各自抽到不同的题目，得分高者获胜。',
       solo: `一个人练习${PER_PLAYER}题，答错的题会记入本机错题本。`,
       mistakes: `从本机错题本中抽题练习（最多${PER_PLAYER}题），答对后自动移出错题本。`,
+      online: `和同学各用自己的设备，同时答同一套${PER_PLAYER}道题，实时比分；2到10人一起玩，第一名额外加20分。`,
     }[mode];
+    go.hidden = mode === 'online';
+    onlinePanel.hidden = mode !== 'online';
+    if (mode === 'online') online.showPanel();
+    else online.hidePanel();
     statPer.textContent = mode === 'mistakes' ? String(Math.min(count, PER_PLAYER)) : String(PER_PLAYER);
     if (bank && !trial.claiming) go.textContent = (mode === 'pk' ? '开始PK' : '开始练习') + (TRIAL ? ' · 试玩' : '');
   }
@@ -370,7 +380,10 @@
   timer.setAttribute('aria-label', '剩余时间');
   header.append(el('h1', '', cfg.title), homeLink(), timer);
   const arena = el('main', 'pk-arena');
-  gameScreen.append(header, arena);
+  const onlineBar = el('div', 'pk-online-bar');
+  onlineBar.hidden = true;
+  onlineBar.setAttribute('aria-label', '实时比分');
+  gameScreen.append(header, onlineBar, arena);
 
   // ---------- settings dialog ----------
   const dialog = el('dialog', 'pk-dialog');
@@ -515,35 +528,49 @@
 
   // ---------- class rankings: a ticket when a solo round starts, the right/wrong sequence when it ends ----------
   const SCORE = PAGE.score || null;
-  let scoreToken = null;
+  let scoreToken = null, csrfValue = '';
+  const csrfToken = () => (scoreToken ||= fetch(SCORE.csrf, { cache: 'no-store', credentials: 'same-origin' }).then(r => r.json())
+    .then(d => (csrfValue = d.csrf)).catch(e => { scoreToken = null; throw e; }));
+  // POSTs JSON (GET when body is undefined). Errors carry .status (0 = network) and the server's message.
   async function scorePost(path, body) {
-    scoreToken ||= fetch(SCORE.csrf, { cache: 'no-store', credentials: 'same-origin' }).then(r => r.json()).then(d => d.csrf);
-    const r = await fetch(path, { method: 'POST', cache: 'no-store', credentials: 'same-origin',
-      headers: { 'X-CSRF-Token': await scoreToken, 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-    const data = await r.json();
-    if (!r.ok) throw Error(data.error);
+    const opts = { cache: 'no-store', credentials: 'same-origin' };
+    if (body !== undefined) {
+      Object.assign(opts, { method: 'POST', headers: { 'X-CSRF-Token': await csrfToken(), 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    }
+    let r;
+    try {
+      r = await fetch(path, opts);
+    } catch {
+      throw Object.assign(Error('网络连接失败，正在重试…'), { status: 0 });
+    }
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok) throw Object.assign(Error(data.error || '请求失败，请稍后重试'), { status: r.status, data });
     return data;
   }
 
   // ---------- the round ----------
-  function startRound() {
+  // preset = {draws, deadline} starts an online round with the room's questions and the server's deadline.
+  function startRound(preset) {
     if (round.running || !bank) return;
-    if (TRIAL && trial.done) return showContact('本游戏的试玩已经结束。');
-    if (TRIAL && !trial.claimed) return void claimTrial();
-    if (round.mode === 'mistakes' && !mistakes.ids().length) selectMode('solo');
-    audio.unlock();
-    let draws;
-    try {
-      draws = drawQuestions(round.mode === 'pk' ? 2 : 1).filter(questions => questions.length);
-    } catch (error) {
-      loadError.textContent = error.message;
-      return;
+    let draws = preset?.draws;
+    if (!preset) {
+      if (TRIAL && trial.done) return showContact('本游戏的试玩已经结束。');
+      if (TRIAL && !trial.claimed) return void claimTrial();
+      if (round.mode === 'online') return;
+      if (round.mode === 'mistakes' && !mistakes.ids().length) selectMode('solo');
+      audio.unlock();
+      try {
+        draws = drawQuestions(round.mode === 'pk' ? 2 : 1).filter(questions => questions.length);
+      } catch (error) {
+        loadError.textContent = error.message;
+        return;
+      }
     }
     if (!draws.length) return;
     duration = validSeconds(duration) ? duration : cfg.defaultSeconds;
     round.running = true;
     round.ended = false;
-    round.deadline = Date.now() + duration * 1000;
+    round.deadline = preset ? preset.deadline : Date.now() + duration * 1000;
     round.players = draws.map(questions => ({ questions, index: 0, score: 0, combo: 0, correct: 0, wrong: [], marks: [], a: null, view: null,
       history: [], result: null, notice: '' }));
     round.ticket = SCORE && round.mode === 'solo' ? scorePost(SCORE.start, {}).then(d => d.round, () => null) : null;
@@ -557,6 +584,7 @@
       const score = el('span', 'pk-score', '0');
       score.id = 'score-' + p;
       head.append(el('h2', '', round.players.length === 1 ? modeLabel[round.mode] : NAMES[p]), score);
+      if (round.mode === 'online') head.firstChild.textContent = `联网PK · 房间 ${online.code}`;
       const body = el('div', 'pk-body');
       body.id = 'body-' + p;
       panel.append(head, body);
@@ -564,8 +592,10 @@
       load(p);
     });
     startScreen.hidden = true;
+    lobbyScreen.hidden = true;
     resultScreen.hidden = true;
     gameScreen.hidden = false;
+    onlineBar.hidden = round.mode !== 'online';
     header.append(tools);
     document.body.classList.add('pk-playing');
     audio.resetCheer();
@@ -655,6 +685,7 @@
     const correct = !!renderer.check(q, answer.value, ctx);
     s.result = { correct, value: answer.value };
     s.marks.push(correct);
+    if (round.mode === 'online') online.report(s.marks.length - 1, correct);
     if (correct) {
       s.combo++;
       s.correct++;
@@ -682,7 +713,8 @@
     $('score-' + p).textContent = s.score;
     body.replaceChildren();
     if (!q) {
-      body.append(el('p', 'pk-waiting', round.players.length > 1 ? `本轮${s.questions.length}题已完成，等待另一位玩家。` : '本轮已完成。'));
+      body.append(el('p', 'pk-waiting', round.mode === 'online' ? `${s.questions.length}题全部答完！等其他同学答完或时间到，就公布名次。`
+        : round.players.length > 1 ? `本轮${s.questions.length}题已完成，等待另一位玩家。` : '本轮已完成。'));
       return;
     }
     const ctx = contextFor(p);
@@ -743,7 +775,8 @@
     resultScreen.replaceChildren();
     const players = round.players;
     let title;
-    if (players.length === 1) title = round.mode === 'mistakes' ? '错题重练完成！' : '练习完成！';
+    if (round.mode === 'online') title = '联网PK结束！';
+    else if (players.length === 1) title = round.mode === 'mistakes' ? '错题重练完成！' : '练习完成！';
     else title = players[0].score === players[1].score ? '平局！' : players[0].score > players[1].score ? '玩家一获胜！' : '玩家二获胜！';
     resultScreen.append(el('h2', '', title));
     const summary = el('div', 'pk-summary');
@@ -754,6 +787,7 @@
       summary.append(box);
     });
     resultScreen.append(summary);
+    if (round.mode === 'online') resultScreen.append(online.resultsBox());
     if (round.report) {
       const line = el('p', 'pk-help pk-rank-note', '正在计入班级排行…');
       line.setAttribute('role', 'status');
@@ -789,6 +823,13 @@
       setTimeout(() => showContact(), 1200);
       return;
     }
+    if (round.mode === 'online') {
+      actions.append(button('再开一个房间', () => online.create(), 'primary'), button('返回开始页', () => online.leave(), 'secondary'));
+      resultScreen.append(actions);
+      resultScreen.hidden = false;
+      resultScreen.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
     actions.append(button('再来一局', () => {
       if (round.mode === 'mistakes' && !mistakes.ids().length) selectMode('solo');
       startRound();
@@ -804,6 +845,376 @@
     resultScreen.hidden = false;
     resultScreen.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
+
+  // ---------- online PK rooms: everybody on their own device, same questions, live scores (core/rooms.py) ----------
+  // The page polls the room every 2 s; answers are graded here and reported one by one, in order.
+  const lobbyScreen = el('section', 'pk-start pk-lobby');
+  lobbyScreen.hidden = true;
+  document.body.insertBefore(lobbyScreen, gameScreen);
+  const online = (() => {
+    const POLL = 2000;
+    const o = { code: '', state: null, offset: 0, timer: 0, fails: 0, queue: Promise.resolve(), lastPost: 0, begun: false, panelTimer: 0 };
+    const roomUrl = kind => ROOM[kind].replace('CODE', o.code);
+    const serverNow = () => Date.now() + o.offset;
+    let index = null;
+    const question = id => (index ||= new Map(bank.questions.map(q => [String(q.id), q]))).get(String(id));
+    function avatar(p, cls = '') {
+      const a = el('span', `pk-av c${p.color} ${cls}`);
+      a.setAttribute('aria-hidden', 'true');
+      if (p.avatar) {
+        const img = el('img');
+        img.src = p.avatar;
+        img.alt = '';
+        a.append(img);
+      } else a.textContent = p.initial;
+      return a;
+    }
+    function setUrl(code) {
+      try {
+        const u = new URL(location.href);
+        if (code) u.searchParams.set('room', code);
+        else u.searchParams.delete('room');
+        history.replaceState(null, '', u);
+      } catch {}
+    }
+
+    // ---- start-screen panel: create, join by code, rooms classmates are waiting in ----
+    const panelError = el('p', 'pk-error');
+    panelError.setAttribute('role', 'alert');
+    const createButton = button('创建房间', () => create(), 'pk-primary');
+    const codeInput = el('input', 'pk-online-code');
+    Object.assign(codeInput, { placeholder: '输入6位房间码', maxLength: 6, inputMode: 'numeric', autocomplete: 'off' });
+    codeInput.setAttribute('aria-label', '房间码');
+    const joinForm = el('form', 'pk-online-join');
+    joinForm.append(codeInput, el('button', 'secondary', '加入房间'));
+    joinForm.onsubmit = e => {
+      e.preventDefault();
+      const code = codeInput.value.trim();
+      if (!/^\d{6}$/.test(code)) return void (panelError.textContent = '房间码是6位数字。');
+      join(code);
+    };
+    const classBox = el('div', 'pk-online-class');
+    onlinePanel.append(createButton, el('p', 'pk-online-or', '或者加入同学的房间'), joinForm, classBox, panelError);
+    async function loadClassRooms() {
+      let data;
+      try {
+        data = await scorePost(ROOM.lobby);
+      } catch {
+        return;
+      }
+      classBox.replaceChildren();
+      if (!data.rooms.length) return;
+      classBox.append(el('h3', '', '班级里正在等人的房间'));
+      for (const r of data.rooms) {
+        const row = el('div', 'pk-online-room');
+        const who = el('span', 'pk-online-who');
+        who.append(el('strong', '', r.host.name + ' 的房间'), el('small', '', `${r.players}/${r.max} 人`));
+        row.append(avatar(r.host), who, button('加入', () => join(r.code), 'primary'));
+        classBox.append(row);
+      }
+    }
+    function showPanel() {
+      panelError.textContent = '';
+      clearInterval(o.panelTimer);
+      if (!bank) return;
+      loadClassRooms();
+      o.panelTimer = setInterval(() => !document.hidden && !startScreen.hidden && loadClassRooms(), 5000);
+    }
+    function hidePanel() {
+      clearInterval(o.panelTimer);
+    }
+
+    // ---- lobby ----
+    function renderLobby() {
+      const st = o.state;
+      lobbyScreen.replaceChildren();
+      const top = el('div', 'pk-top');
+      const back = button('← 离开房间', () => leave(), 'pk-home');
+      top.append(back, tools);
+      const box = el('main', 'pk-card');
+      box.append(el('p', 'pk-eyebrow', `联网PK · ${cfg.title}`));
+      box.append(el('p', 'pk-lobby-label', '房间码'), el('p', 'pk-lobby-code', st.code));
+      const invite = button('复制邀请', async () => {
+        const text = `来和我PK「${cfg.title}」！打开游戏，选「联网PK」，输入房间码 ${st.code}，或者直接打开：${new URL(st.link, location.href).href}`;
+        try {
+          await navigator.clipboard.writeText(text);
+          invite.textContent = '已复制，发给同学吧';
+        } catch {
+          prompt('复制下面的文字发给同学：', text);
+        }
+      }, 'secondary');
+      box.append(invite, el('p', 'pk-help', '同学在这个游戏里选「联网PK」，输入房间码就能加入；同班同学还能直接在列表里点「加入」。'));
+      const grid = el('ul', 'pk-lobby-players');
+      for (const p of st.players) {
+        const li = el('li', p.id === st.me ? 'me' : '');
+        li.append(avatar(p), el('span', '', p.name + (p.host ? ' · 房主' : '')));
+        grid.append(li);
+      }
+      box.append(el('h2', 'pk-lobby-count', `已加入 ${st.players.length}/${st.max} 人`), grid);
+      const status = el('p', 'pk-lobby-status');
+      status.setAttribute('role', 'status');
+      if (st.status === 'running') {
+        const left = Math.max(1, Math.ceil((st.startsAt * 1000 - serverNow()) / 1000));
+        status.textContent = `${left} 秒后开始！`;
+        status.classList.add('go');
+        box.append(status);
+      } else if (st.host === st.me) {
+        const enough = st.players.length >= 2;
+        const start = button(enough ? `开始PK（${st.players.length}人）` : '等同学加入…（至少2人）', () => begin(start), 'pk-primary');
+        start.disabled = !enough;
+        box.append(start, el('p', 'pk-help', `本局 ${st.seconds} 秒；可以在右上角「设置」里改时长，再重新创建房间。`));
+      } else {
+        status.textContent = '等房主开始…';
+        box.append(status);
+      }
+      const error = el('p', 'pk-error', o.notice || '');
+      error.setAttribute('role', 'alert');
+      box.append(error);
+      lobbyScreen.append(top, box);
+    }
+    function showLobby() {
+      startScreen.hidden = true;
+      gameScreen.hidden = true;
+      resultScreen.hidden = true;
+      lobbyScreen.hidden = false;
+      renderLobby();
+    }
+
+    // ---- live scores during the round and the final ranking ----
+    function renderBar() {
+      const st = o.state;
+      onlineBar.replaceChildren();
+      const sorted = [...st.players].sort((a, b) => b.score - a.score);
+      for (const p of sorted) {
+        const chip = el('div', 'pk-online-chip' + (p.id === st.me ? ' me' : ''));
+        const name = el('span', 'pk-online-name', p.name);
+        chip.append(avatar(p), name, el('strong', '', String(p.score)));
+        chip.title = `${p.name}：${p.score} 分，已答 ${p.answered} 题`;
+        onlineBar.append(chip);
+      }
+      if (o.notice) onlineBar.append(el('p', 'pk-online-notice', o.notice));
+    }
+    const resultsHolder = el('div', 'pk-online-results');
+    function renderResults() {
+      const st = o.state;
+      resultsHolder.replaceChildren();
+      if (!st) return;
+      const ended = st.status === 'ended';
+      const mine = st.players.find(p => p.id === st.me);
+      if (ended && mine) {
+        const head = resultScreen.querySelector('h2');
+        if (head) head.textContent = mine.rank === 1 && st.players.length > 1 ? '你是第一名！🏆' : `你是第 ${mine.rank} 名！`;
+      }
+      const list = el('ol', 'pk-online-rank');
+      for (const p of st.players) {
+        const li = el('li', p.id === st.me ? 'me' : '');
+        const who = el('span', 'pk-online-who');
+        who.append(el('strong', '', p.name), el('small', '', `答对 ${p.correct} 题 · 已答 ${p.answered} 题`));
+        const pts = el('span', 'pk-online-points', `${p.score} 分`);
+        if (ended && p.bonus) pts.append(el('small', '', ` +${p.bonus} 冠军奖励`));
+        li.append(el('span', 'pk-online-rankno', ended ? String(p.rank) : '·'), avatar(p), who, pts);
+        list.append(li);
+      }
+      resultsHolder.append(list);
+      resultsHolder.append(el('p', 'pk-help', ended ? '本局得分已计入班级排行（每人每天最多30局联网PK计分）。' : '等其他同学答完或时间到，就公布最终名次…'));
+    }
+    function resultsBox() {
+      renderResults();
+      return resultsHolder;
+    }
+
+    // ---- talking to the server ----
+    // fresh: st just came from the server (its `now` sets the clock offset); timers re-apply the stored state.
+    function apply(st, fresh = true) {
+      const was = o.state;
+      o.state = st;
+      if (fresh) o.offset = st.now * 1000 - Date.now();
+      if (st.status === 'closed' || !st.joined) {
+        stop();
+        const reason = st.status === 'closed' ? '房主已经关闭了这个房间。' : '你已经离开了这个房间（很久没有响应）。';
+        backToStart(reason);
+        return;
+      }
+      if (st.status === 'lobby') return void showLobby();
+      if (st.status === 'running' && !o.begun) {
+        if (serverNow() < st.startsAt * 1000) {
+          showLobby();
+          clearTimeout(o.beginTimer);
+          o.beginTimer = setTimeout(() => o.state && !o.begun && apply(o.state, false), Math.min(1000, st.startsAt * 1000 - serverNow()));
+          return;
+        }
+        return void play(st);
+      }
+      if (st.status === 'running' || st.status === 'ended') {
+        if (!o.begun) return void play(st);
+        renderBar();
+        if (st.status === 'ended') {
+          if (round.running) finish();
+          else renderResults();
+          if (!was || was.status !== 'ended') stop();
+        }
+      }
+    }
+    function play(st) {
+      const questions = st.questions.map(question);
+      if (questions.some(q => !q)) {
+        o.notice = '题库版本不一致，请刷新页面后重新加入。';
+        return void showLobby();
+      }
+      o.begun = true;
+      round.mode = 'online';
+      startRound({ draws: [questions], deadline: st.deadline * 1000 - o.offset });
+      // Answers already sent before a reload count on the server; continue from there.
+      const s = round.players[0];
+      const mine = st.players.find(p => p.id === st.me);
+      if (mine && mine.answered) {
+        s.index = Math.min(mine.answered, questions.length);
+        s.score = mine.score;
+        s.correct = mine.correct;
+        s.marks = Array(mine.answered).fill(true);
+        load(0);
+      }
+      renderBar();
+      if (st.status === 'ended') finish();
+    }
+    function schedule(delay = POLL) {
+      clearTimeout(o.timer);
+      if (o.code) o.timer = setTimeout(poll, delay);
+    }
+    async function poll() {
+      if (!o.code) return;
+      if (document.hidden && !round.running) return schedule(POLL * 2);
+      try {
+        const data = await scorePost(roomUrl('state') + '?v=' + (o.state ? o.state.version : 0));
+        if (o.fails) o.notice = '';
+        o.fails = 0;
+        if (data.same) o.offset = data.now * 1000 - Date.now();
+        else apply(data);
+      } catch (e) {
+        o.fails++;
+        if (e.status === 404 || e.status === 403) {
+          stop();
+          return void backToStart(e.status === 404 ? '这个房间已经不存在了。' : e.message);
+        }
+        o.notice = '网络不稳定，正在重连…';
+        if (!lobbyScreen.hidden) renderLobby();
+        else if (round.running) renderBar();
+      }
+      schedule(o.fails ? Math.min(10000, POLL * 2 ** o.fails) : POLL);
+    }
+    function stop() {
+      clearTimeout(o.timer);
+      clearTimeout(o.beginTimer);
+      o.timer = 0;
+    }
+    async function enter(promise) {
+      panelError.textContent = '';
+      audio.unlock();
+      try {
+        const st = await promise;
+        stop();
+        o.code = st.code;
+        o.state = null;
+        o.begun = false;
+        o.notice = '';
+        o.queue = Promise.resolve();
+        setUrl(st.code);
+        hidePanel();
+        apply(st);
+        schedule();
+      } catch (e) {
+        panelError.textContent = e.message;
+        if (!startScreen.hidden) return;
+        backToStart(e.message);
+      }
+    }
+    function create() {
+      if (!bank) return;
+      duration = validSeconds(duration) ? duration : cfg.defaultSeconds;
+      if (o.code && o.state?.status === 'lobby') scorePost(roomUrl('leave'), {}).catch(() => {});
+      enter(scorePost(ROOM.create, { seconds: duration }));
+    }
+    function join(code) {
+      if (!bank) return;
+      enter(scorePost(ROOM.join.replace('CODE', code), {}));
+    }
+    async function begin(startButton) {
+      startButton.disabled = true;
+      let draws;
+      try {
+        draws = drawQuestions(1);
+      } catch (e) {
+        o.notice = e.message;
+        return void renderLobby();
+      }
+      try {
+        apply(await scorePost(roomUrl('start'), { questions: draws[0].map(q => q.id) }));
+      } catch (e) {
+        o.notice = e.message;
+        renderLobby();
+      }
+    }
+    // Answers go out one at a time, in order and at least a second apart (the server refuses faster ones).
+    function report(i, correct) {
+      o.queue = o.queue.then(async () => {
+        for (let attempt = 0; attempt < 4; attempt++) {
+          const wait = o.lastPost + 1100 - Date.now();
+          if (wait > 0) await new Promise(r => setTimeout(r, wait));
+          o.lastPost = Date.now();
+          try {
+            await scorePost(roomUrl('answer'), { index: i, correct });
+            return;
+          } catch (e) {
+            if (e.status === 409) return; // already counted, or the round is over
+            if (e.status !== 0 && e.status !== 429 && e.status !== 503) return;
+            await new Promise(r => setTimeout(r, 1000 * (attempt + 1)));
+          }
+        }
+      });
+      // Show my new score right away; the next poll brings everybody else's.
+      const mine = o.state?.players.find(p => p.id === o.state.me);
+      if (mine) {
+        mine.score = round.players[0].score;
+        mine.answered = i + 1;
+        renderBar();
+      }
+    }
+    function backToStart(message) {
+      stop();
+      setUrl('');
+      if (round.running) {
+        round.running = false;
+        clearInterval(round.timer);
+        audio.stop();
+        document.body.classList.remove('pk-playing');
+      }
+      o.code = '';
+      o.state = null;
+      o.begun = false;
+      lobbyScreen.hidden = true;
+      gameScreen.hidden = true;
+      resultScreen.hidden = true;
+      onlineBar.hidden = true;
+      startScreen.hidden = false;
+      top.append(tools);
+      selectMode('online');
+      panelError.textContent = message || '';
+      window.scrollTo(0, 0);
+    }
+    function leave() {
+      if (o.code && o.state?.status === 'lobby') scorePost(roomUrl('leave'), {}).catch(() => {});
+      backToStart('');
+    }
+    // Closing the tab while waiting frees the seat (the server also drops players it has not heard from in 45 s).
+    window.addEventListener('pagehide', () => {
+      if (!o.code || o.state?.status !== 'lobby' || !csrfValue || !navigator.sendBeacon) return;
+      const form = new FormData();
+      form.append('csrf', csrfValue);
+      navigator.sendBeacon(roomUrl('leave'), form);
+    });
+    document.addEventListener('visibilitychange', () => !document.hidden && o.code && schedule(0));
+    return { showPanel, hidePanel, create, join, leave, report, resultsBox, get code() { return o.code; } };
+  })();
 
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) audio.stop();
@@ -834,7 +1245,11 @@
     }
     statBank.textContent = bank.total ?? bank.questions.length;
     go.disabled = false;
-    selectMode(location.hash === '#mistakes' && mistakes.ids().length ? 'mistakes' : 'pk');
+    const invited = new URLSearchParams(location.search).get('room');
+    if (ROOM && /^\d{6}$/.test(invited || '')) {
+      selectMode('online');
+      online.join(invited);
+    } else selectMode(location.hash === '#mistakes' && mistakes.ids().length ? 'mistakes' : 'pk');
   }
   updateSettingsLabels();
   selectMode('pk');
