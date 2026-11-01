@@ -168,7 +168,8 @@ def score(sentence, heard):
     for index, token in enumerate(shown):
         parts = [k for k, (owner, _) in enumerate(target) if owner == index]
         words.append({"w": token, "ok": all(k in matched for k in parts)})
-    value = round(100 * len(matched) / n) if n else 0
+    # Counted per written word, so a contraction such as "It's" weighs as one word, not two.
+    value = round(100 * sum(w["ok"] for w in words) / len(words)) if words else 0
     return {"score": value, "pass": value >= PASS, "words": words, "heard": heard}
 
 

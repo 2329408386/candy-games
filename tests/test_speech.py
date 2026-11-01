@@ -15,10 +15,11 @@ def test_score_normalises_contractions_spelling_and_numbers():
     assert speech.score("What colour is it?", "what color is it")["score"] == 100
     assert speech.score("I see 3 pens.", "i see three pens")["score"] == 100
     r = speech.score("I'm Lily. Nice to meet you.", "i am lily nice to meet")
-    assert r["score"] == 86 and r["pass"] and [w["ok"] for w in r["words"]] == [True] * 5 + [False]
+    assert r["score"] == 83 and r["pass"] and [w["ok"] for w in r["words"]] == [True] * 5 + [False]
     r = speech.score("This is my pencil box.", "this is my")
     assert r["score"] == 60 and not r["pass"]
     assert speech.score("He's my friend.", "")["score"] == 0
+    assert speech.score("It's on the bed.", "it's on the")["score"] == 75, "a contraction counts as one word"
     assert speech.score("He's my friend.", "um he's my my friend yes")["score"] == 100, "extra words do not count against"
 
 
