@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+{% block title %}{{'班级榜' if board == 'class' else '总榜'}} · {{site.title}}{% endblock %}
+{% block content %}
+  <div class="board-page">
+    <nav class="board-switch" aria-label="选择排行榜">
+      <a class="top" href="{{url_for('ranking_page')}}"{% if board == 'top' %} aria-current="page"{% endif %}><span aria-hidden="true">🏆</span>总榜</a>
+      {% if klass %}<a class="class" href="{{url_for('ranking_page', board='class')}}"{% if board == 'class' %} aria-current="page"{% endif %}><span aria-hidden="true">🏅</span>班级榜</a>
+      {% else %}<a class="class" href="{{url_for('me_page')}}"><span aria-hidden="true">🏅</span>加入班级，看班级榜</a>{% endif %}
+    </nav>
+    <section class="me-card top-card board-card" aria-label="{{'班级榜' if board == 'class' else '总榜'}}">
+      <h1 class="board-title">{{ (klass ~ ' · 班级榜') if board == 'class' else '全体同学 · 总榜' }}</h1>
+      <p class="board-sub">{{'班里前 10 名' if board == 'class' else '所有同学一起比，前 20 名上榜'}}</p>
+      <div class="class-head" style="margin-top:12px">
+        <div class="rank-tabs" id="board-tabs" role="group" aria-label="排行周期">
+          <button type="button" data-period="week" aria-pressed="true">本周</button><button type="button" data-period="all" aria-pressed="false">累计</button>
+        </div>
+      </div>
+      <div class="podium" id="board-podium"></div>
+      <ol class="rank-list top-list" id="board-list"></ol>
+      <p class="top-mine" id="board-mine" hidden></p>
+    </section>
+    <p class="board-rules">单人练习、错题重练（每改对一道 +1 分）和联网PK（前三名另有名次奖励）的得分都会计入排行；本周榜每周一 0 点清零。</p>
+  </div>
+  <script id="board-config" type="application/json">{{ {
+    "board": board,
+    "url": url_for("class_ranking") if board == "class" else url_for("site_ranking"),
+    "limit": 10 if board == "class" else 20,
+  }|tojson }}</script>
+  <script>
+(() => {
+  const C = JSON.parse(document.getElementById('board-config').textContent);
+  const $ = id => document.getElementById(id);
+  const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text !== undefined) n.textContent = text; return n; };
+  const calm = matchMedia('(prefers-reduced-motion: reduce)');
+  let period = 'week', seq = 0;
+
+  function avatar(p) {
+    const a = el('span', 'av c' + p.color);
+    if (p.avatar) { const img = el('img'); img.src = p.avatar; img.alt = ''; a.append(img); }
+    else a.textContent = p.initial;
+    return a;
+  }
+  function confetti(box) {
+    if (calm.matches) return;
+    const layer = el('div', 'confetti');
+    const colors = ['#f5c542', '#ff7a59', '#4fc3f7', '#9be15d', '#c77dff', '#ff5fa2', '#ffd166'];
+    for (let i = 0; i < 80; i++) {
+      const bit = el('i');
+      bit.style.cssText = `left:${50 + (Math.random() - 0.5) * 30}%;background:${colors[i % colors.length]};` +
+        `--x:${(Math.random() - 0.5) * 560}px;--y:${-120 - Math.random() * 220}px;--r:${Math.random() * 900 - 450}deg;` +
+        `--d:${1.6 + Math.random() * 1.4}s;--w:${6 + Math.random() * 6}px;animation-delay:${Math.random() * 0.25}s`;
+      if (i % 3 === 0) bit.className = 'round';
+      layer.append(bit);
+    }
+    box.append(layer);
+    setTimeout(() => layer.remove(), 3500);
+  }
+  function spot(r, myId) {
+    const place = Math.min(r.rank, 3);
+    const box = el('div', `podium-spot p${place}` + (r.id === myId ? ' me' : ''));
+    const head = el('div', 'podium-head');
+    if (place === 1) head.append(el('span', 'podium-crown', '👑'), el('span', 'podium-rays'));
+    const ring = el('span', 'podium-ring');
+    ring.append(avatar(r));
+    head.append(ring, el('span', 'podium-medal', ['🥇', '🥈', '🥉'][place - 1]));
+    const pts = el('span', 'podium-points', String(r.points));
+    pts.append(el('small', '', '分'));
+    const base = el('div', 'podium-base');
+    base.append(el('span', '', String(r.rank)));
+    box.append(head, el('strong', 'podium-name', r.name + (r.id === myId ? '（我）' : '')), pts, base);
+    return box;
+  }
+  // rows: the board's entries (already cut to the limit); mine: the sentence under it.
+  function renderBoard(rows, myId, mine) {
+    const podium = $('board-podium'), list = $('board-list'), line = $('board-mine');
+    podium.replaceChildren();
+    list.replaceChildren();
+    if (!rows.length) {
+      list.append(el('li', 'rank-empty', (period === 'week' ? '本周' : '') + '还没有人上榜，快去玩一局，抢下第一名！'));
+    } else {
+      const top3 = rows.slice(0, 3);
+      [top3[1], top3[0], top3[2]].forEach(r => r && podium.append(spot(r, myId)));  // 2nd, 1st, 3rd
+      podium.classList.toggle('few', top3.length < 3);
+      confetti(podium);
+      rows.slice(3).forEach((r, i) => {
+        const li = el('li', r.id === myId ? 'me' : '');
+        li.style.animationDelay = (0.6 + i * 0.05) + 's';
+        const who = el('div', 'rank-who');
+        who.append(el('strong', '', r.name + (r.id === myId ? '（我）' : '')));
+        const pts = el('span', 'rank-points', String(r.points));
+        pts.append(el('small', '', '分'));
+        li.append(el('span', 'rank-no', String(r.rank)), avatar(r), who, pts);
+        list.append(li);
+      });
+    }
+    line.textContent = mine;
+    line.hidden = !mine;
+  }
+  function sentence(rank, points, gapIn, gapPodium) {
+    if (rank && rank <= 3) return `太厉害了！你是第 ${rank} 名，守住领奖台！🔥`;
+    if (rank && rank <= C.limit) return `你排在第 ${rank} 名，再得 ${gapPodium} 分就能冲上领奖台！💪`;
+    if (rank) return `你现在是第 ${rank} 名，再得 ${gapIn} 分就能进入前 ${C.limit} 名！`;
+    return gapIn ? `再得 ${gapIn} 分就能进入前 ${C.limit} 名，加油！` : '得分就能上榜，快去玩一局吧！';
+  }
+  async function load() {
+    const n = ++seq;
+    let data;
+    try {
+      const r = await fetch(C.url + '?period=' + period, { cache: 'no-store', credentials: 'same-origin' });
+      data = await r.json();
+      if (!r.ok) throw Error(data.error || '加载失败');
+    } catch (e) {
+      if (n === seq) renderBoard([], null, e.message === 'Failed to fetch' ? '网络连接失败，请稍后重试' : e.message);
+      return;
+    }
+    if (n !== seq) return;
+    const scored = data.rows.filter(r => r.points > 0);
+    const rows = scored.slice(0, C.limit);
+    const podiumAt = rows[2] ? rows[2].points : 0;
+    let mine;
+    if (C.board === 'class') {
+      const me = scored.find(r => r.id === data.me);
+      const cutoff = rows.length === C.limit ? rows[C.limit - 1].points : 0;
+      mine = sentence(me && me.rank, me ? me.points : 0, cutoff - (me ? me.points : 0) + 1, podiumAt - (me ? me.points : 0) + 1);
+    } else {
+      const m = data.mine;
+      mine = m ? sentence(m.rank, m.points, m.gap, podiumAt - m.points + 1) : sentence(null, 0, 0, 0);
+    }
+    renderBoard(rows, data.me, rows.length || mine.startsWith('再得') ? mine : '');
+  }
+  document.querySelectorAll('#board-tabs button').forEach(b => b.onclick = () => {
+    period = b.dataset.period;
+    document.querySelectorAll('#board-tabs button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    load();
+  });
+  load();
+})();
+</script>
+{% endblock %}

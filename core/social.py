@@ -86,7 +86,7 @@ def header_profile():
     if not row:
         return None
     p = profile_row(row["id"])
-    return display(row["id"], p["nickname"] if p else "", p["avatar_ver"] if p else 0)
+    return dict(display(row["id"], p["nickname"] if p else "", p["avatar_ver"] if p else 0), in_class=bool(p and p["class_id"]))
 
 
 def class_row(cid):
@@ -255,6 +255,16 @@ def register_social(app):
         if not current():
             return redirect(url_for("home"))
         return render_template("me.html")
+
+    @app.get("/ranking")
+    def ranking_page():
+        row = current()
+        if not row:
+            return redirect(url_for("home"))
+        p = profile_row(row["id"])
+        c = class_row(p["class_id"]) if p and p["class_id"] else None
+        board = "class" if request.args.get("board") == "class" and c else "top"
+        return render_template("ranking.html", board=board, klass=c and c["name"])
 
     @app.get("/avatars/<int:lid>.webp")
     def avatar(lid):

@@ -8,7 +8,7 @@
     <link rel="icon" href="data:,">
     <title>{% block title %}语文小游戏{% endblock %}</title>
     <link rel="stylesheet" href="{{asset('site.css')}}">
-    {% if not is_admin %}<link rel="stylesheet" href="{{url_for('home')}}static/shared/social/social.css?v=7dcbf463">{% endif %}
+    {% if not is_admin %}<link rel="stylesheet" href="{{url_for('home')}}static/shared/social/social.css?v=0df20def">{% endif %}
   </head>
   <body class="{{'admin-body' if is_admin else 'student-body'}}">
     <svg xmlns="http://www.w3.org/2000/svg" style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
@@ -35,7 +35,7 @@
           </form>
         {% endif %}
       </nav>
-      {% else %}<span class="header-actions"><a class="header-link" href="{{url_for('mistakes')}}">错题本</a>{% set me = header_profile() %}{% if me %}<a class="header-avatar" href="{{url_for('me_page')}}" title="我的资料和班级排行">{% include 'avatar.html' %}<span class="name">{{me.name}}</span></a>{% else %}<button type="button" class="header-link header-contact" data-contact>获取授权码</button>{% endif %}<span class="header-note"><span class="status-dot"></span> 一起玩，一起长大</span></span>{% endif %}
+      {% else %}<span class="header-actions"><a class="header-link" href="{{url_for('mistakes')}}">错题本</a>{% set me = header_profile() %}{% if me %}{% set on_rank = request.endpoint == 'ranking_page' %}<a class="header-rank top{{' active' if on_rank and board == 'top'}}" href="{{url_for('ranking_page')}}" title="所有同学的总排行榜"><span aria-hidden="true">🏆</span><span class="label">总榜</span></a>{% if me.in_class %}<a class="header-rank class{{' active' if on_rank and board == 'class'}}" href="{{url_for('ranking_page', board='class')}}" title="班级排行榜"><span aria-hidden="true">🏅</span><span class="label">班级榜</span></a>{% endif %}<a class="header-avatar" href="{{url_for('me_page')}}" title="我的资料和班级">{% include 'avatar.html' %}<span class="name">{{me.name}}</span></a>{% else %}<button type="button" class="header-link header-contact" data-contact>获取授权码</button>{% endif %}<span class="header-note"><span class="status-dot"></span> 一起玩，一起长大</span></span>{% endif %}
     </header>
     <main class="{{'admin-main' if is_admin else 'student-main'}}">
       {% with messages=get_flashed_messages(with_categories=true) %}{% for category,message in messages %}

@@ -271,3 +271,23 @@ def test_site_ranking_top_20(alice, bob, site, db, extra_users):
     db.commit()
     _top_cache.clear()
     assert 2 not in [r["id"] for r in alice.get("/api/ranking").get_json()["rows"]], "disabled users drop out"
+
+
+def test_ranking_page_and_header_links(client, alice, bob, site):
+    assert client.get("/ranking").status_code == 302
+    home = client.get("/").get_data(as_text=True)
+    assert "header-rank" not in home, "no boards without a license"
+    home = alice.get("/").get_data(as_text=True)
+    assert "🏆" in home and "总榜" in home and "班级榜" not in home
+    page = alice.get("/ranking").get_data(as_text=True)
+    assert "/api/ranking" in page and "加入班级，看班级榜" in page
+    assert '"board": "top"' in alice.get("/ranking?board=class").get_data(as_text=True), "no class yet: the top board"
+    code = alice.post("/api/class/create", json={"name": "三年级二班"}).get_json()["klass"]["code"]
+    home = alice.get("/").get_data(as_text=True)
+    assert "班级榜" in home and "board=class" in home
+    page = alice.get("/ranking?board=class").get_data(as_text=True)
+    assert '"board": "class"' in page and "/api/class/ranking" in page and "三年级二班 · 班级榜" in page
+    assert "班级榜" not in bob.get("/").get_data(as_text=True).split("</header>")[0]
+    bob.post("/api/class/join", json={"code": code})
+    assert "班级榜" in bob.get("/").get_data(as_text=True).split("</header>")[0]
+    assert "查看班级榜" in alice.get("/me").get_data(as_text=True)
