@@ -904,11 +904,11 @@
       }
       classBox.replaceChildren();
       if (!data.rooms.length) return;
-      classBox.append(el('h3', '', '班级里正在等人的房间'));
+      classBox.append(el('h3', '', data.rooms.some(r => !r.mine) ? '班级里正在等人的房间' : '可以加入的房间'));
       for (const r of data.rooms) {
         const row = el('div', 'pk-online-room');
         const who = el('span', 'pk-online-who');
-        who.append(el('strong', '', r.host.name + ' 的房间'), el('small', '', `${r.players}/${r.max} 人`));
+        who.append(el('strong', '', r.mine ? '我的另一台设备开的房间' : r.host.name + ' 的房间'), el('small', '', `${r.players}/${r.max} 人`));
         row.append(avatar(r.host), who, button('加入', () => join(r.code), 'primary'));
         classBox.append(row);
       }
@@ -942,15 +942,21 @@
         } catch {
           prompt('复制下面的文字发给同学：', text);
         }
-      }, 'secondary');
+      }, st.practice ? 'pk-invite-main' : 'secondary');
       box.append(invite, el('p', 'pk-help', '同学在这个游戏里选「联网PK」，输入房间码就能加入；同班同学还能直接在列表里点「加入」。'));
       const grid = el('ul', 'pk-lobby-players');
       for (const p of st.players) {
-        const li = el('li', p.id === st.me ? 'me' : '');
+        const li = el('li', p.seat === st.me ? 'me' : '');
         li.append(avatar(p), el('span', '', p.name + (p.host ? ' · 房主' : '')));
         grid.append(li);
       }
       box.append(el('h2', 'pk-lobby-count', `已加入 ${st.players.length}/${st.max} 人`), grid);
+      // One account on several devices: still playable, but nudge towards a classmate.
+      if (st.practice && st.status === 'lobby') {
+        box.append(el('p', 'pk-practice-note', st.players.length > 1
+          ? '现在都是你自己的设备，这局是自家练习赛，不计入班级排行。把房间码发给同学，一起比才能为排行加分 🏆'
+          : '把房间码发给同学，等同学加入就能开始PK；用同一个授权码的另一台设备加入，可以先来一局自家练习赛（不计分）。'));
+      }
       const status = el('p', 'pk-lobby-status');
       status.setAttribute('role', 'status');
       if (st.status === 'running') {
@@ -960,7 +966,8 @@
         box.append(status);
       } else if (st.host === st.me) {
         const enough = st.players.length >= 2;
-        const start = button(enough ? `开始PK（${st.players.length}人）` : '等同学加入…（至少2人）', () => begin(start), 'pk-primary');
+        const label = !enough ? '等同学加入…（至少2人）' : st.practice ? '开始练习赛（不计分）' : `开始PK（${st.players.length}人）`;
+        const start = button(label, () => begin(start), 'pk-primary');
         start.disabled = !enough;
         box.append(start, el('p', 'pk-help', `本局 ${st.seconds} 秒；可以在右上角「设置」里改时长，再重新创建房间。`));
       } else {
@@ -986,7 +993,7 @@
       onlineBar.replaceChildren();
       const sorted = [...st.players].sort((a, b) => b.score - a.score);
       for (const p of sorted) {
-        const chip = el('div', 'pk-online-chip' + (p.id === st.me ? ' me' : ''));
+        const chip = el('div', 'pk-online-chip' + (p.seat === st.me ? ' me' : ''));
         const name = el('span', 'pk-online-name', p.name);
         chip.append(avatar(p), name, el('strong', '', String(p.score)));
         chip.title = `${p.name}：${p.score} 分，已答 ${p.answered} 题`;
@@ -1000,14 +1007,14 @@
       resultsHolder.replaceChildren();
       if (!st) return;
       const ended = st.status === 'ended';
-      const mine = st.players.find(p => p.id === st.me);
+      const mine = st.players.find(p => p.seat === st.me);
       if (ended && mine) {
         const head = resultScreen.querySelector('h2');
         if (head) head.textContent = mine.rank === 1 && st.players.length > 1 ? '你是第一名！🏆' : `你是第 ${mine.rank} 名！`;
       }
       const list = el('ol', 'pk-online-rank');
       for (const p of st.players) {
-        const li = el('li', p.id === st.me ? 'me' : '');
+        const li = el('li', p.seat === st.me ? 'me' : '');
         const who = el('span', 'pk-online-who');
         who.append(el('strong', '', p.name), el('small', '', `答对 ${p.correct} 题 · 已答 ${p.answered} 题`));
         const pts = el('span', 'pk-online-points', `${p.score} 分`);
@@ -1016,7 +1023,18 @@
         list.append(li);
       }
       resultsHolder.append(list);
-      resultsHolder.append(el('p', 'pk-help', ended ? '本局得分已计入班级排行（每人每天最多30局联网PK计分）。' : '等其他同学答完或时间到，就公布最终名次…'));
+      if (!ended) return void resultsHolder.append(el('p', 'pk-help', '等其他同学答完或时间到，就公布最终名次…'));
+      if (st.practice) {
+        const note = el('p', 'pk-practice-note', '这是自家设备之间的练习赛，不计分。下次邀请同学来PK，第一名还有 +20 冠军奖励！');
+        if (!st.inClass) {
+          const link = el('a', '', '去加入班级');
+          link.href = ROOM.me;
+          note.append(' ', link);
+        }
+        resultsHolder.append(note);
+      } else if (mine && !mine.counted) {
+        resultsHolder.append(el('p', 'pk-help', '同一个账号在这局有好几台设备，只按得分最高的一台计入班级排行。'));
+      } else resultsHolder.append(el('p', 'pk-help', '本局得分已计入班级排行（每人每天最多30局联网PK计分）。'));
     }
     function resultsBox() {
       renderResults();
@@ -1066,7 +1084,7 @@
       startRound({ draws: [questions], deadline: st.deadline * 1000 - o.offset });
       // Answers already sent before a reload count on the server; continue from there.
       const s = round.players[0];
-      const mine = st.players.find(p => p.id === st.me);
+      const mine = st.players.find(p => p.seat === st.me);
       if (mine && mine.answered) {
         s.index = Math.min(mine.answered, questions.length);
         s.score = mine.score;
@@ -1172,7 +1190,7 @@
         }
       });
       // Show my new score right away; the next poll brings everybody else's.
-      const mine = o.state?.players.find(p => p.id === o.state.me);
+      const mine = o.state?.players.find(p => p.seat === o.state.me);
       if (mine) {
         mine.score = round.players[0].score;
         mine.answered = i + 1;

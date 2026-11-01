@@ -315,3 +315,6 @@ mark { background: #ffe797; color: inherit; border-bottom: 3px solid #da9c16; pa
 .pk-online-points small { display: block; font-size: 0.75rem; color: #9a7413; font-weight: 600; }
 @media (max-width: 600px) { .pk-online-bar { padding: 0 0.75rem; } .pk-online-chip { max-width: 9rem; font-size: 0.875rem; } }
 button.pk-home { border: 0; background: transparent; padding: 0; }
+.pk-practice-note { background: var(--gold-soft); border: 1px solid #ecd58a; color: #6d5310; border-radius: 12px; padding: 0.625rem 0.875rem; font-size: 0.9375rem; line-height: 1.7; margin: 0 0 1rem; text-align: left; }
+.pk-practice-note a { color: var(--green-dark); font-weight: 700; }
+.pk-lobby .pk-invite-main { border: 0; border-radius: 12px; padding: 0.625rem 1.5rem; min-height: 2.75rem; background: var(--gold); color: #3d2e05; font-weight: 750; box-shadow: 0 3px 0 #b88b1f; }
