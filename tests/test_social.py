@@ -174,7 +174,9 @@ def test_solo_rounds_score_once_and_rank(alice, bob, site, db):
     page = alice.get("/games/" + game).get_data(as_text=True)
     assert f"/api/rounds/{game}/finish" in page
     ticket, r = finish(alice, game, db, site, [True, True, False, True])
-    assert r.get_json() == {"recorded": True, "points": 30, "in_class": False, "mode": "solo"}
+    got = r.get_json()
+    assert {k: got[k] for k in ("recorded", "points", "in_class", "mode")} == {"recorded": True, "points": 3, "in_class": False, "mode": "solo"}
+    assert got["rank"]["name"] == "青铜 III" and got["rank"]["progress"] == 3 and got["stars"] == 0 and not got["promoted"]
     again = alice.post(f"/api/rounds/{game}/finish", json={"round": ticket, "answers": [True] * 20})
     assert again.status_code == 409, "a ticket counts once"
     assert finish(alice, game, db, site, [True] * 21)[1].status_code == 400
@@ -193,9 +195,9 @@ def test_solo_rounds_score_once_and_rank(alice, bob, site, db):
     db.execute("INSERT INTO scores(site,license_id,game,mode,points,created_at) VALUES(?,2,?,'solo',100,?)", (site, game, old))
     db.commit()
     week = alice.get("/api/class/ranking?period=week").get_json()
-    assert [(r["id"], r["rank"], r["points"]) for r in week["rows"]] == [(1, 1, 30), (2, 2, 25)]
+    assert [(r["id"], r["rank"], r["points"]) for r in week["rows"]] == [(1, 1, 3), (2, 1, 3)]
     total = alice.get("/api/class/ranking").get_json()
-    assert [(r["id"], r["points"], r["rounds"]) for r in total["rows"]] == [(2, 125, 2), (1, 30, 1)]
+    assert [(r["id"], r["points"], r["rounds"]) for r in total["rows"]] == [(2, 103, 2), (1, 3, 1)]
     db.execute("UPDATE licenses SET enabled=0 WHERE site=? AND id=2", (site,))
     db.commit()
     assert [r["id"] for r in alice.get("/api/class/ranking").get_json()["rows"]] == [1], "disabled users drop out"
@@ -228,7 +230,7 @@ def test_admin_can_dissolve_and_reset(alice, bob, admin, site):
 def test_mistake_rounds_score_one_point_per_fixed_mistake(alice, site, db):
     game = next(iter(SITES[site].games))
     r = finish(alice, game, db, site, [True, False, True, True], mode="mistakes")[1].get_json()
-    assert r == {"recorded": True, "points": 3, "in_class": False, "mode": "mistakes"}
+    assert {k: r[k] for k in ("recorded", "points", "in_class", "mode")} == {"recorded": True, "points": 3, "in_class": False, "mode": "mistakes"}
     fast = finish(alice, game, db, site, [True] * 10, ago=3, mode="mistakes")[1].get_json()
     assert not fast["recorded"]
     rows = db.execute("SELECT mode,points FROM scores WHERE site=?", (site,)).fetchall()

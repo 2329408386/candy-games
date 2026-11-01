@@ -1,11 +1,13 @@
-import sqlite3
+import sqlite3, time
 from pathlib import Path
+from . import ranks
 
 DB_NAME = "games.sqlite3"
 # Every table is scoped by site ('chinese' or 'math'); ids keep their original per-site numbering.
 # Permissions and grades come from license_groups -> game_groups. licenses.grade_scopes and
 # generation_batches.grade_scopes are deprecated mirrors: still written so older releases can be rolled back to,
 # never read.
+# migrations: one-off data changes already applied (see initialize).
 # trials records the one free round each browser (session device token) may play per game.
 # profiles/classes/scores/rounds: see core/social.py (one license = one user, in at most one class); pk_rooms/pk_seats: core/rooms.py (rooms/room_players are the unused, license-keyed predecessors).
 SCHEMA = """
@@ -38,16 +40,49 @@ CREATE INDEX IF NOT EXISTS pk_rooms_class ON pk_rooms(site,class_id,status);
 CREATE INDEX IF NOT EXISTS pk_rooms_host ON pk_rooms(site,host,status);
 CREATE TABLE IF NOT EXISTS pk_seats(site TEXT NOT NULL,code TEXT NOT NULL,seat TEXT NOT NULL,license_id INTEGER NOT NULL,device TEXT NOT NULL,score INTEGER NOT NULL DEFAULT 0,combo INTEGER NOT NULL DEFAULT 0,correct INTEGER NOT NULL DEFAULT 0,answered INTEGER NOT NULL DEFAULT 0,bonus INTEGER NOT NULL DEFAULT 0,counted INTEGER NOT NULL DEFAULT 0,last_answer REAL NOT NULL DEFAULT 0,joined_at INTEGER NOT NULL,last_seen INTEGER NOT NULL,PRIMARY KEY(site,code,seat),UNIQUE(site,code,device));
 CREATE TABLE IF NOT EXISTS rounds(site TEXT NOT NULL,id TEXT NOT NULL,license_id INTEGER NOT NULL,game TEXT NOT NULL,started_at INTEGER NOT NULL,PRIMARY KEY(site,id));
+CREATE TABLE IF NOT EXISTS migrations(name TEXT PRIMARY KEY,done_at INTEGER NOT NULL);
 """
 
 
 def initialize(path):
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
-    with sqlite3.connect(path) as d:
+    with sqlite3.connect(path, timeout=30) as d:
         d.execute("PRAGMA journal_mode=WAL")
         d.executescript(SCHEMA)
+        # Every gunicorn worker runs this at start-up: the write lock makes the checks below and migrate() run once.
+        d.execute("BEGIN IMMEDIATE")
         # Columns added after a table first shipped (older releases ignore them, so rollbacks stay safe).
         if "mode" not in {r[1] for r in d.execute("PRAGMA table_info(rounds)")}:
             d.execute("ALTER TABLE rounds ADD COLUMN mode TEXT NOT NULL DEFAULT 'solo'")
+        columns = {r[1] for r in d.execute("PRAGMA table_info(profiles)")}
+        if "rank_stars" not in columns:
+            d.execute("ALTER TABLE profiles ADD COLUMN rank_stars INTEGER NOT NULL DEFAULT 0")
+            d.execute("ALTER TABLE profiles ADD COLUMN rank_progress INTEGER NOT NULL DEFAULT 0")
+        if "pk_outcome" not in {r[1] for r in d.execute("PRAGMA table_info(pk_seats)")}:
+            d.execute("ALTER TABLE pk_seats ADD COLUMN pk_outcome TEXT NOT NULL DEFAULT ''")
+        migrate(d)
     path.chmod(0o600)
+
+
+def migrate(d):
+    """One-off data changes, each recorded in `migrations` so it runs once. The caller holds the write lock."""
+    done = {r[0] for r in d.execute("SELECT name FROM migrations")}
+    if "points_div10" not in done:
+        # Ranking points became a tenth of the game score (rounded half up); mistake re-practice stays +1 per question.
+        # Earlier PK rows hold score + placing bonus together, so the whole row is divided.
+        d.execute("UPDATE scores SET points=(points+5)/10 WHERE mode IN ('solo','online')")
+        d.execute("INSERT INTO migrations VALUES('points_div10',?)", (int(time.time()),))
+    if "ranks_from_points" not in done:
+        # Everyone starts at the tier their points so far would have bought.
+        totals = d.execute(
+            "SELECT s.site,s.license_id,sum(s.points) FROM scores s JOIN licenses l ON l.site=s.site AND l.id=s.license_id"
+            " GROUP BY s.site,s.license_id"
+        ).fetchall()
+        for site, lid, total in totals:
+            stars, progress = ranks.replay(total)
+            d.execute("INSERT OR IGNORE INTO profiles(site,license_id) VALUES(?,?)", (site, lid))
+            d.execute(
+                "UPDATE profiles SET rank_stars=?,rank_progress=? WHERE site=? AND license_id=?", (stars, progress, site, lid)
+            )
+        d.execute("INSERT INTO migrations VALUES('ranks_from_points',?)", (int(time.time()),))

@@ -9,14 +9,16 @@ State lives in SQLite so deploys and restarts keep rooms alive; clients poll GET
 The host's browser draws the question ids (same quotas as a solo round); the server only checks they are in the
 bank. Answers are graded in the browser (the renderers hold the grading logic) and reported one by one in order;
 the server keeps the score with the game's rules. When the deadline (+ grace) passes, or everybody has answered
-every question, the room ends and points go into `scores` (mode 'online') plus a placing bonus (PLACE_BONUS).
+every question, the room ends and points go into `scores` (mode 'online'): a tenth of the game score (rank_points)
+plus a placing bonus (PLACE_BONUS). Each scored account also gets its PK result in stars (pk_outcome, core/ranks.py).
 (Tables pk_rooms/pk_seats replaced rooms/room_players, which keyed players by license; those are no longer used.)
 """
 
 import json, secrets, time
 from flask import abort, jsonify, request, url_for
+from . import ranks
 from .app import bank_json, current, db, device_hash, limited, site
-from .social import SOLO_PER_DAY, _top_cache, display, ensure_profile, period_start, profile_row
+from .social import SOLO_PER_DAY, _top_cache, display, ensure_profile, period_start, profile_row, rank_points
 
 MAX_PLAYERS = 10
 # Placing bonus by number of scoring licenses: 2 players → 1st +10, 2nd +5; 3 or more → +20/+10/+5. Ties share a place.
@@ -46,7 +48,7 @@ def seats(code):
     return (
         db()
         .execute(
-            "SELECT r.*,p.nickname,p.avatar_ver FROM pk_seats r LEFT JOIN profiles p ON p.site=r.site AND p.license_id=r.license_id"
+            "SELECT r.*,p.nickname,p.avatar_ver,p.rank_stars FROM pk_seats r LEFT JOIN profiles p ON p.site=r.site AND p.license_id=r.license_id"
             " WHERE r.site=? AND r.code=? ORDER BY r.joined_at,r.rowid",
             (site().key, code),
         )
@@ -88,19 +90,29 @@ def finalize(room, now):
     if len(best) > 1:  # a license playing only itself scores nothing
         prizes = PLACE_BONUS[min(len(best), 3)]
         scores = sorted((r["score"] for r in best.values()), reverse=True)
+        anyone = any(r["answered"] for r in best.values())
         for lid, r in best.items():
             place = scores.index(r["score"])  # competition ranking: ties share the higher place
             bonus = prizes[place] if place < len(prizes) and r["score"] > 0 and r["answered"] else 0
-            db().execute("UPDATE pk_seats SET bonus=?,counted=1 WHERE site=? AND code=? AND seat=?", (bonus, s, room["code"], r["seat"]))
             played = db().execute(
                 "SELECT count(*) FROM scores WHERE site=? AND license_id=? AND mode='online' AND created_at>=?",
                 (s, lid, day),
             ).fetchone()[0]
-            if r["answered"] and played < SOLO_PER_DAY:
-                db().execute(
-                    "INSERT INTO scores(site,license_id,game,mode,points,created_at) VALUES(?,?,?,?,?,?)",
-                    (s, lid, room["game"], "online", r["score"] + bonus, now),
-                )
+            result = ""
+            if played < SOLO_PER_DAY and anyone:
+                if r["answered"]:
+                    points = rank_points(r["score"]) + bonus
+                    db().execute(
+                        "INSERT INTO scores(site,license_id,game,mode,points,created_at) VALUES(?,?,?,?,?,?)",
+                        (s, lid, room["game"], "online", points, now),
+                    )
+                    ranks.add_points(db(), s, lid, points)
+                others = [o["score"] for who, o in best.items() if who != lid]
+                result = ranks.apply_outcome(db(), s, lid, ranks.outcome(r["score"], others, r["answered"]))
+            db().execute(
+                "UPDATE pk_seats SET bonus=?,counted=1,pk_outcome=? WHERE site=? AND code=? AND seat=?",
+                (bonus, result, s, room["code"], r["seat"]),
+            )
     _top_cache.clear()
     db().execute(
         "UPDATE pk_rooms SET status='ended',deadline=min(deadline,?),version=version+1 WHERE site=? AND code=?",
@@ -155,6 +167,10 @@ def state(room, me, now):
                 answered=r["answered"],
                 bonus=r["bonus"],
                 counted=bool(r["counted"]),
+                # Ranking points this seat earned and its PK result in stars ('' when the room did not score it).
+                points=rank_points(r["score"]) + r["bonus"] if r["pk_outcome"] and r["answered"] else 0,
+                outcome=r["pk_outcome"],
+                tier=ranks.badge(r["rank_stars"] or 0),
                 host=r["seat"] == room["host_seat"],
             )
         )

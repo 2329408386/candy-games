@@ -833,8 +833,13 @@
         if (!d) line.textContent = '这一局的成绩没能提交（网络不稳定），不影响继续练习。';
         else if (!d.recorded) line.textContent = d.reason;
         else {
-          const fixed = d.mode === 'mistakes' ? `（改对 ${d.points} 道错题，每道 +1 分）` : '';
-          line.textContent = d.in_class ? `已计入排行 +${d.points} 分${fixed}` : `已记录 +${d.points} 分${fixed}。在首页右上角的「我的」里加入班级，就能和同学比排名。`;
+          const how = d.mode === 'mistakes' ? `（改对 ${d.points} 道错题，每道 +1 分）` : `（本局 ${players[0].score} 分的十分之一）`;
+          let text = `已计入排行 +${d.points} 分${how}`;
+          if (d.promoted) text += `　🎉 晋级 ${d.promoted}！`;
+          else if (d.stars > 0) text += `　⭐ +${d.stars} 星`;
+          if (d.rank) text += `　段位：${d.rank.name}${d.rank.slots ? ' ' + '★'.repeat(d.rank.stars) + '☆'.repeat(d.rank.slots - d.rank.stars) : ' ★×' + d.rank.stars}，再得 ${d.rank.toNext} 分加一星`;
+          if (!d.in_class) text += '。在首页右上角的「我的」里加入班级，还能和同学比班级排名。';
+          line.textContent = text;
         }
       });
     }
@@ -1038,6 +1043,7 @@
       }
       if (o.notice) onlineBar.append(el('p', 'pk-online-notice', o.notice));
     }
+    const OUTCOMES = { mvp: 'MVP +2★', win: '赢 +1★', lose: '输 -1★', protect: '输 · 段位保护', draw: '星数不变' };
     const resultsHolder = el('div', 'pk-online-results');
     function renderResults() {
       const st = o.state;
@@ -1053,16 +1059,23 @@
       for (const p of st.players) {
         const li = el('li', p.seat === st.me ? 'me' : '');
         const who = el('span', 'pk-online-who');
-        who.append(el('strong', '', p.name), el('small', '', `答对 ${p.correct} 题 · 已答 ${p.answered} 题`));
+        const name = el('span', 'pk-online-name-line');
+        name.append(el('strong', '', p.name));
+        if (p.tier) name.append(el('span', 'tier t-' + p.tier.key, p.tier.name));
+        who.append(name, el('small', '', `答对 ${p.correct} 题 · 已答 ${p.answered} 题`));
         const pts = el('span', 'pk-online-points', `${p.score} 分`);
-        if (ended && p.bonus) pts.append(el('small', '', ` +${p.bonus} 名次奖励`));
+        if (ended && p.outcome) {
+          if (p.points) pts.append(el('small', '', `排行 +${p.points - p.bonus}` + (p.bonus ? ` +${p.bonus} 名次奖励` : '')));
+          const o = OUTCOMES[p.outcome];
+          if (o) pts.append(el('small', 'pk-outcome ' + p.outcome, o));
+        } else if (ended && p.bonus) pts.append(el('small', '', ` +${p.bonus} 名次奖励`));
         li.append(el('span', 'pk-online-rankno', ended ? String(p.rank) : '·'), avatar(p), who, pts);
         list.append(li);
       }
       resultsHolder.append(list);
       if (!ended) return void resultsHolder.append(el('p', 'pk-help', '等其他同学答完或时间到，就公布最终名次…'));
       if (st.practice) {
-        const note = el('p', 'pk-practice-note', '这是自家设备之间的练习赛，不计分。下次邀请同学来PK，前三名都有名次奖励（第一名最多 +20）！');
+        const note = el('p', 'pk-practice-note', '这是自家设备之间的练习赛，不计分。下次邀请同学来PK，前三名都有名次奖励（第一名最多 +20），赢了还能加段位星！');
         if (!st.inClass) {
           const link = el('a', '', '去加入班级');
           link.href = ROOM.me;
@@ -1071,7 +1084,13 @@
         resultsHolder.append(note);
       } else if (mine && !mine.counted) {
         resultsHolder.append(el('p', 'pk-help', '同一个账号在这局有好几台设备，只按得分最高的一台计入班级排行。'));
-      } else resultsHolder.append(el('p', 'pk-help', '本局得分和名次奖励已计入排行（每人每天最多30局联网PK计分）。'));
+      } else {
+        resultsHolder.append(el('p', 'pk-help', '本局得分的十分之一加名次奖励已计入排行，输赢计入段位：前一半 +1 星（3 人以上的单独第一名 +2），后一半 -1 星（每人每天最多30局联网PK计分）。'));
+        if (mine && mine.tier && mine.outcome) {
+          const t = mine.tier;
+          resultsHolder.append(el('p', 'pk-rank-note', `我的段位：${t.name} ` + (t.slots ? '★'.repeat(t.stars) + '☆'.repeat(t.slots - t.stars) : '★×' + t.stars)));
+        }
+      }
     }
     function resultsBox() {
       renderResults();

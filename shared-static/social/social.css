@@ -42,12 +42,14 @@
 .rank-list{list-style:none;margin:14px 0 0;padding:0}
 .rank-list li{display:grid;grid-template-columns:44px auto 1fr auto;align-items:center;gap:12px;padding:10px 12px;border-top:1px solid var(--line)}
 .rank-list li:first-child{border-top:0}
-.rank-list li.me{background:#eef4e8;border-radius:14px}
+.rank-list li.me{background:linear-gradient(90deg,#e3f2dc,#f3f9ef);border-radius:14px;box-shadow:inset 4px 0 0 var(--green),0 3px 12px rgba(63,143,85,.16)}
 .rank-list .av{--av:42px}
 .rank-no{font-size:18px;font-weight:750;color:var(--muted);text-align:center}
 .rank-list li:nth-child(-n+3) .rank-no{color:#c08a2c;font-size:21px}
 .rank-who{min-width:0}
 .rank-who strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rank-name{display:flex;align-items:center;gap:6px;min-width:0}
+.rank-name strong{min-width:0;flex:0 1 auto}
 .rank-who small{color:var(--muted);font-size:12px}
 .rank-points{font-size:20px;font-weight:750;color:var(--green-dark);white-space:nowrap}
 .rank-points small{font-size:12px;color:var(--muted);font-weight:400;margin-left:2px}
@@ -94,7 +96,10 @@
 .p2 .podium-base{height:86px;background:linear-gradient(180deg,#d6dce3,#9aa5b1)}
 .p3 .podium-base{height:66px;background:linear-gradient(180deg,#f0be95,#c47a46)}
 .p2 .podium-base::after{animation-delay:1s}.p3 .podium-base::after{animation-delay:2s}
-.podium-spot.me .podium-name{text-decoration:underline wavy #f0a500 2px;text-underline-offset:4px}
+.podium-spot.me .podium-ring{box-shadow:0 0 0 4px #fff,0 0 0 7px var(--green),0 0 22px 6px rgba(63,143,85,.45);animation:meglow 1.8s ease-in-out infinite}
+.podium-spot.me.p1 .podium-ring{animation:ringspin 3s linear infinite,meglow 1.8s ease-in-out infinite}
+.podium-head .me-tag{position:absolute;z-index:3;left:-8px;top:-6px;font-size:13px;padding:2px 9px;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.podium-spot .tier{margin-top:3px}
 .top-list li{animation:slidein .45s ease-out both}
 .top-mine{margin:14px 0 0;padding:12px 16px;border-radius:14px;background:linear-gradient(90deg,#fff4d1,#ffe3ec);color:#8a4b00;font-weight:700;text-align:center}
 .confetti{position:absolute;inset:0;pointer-events:none;z-index:5;overflow:visible}
@@ -102,6 +107,7 @@
 .confetti i.round{height:var(--w);border-radius:50%}
 @property --a{syntax:"<angle>";inherits:false;initial-value:0deg}
 @keyframes spin{to{transform:rotate(360deg)}}
+@keyframes meglow{0%,100%{filter:none}50%{filter:brightness(1.12) drop-shadow(0 0 6px rgba(63,143,85,.6))}}
 @keyframes ringspin{to{--a:360deg}}
 @keyframes rise{from{opacity:0;transform:translateY(40px) scale(.85)}to{opacity:1;transform:none}}
 @keyframes float{0%,100%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-7px) rotate(6deg)}}
@@ -127,3 +133,44 @@
 .board-rules{font-size:13px;color:var(--muted);text-align:center;margin:0}
 @media(min-width:1600px){.board-page{max-width:1100px}.board-title{font-size:42px}.board-switch a{font-size:22px;padding:12px 30px}}
 @media(prefers-reduced-motion:reduce){.board-title{animation:none}}
+
+/* "me" tag on leaderboards */
+.me-tag{display:inline-block;flex:none;padding:1px 8px;border-radius:999px;background:var(--green);color:#fff;font-size:12px;font-weight:800;line-height:1.5;letter-spacing:1px}
+
+/* 段位: small pill (leaderboards, PK results) */
+.tier{--t1:#b46a3c;--t2:#f0c39d;display:inline-flex;align-items:center;gap:2px;flex:none;padding:1px 8px;border-radius:999px;background:linear-gradient(135deg,var(--t2),var(--t1));color:#fff;font-size:12px;font-weight:800;line-height:1.5;white-space:nowrap;text-shadow:0 1px 1px rgba(0,0,0,.25)}
+.t-bronze{--t1:#b46a3c;--t2:#f0c39d}
+.t-silver{--t1:#7d8995;--t2:#d7dee6}
+.t-gold{--t1:#d98b00;--t2:#ffd75e}
+.t-platinum{--t1:#1f9b8c;--t2:#8fe3d8}
+.t-diamond{--t1:#2f6fe0;--t2:#9cc8ff}
+.t-star{--t1:#7a45e6;--t2:#cdb2ff}
+.t-king{--t1:#d6352b;--t2:#ffb36b}
+.t-glory{--t1:#c2185b;--t2:#ffd75e;background:linear-gradient(110deg,#c2185b,#ff7a3d,#ffd75e,#ff7a3d,#c2185b);background-size:200% auto;animation:shine 3s linear infinite}
+
+/* 段位 card on 我的 */
+.rank-tier{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+.tier-emblem{position:relative;flex:none;width:96px;height:108px;display:grid;place-items:center;clip-path:polygon(50% 0,100% 18%,100% 62%,50% 100%,0 62%,0 18%);background:linear-gradient(160deg,var(--t2,#f0c39d),var(--t1,#b46a3c));color:#fff;text-align:center;text-shadow:0 2px 2px rgba(0,0,0,.3)}
+.tier-emblem::after{content:"";position:absolute;inset:6px;clip-path:inherit;border:0;background:linear-gradient(160deg,rgba(255,255,255,.45),rgba(255,255,255,0) 55%);pointer-events:none}
+.tier-emblem b{display:block;font-size:24px;line-height:1.1}
+.tier-emblem small{display:block;font-size:16px;font-weight:800}
+.tier-emblem.t-glory{animation:none;background:linear-gradient(160deg,#ffd75e,#ff7a3d 50%,#c2185b)}
+.rank-tier-main{flex:1;min-width:220px}
+.rank-tier-name{font-size:26px;font-weight:850;margin:0}
+.tier-stars{display:flex;gap:4px;margin:6px 0 10px;font-size:26px;line-height:1;color:#d9d6c8}
+.tier-stars .on{color:#f5b301;text-shadow:0 0 8px rgba(245,179,1,.55)}
+.tier-stars.king{font-size:20px;color:#c27c00;font-weight:800;align-items:center}
+.tier-bar{height:12px;border-radius:999px;background:#eeede4;overflow:hidden}
+.tier-bar i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#9be15d,#3f8f55);transition:width .6s}
+.tier-next{margin:6px 0 0;font-size:14px;color:var(--muted)}
+.tier-rules{margin-top:14px;font-size:14px;color:var(--muted)}
+.tier-rules summary{cursor:pointer;color:var(--green-dark);font-weight:700}
+.tier-rules ul{margin:8px 0 0;padding-left:20px;line-height:1.8}
+.tier-ladder{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0}
+@media(max-width:640px){.tier-emblem{width:76px;height:86px}.tier-emblem b{font-size:19px}.tier-emblem small{font-size:13px}.rank-tier-name{font-size:22px}.rank-tier{gap:16px}}
+@media(prefers-reduced-motion:reduce){.t-glory{animation:none}}
+
+/* ranking page: back home */
+.board-switch a.home{border-color:var(--line);color:var(--muted);font-weight:700}
+@media(max-width:640px){.board-switch{gap:8px}.board-switch a{padding:8px 13px;font-size:15px;gap:5px;white-space:nowrap}}
+.podium-head .me-tag{font-size:14px}

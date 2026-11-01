@@ -24,6 +24,30 @@
         </div>
       </div>
     </section>
+    <section class="me-card" id="tier-card" aria-label="我的段位">
+      <div class="class-head"><h2>我的段位</h2><a class="header-rank top" href="{{url_for('ranking_page')}}"><span aria-hidden="true">🏆</span><span class="label">看总榜</span></a></div>
+      <div class="rank-tier">
+        <div class="tier-emblem" id="tier-emblem"></div>
+        <div class="rank-tier-main">
+          <p class="rank-tier-name" id="tier-name"></p>
+          <div class="tier-stars" id="tier-stars"></div>
+          <div class="tier-bar"><i id="tier-bar"></i></div>
+          <p class="tier-next" id="tier-next"></p>
+        </div>
+      </div>
+      <details class="tier-rules">
+        <summary>段位怎么升？</summary>
+        <ul>
+          <li>段位从低到高：青铜 → 白银 → 黄金 → 铂金 → 钻石 → 星耀 → 王者，王者 50 星成为<strong>荣耀王者</strong>。每个段位分几个小段（如 黄金 IV → 黄金 I），攒满星星就升一小段。</li>
+          <li><strong>得分攒星</strong>：每次计入排行的分数都会攒进进度条，攒够就加一颗星。段位越高，一颗星要的分越多：青铜 10 分、白银 15、黄金 25、铂金 40、钻石 60、星耀 80、王者 100。</li>
+          <li><strong>联网PK</strong>：前一半的同学赢，+1 星（3 人以上的单独第一名是 MVP，+2 星）；后一半的同学输，-1 星；平局或者正好排在中间不加也不扣。一题没答也算输。</li>
+          <li><strong>段位保护</strong>：青铜、白银输了不扣星；也不会掉出已经达到的大段位。</li>
+        </ul>
+        <div class="tier-ladder">
+          <span class="tier t-bronze">青铜</span><span class="tier t-silver">白银</span><span class="tier t-gold">黄金</span><span class="tier t-platinum">铂金</span><span class="tier t-diamond">钻石</span><span class="tier t-star">星耀</span><span class="tier t-king">王者</span><span class="tier t-glory">荣耀王者</span>
+        </div>
+      </details>
+    </section>
     <section class="me-card" id="class-card" aria-label="班级"></section>
     <section class="me-card" id="rank-card" aria-label="班级成员" hidden>
       <div class="class-head">
@@ -31,7 +55,7 @@
         <a class="header-rank class" href="{{url_for('ranking_page', board='class')}}"><span aria-hidden="true">🏅</span><span class="label">查看班级榜</span></a>
       </div>
       <ol class="rank-list" id="rank-list"></ol>
-      <p class="hint">单人练习、错题重练（每改对一道 +1 分）和联网PK（前三名另有名次奖励）的得分都会计入排行；本周榜每周一 0 点清零。</p>
+      <p class="hint">单人练习和联网PK按游戏得分的十分之一计入排行（230 分记 23 分），联网PK前三名另有名次奖励；错题重练每改对一道 +1 分。本周榜每周一 0 点清零。</p>
     </section>
   </div>
   <script id="me-config" type="application/json">{{ {
@@ -159,6 +183,26 @@
     if (await act('profile-msg', async () => call(C.avatar, await shrink(file), true))) say('profile-msg', '头像已更新', true);
   };
 
+  // ---------- 段位 ----------
+  function renderTier() {
+    const t = me.rank;
+    if (!t) return;
+    const emblem = $('tier-emblem');
+    emblem.className = 'tier-emblem t-' + t.key;
+    const glory = t.key === 'glory';
+    const sub = t.slots ? t.name.split(' ')[1] : t.stars + '★';
+    emblem.replaceChildren(el('b', '', glory ? '荣耀' : t.tier), el('small', '', glory ? '王者 ' + sub : sub));
+    $('tier-name').textContent = t.name;
+    const stars = $('tier-stars');
+    stars.className = 'tier-stars' + (t.slots ? '' : ' king');
+    stars.replaceChildren();
+    if (t.slots) for (let i = 0; i < t.slots; i++) stars.append(el('span', i < t.stars ? 'on' : '', '★'));
+    else stars.append(el('span', 'on', '★'), document.createTextNode(` × ${t.stars}`));
+    stars.setAttribute('aria-label', t.slots ? `${t.stars} / ${t.slots} 颗星` : `${t.stars} 颗星`);
+    $('tier-bar').style.width = Math.round(100 * t.progress / t.cost) + '%';
+    $('tier-next').textContent = `再得 ${t.toNext} 分加一颗星（${t.progress} / ${t.cost}）；联网PK赢了直接加星！`;
+  }
+
   // ---------- class ----------
   function renderClass() {
     const card = $('class-card');
@@ -228,7 +272,11 @@
     for (const r of data.rows) {
       const li = el('li', r.id === data.me ? 'me' : '');
       const who = el('div', 'rank-who');
-      who.append(el('strong', '', r.name + (r.id === data.me ? '（我）' : '')), el('small', '', `${r.rounds} 局`));
+      const line = el('div', 'rank-name');
+      line.append(el('strong', '', r.name));
+      if (r.id === data.me) line.append(el('span', 'me-tag', '我'));
+      if (r.tier) line.append(el('span', 'tier t-' + r.tier.key, r.tier.name));
+      who.append(line, el('small', '', `${r.rounds} 局`));
       const pts = el('span', 'rank-points', String(r.points));
       pts.append(el('small', '', '分'));
       li.append(el('span', 'rank-no', String(r.rank)), avatar(r), who, pts);
@@ -247,7 +295,7 @@
     if (!data.rows.some(r => r.points)) list.append(el('li', 'rank-empty', '还没有人得分，快去玩一局吧！'));
   }
 
-  function render() { renderProfile(); renderClass(); loadRanking(); }
+  function render() { renderProfile(); renderTier(); renderClass(); loadRanking(); }
   async function refresh() { me = await call(C.me); render(); }
   refresh().catch(e => { $('class-card').textContent = e.message; });
 })();

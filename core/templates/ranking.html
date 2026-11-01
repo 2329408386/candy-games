@@ -3,13 +3,14 @@
 {% block content %}
   <div class="board-page">
     <nav class="board-switch" aria-label="选择排行榜">
+      <a class="home" href="{{url_for('home')}}"><span aria-hidden="true">🏠</span>回首页</a>
       <a class="top" href="{{url_for('ranking_page')}}"{% if board == 'top' %} aria-current="page"{% endif %}><span aria-hidden="true">🏆</span>总榜</a>
       {% if klass %}<a class="class" href="{{url_for('ranking_page', board='class')}}"{% if board == 'class' %} aria-current="page"{% endif %}><span aria-hidden="true">🏅</span>班级榜</a>
       {% else %}<a class="class" href="{{url_for('me_page')}}"><span aria-hidden="true">🏅</span>加入班级，看班级榜</a>{% endif %}
     </nav>
     <section class="me-card top-card board-card" aria-label="{{'班级榜' if board == 'class' else '总榜'}}">
-      <h1 class="board-title">{{ (klass ~ ' · 班级榜') if board == 'class' else '全体同学 · 总榜' }}</h1>
-      <p class="board-sub">{{'班里前 10 名' if board == 'class' else '所有同学一起比，前 20 名上榜'}}</p>
+      <h1 class="board-title">{{ (klass ~ ' · 班级榜') if board == 'class' else '全国用户 · 总榜' }}</h1>
+      <p class="board-sub">{{'班里前 10 名' if board == 'class' else '全国用户一起比，前 20 名上榜'}}</p>
       <div class="class-head" style="margin-top:12px">
         <div class="rank-tabs" id="board-tabs" role="group" aria-label="排行周期">
           <button type="button" data-period="week" aria-pressed="true">本周</button><button type="button" data-period="all" aria-pressed="false">累计</button>
@@ -19,7 +20,7 @@
       <ol class="rank-list top-list" id="board-list"></ol>
       <p class="top-mine" id="board-mine" hidden></p>
     </section>
-    <p class="board-rules">单人练习、错题重练（每改对一道 +1 分）和联网PK（前三名另有名次奖励）的得分都会计入排行；本周榜每周一 0 点清零。</p>
+    <p class="board-rules">单人练习和联网PK按游戏得分的十分之一计入排行（230 分记 23 分），联网PK前三名另有名次奖励（+20/+10/+5，两人局 +10/+5）；错题重练每改对一道 +1 分。本周榜每周一 0 点清零。名字旁边是段位，在「我的」里查看段位规则。</p>
   </div>
   <script id="board-config" type="application/json">{{ {
     "board": board,
@@ -39,6 +40,14 @@
     if (p.avatar) { const img = el('img'); img.src = p.avatar; img.alt = ''; a.append(img); }
     else a.textContent = p.initial;
     return a;
+  }
+  function tier(t) { return el('span', 'tier t-' + t.key, t.name); }
+  function nameLine(r, myId) {
+    const line = el('div', 'rank-name');
+    line.append(el('strong', '', r.name));
+    if (r.id === myId) line.append(el('span', 'me-tag', '我'));
+    if (r.tier) line.append(tier(r.tier));
+    return line;
   }
   function confetti(box) {
     if (calm.matches) return;
@@ -63,11 +72,14 @@
     const ring = el('span', 'podium-ring');
     ring.append(avatar(r));
     head.append(ring, el('span', 'podium-medal', ['🥇', '🥈', '🥉'][place - 1]));
+    if (r.id === myId) head.append(el('span', 'me-tag', '我'));
     const pts = el('span', 'podium-points', String(r.points));
     pts.append(el('small', '', '分'));
     const base = el('div', 'podium-base');
     base.append(el('span', '', String(r.rank)));
-    box.append(head, el('strong', 'podium-name', r.name + (r.id === myId ? '（我）' : '')), pts, base);
+    box.append(head, el('strong', 'podium-name', r.name));
+    if (r.tier) box.append(tier(r.tier));
+    box.append(pts, base);
     return box;
   }
   // rows: the board's entries (already cut to the limit); mine: the sentence under it.
@@ -86,7 +98,7 @@
         const li = el('li', r.id === myId ? 'me' : '');
         li.style.animationDelay = (0.6 + i * 0.05) + 's';
         const who = el('div', 'rank-who');
-        who.append(el('strong', '', r.name + (r.id === myId ? '（我）' : '')));
+        who.append(nameLine(r, myId));
         const pts = el('span', 'rank-points', String(r.points));
         pts.append(el('small', '', '分'));
         li.append(el('span', 'rank-no', String(r.rank)), avatar(r), who, pts);

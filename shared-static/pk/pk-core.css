@@ -287,6 +287,8 @@ mark { background: #ffe797; color: inherit; border-bottom: 3px solid #da9c16; pa
 .pk-online-room { display: flex; align-items: center; gap: 0.75rem; padding: 0.625rem 0.75rem; border: 1px solid var(--line); border-radius: 14px; margin-top: 0.5rem; background: #fbfcf7; }
 .pk-online-who { flex: 1; min-width: 0; display: flex; flex-direction: column; text-align: left; }
 .pk-online-who strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pk-online-name-line { display: flex; align-items: center; gap: 0.375rem; min-width: 0; }
+.pk-online-name-line strong { min-width: 0; }
 .pk-online-who small { color: var(--muted); font-size: 0.8125rem; }
 .pk-lobby-label { color: var(--muted); margin: 0; font-size: 0.9375rem; }
 .pk-lobby-code { font: 800 clamp(2.75rem, 2rem + 4vw, 4.5rem)/1.15 ui-monospace, SFMono-Regular, Consolas, monospace; letter-spacing: 0.18em; color: var(--green-dark); margin: 0.25rem 0 0.75rem; padding-left: 0.18em; }
@@ -313,6 +315,20 @@ mark { background: #ffe797; color: inherit; border-bottom: 3px solid #da9c16; pa
 .pk-online-rank li:nth-child(-n+3) .pk-online-rankno { color: var(--gold); }
 .pk-online-points { font-size: 1.25rem; font-weight: 750; color: var(--green-dark); white-space: nowrap; text-align: right; }
 .pk-online-points small { display: block; font-size: 0.75rem; color: #9a7413; font-weight: 600; }
+.pk-online-points .pk-outcome { display: inline-block; margin-top: 0.125rem; padding: 0 0.5rem; border-radius: 999px; font-weight: 800; color: #fff; background: #9aa5b1; }
+.pk-online-points .pk-outcome.mvp { background: linear-gradient(135deg, #ffb300, #ff6f3c); }
+.pk-online-points .pk-outcome.win { background: #3f8f55; }
+.pk-online-points .pk-outcome.lose { background: #c0563f; }
+.pk-online-points .pk-outcome.protect { background: #7d8995; }
+/* 段位 pill, same as social.css */
+.tier { --t1: #b46a3c; --t2: #f0c39d; display: inline-flex; flex: none; padding: 0 0.5rem; border-radius: 999px; background: linear-gradient(135deg, var(--t2), var(--t1)); color: #fff; font-size: 0.75rem; font-weight: 800; line-height: 1.5; white-space: nowrap; text-shadow: 0 1px 1px rgba(0,0,0,.25); }
+.t-silver { --t1: #7d8995; --t2: #d7dee6; }
+.t-gold { --t1: #d98b00; --t2: #ffd75e; }
+.t-platinum { --t1: #1f9b8c; --t2: #8fe3d8; }
+.t-diamond { --t1: #2f6fe0; --t2: #9cc8ff; }
+.t-star { --t1: #7a45e6; --t2: #cdb2ff; }
+.t-king { --t1: #d6352b; --t2: #ffb36b; }
+.t-glory { --t1: #c2185b; --t2: #ffd75e; }
 @media (max-width: 600px) { .pk-online-bar { padding: 0 0.75rem; } .pk-online-chip { max-width: 9rem; font-size: 0.875rem; } }
 button.pk-home { border: 0; background: transparent; padding: 0; }
 .pk-practice-note { background: var(--gold-soft); border: 1px solid #ecd58a; color: #6d5310; border-radius: 12px; padding: 0.625rem 0.875rem; font-size: 0.9375rem; line-height: 1.7; margin: 0 0 1rem; text-align: left; }

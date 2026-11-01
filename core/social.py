@@ -2,13 +2,15 @@
 
 Every endpoint needs a licensed browser (current()). A user belongs to at most one class: profiles.class_id.
 Points go into `scores`: a solo round is reported once at its end against a ticket from /start (the server
-recomputes the points from the right/wrong sequence); a mistake re-practice round scores 1 point per question
-answered right; free trials never score. The site-wide leaderboard (top 20) is cached per process for a minute.
+recomputes the game score from the right/wrong sequence and records a tenth of it, rank_points); a mistake
+re-practice round scores 1 point per question answered right; free trials never score. Every recorded point also
+counts towards the user's 段位 (core/ranks.py). The site-wide leaderboard (top 20) is cached per process for a minute.
 """
 
 import io, secrets, time
 from flask import Response, abort, jsonify, redirect, render_template, request, url_for
 from PIL import Image, ImageOps, UnidentifiedImageError
+from . import ranks
 from .app import current, db, limited, site
 
 AVATAR_SIZE = 96
@@ -46,6 +48,11 @@ def round_points(marks):
     return score
 
 
+def rank_points(score):
+    """What a game score is worth on the leaderboards: a tenth, rounded half up (230 → 23, 235 → 24)."""
+    return (max(0, score) + 5) // 10
+
+
 def clean_text(value, limit):
     if not isinstance(value, str):
         return ""
@@ -61,7 +68,7 @@ def profile_row(lid):
     return (
         db()
         .execute(
-            "SELECT license_id,nickname,avatar_ver,class_id FROM profiles WHERE site=? AND license_id=?",
+            "SELECT license_id,nickname,avatar_ver,class_id,rank_stars,rank_progress FROM profiles WHERE site=? AND license_id=?",
             (site().key, lid),
         )
         .fetchone()
@@ -138,12 +145,20 @@ def reset_profile(lid, field):
 
 
 def ranked(rows):
-    """Score rows (license_id, nickname, avatar_ver, points, rounds) → display dicts with competition ranks."""
+    """Score rows (license_id, nickname, avatar_ver, rank_stars, points, rounds) → display dicts with competition ranks."""
     out, rank = [], 0
     for i, r in enumerate(rows):
         if not i or r["points"] != rows[i - 1]["points"]:
             rank = i + 1
-        out.append(dict(display(r["license_id"], r["nickname"], r["avatar_ver"]), rank=rank, points=r["points"], rounds=r["rounds"]))
+        out.append(
+            dict(
+                display(r["license_id"], r["nickname"], r["avatar_ver"]),
+                rank=rank,
+                points=r["points"],
+                rounds=r["rounds"],
+                tier=ranks.badge(r["rank_stars"]),
+            )
+        )
     return out
 
 
@@ -155,7 +170,7 @@ def ranking(cid, period):
     rows = (
         db()
         .execute(
-            "SELECT p.license_id,p.nickname,p.avatar_ver,coalesce(sum(s.points),0) AS points,count(s.id) AS rounds"
+            "SELECT p.license_id,p.nickname,p.avatar_ver,p.rank_stars,coalesce(sum(s.points),0) AS points,count(s.id) AS rounds"
             " FROM profiles p" + ACTIVE +
             " LEFT JOIN scores s ON s.site=p.site AND s.license_id=p.license_id AND s.created_at>=?"
             " WHERE p.site=? AND p.class_id=? GROUP BY p.license_id ORDER BY points DESC,p.license_id",
@@ -209,14 +224,23 @@ def top_ranking(period, lid):
         info = {
             r["license_id"]: r
             for r in db().execute(
-                f"SELECT license_id,nickname,avatar_ver FROM profiles WHERE site=? AND license_id IN ({marks})",
+                f"SELECT license_id,nickname,avatar_ver,rank_stars FROM profiles WHERE site=? AND license_id IN ({marks})",
                 (site().key, *ids),
             )
         }
     rows = []
     for who, points in top:
         p = info.get(who)
-        rows.append({"license_id": who, "nickname": p["nickname"] if p else "", "avatar_ver": p["avatar_ver"] if p else 0, "points": points, "rounds": 0})
+        rows.append(
+            {
+                "license_id": who,
+                "nickname": p["nickname"] if p else "",
+                "avatar_ver": p["avatar_ver"] if p else 0,
+                "rank_stars": p["rank_stars"] if p else 0,
+                "points": points,
+                "rounds": 0,
+            }
+        )
     return ranked(rows), mine
 
 
@@ -246,6 +270,7 @@ def register_social(app):
         return dict(
             display(lid, p["nickname"], p["avatar_ver"]),
             nickname=p["nickname"],
+            rank=ranks.info(p["rank_stars"], p["rank_progress"]),
             klass=c
             and {"name": c["name"], "code": c["code"], "owner": c["owner"] == lid, "members": member_count(c["id"])},
         )
@@ -482,7 +507,7 @@ def register_social(app):
         in_class = bool(profile_row(lid)["class_id"])
         mode = ticket["mode"]
         # Mistake re-practice: +1 for every mistake answered right (it leaves the mistake book).
-        points = sum(marks) if mode == "mistakes" else round_points(marks)
+        points = sum(marks) if mode == "mistakes" else rank_points(round_points(marks))
         reason = (
             "这一局没有答题，不计分"
             if not marks
@@ -504,6 +529,9 @@ def register_social(app):
             "INSERT INTO scores(site,license_id,game,mode,points,created_at) VALUES(?,?,?,?,?,?)",
             (s, lid, game, mode, points, now),
         )
+        before, after = ranks.add_points(d, s, lid, points)
         d.commit()
         _top_cache.clear()  # this process shows the new points at once; other workers within a minute
-        return jsonify(recorded=True, points=points, in_class=in_class, mode=mode)
+        return jsonify(
+            recorded=True, points=points, in_class=in_class, mode=mode, rank=after, stars=after["total"] - before["total"], promoted=after["name"] != before["name"] and after["name"]
+        )
