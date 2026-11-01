@@ -315,6 +315,8 @@ def test_english_pages_audio_and_units():
         if game != "letters":
             assert bank["ui"]["units"] == ["U1", "U2", "U3", "U4", "U5", "U6"], game
         audio = next((q["audio"] for q in bank["questions"] if "audio" in q), None)
+        # Listening games have no same-screen 双人PK (both players would hear each other's recording).
+        assert ('"noPk": true' in page) == (game in ("listen-word", "listen-judge")), game
         if audio:
             r = client.get("/static/audio/" + audio)
             assert r.status_code == 200 and r.mimetype == "audio/mpeg", game

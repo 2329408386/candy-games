@@ -1,8 +1,8 @@
 // Single-answer choice: 课外阅读, 多音字 (highlighted character), 形近字 (blank in the sentence), the choice-based math
 // games and the English games. A question may name a figure (PK.figures[q.figure]) drawn above the options.
 // English listening questions carry q.audio (a recording in static/audio/, transcript q.audioText): a 🔊 button
-// replays it, and it plays by itself once when the question appears to a single player (two players sharing one
-// screen tap 🔊 instead, so the recordings do not talk over each other). q.pictures shows each option as its picture
+// replays it, and it plays by itself once when the question appears to a single player. The listening games set
+// noPk in their config, so there is no same-screen 双人PK where two players would hear each other's recordings. q.pictures shows each option as its picture
 // (PK.picture from types/english.js) instead of its text.
 (() => {
   'use strict';

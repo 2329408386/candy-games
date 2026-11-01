@@ -402,8 +402,10 @@
   modes.setAttribute('role', 'radiogroup');
   modes.setAttribute('aria-label', '游戏模式');
   const modeButtons = {};
-  if (ROOM) modes.classList.add('four');
-  for (const mode of ROOM ? ['pk', 'solo', 'mistakes', 'online'] : ['pk', 'solo', 'mistakes']) {
+  // Listening games (cfg.noPk) have no 双人PK: two players share one speaker, so each would hear the other's recording.
+  const modeList = (ROOM ? ['pk', 'solo', 'mistakes', 'online'] : ['pk', 'solo', 'mistakes']).filter(m => !(cfg.noPk && m === 'pk'));
+  modes.classList.add({ 2: 'two', 3: 'three', 4: 'four' }[modeList.length]);
+  for (const mode of modeList) {
     const b = button(modeLabel[mode], () => selectMode(mode), 'pk-mode');
     b.setAttribute('role', 'radio');
     modeButtons[mode] = b;
@@ -448,6 +450,7 @@
   startScreen.append(top, card);
 
   function selectMode(mode) {
+    if (mode === 'pk' && cfg.noPk) mode = 'solo';
     if (mode === 'mistakes' && !mistakes.ids().length) return;
     round.mode = mode;
     for (const [m, b] of Object.entries(modeButtons)) b.setAttribute('aria-checked', String(m === mode));
@@ -456,7 +459,8 @@
     modeButtons.mistakes.disabled = !count;
     modeNote.textContent = {
       pk: '两位玩家同时作答，各自抽到不同的题目，得分高者获胜。',
-      solo: `一个人练习${PER_PLAYER}题，答错的题会记入本机错题本。`,
+      solo: `一个人练习${PER_PLAYER}题，答错的题会记入本机错题本。` +
+        (cfg.noPk ? (ROOM ? '听力题要听录音，两人共用一个喇叭会互相干扰，所以没有双人PK；想和同学比赛，请用「联网PK」。' : '听力题要听录音，两人共用一个喇叭会互相干扰，所以没有双人PK。') : ''),
       mistakes: `从本机错题本中抽题练习（最多${PER_PLAYER}题），答对后自动移出错题本，每改对一道 +1 分。`,
       online: `和同学各用自己的设备，同时答同一套${PER_PLAYER}道题，实时比分；2到10人一起玩，前三名有名次奖励（第一名 +20，第二名 +10，第三名 +5；只有两人时第一名 +10）。`,
     }[mode];

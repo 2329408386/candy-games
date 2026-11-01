@@ -276,6 +276,7 @@ mark { background: #ffe797; color: inherit; border-bottom: 3px solid #da9c16; pa
 .pk-result-actions .pk-home-button { min-width: 10rem; }
 
 /* ---------- online PK rooms ---------- */
+.pk-modes.two { grid-template-columns: repeat(2, 1fr); }
 .pk-modes.four { grid-template-columns: repeat(4, 1fr); }
 @media (max-width: 480px) { .pk-modes.four { grid-template-columns: repeat(2, 1fr); } }
 .pk-av { --av: 2.5rem; width: var(--av); height: var(--av); border-radius: 50%; flex-shrink: 0; display: inline-grid; place-items: center; overflow: hidden; font-weight: 700; font-size: calc(var(--av) * 0.42); line-height: 1; color: #fff; background: #8ba182; }
