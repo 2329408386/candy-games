@@ -34,6 +34,42 @@
     b.onclick = onClick;
     return b;
   }
+  // Copies text: the Clipboard API needs HTTPS, so plain-HTTP pages fall back to a hidden textarea + execCommand.
+  async function copyText(text) {
+    try {
+      if (window.isSecureContext && navigator.clipboard) {
+        await navigator.clipboard.writeText(text);
+        return true;
+      }
+    } catch {}
+    const area = el('textarea');
+    area.value = text;
+    area.setAttribute('readonly', '');
+    area.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:1px;opacity:0';
+    document.body.append(area);
+    area.select();
+    area.setSelectionRange(0, text.length);
+    let ok = false;
+    try { ok = document.execCommand('copy'); } catch {}
+    area.remove();
+    return ok;
+  }
+  let toastTimer = 0;
+  function toast(text, ok = true) {
+    let box = document.querySelector('.pk-toast');
+    if (!box) {
+      box = el('div', 'pk-toast');
+      box.setAttribute('role', 'status');
+      document.body.append(box);
+    }
+    box.textContent = (ok ? '✓ ' : '') + text;
+    box.classList.toggle('bad', !ok);
+    box.classList.remove('show');
+    void box.offsetWidth;
+    box.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => box.classList.remove('show'), 2200);
+  }
   function shuffle(items) {
     const out = [...items];
     for (let i = out.length - 1; i > 0; i--) {
@@ -361,8 +397,8 @@
     modeNote.textContent = {
       pk: '两位玩家同时作答，各自抽到不同的题目，得分高者获胜。',
       solo: `一个人练习${PER_PLAYER}题，答错的题会记入本机错题本。`,
-      mistakes: `从本机错题本中抽题练习（最多${PER_PLAYER}题），答对后自动移出错题本。`,
-      online: `和同学各用自己的设备，同时答同一套${PER_PLAYER}道题，实时比分；2到10人一起玩，第一名额外加20分。`,
+      mistakes: `从本机错题本中抽题练习（最多${PER_PLAYER}题），答对后自动移出错题本，每改对一道 +1 分。`,
+      online: `和同学各用自己的设备，同时答同一套${PER_PLAYER}道题，实时比分；2到10人一起玩，前三名有名次奖励（第一名 +20，第二名 +10，第三名 +5；只有两人时 +10 和 +5）。`,
     }[mode];
     go.hidden = mode === 'online';
     onlinePanel.hidden = mode !== 'online';
@@ -573,7 +609,8 @@
     round.deadline = preset ? preset.deadline : Date.now() + duration * 1000;
     round.players = draws.map(questions => ({ questions, index: 0, score: 0, combo: 0, correct: 0, wrong: [], marks: [], a: null, view: null,
       history: [], result: null, notice: '' }));
-    round.ticket = SCORE && round.mode === 'solo' ? scorePost(SCORE.start, {}).then(d => d.round, () => null) : null;
+    round.ticket = SCORE && (round.mode === 'solo' || round.mode === 'mistakes')
+      ? scorePost(SCORE.start, { mode: round.mode }).then(d => d.round, () => null) : null;
     round.report = null;
     arena.replaceChildren();
     arena.classList.toggle('solo', round.players.length === 1);
@@ -789,13 +826,16 @@
     resultScreen.append(summary);
     if (round.mode === 'online') resultScreen.append(online.resultsBox());
     if (round.report) {
-      const line = el('p', 'pk-help pk-rank-note', '正在计入班级排行…');
+      const line = el('p', 'pk-help pk-rank-note', '正在计入排行…');
       line.setAttribute('role', 'status');
       resultScreen.append(line);
       round.report.then(d => {
         if (!d) line.textContent = '这一局的成绩没能提交（网络不稳定），不影响继续练习。';
         else if (!d.recorded) line.textContent = d.reason;
-        else line.textContent = d.in_class ? `已计入班级排行 +${d.points} 分` : `已记录 +${d.points} 分。在首页右上角的「我的」里加入班级，就能和同学比排名。`;
+        else {
+          const fixed = d.mode === 'mistakes' ? `（改对 ${d.points} 道错题，每道 +1 分）` : '';
+          line.textContent = d.in_class ? `已计入排行 +${d.points} 分${fixed}` : `已记录 +${d.points} 分${fixed}。在首页右上角的「我的」里加入班级，就能和同学比排名。`;
+        }
       });
     }
     players.forEach((s, p) => {
@@ -934,14 +974,11 @@
       const box = el('main', 'pk-card');
       box.append(el('p', 'pk-eyebrow', `联网PK · ${cfg.title}`));
       box.append(el('p', 'pk-lobby-label', '房间码'), el('p', 'pk-lobby-code', st.code));
-      const invite = button('复制邀请', async () => {
-        const text = `来和我PK「${cfg.title}」！打开游戏，选「联网PK」，输入房间码 ${st.code}，或者直接打开：${new URL(st.link, location.href).href}`;
-        try {
-          await navigator.clipboard.writeText(text);
-          invite.textContent = '已复制，发给同学吧';
-        } catch {
-          prompt('复制下面的文字发给同学：', text);
-        }
+      const invite = button('复制房间码', async () => {
+        if (await copyText(st.code)) {
+          toast(`已复制房间码 ${st.code}，发给同学吧`);
+          invite.textContent = '已复制 ✓';
+        } else toast('复制失败，请长按房间码手动复制', false);
       }, st.practice ? 'pk-invite-main' : 'secondary');
       box.append(invite, el('p', 'pk-help', '同学在这个游戏里选「联网PK」，输入房间码就能加入；同班同学还能直接在列表里点「加入」。'));
       const grid = el('ul', 'pk-lobby-players');
@@ -1018,14 +1055,14 @@
         const who = el('span', 'pk-online-who');
         who.append(el('strong', '', p.name), el('small', '', `答对 ${p.correct} 题 · 已答 ${p.answered} 题`));
         const pts = el('span', 'pk-online-points', `${p.score} 分`);
-        if (ended && p.bonus) pts.append(el('small', '', ` +${p.bonus} 冠军奖励`));
+        if (ended && p.bonus) pts.append(el('small', '', ` +${p.bonus} 名次奖励`));
         li.append(el('span', 'pk-online-rankno', ended ? String(p.rank) : '·'), avatar(p), who, pts);
         list.append(li);
       }
       resultsHolder.append(list);
       if (!ended) return void resultsHolder.append(el('p', 'pk-help', '等其他同学答完或时间到，就公布最终名次…'));
       if (st.practice) {
-        const note = el('p', 'pk-practice-note', '这是自家设备之间的练习赛，不计分。下次邀请同学来PK，第一名还有 +20 冠军奖励！');
+        const note = el('p', 'pk-practice-note', '这是自家设备之间的练习赛，不计分。下次邀请同学来PK，前三名都有名次奖励（第一名最多 +20）！');
         if (!st.inClass) {
           const link = el('a', '', '去加入班级');
           link.href = ROOM.me;
@@ -1034,7 +1071,7 @@
         resultsHolder.append(note);
       } else if (mine && !mine.counted) {
         resultsHolder.append(el('p', 'pk-help', '同一个账号在这局有好几台设备，只按得分最高的一台计入班级排行。'));
-      } else resultsHolder.append(el('p', 'pk-help', '本局得分已计入班级排行（每人每天最多30局联网PK计分）。'));
+      } else resultsHolder.append(el('p', 'pk-help', '本局得分和名次奖励已计入排行（每人每天最多30局联网PK计分）。'));
     }
     function resultsBox() {
       renderResults();

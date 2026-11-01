@@ -9,17 +9,18 @@ State lives in SQLite so deploys and restarts keep rooms alive; clients poll GET
 The host's browser draws the question ids (same quotas as a solo round); the server only checks they are in the
 bank. Answers are graded in the browser (the renderers hold the grading logic) and reported one by one in order;
 the server keeps the score with the game's rules. When the deadline (+ grace) passes, or everybody has answered
-every question, the room ends and points go into `scores` (mode 'online'), +20 for the winning license(s).
+every question, the room ends and points go into `scores` (mode 'online') plus a placing bonus (PLACE_BONUS).
 (Tables pk_rooms/pk_seats replaced rooms/room_players, which keyed players by license; those are no longer used.)
 """
 
 import json, secrets, time
 from flask import abort, jsonify, request, url_for
 from .app import bank_json, current, db, device_hash, limited, site
-from .social import SOLO_PER_DAY, display, ensure_profile, period_start, profile_row
+from .social import SOLO_PER_DAY, _top_cache, display, ensure_profile, period_start, profile_row
 
 MAX_PLAYERS = 10
-WIN_BONUS = 20
+# Placing bonus by number of scoring licenses: 2 players → 1st +10, 2nd +5; 3 or more → +20/+10/+5. Ties share a place.
+PLACE_BONUS = {2: (10, 5), 3: (20, 10, 5)}
 COUNTDOWN = 3  # seconds between 开始 and the first question
 GRACE = 3  # answers may arrive this late after the deadline (network delay)
 MIN_ANSWER_GAP = 1  # seconds between two answers of one player
@@ -83,11 +84,13 @@ def finalize(room, now):
     """Ends a running room once and writes the points. Caller holds the write lock."""
     s = site().key
     best = best_seats(seats(room["code"]))
-    top = max((r["score"] for r in best.values()), default=0)
     day = period_start("day", now)
     if len(best) > 1:  # a license playing only itself scores nothing
+        prizes = PLACE_BONUS[min(len(best), 3)]
+        scores = sorted((r["score"] for r in best.values()), reverse=True)
         for lid, r in best.items():
-            bonus = WIN_BONUS if top > 0 and r["score"] == top else 0
+            place = scores.index(r["score"])  # competition ranking: ties share the higher place
+            bonus = prizes[place] if place < len(prizes) and r["score"] > 0 and r["answered"] else 0
             db().execute("UPDATE pk_seats SET bonus=?,counted=1 WHERE site=? AND code=? AND seat=?", (bonus, s, room["code"], r["seat"]))
             played = db().execute(
                 "SELECT count(*) FROM scores WHERE site=? AND license_id=? AND mode='online' AND created_at>=?",
@@ -98,6 +101,7 @@ def finalize(room, now):
                     "INSERT INTO scores(site,license_id,game,mode,points,created_at) VALUES(?,?,?,?,?,?)",
                     (s, lid, room["game"], "online", r["score"] + bonus, now),
                 )
+    _top_cache.clear()
     db().execute(
         "UPDATE pk_rooms SET status='ended',deadline=min(deadline,?),version=version+1 WHERE site=? AND code=?",
         (now, s, room["code"]),

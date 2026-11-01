@@ -2,7 +2,7 @@ import json, time
 import pytest
 from conftest import SiteClient
 from sites import SITES
-from test_social import second_key, reset_social, alice, bob  # noqa: F401  (fixtures)
+from test_social import second_key, reset_social, alice, bob, extra_users  # noqa: F401  (fixtures)
 
 
 @pytest.fixture(autouse=True)
@@ -117,9 +117,9 @@ def test_answers_score_in_order_and_room_ends(alice, bob, site, db):
     answer(bob, code, 2, True, db, site)
     st = bob.get(f"/api/rooms/{code}").get_json()
     assert st["status"] == "ended", "everybody finished, so the room ends early"
-    assert [(p["id"], p["score"], p["bonus"]) for p in st["players"]] == [(2, 25, 20), (1, 20, 0)]
+    assert [(p["id"], p["score"], p["bonus"]) for p in st["players"]] == [(2, 25, 10), (1, 20, 5)]
     rows = db.execute("SELECT license_id,points,mode FROM scores WHERE site=? ORDER BY license_id", (site,)).fetchall()
-    assert [tuple(r) for r in rows] == [(1, 20, "online"), (2, 45, "online")]
+    assert [tuple(r) for r in rows] == [(1, 25, "online"), (2, 35, "online")]
     bob.get(f"/api/rooms/{code}")
     assert db.execute("SELECT count(*) FROM scores WHERE site=?", (site,)).fetchone()[0] == 2, "scored once"
     assert answer(bob, code, 3, True, db, site).status_code == 409
@@ -137,7 +137,7 @@ def test_deadline_ends_the_room_after_a_grace_period(alice, bob, site, db):
     db.commit()
     assert answer(alice, code, 2, True, db, site).status_code == 409, "too late"
     st = alice.get(f"/api/rooms/{code}").get_json()
-    assert st["status"] == "ended" and [(p["id"], p["bonus"]) for p in st["players"]] == [(1, 20), (2, 0)]
+    assert st["status"] == "ended" and [(p["id"], p["bonus"]) for p in st["players"]] == [(1, 10), (2, 5)]
 
 
 def test_tied_winners_share_the_bonus(alice, bob, site, db):
@@ -147,7 +147,7 @@ def test_tied_winners_share_the_bonus(alice, bob, site, db):
     db.execute("UPDATE pk_rooms SET deadline=? WHERE site=? AND code=?", (int(time.time()) - 10, site, code))
     db.commit()
     st = alice.get(f"/api/rooms/{code}").get_json()
-    assert [(p["rank"], p["bonus"]) for p in st["players"]] == [(1, 20), (1, 20)]
+    assert [(p["rank"], p["bonus"]) for p in st["players"]] == [(1, 10), (1, 10)]
 
 
 def test_class_lobby_lists_classmates_rooms(alice, bob, site, db):
@@ -208,6 +208,24 @@ def test_mixed_room_scores_each_license_once(alice, bob, site, db):
     st = bob.get(f"/api/rooms/{code}").get_json()
     assert st["status"] == "ended"
     got = [(p["name"], p["score"], p["bonus"], p["counted"]) for p in st["players"]]
-    assert got == [("同学1 · 设备2", 25, 20, True), ("同学1", 10, 0, False), ("同学2", 5, 0, True)]
+    assert got == [("同学1 · 设备2", 25, 10, True), ("同学1", 10, 0, False), ("同学2", 5, 5, True)]
     rows = db.execute("SELECT license_id,points FROM scores WHERE site=? ORDER BY license_id", (site,)).fetchall()
-    assert [tuple(r) for r in rows] == [(1, 45), (2, 5)], "alice's best device counts once, with the bonus"
+    assert [tuple(r) for r in rows] == [(1, 35), (2, 10)], "alice's best device counts once, with the bonus"
+
+
+def test_three_players_get_20_10_5_and_ties_share(alice, bob, site, db, extra_users):
+    carol, dave = extra_users(2)
+    code = alice.post(f"/api/rooms/{game_of(site)}/create", json={"seconds": 120}).get_json()["code"]
+    for c in (bob, carol, dave):
+        assert c.post(f"/api/rooms/{code}/join", json={}).status_code == 200
+    alice.post(f"/api/rooms/{code}/start", json={"questions": ids(alice, site, 2)})
+    db.execute("UPDATE pk_rooms SET started_at=started_at-5 WHERE site=? AND code=?", (site, code))
+    db.commit()
+    for client, marks in ((alice, [True, True]), (bob, [True, False]), (carol, [True, False]), (dave, [False, False])):
+        for i, ok in enumerate(marks):
+            answer(client, code, i, ok, db, site)
+    st = alice.get(f"/api/rooms/{code}").get_json()
+    assert st["status"] == "ended"
+    assert [(p["id"], p["rank"], p["bonus"]) for p in st["players"]] == [(1, 1, 20), (2, 2, 10), (10, 2, 10), (11, 4, 0)]
+    rows = db.execute("SELECT license_id,points FROM scores WHERE site=? ORDER BY license_id", (site,)).fetchall()
+    assert [tuple(r) for r in rows] == [(1, 45), (2, 15), (10, 15), (11, 0)]

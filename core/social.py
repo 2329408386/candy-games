@@ -2,7 +2,8 @@
 
 Every endpoint needs a licensed browser (current()). A user belongs to at most one class: profiles.class_id.
 Points go into `scores`: a solo round is reported once at its end against a ticket from /start (the server
-recomputes the points from the right/wrong sequence), mistake re-practice and free trials never score.
+recomputes the points from the right/wrong sequence); a mistake re-practice round scores 1 point per question
+answered right; free trials never score. The site-wide leaderboard (top 20) is cached per process for a minute.
 """
 
 import io, secrets, time
@@ -15,7 +16,10 @@ NAME_MAX = 8
 CLASS_NAME_MAX = 20
 CLASS_MAX = 100
 PER_ROUND = 20
-SOLO_PER_DAY = 30  # solo rounds per user per day that count towards the rankings
+SOLO_PER_DAY = 30  # rounds per user per day and mode that count towards the rankings
+TOP_N = 20
+TOP_CACHE_SECONDS = 60
+_top_cache = {}
 MIN_SECONDS_PER_ANSWER = 2
 BEIJING = 8 * 3600
 
@@ -133,25 +137,87 @@ def reset_profile(lid, field):
     db().execute(f"UPDATE profiles SET {column} WHERE site=? AND license_id=?", (site().key, lid))
 
 
-def ranking(cid, period):
-    since = period_start("week") if period == "week" else 0
-    rows = (
-        db()
-        .execute(
-            "SELECT p.license_id,p.nickname,p.avatar_ver,coalesce(sum(s.points),0) AS points,count(s.id) AS rounds"
-            " FROM profiles p JOIN licenses l ON l.site=p.site AND l.id=p.license_id AND l.enabled=1 AND l.archived_at IS NULL"
-            " LEFT JOIN scores s ON s.site=p.site AND s.license_id=p.license_id AND s.created_at>=?"
-            " WHERE p.site=? AND p.class_id=? GROUP BY p.license_id ORDER BY points DESC,p.license_id",
-            (since, site().key, cid),
-        )
-        .fetchall()
-    )
+def ranked(rows):
+    """Score rows (license_id, nickname, avatar_ver, points, rounds) → display dicts with competition ranks."""
     out, rank = [], 0
     for i, r in enumerate(rows):
         if not i or r["points"] != rows[i - 1]["points"]:
             rank = i + 1
         out.append(dict(display(r["license_id"], r["nickname"], r["avatar_ver"]), rank=rank, points=r["points"], rounds=r["rounds"]))
     return out
+
+
+ACTIVE = " JOIN licenses l ON l.site=p.site AND l.id=p.license_id AND l.enabled=1 AND l.archived_at IS NULL"
+
+
+def ranking(cid, period):
+    since = period_start("week") if period == "week" else 0
+    rows = (
+        db()
+        .execute(
+            "SELECT p.license_id,p.nickname,p.avatar_ver,coalesce(sum(s.points),0) AS points,count(s.id) AS rounds"
+            " FROM profiles p" + ACTIVE +
+            " LEFT JOIN scores s ON s.site=p.site AND s.license_id=p.license_id AND s.created_at>=?"
+            " WHERE p.site=? AND p.class_id=? GROUP BY p.license_id ORDER BY points DESC,p.license_id",
+            (since, site().key, cid),
+        )
+        .fetchall()
+    )
+    return ranked(rows)
+
+
+def site_totals(period):
+    """Every active license with points in the period: [(license_id, points)], best first. Cached for a minute."""
+    key, now = (site().key, period), time.time()
+    hit = _top_cache.get(key)
+    if hit and hit[0] > now:
+        return hit[1]
+    since = period_start("week") if period == "week" else 0
+    totals = [
+        (r[0], r[1])
+        for r in db().execute(
+            "SELECT s.license_id,sum(s.points) AS points FROM scores s"
+            " JOIN licenses l ON l.site=s.site AND l.id=s.license_id AND l.enabled=1 AND l.archived_at IS NULL"
+            " WHERE s.site=? AND s.created_at>=? GROUP BY s.license_id HAVING points>0 ORDER BY points DESC,s.license_id",
+            (site().key, since),
+        )
+    ]
+    _top_cache[key] = (now + TOP_CACHE_SECONDS, totals)
+    return totals
+
+
+def top_ranking(period, lid):
+    """The site-wide top TOP_N, plus where `lid` stands ({rank, points, gap} or None without points)."""
+    totals = site_totals(period)
+    rank, mine = 0, None
+    for i, (who, points) in enumerate(totals):
+        if not i or points != totals[i - 1][1]:
+            rank = i + 1
+        if who == lid:
+            mine = {"rank": rank, "points": points}
+            break
+    top = totals[:TOP_N]
+    if mine:
+        cutoff = top[-1][1] if len(top) == TOP_N else 0
+        mine["gap"] = max(0, cutoff - mine["points"] + 1) if mine["rank"] > TOP_N else 0
+    elif len(top) == TOP_N:
+        mine = {"rank": None, "points": 0, "gap": top[-1][1] + 1}
+    ids = [who for who, _ in top]
+    info = {}
+    if ids:
+        marks = ",".join("?" * len(ids))
+        info = {
+            r["license_id"]: r
+            for r in db().execute(
+                f"SELECT license_id,nickname,avatar_ver FROM profiles WHERE site=? AND license_id IN ({marks})",
+                (site().key, *ids),
+            )
+        }
+    rows = []
+    for who, points in top:
+        p = info.get(who)
+        rows.append({"license_id": who, "nickname": p["nickname"] if p else "", "avatar_ver": p["avatar_ver"] if p else 0, "points": points, "rounds": 0})
+    return ranked(rows), mine
 
 
 def register_social(app):
@@ -298,7 +364,7 @@ def register_social(app):
         if not c:
             return fail("你还没有加入班级")
         if c["owner"] == lid:
-            return fail("你是班主，不能直接退出；如果不再需要这个班级，可以解散它")
+            return fail("这个班级是你创建的，不能直接退出；如果不再需要这个班级，可以解散它")
         db().execute("UPDATE profiles SET class_id=NULL WHERE site=? AND license_id=?", (site().key, lid))
         db().commit()
         return jsonify(me_payload(lid))
@@ -308,7 +374,7 @@ def register_social(app):
         lid = user()
         c = own_class(lid)
         if not c or c["owner"] != lid:
-            return fail("只有班主可以管理班级", 403)
+            return fail("只有班级创建者可以管理班级", 403)
         if action == "rename":
             name = clean_text(payload().get("name"), CLASS_NAME_MAX + 1)
             if not 1 <= len(name) <= CLASS_NAME_MAX:
@@ -326,7 +392,7 @@ def register_social(app):
         lid = user()
         c = own_class(lid)
         if not c or c["owner"] != lid:
-            return fail("只有班主可以管理班级", 403)
+            return fail("只有班级创建者可以管理班级", 403)
         p = profile_row(member)
         if member == lid or not p or p["class_id"] != c["id"]:
             return fail("这位同学不在你的班级里", 404)
@@ -349,6 +415,14 @@ def register_social(app):
         period = "week" if request.args.get("period") == "week" else "all"
         return jsonify(period=period, me=lid, rows=ranking(c["id"], period))
 
+    @app.get("/api/ranking")
+    def site_ranking():
+        lid = user()
+        db().commit()
+        period = "week" if request.args.get("period") == "week" else "all"
+        rows, mine = top_ranking(period, lid)
+        return jsonify(period=period, me=lid, mine=mine, rows=rows)
+
     # ---- solo rounds: a ticket at the start, the right/wrong sequence at the end ----
     @app.post("/api/rounds/<game>/start")
     def round_start(game):
@@ -361,9 +435,10 @@ def register_social(app):
         now = int(time.time())
         d.execute("DELETE FROM rounds WHERE site=? AND started_at<?", (site().key, now - 86400))
         ticket = secrets.token_urlsafe(16)
+        mode = "mistakes" if payload().get("mode") == "mistakes" else "solo"
         d.execute(
-            "INSERT INTO rounds(site,id,license_id,game,started_at) VALUES(?,?,?,?,?)",
-            (site().key, ticket, row["id"], game, now),
+            "INSERT INTO rounds(site,id,license_id,game,started_at,mode) VALUES(?,?,?,?,?,?)",
+            (site().key, ticket, row["id"], game, now, mode),
         )
         d.commit()
         return jsonify(round=ticket)
@@ -395,7 +470,9 @@ def register_social(app):
         d.execute("DELETE FROM rounds WHERE site=? AND id=?", (s, ticket["id"]))
         ensure_profile(lid)
         in_class = bool(profile_row(lid)["class_id"])
-        points = round_points(marks)
+        mode = ticket["mode"]
+        # Mistake re-practice: +1 for every mistake answered right (it leaves the mistake book).
+        points = sum(marks) if mode == "mistakes" else round_points(marks)
         reason = (
             "这一局没有答题，不计分"
             if not marks
@@ -405,17 +482,18 @@ def register_social(app):
             d.commit()
             return jsonify(recorded=False, points=0, in_class=in_class, reason=reason)
         today = d.execute(
-            "SELECT count(*) FROM scores WHERE site=? AND license_id=? AND mode='solo' AND created_at>=?",
-            (s, lid, period_start("day", now)),
+            "SELECT count(*) FROM scores WHERE site=? AND license_id=? AND mode=? AND created_at>=?",
+            (s, lid, mode, period_start("day", now)),
         ).fetchone()[0]
         if today >= SOLO_PER_DAY:
             d.commit()
             return jsonify(
-                recorded=False, points=points, in_class=in_class, reason=f"今天已有{SOLO_PER_DAY}局计入排行，明天再来吧"
+                recorded=False, points=points, in_class=in_class, reason=f"今天已有{SOLO_PER_DAY}局{'错题重练' if mode == 'mistakes' else ''}计入排行，明天再来吧"
             )
         d.execute(
             "INSERT INTO scores(site,license_id,game,mode,points,created_at) VALUES(?,?,?,?,?,?)",
-            (s, lid, game, "solo", points, now),
+            (s, lid, game, mode, points, now),
         )
         d.commit()
-        return jsonify(recorded=True, points=points, in_class=in_class)
+        _top_cache.clear()  # this process shows the new points at once; other workers within a minute
+        return jsonify(recorded=True, points=points, in_class=in_class, mode=mode)

@@ -33,7 +33,21 @@
         </div>
       </div>
       <ol class="rank-list" id="rank-list"></ol>
-      <p class="hint">单人练习和联网对战的得分都会计入排行（错题重练不计分）；本周榜每周一 0 点清零。</p>
+      <p class="hint">单人练习、错题重练（每改对一道 +1 分）和联网PK（前三名另有名次奖励）的得分都会计入排行；本周榜每周一 0 点清零。</p>
+    </section>
+    <section class="me-card top-card" id="top-card" aria-label="总排行榜">
+      <div class="class-head">
+        <div>
+          <h2>🏆 总排行榜</h2>
+          <p class="hint">所有同学一起比，只显示前 20 名</p>
+        </div>
+        <div class="rank-tabs" id="top-tabs" role="group" aria-label="总榜周期">
+          <button type="button" data-period="week" aria-pressed="true">本周</button><button type="button" data-period="all" aria-pressed="false">累计</button>
+        </div>
+      </div>
+      <div class="podium" id="top-podium"></div>
+      <ol class="rank-list top-list" id="top-list"></ol>
+      <p class="top-mine" id="top-mine" hidden></p>
     </section>
   </div>
   <script id="me-config" type="application/json">{{ {
@@ -48,13 +62,14 @@
     "manage": url_for("manage_class", action="ACTION"),
     "member": url_for("manage_member", member=0, action="ACTION"),
     "ranking": url_for("class_ranking"),
+    "top": url_for("site_ranking"),
   }|tojson }}</script>
   <script>
 (() => {
   const C = JSON.parse(document.getElementById('me-config').textContent);
   const $ = id => document.getElementById(id);
   const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text !== undefined) n.textContent = text; return n; };
-  let me = null, period = 'week', managing = false;
+  let me = null, period = 'week', topPeriod = 'week', managing = false;
 
   async function call(url, body, raw) {
     const opts = { method: body === undefined ? 'GET' : 'POST', headers: {}, cache: 'no-store' };
@@ -78,6 +93,33 @@
     return a;
   }
   function say(id, text, ok) { const m = $(id); m.textContent = text; m.className = 'me-msg ' + (ok ? 'success' : 'error'); }
+  // The Clipboard API needs HTTPS; plain-HTTP pages fall back to a hidden textarea + execCommand.
+  async function copyText(text) {
+    try { if (window.isSecureContext && navigator.clipboard) { await navigator.clipboard.writeText(text); return true; } } catch {}
+    const area = el('textarea');
+    area.value = text;
+    area.setAttribute('readonly', '');
+    area.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:1px;opacity:0';
+    document.body.append(area);
+    area.select();
+    area.setSelectionRange(0, text.length);
+    let ok = false;
+    try { ok = document.execCommand('copy'); } catch {}
+    area.remove();
+    return ok;
+  }
+  let toastTimer = 0;
+  function toast(text, ok = true) {
+    let box = document.querySelector('.me-toast');
+    if (!box) { box = el('div', 'me-toast'); box.setAttribute('role', 'status'); document.body.append(box); }
+    box.textContent = (ok ? '✓ ' : '') + text;
+    box.classList.toggle('bad', !ok);
+    box.classList.remove('show');
+    void box.offsetWidth;
+    box.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => box.classList.remove('show'), 2200);
+  }
   function button(text, onClick, cls) { const b = el('button', cls || '', text); b.type = 'button'; b.onclick = onClick; return b; }
   async function act(msgId, fn) {
     try { const data = await fn(); if (data && data.id) { me = data; render(); } return true; }
@@ -163,12 +205,12 @@
       const k = me.klass;
       const head = el('div', 'class-head');
       const left = el('div');
-      left.append(el('h2', '', k.name), el('p', 'hint', `${k.members} 人${k.owner ? ' · 你是班主' : ''}`));
+      left.append(el('h2', '', k.name), el('p', 'hint', `${k.members} 人${k.owner ? ' · 我创建的' : ''}`));
       const code = el('div');
       code.append(el('span', 'hint', '班级码 '), el('span', 'class-code', k.code));
-      const copy = button('复制邀请', async () => {
-        const text = `来加入我的班级「${k.name}」吧！打开${document.title.split(' · ').pop()}，在「我的」页面输入班级码 ${k.code}`;
-        try { await navigator.clipboard.writeText(text); copy.textContent = '已复制'; } catch { prompt('复制下面的文字发给同学：', text); }
+      const copy = button('复制班级码', async () => {
+        if (await copyText(k.code)) { toast(`已复制班级码 ${k.code}，发给同学吧`); copy.textContent = '已复制 ✓'; }
+        else toast('复制失败，请长按班级码手动复制', false);
       }, 'text-button');
       code.append(el('br'), copy);
       head.append(left, code);
@@ -221,15 +263,92 @@
     }
     if (!data.rows.some(r => r.points)) list.append(el('li', 'rank-empty', period === 'week' ? '本周还没有人得分，快去玩一局吧！' : '还没有人得分，快去玩一局吧！'));
   }
-  document.querySelectorAll('.rank-tabs button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('#rank-card .rank-tabs button').forEach(b => b.onclick = () => {
     period = b.dataset.period;
-    document.querySelectorAll('.rank-tabs button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    document.querySelectorAll('#rank-card .rank-tabs button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
     loadRanking();
+  });
+
+  // ---------- site-wide top 20: podium for the first three, then a list ----------
+  const calm = matchMedia('(prefers-reduced-motion: reduce)');
+  function confetti(box) {
+    if (calm.matches) return;
+    const layer = el('div', 'confetti');
+    const colors = ['#f5c542', '#ff7a59', '#4fc3f7', '#9be15d', '#c77dff', '#ff5fa2', '#ffd166'];
+    for (let i = 0; i < 70; i++) {
+      const bit = el('i');
+      bit.style.cssText = `left:${50 + (Math.random() - 0.5) * 30}%;background:${colors[i % colors.length]};` +
+        `--x:${(Math.random() - 0.5) * 520}px;--y:${-120 - Math.random() * 200}px;--r:${Math.random() * 900 - 450}deg;` +
+        `--d:${1.6 + Math.random() * 1.4}s;--w:${6 + Math.random() * 6}px;animation-delay:${Math.random() * 0.25}s`;
+      if (i % 3 === 0) bit.className = 'round';
+      layer.append(bit);
+    }
+    box.append(layer);
+    setTimeout(() => layer.remove(), 3500);
+  }
+  function spot(r, myId) {
+    const place = Math.min(r.rank, 3);
+    const box = el('div', `podium-spot p${place}` + (r.id === myId ? ' me' : ''));
+    const head = el('div', 'podium-head');
+    if (place === 1) head.append(el('span', 'podium-crown', '👑'), el('span', 'podium-rays'));
+    const ring = el('span', 'podium-ring');
+    ring.append(avatar(r));
+    head.append(ring, el('span', 'podium-medal', ['🥇', '🥈', '🥉'][place - 1]));
+    const name = el('strong', 'podium-name', r.name + (r.id === myId ? '（我）' : ''));
+    const pts = el('span', 'podium-points', String(r.points));
+    pts.append(el('small', '', '分'));
+    const base = el('div', 'podium-base');
+    base.append(el('span', '', String(r.rank)));
+    box.append(head, name, pts, base);
+    return box;
+  }
+  let topSeq = 0;
+  async function loadTop() {
+    const seq = ++topSeq, podium = $('top-podium'), list = $('top-list'), mine = $('top-mine');
+    let data;
+    try { data = await call(C.top + '?period=' + topPeriod); }
+    catch (e) { podium.replaceChildren(); list.replaceChildren(el('li', 'rank-empty', e.message)); mine.hidden = true; return; }
+    if (seq !== topSeq) return;
+    podium.replaceChildren();
+    list.replaceChildren();
+    const rows = data.rows;
+    if (!rows.length) {
+      list.append(el('li', 'rank-empty', topPeriod === 'week' ? '本周还没有人上榜，快去玩一局，抢下第一名！' : '还没有人上榜，快去玩一局，抢下第一名！'));
+    } else {
+      // Order on the podium: 2nd, 1st, 3rd.
+      const top3 = rows.slice(0, 3);
+      [top3[1], top3[0], top3[2]].forEach(r => r && podium.append(spot(r, data.me)));
+      podium.classList.toggle('few', top3.length < 3);
+      confetti(podium);
+      rows.slice(3).forEach((r, i) => {
+        const li = el('li', r.id === data.me ? 'me' : '');
+        li.style.animationDelay = (0.6 + i * 0.05) + 's';
+        const who = el('div', 'rank-who');
+        who.append(el('strong', '', r.name + (r.id === data.me ? '（我）' : '')));
+        const pts = el('span', 'rank-points', String(r.points));
+        pts.append(el('small', '', '分'));
+        li.append(el('span', 'rank-no', String(r.rank)), avatar(r), who, pts);
+        list.append(li);
+      });
+    }
+    const m = data.mine;
+    mine.hidden = false;
+    if (m && m.rank && m.rank <= 20) mine.textContent = m.rank <= 3 ? `太厉害了！你是第 ${m.rank} 名，守住领奖台！🔥` : `你排在第 ${m.rank} 名，继续冲击前三名！💪`;
+    else if (m && m.rank) mine.textContent = `你现在是第 ${m.rank} 名，再得 ${m.gap} 分就能进入前 20 名！`;
+    else if (m) mine.textContent = `再得 ${m.gap} 分就能进入前 20 名，加油！`;
+    else mine.textContent = rows.length ? '得分就能上榜，快去玩一局吧！' : '';
+    mine.hidden = !mine.textContent;
+  }
+  document.querySelectorAll('#top-tabs button').forEach(b => b.onclick = () => {
+    topPeriod = b.dataset.period;
+    document.querySelectorAll('#top-tabs button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    loadTop();
   });
 
   function render() { renderProfile(); renderClass(); loadRanking(); }
   async function refresh() { me = await call(C.me); render(); }
   refresh().catch(e => { $('class-card').textContent = e.message; });
+  loadTop();
 })();
 </script>
 {% endblock %}

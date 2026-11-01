@@ -318,3 +318,6 @@ button.pk-home { border: 0; background: transparent; padding: 0; }
 .pk-practice-note { background: var(--gold-soft); border: 1px solid #ecd58a; color: #6d5310; border-radius: 12px; padding: 0.625rem 0.875rem; font-size: 0.9375rem; line-height: 1.7; margin: 0 0 1rem; text-align: left; }
 .pk-practice-note a { color: var(--green-dark); font-weight: 700; }
 .pk-lobby .pk-invite-main { border: 0; border-radius: 12px; padding: 0.625rem 1.5rem; min-height: 2.75rem; background: var(--gold); color: #3d2e05; font-weight: 750; box-shadow: 0 3px 0 #b88b1f; }
+.pk-toast { position: fixed; left: 50%; bottom: 2.5rem; z-index: 1000; transform: translate(-50%, 1rem); max-width: calc(100vw - 2rem); padding: 0.75rem 1.375rem; border-radius: 999px; background: var(--green-dark); color: #fff; font-weight: 700; font-size: 1.0625rem; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22); opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s; text-align: center; }
+.pk-toast.bad { background: #9a3b2f; }
+.pk-toast.show { opacity: 1; transform: translate(-50%, 0); }

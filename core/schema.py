@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS profiles(site TEXT NOT NULL,license_id INTEGER NOT NU
 CREATE INDEX IF NOT EXISTS profiles_class ON profiles(site,class_id);
 CREATE TABLE IF NOT EXISTS scores(id INTEGER PRIMARY KEY,site TEXT NOT NULL,license_id INTEGER NOT NULL,game TEXT NOT NULL,mode TEXT NOT NULL,points INTEGER NOT NULL,created_at INTEGER NOT NULL);
 CREATE INDEX IF NOT EXISTS scores_license ON scores(site,license_id,created_at);
+CREATE INDEX IF NOT EXISTS scores_time ON scores(site,created_at);
 CREATE TABLE IF NOT EXISTS rooms(site TEXT NOT NULL,code TEXT NOT NULL,game TEXT NOT NULL,host INTEGER NOT NULL,class_id INTEGER,status TEXT NOT NULL,seconds INTEGER NOT NULL,question_ids TEXT NOT NULL,version INTEGER NOT NULL,created_at INTEGER NOT NULL,started_at INTEGER NOT NULL,deadline INTEGER NOT NULL,PRIMARY KEY(site,code));
 CREATE INDEX IF NOT EXISTS rooms_class ON rooms(site,class_id,status);
 CREATE TABLE IF NOT EXISTS room_players(site TEXT NOT NULL,code TEXT NOT NULL,license_id INTEGER NOT NULL,score INTEGER NOT NULL DEFAULT 0,combo INTEGER NOT NULL DEFAULT 0,correct INTEGER NOT NULL DEFAULT 0,answered INTEGER NOT NULL DEFAULT 0,bonus INTEGER NOT NULL DEFAULT 0,last_answer REAL NOT NULL DEFAULT 0,joined_at INTEGER NOT NULL,last_seen INTEGER NOT NULL,PRIMARY KEY(site,code,license_id));
@@ -46,4 +47,7 @@ def initialize(path):
     with sqlite3.connect(path) as d:
         d.execute("PRAGMA journal_mode=WAL")
         d.executescript(SCHEMA)
+        # Columns added after a table first shipped (older releases ignore them, so rollbacks stay safe).
+        if "mode" not in {r[1] for r in d.execute("PRAGMA table_info(rounds)")}:
+            d.execute("ALTER TABLE rounds ADD COLUMN mode TEXT NOT NULL DEFAULT 'solo'")
     path.chmod(0o600)

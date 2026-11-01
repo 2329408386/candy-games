@@ -3,7 +3,7 @@ import pytest
 from PIL import Image
 from conftest import SiteClient, KEYS
 from sites import SITES
-from core.social import period_start, round_points
+from core.social import _top_cache, period_start, round_points
 
 
 def second_key(site):
@@ -14,6 +14,7 @@ def second_key(site):
 def reset_social(db):
     for table in ("devices", "limits", "trials", "profiles", "classes", "scores", "rounds"):
         db.execute("DELETE FROM " + table)
+    _top_cache.clear()
     db.execute("UPDATE licenses SET enabled=1,device_limit=3 WHERE archived_at IS NULL")
     db.commit()
 
@@ -30,6 +31,42 @@ def bob(site):
     c = SiteClient(site)
     assert c.activate(second_key(site)).status_code == 200
     return c
+
+
+@pytest.fixture
+def extra_users(site, db):
+    """make(n) → n more activated clients (license ids 10, 11, ...); removed again afterwards."""
+    from core.app import digest
+
+    made = []
+
+    def make(n):
+        out = []
+        for _ in range(n):
+            lid = 10 + len(made)
+            key = site.upper().ljust(12, "X") + f"{lid:04d}"
+            db.execute(
+                "INSERT INTO licenses(site,id,key_hash,games,created_at,device_limit,batch_id,grade_scopes)"
+                " VALUES(?,?,?,'[]',1,3,'historical-batch','[\"g3-t1\"]')",
+                (site, lid, digest(key)),
+            )
+            db.execute("INSERT INTO license_keys VALUES(?,?,?)", (site, lid, key))
+            db.execute("INSERT INTO license_groups VALUES(?,?,?)", (site, lid, "g3-t1-a"))
+            db.commit()
+            made.append(lid)
+            c = SiteClient(site)
+            assert c.activate(key).status_code == 200
+            out.append(c)
+        return out
+
+    yield make
+    for table in ("devices", "profiles", "scores"):
+        db.execute(f"DELETE FROM {table} WHERE site=? AND license_id>=10", (site,))
+    db.execute("DELETE FROM license_groups WHERE site=? AND license_id>=10", (site,))
+    db.execute("DELETE FROM license_keys WHERE site=? AND license_id>=10", (site,))
+    db.execute("DELETE FROM audit WHERE site=? AND license_id>=10", (site,))
+    db.execute("DELETE FROM licenses WHERE site=? AND id>=10", (site,))
+    db.commit()
 
 
 def png(w=300, h=200, color=(200, 60, 60)):
@@ -125,8 +162,8 @@ def test_one_class_per_user_and_owner_rights(alice, bob, site):
     assert other.post("/api/class/join", json={"code": k["code"]}).status_code == 404, "sites do not share classes"
 
 
-def finish(client, game, db, site, answers, ago=600):
-    ticket = client.post(f"/api/rounds/{game}/start", json={}).get_json()["round"]
+def finish(client, game, db, site, answers, ago=600, mode=None):
+    ticket = client.post(f"/api/rounds/{game}/start", json={"mode": mode} if mode else {}).get_json()["round"]
     db.execute("UPDATE rounds SET started_at=started_at-? WHERE site=? AND id=?", (ago, site, ticket))
     db.commit()
     return ticket, client.post(f"/api/rounds/{game}/finish", json={"round": ticket, "answers": answers})
@@ -137,7 +174,7 @@ def test_solo_rounds_score_once_and_rank(alice, bob, site, db):
     page = alice.get("/games/" + game).get_data(as_text=True)
     assert f"/api/rounds/{game}/finish" in page
     ticket, r = finish(alice, game, db, site, [True, True, False, True])
-    assert r.get_json() == {"recorded": True, "points": 30, "in_class": False}
+    assert r.get_json() == {"recorded": True, "points": 30, "in_class": False, "mode": "solo"}
     again = alice.post(f"/api/rounds/{game}/finish", json={"round": ticket, "answers": [True] * 20})
     assert again.status_code == 409, "a ticket counts once"
     assert finish(alice, game, db, site, [True] * 21)[1].status_code == 400
@@ -186,3 +223,51 @@ def test_admin_can_dissolve_and_reset(alice, bob, admin, site):
     assert admin.post("/admin/licenses/1/leave_class").status_code == 302
     assert alice.get("/api/me").get_json()["nickname"] == ""
     assert bob.get("/api/me").get_json()["klass"] is None, "removing the owner dissolves the class"
+
+
+def test_mistake_rounds_score_one_point_per_fixed_mistake(alice, site, db):
+    game = next(iter(SITES[site].games))
+    r = finish(alice, game, db, site, [True, False, True, True], mode="mistakes")[1].get_json()
+    assert r == {"recorded": True, "points": 3, "in_class": False, "mode": "mistakes"}
+    fast = finish(alice, game, db, site, [True] * 10, ago=3, mode="mistakes")[1].get_json()
+    assert not fast["recorded"]
+    rows = db.execute("SELECT mode,points FROM scores WHERE site=?", (site,)).fetchall()
+    assert [tuple(r) for r in rows] == [("mistakes", 3)]
+    now = int(time.time())
+    db.executemany(
+        "INSERT INTO scores(site,license_id,game,mode,points,created_at) VALUES(?,1,?,'solo',10,?)", [(site, game, now)] * 30
+    )
+    db.commit()
+    assert finish(alice, game, db, site, [True], mode="mistakes")[1].get_json()["recorded"], "own daily cap"
+    db.executemany(
+        "INSERT INTO scores(site,license_id,game,mode,points,created_at) VALUES(?,1,?,'mistakes',1,?)", [(site, game, now)] * 30
+    )
+    db.commit()
+    capped = finish(alice, game, db, site, [True], mode="mistakes")[1].get_json()
+    assert not capped["recorded"] and "错题重练" in capped["reason"]
+
+
+def test_site_ranking_top_20(alice, bob, site, db, extra_users):
+    game = next(iter(SITES[site].games))
+    empty = alice.get("/api/ranking?period=week").get_json()
+    assert empty["rows"] == [] and empty["mine"] is None
+    others = extra_users(21)
+    now, old = int(time.time()), period_start("week") - 3600
+    rows = [(site, 10 + i, game, 100 + i, now) for i in range(21)]  # license 30 is best (120), license 10 is 21st
+    rows += [(site, 2, game, 500, old), (site, 1, game, 50, now), (site, 2, game, 5, now)]
+    db.executemany("INSERT INTO scores(site,license_id,game,mode,points,created_at) VALUES(?,?,?,'solo',?,?)", rows)
+    db.commit()
+    assert alice.get("/api/ranking?period=week").get_json()["rows"] == [], "cached for a minute"
+    _top_cache.clear()
+    week = alice.get("/api/ranking?period=week").get_json()
+    assert len(week["rows"]) == 20 and week["rows"][0]["id"] == 30 and week["rows"][0]["rank"] == 1
+    assert week["rows"][-1]["id"] == 11 and week["mine"] == {"rank": 22, "points": 50, "gap": 52}
+    assert others[0].get("/api/ranking?period=week").get_json()["mine"] == {"rank": 21, "points": 100, "gap": 2}
+    total = bob.get("/api/ranking").get_json()
+    assert total["rows"][0]["id"] == 2 and total["rows"][0]["points"] == 505 and total["mine"]["rank"] == 1
+    assert total["mine"]["gap"] == 0
+    assert alice.get("/api/ranking").get_json()["period"] == "all"
+    db.execute("UPDATE licenses SET enabled=0 WHERE site=? AND id=2", (site,))
+    db.commit()
+    _top_cache.clear()
+    assert 2 not in [r["id"] for r in alice.get("/api/ranking").get_json()["rows"]], "disabled users drop out"

@@ -63,7 +63,7 @@
         {% if profile %}
           <div class="device-head">
             {% if profile.avatar_ver %}<img src="{{url_for('admin_avatar',lid=row.id,v=profile.avatar_ver)}}" alt="头像" width="56" height="56" style="border-radius:50%">{% else %}<span class="muted">未上传头像</span>{% endif %}
-            <p style="margin:0">昵称：{{profile.nickname or '未设置'}}<br>班级：{% if klass %}{{klass.name}}（班级码 {{klass.code}}{{'，班主' if klass.owner==row.id else ''}}）{% else %}未加入{% endif %}</p>
+            <p style="margin:0">昵称：{{profile.nickname or '未设置'}}<br>班级：{% if klass %}{{klass.name}}（班级码 {{klass.code}}{{'，创建者' if klass.owner==row.id else ''}}）{% else %}未加入{% endif %}</p>
           </div>
           {% if not row.archived_at %}
             <div class="form-actions">
