@@ -457,6 +457,7 @@ def create_app(site_config):
                 400: "请求格式不正确，请刷新页面后重试",
                 404: "接口不存在，请刷新页面后重试",
                 405: "请求方式不正确",
+                403: "授权已失效，请返回首页重新激活",
                 413: "提交内容过长",
                 500: "服务器处理失败，请稍后重试",
                 503: "服务器繁忙，请稍后重试",
@@ -474,7 +475,7 @@ def create_app(site_config):
     @app.after_request
     def headers(r):
         # Static files are fingerprinted, so only dynamic responses must bypass caches.
-        if request.endpoint not in ("static", "shared_static", "shared_audio"):
+        if request.endpoint not in ("static", "shared_static", "shared_audio", "avatar"):
             r.headers["Cache-Control"] = "no-store"
         r.headers["X-Content-Type-Options"] = "nosniff"
         r.headers["X-Frame-Options"] = "SAMEORIGIN"
@@ -484,6 +485,9 @@ def create_app(site_config):
     register_public(app)
     register_api(app)
     register_admin(app)
+    from .social import register_social  # imports this module, so it is loaded once create_app runs
+
+    register_social(app)
     return app
 
 
@@ -530,6 +534,12 @@ def register_public(app):
         page = {"grade": GRADES[site().game_grades[game]], "trial": None}
         if current(game):
             extra = GUARD.replace("SESSION_URL", url_for("status", game=game)).replace("HOME_URL", url_for("home"))
+            # Solo rounds report their score for the class rankings (core/social.py).
+            page["score"] = {
+                "start": url_for("round_start", game=game),
+                "finish": url_for("round_finish", game=game),
+                "csrf": url_for("csrf_token"),
+            }
         elif trial_open(game):
             # No session guard here: /api/session refuses unlicensed browsers and would send them home mid-round.
             page["trial"] = {"start": url_for("trial_start", game=game), "csrf": url_for("csrf_token")}
@@ -847,9 +857,14 @@ def register_admin(app):
         if not row:
             abort(404)
         s = site().key
+        from .social import profile_row, class_row
+
+        profile = profile_row(lid)
         return render_template(
             "detail.html",
             row=row,
+            profile=profile,
+            klass=profile and profile["class_id"] and class_row(profile["class_id"]),
             key=license_codes([lid])[row["key_hash"]],
             devices=db().execute("SELECT * FROM devices WHERE site=? AND license_id=?", (s, lid)).fetchall(),
             events=db()
@@ -916,6 +931,14 @@ def register_admin(app):
                 return redirect(url_for("detail", lid=lid))
             d.execute("UPDATE licenses SET device_limit=? WHERE site=? AND id=?", (limit, s, lid))
             details = f"{record['device_limit']} → {limit}"
+        elif action in ("reset_nickname", "reset_avatar", "leave_class"):
+            from .social import leave_class, reset_profile
+
+            if action == "leave_class":
+                leave_class(lid)
+            else:
+                reset_profile(lid, action[len("reset_") :])
+            details = ""
         elif action == "unbind":
             details = request.form.get("device", "")
             d.execute("DELETE FROM devices WHERE site=? AND license_id=? AND token_hash=?", (s, lid, details))
@@ -925,6 +948,14 @@ def register_admin(app):
         d.commit()
         flash("已保存更改", "success")
         return redirect(url_for("detail", lid=lid))
+
+    @app.get("/admin/licenses/<int:lid>/avatar.webp")
+    @admin_only
+    def admin_avatar(lid):
+        row = db().execute("SELECT avatar FROM profiles WHERE site=? AND license_id=?", (site().key, lid)).fetchone()
+        if not row or not row["avatar"]:
+            abort(404)
+        return Response(row["avatar"], mimetype="image/webp", headers={"Content-Security-Policy": "default-src 'none'"})
 
     @app.get("/admin/export")
     @admin_only

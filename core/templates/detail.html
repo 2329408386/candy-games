@@ -58,6 +58,26 @@
           </form>
         {% endif %}
       </section>
+      <section class="panel">
+        <h2>用户资料</h2>
+        {% if profile %}
+          <div class="device-head">
+            {% if profile.avatar_ver %}<img src="{{url_for('admin_avatar',lid=row.id,v=profile.avatar_ver)}}" alt="头像" width="56" height="56" style="border-radius:50%">{% else %}<span class="muted">未上传头像</span>{% endif %}
+            <p style="margin:0">昵称：{{profile.nickname or '未设置'}}<br>班级：{% if klass %}{{klass.name}}（班级码 {{klass.code}}{{'，班主' if klass.owner==row.id else ''}}）{% else %}未加入{% endif %}</p>
+          </div>
+          {% if not row.archived_at %}
+            <div class="form-actions">
+              {% for action,label in [('reset_nickname','重置昵称'),('reset_avatar','删除头像'),('leave_class','解散班级' if klass and klass.owner==row.id else '移出班级')] %}
+                {% if (action!='leave_class' or klass) and (action!='reset_nickname' or profile.nickname) and (action!='reset_avatar' or profile.avatar_ver) %}
+                  <form method="post" action="{{url_for('edit',lid=row.id,action=action)}}" onsubmit="return confirm('确定{{label}}？')"><input type="hidden" name="csrf" value="{{csrf()}}"><button class="secondary">{{label}}</button></form>
+                {% endif %}
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% else %}
+          <p class="hint">用户还没有设置昵称、头像或加入班级。</p>
+        {% endif %}
+      </section>
       {% if not row.archived_at %}
         <section class="panel">
           <h2>授权状态</h2>
@@ -99,7 +119,7 @@
       <h2>最近操作记录</h2>
       {% for event in events %}
         <div class="audit-item">
-          <time>{{event.created_at|datetime}}</time>{{ {"assign":"分配 / 更新买家备注","disable":"停用授权","enable":"启用授权","unbind":"解绑设备","limit":"调整设备上限","grades":"调整授权年级范围","archive":"归档停用","grade_migrate":"年级权限迁移"}.get(event.action,event.action) }}{% if event.action=='groups' %}
+          <time>{{event.created_at|datetime}}</time>{{ {"assign":"分配 / 更新买家备注","disable":"停用授权","enable":"启用授权","unbind":"解绑设备","limit":"调整设备上限","grades":"调整授权年级范围","archive":"归档停用","grade_migrate":"年级权限迁移","reset_nickname":"重置昵称","reset_avatar":"删除头像","leave_class":"移出班级 / 解散班级"}.get(event.action,event.action) }}{% if event.action=='groups' %}
           <p class="hint">{{event.details}}</p>
         {% elif event.action=='grades' %}
           {% set change=decode(event.details) %}

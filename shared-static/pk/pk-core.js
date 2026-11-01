@@ -4,8 +4,9 @@
 // ./types/. The engine loads the licensed bank (../games/<id>/bank.json), draws questions, runs the round
 // (one player or two, one shared deadline), scores answers, records mistakes and shows the results.
 // Renderers register with PK.register(type, renderer); see the contract above `register` below.
-// The server injects window.PK_PAGE = {grade, trial}: trial is null for licensed browsers, or {start, csrf} URLs when
-// this browser may play one free round of the game (starting the round uses it up).
+// The server injects window.PK_PAGE = {grade, trial, score}: trial is null for licensed browsers, or {start, csrf} URLs when
+// this browser may play one free round of the game (starting the round uses it up). score ({start, finish, csrf} URLs,
+// licensed browsers only) reports each solo round's right/wrong sequence for the class rankings.
 (() => {
   'use strict';
   const cfg = JSON.parse(document.getElementById('game-config').textContent);
@@ -512,6 +513,18 @@
     startRound();
   }
 
+  // ---------- class rankings: a ticket when a solo round starts, the right/wrong sequence when it ends ----------
+  const SCORE = PAGE.score || null;
+  let scoreToken = null;
+  async function scorePost(path, body) {
+    scoreToken ||= fetch(SCORE.csrf, { cache: 'no-store', credentials: 'same-origin' }).then(r => r.json()).then(d => d.csrf);
+    const r = await fetch(path, { method: 'POST', cache: 'no-store', credentials: 'same-origin',
+      headers: { 'X-CSRF-Token': await scoreToken, 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    const data = await r.json();
+    if (!r.ok) throw Error(data.error);
+    return data;
+  }
+
   // ---------- the round ----------
   function startRound() {
     if (round.running || !bank) return;
@@ -531,8 +544,10 @@
     round.running = true;
     round.ended = false;
     round.deadline = Date.now() + duration * 1000;
-    round.players = draws.map(questions => ({ questions, index: 0, score: 0, combo: 0, correct: 0, wrong: [], a: null, view: null,
+    round.players = draws.map(questions => ({ questions, index: 0, score: 0, combo: 0, correct: 0, wrong: [], marks: [], a: null, view: null,
       history: [], result: null, notice: '' }));
+    round.ticket = SCORE && round.mode === 'solo' ? scorePost(SCORE.start, {}).then(d => d.round, () => null) : null;
+    round.report = null;
     arena.replaceChildren();
     arena.classList.toggle('solo', round.players.length === 1);
     round.players.forEach((s, p) => {
@@ -639,6 +654,7 @@
     }
     const correct = !!renderer.check(q, answer.value, ctx);
     s.result = { correct, value: answer.value };
+    s.marks.push(correct);
     if (correct) {
       s.combo++;
       s.correct++;
@@ -712,6 +728,10 @@
     round.running = false;
     round.ended = true;
     if (TRIAL) trial.done = true;
+    if (round.ticket) {
+      const marks = round.players[0].marks;
+      round.report = round.ticket.then(ticket => ticket && scorePost(SCORE.finish, { round: ticket, answers: marks })).catch(() => null);
+    }
     clearInterval(round.timer);
     audio.stop();
     if (Date.now() >= round.deadline) timeValue.textContent = '0';
@@ -734,6 +754,16 @@
       summary.append(box);
     });
     resultScreen.append(summary);
+    if (round.report) {
+      const line = el('p', 'pk-help pk-rank-note', '正在计入班级排行…');
+      line.setAttribute('role', 'status');
+      resultScreen.append(line);
+      round.report.then(d => {
+        if (!d) line.textContent = '这一局的成绩没能提交（网络不稳定），不影响继续练习。';
+        else if (!d.recorded) line.textContent = d.reason;
+        else line.textContent = d.in_class ? `已计入班级排行 +${d.points} 分` : `已记录 +${d.points} 分。在首页右上角的「我的」里加入班级，就能和同学比排名。`;
+      });
+    }
     players.forEach((s, p) => {
       if (!s.wrong.length) return;
       const list = el('details', 'pk-wrong-list');

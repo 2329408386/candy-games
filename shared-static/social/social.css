@@ -1,0 +1,51 @@
+/* Profile chip in the header, the 「我的」 page (profile, class, ranking). Uses each site's :root tokens. */
+.av{--av:48px;width:var(--av);height:var(--av);border-radius:50%;flex-shrink:0;display:inline-grid;place-items:center;overflow:hidden;font-weight:700;font-size:calc(var(--av)*.42);line-height:1;color:#fff;background:#8ba182;user-select:none}
+.av img{width:100%;height:100%;object-fit:cover;display:block}
+.av.c0{background:#7c9a6d}.av.c1{background:#c39a4b}.av.c2{background:#6c8fa7}.av.c3{background:#b47e66}.av.c4{background:#8d7fb0}.av.c5{background:#5f9c94}
+.header-avatar{display:inline-flex;align-items:center;gap:8px;padding:3px 14px 3px 3px;border:1px solid var(--line);border-radius:999px;background:var(--white);color:var(--ink);font-size:14px;font-weight:650;white-space:nowrap;max-width:180px}
+.header-avatar .av{--av:34px}
+.header-avatar span.name{overflow:hidden;text-overflow:ellipsis}
+.header-avatar:hover{border-color:#cfdac6}
+@media(max-width:600px){.header-avatar{padding:2px}.header-avatar span.name{display:none}}
+
+.me-page{max-width:880px;margin:0 auto;display:grid;gap:20px}
+.me-card{background:var(--white);border:1px solid #eeede4;border-radius:22px;padding:24px}
+.me-card h2{font-size:19px;margin:0 0 14px}
+.me-profile{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+.me-profile .av{--av:96px;cursor:pointer}
+.me-profile-main{flex:1;min-width:220px}
+.me-name{font-size:26px;font-weight:750;margin:0 0 6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;overflow-wrap:anywhere}
+.me-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.me-row input{flex:1;min-width:0;width:100%;max-width:260px}
+.me-actions{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-top:8px}
+.me-msg{font-size:14px;margin:10px 0 0;min-height:0}
+.me-msg:empty{display:none}
+.class-join{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.class-join form{border:1px solid var(--line);border-radius:16px;padding:18px;margin:0}
+.class-join label{font-size:15px}
+.class-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap}
+.class-head h2{margin:0 0 4px;font-size:22px}
+.class-code{font:700 20px ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:3px;color:var(--green-dark)}
+.rank-tabs{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px;background:#f5f6ef}
+.rank-tabs button{min-height:36px;padding:6px 18px;border-radius:999px;background:transparent;color:var(--muted);font-size:14px}
+.rank-tabs button[aria-pressed=true]{background:var(--green);color:#fff}
+.rank-list{list-style:none;margin:14px 0 0;padding:0}
+.rank-list li{display:grid;grid-template-columns:44px auto 1fr auto;align-items:center;gap:12px;padding:10px 12px;border-top:1px solid var(--line)}
+.rank-list li:first-child{border-top:0}
+.rank-list li.me{background:#eef4e8;border-radius:14px}
+.rank-list .av{--av:42px}
+.rank-no{font-size:18px;font-weight:750;color:var(--muted);text-align:center}
+.rank-list li:nth-child(-n+3) .rank-no{color:#c08a2c;font-size:21px}
+.rank-who{min-width:0}
+.rank-who strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rank-who small{color:var(--muted);font-size:12px}
+.rank-points{font-size:20px;font-weight:750;color:var(--green-dark);white-space:nowrap}
+.rank-points small{font-size:12px;color:var(--muted);font-weight:400;margin-left:2px}
+.rank-manage{grid-column:2/-1;display:flex;gap:14px;flex-wrap:wrap}
+.rank-manage .text-button{font-size:13px}
+.rank-empty{color:var(--muted);text-align:center;padding:26px 0 8px}
+@media(max-width:640px){.class-join{grid-template-columns:1fr}.me-card{padding:18px}.me-profile{gap:16px}.me-profile .av{--av:76px}.me-name{font-size:22px}.rank-list li{grid-template-columns:34px auto 1fr auto;gap:9px;padding:9px 6px}.rank-list .av{--av:36px}}
+@media(min-width:1600px){.me-page{max-width:1080px}.rank-list li{padding:14px 18px}.rank-list .av{--av:52px}.rank-who strong{font-size:20px}.rank-points{font-size:26px}}
+.me-page [hidden]{display:none!important}
+.me-page .section-heading .button{white-space:nowrap}
+@media(max-width:640px){.me-page .section-heading .button{min-height:38px;padding:6px 12px;font-size:14px}}

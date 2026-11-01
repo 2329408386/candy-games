@@ -1,0 +1,235 @@
+{% extends 'base.html' %}
+{% block title %}我的 · {{site.title}}{% endblock %}
+{% block content %}
+  <div class="me-page">
+    <div class="section-heading" style="margin:4px 0 0">
+      <div>
+        <h2>我的</h2>
+        <p>设置昵称和头像，加入班级，和同学比一比。</p>
+      </div>
+      <a class="button secondary" href="{{url_for('home')}}">返回游戏首页</a>
+    </div>
+    <section class="me-card" aria-label="个人资料">
+      <div class="me-profile">
+        <label id="avatar-pick" title="点击更换头像" style="margin:0"><span class="av" id="my-avatar"></span><input id="avatar-file" type="file" accept="image/*" hidden></label>
+        <div class="me-profile-main">
+          <p class="me-name"><span id="my-name"></span><button type="button" class="text-button" id="rename">改昵称</button></p>
+          <form class="me-row" id="name-form" hidden>
+            <input id="name-input" maxlength="8" placeholder="1到8个字" autocomplete="off" aria-label="昵称"><button>保存</button><button type="button" class="secondary" id="name-cancel">取消</button>
+          </form>
+          <div class="me-actions">
+            <button type="button" class="text-button" id="avatar-change">换头像</button><button type="button" class="text-button" id="avatar-reset" hidden>删除头像</button>
+          </div>
+          <p class="me-msg" id="profile-msg" role="status"></p>
+        </div>
+      </div>
+    </section>
+    <section class="me-card" id="class-card" aria-label="班级"></section>
+    <section class="me-card" id="rank-card" aria-label="班级排行" hidden>
+      <div class="class-head">
+        <h2>班级排行</h2>
+        <div class="rank-tabs" role="group" aria-label="排行周期">
+          <button type="button" data-period="week" aria-pressed="true">本周</button><button type="button" data-period="all" aria-pressed="false">累计</button>
+        </div>
+      </div>
+      <ol class="rank-list" id="rank-list"></ol>
+      <p class="hint">单人练习和联网对战的得分都会计入排行（错题重练不计分）；本周榜每周一 0 点清零。</p>
+    </section>
+  </div>
+  <script id="me-config" type="application/json">{{ {
+    "csrf": csrf(),
+    "me": url_for("me"),
+    "nickname": url_for("set_nickname"),
+    "avatar": url_for("set_avatar"),
+    "avatarReset": url_for("clear_avatar"),
+    "create": url_for("create_class"),
+    "join": url_for("join_class"),
+    "leave": url_for("leave"),
+    "manage": url_for("manage_class", action="ACTION"),
+    "member": url_for("manage_member", member=0, action="ACTION"),
+    "ranking": url_for("class_ranking"),
+  }|tojson }}</script>
+  <script>
+(() => {
+  const C = JSON.parse(document.getElementById('me-config').textContent);
+  const $ = id => document.getElementById(id);
+  const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text !== undefined) n.textContent = text; return n; };
+  let me = null, period = 'week', managing = false;
+
+  async function call(url, body, raw) {
+    const opts = { method: body === undefined ? 'GET' : 'POST', headers: {}, cache: 'no-store' };
+    if (body !== undefined) {
+      opts.headers['X-CSRF-Token'] = C.csrf;
+      if (raw) { opts.headers['Content-Type'] = body.type; opts.body = body; }
+      else { opts.headers['Content-Type'] = 'application/json'; opts.body = JSON.stringify(body); }
+    }
+    let r;
+    try { r = await fetch(url, opts); } catch { throw Error('网络连接失败，请稍后重试'); }
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok) throw Error(data.error || '操作失败，请稍后重试');
+    return data;
+  }
+  function avatar(p, node) {
+    const a = node || el('span');
+    a.className = 'av c' + p.color;
+    a.replaceChildren();
+    if (p.avatar) { const img = el('img'); img.src = p.avatar; img.alt = ''; a.append(img); }
+    else a.textContent = p.initial;
+    return a;
+  }
+  function say(id, text, ok) { const m = $(id); m.textContent = text; m.className = 'me-msg ' + (ok ? 'success' : 'error'); }
+  function button(text, onClick, cls) { const b = el('button', cls || '', text); b.type = 'button'; b.onclick = onClick; return b; }
+  async function act(msgId, fn) {
+    try { const data = await fn(); if (data && data.id) { me = data; render(); } return true; }
+    catch (e) { say(msgId, e.message); return false; }
+  }
+
+  // ---------- profile ----------
+  function renderProfile() {
+    avatar(me, $('my-avatar'));
+    $('my-name').textContent = me.name;
+    $('avatar-reset').hidden = !me.avatar;
+    document.querySelectorAll('.header-avatar').forEach(chip => {
+      avatar(me, chip.querySelector('.av'));
+      chip.querySelector('.name').textContent = me.name;
+    });
+  }
+  $('rename').onclick = () => { $('name-form').hidden = false; $('name-input').value = me.nickname; $('name-input').focus(); };
+  $('name-cancel').onclick = () => { $('name-form').hidden = true; };
+  $('name-form').onsubmit = async e => {
+    e.preventDefault();
+    if (await act('profile-msg', () => call(C.nickname, { nickname: $('name-input').value }))) {
+      $('name-form').hidden = true;
+      say('profile-msg', '昵称已保存', true);
+    }
+  };
+  $('avatar-change').onclick = () => $('avatar-file').click();
+  $('avatar-reset').onclick = () => confirm('删除头像，改用昵称的第一个字？') && act('profile-msg', () => call(C.avatarReset, {}));
+  // The picture is cropped to a square and shrunk to 96×96 here, so only a few KB are uploaded.
+  async function shrink(file) {
+    const url = URL.createObjectURL(file);
+    try {
+      const img = await new Promise((ok, bad) => { const i = new Image(); i.onload = () => ok(i); i.onerror = bad; i.src = url; });
+      const side = Math.min(img.naturalWidth, img.naturalHeight);
+      const canvas = document.createElement('canvas');
+      canvas.width = canvas.height = 96;
+      const g = canvas.getContext('2d');
+      g.fillStyle = '#fffefa';
+      g.fillRect(0, 0, 96, 96);
+      g.drawImage(img, (img.naturalWidth - side) / 2, (img.naturalHeight - side) / 2, side, side, 0, 0, 96, 96);
+      for (const q of [0.85, 0.7, 0.5]) {
+        for (const type of ['image/webp', 'image/jpeg']) {
+          const blob = await new Promise(ok => canvas.toBlob(ok, type, q));
+          if (blob && blob.type === type && blob.size < 7000) return blob;
+        }
+      }
+    } catch {} finally { URL.revokeObjectURL(url); }
+    throw Error('这张图片打不开，请换一张');
+  }
+  $('avatar-file').onchange = async () => {
+    const file = $('avatar-file').files[0];
+    $('avatar-file').value = '';
+    if (!file) return;
+    say('profile-msg', '正在上传…', true);
+    if (await act('profile-msg', async () => call(C.avatar, await shrink(file), true))) say('profile-msg', '头像已更新', true);
+  };
+
+  // ---------- class ----------
+  function renderClass() {
+    const card = $('class-card');
+    card.replaceChildren();
+    $('rank-card').hidden = !me.klass;
+    if (!me.klass) {
+      card.append(el('h2', '', '班级'), el('p', 'hint', '每人只能在一个班级里。老师或同学创建班级后，把班级码告诉大家就能加入。'));
+      const wrap = el('div', 'class-join');
+      const make = (label, placeholder, max, text, url, key, inputmode) => {
+        const f = el('form');
+        const id = 'class-' + key;
+        const l = el('label', '', label);
+        l.htmlFor = id;
+        const input = el('input');
+        Object.assign(input, { id, placeholder, maxLength: max, autocomplete: 'off', required: true });
+        if (inputmode) input.inputMode = inputmode;
+        const row = el('div', 'me-row');
+        row.append(input, el('button', '', text));
+        f.append(l, row);
+        f.onsubmit = e => { e.preventDefault(); act('class-msg', () => call(url, { [key]: input.value })); };
+        return f;
+      };
+      wrap.append(make('创建一个新班级', '班级名称，如：三年级二班', 20, '创建', C.create, 'name'),
+        make('加入同学的班级', '输入6位班级码', 6, '加入', C.join, 'code', 'numeric'));
+      card.append(wrap);
+    } else {
+      const k = me.klass;
+      const head = el('div', 'class-head');
+      const left = el('div');
+      left.append(el('h2', '', k.name), el('p', 'hint', `${k.members} 人${k.owner ? ' · 你是班主' : ''}`));
+      const code = el('div');
+      code.append(el('span', 'hint', '班级码 '), el('span', 'class-code', k.code));
+      const copy = button('复制邀请', async () => {
+        const text = `来加入我的班级「${k.name}」吧！打开${document.title.split(' · ').pop()}，在「我的」页面输入班级码 ${k.code}`;
+        try { await navigator.clipboard.writeText(text); copy.textContent = '已复制'; } catch { prompt('复制下面的文字发给同学：', text); }
+      }, 'text-button');
+      code.append(el('br'), copy);
+      head.append(left, code);
+      card.append(head);
+      const actions = el('div', 'me-actions');
+      if (k.owner) {
+        actions.append(button('改班级名', () => {
+          const name = prompt('新的班级名称（1到20个字）', k.name);
+          if (name) act('class-msg', () => call(C.manage.replace('ACTION', 'rename'), { name }));
+        }, 'text-button'), button(managing ? '完成管理' : '管理成员', () => { managing = !managing; render(); }, 'text-button'),
+        button('解散班级', () => confirm(`解散「${k.name}」？所有同学都会离开这个班级，得分记录保留。`) && act('class-msg', () => call(C.manage.replace('ACTION', 'dissolve'), {})), 'text-button'));
+      } else {
+        actions.append(button('退出班级', () => confirm(`退出「${k.name}」？`) && act('class-msg', () => call(C.leave, {})), 'text-button'));
+      }
+      card.append(actions);
+    }
+    const msg = el('p', 'me-msg');
+    msg.id = 'class-msg';
+    msg.setAttribute('role', 'status');
+    card.append(msg);
+  }
+
+  // ---------- ranking ----------
+  let rankSeq = 0;
+  async function loadRanking() {
+    if (!me.klass) return;
+    const seq = ++rankSeq, list = $('rank-list');
+    let data;
+    try { data = await call(C.ranking + '?period=' + period); } catch (e) { list.replaceChildren(el('li', 'rank-empty', e.message)); return; }
+    if (seq !== rankSeq) return;
+    list.replaceChildren();
+    for (const r of data.rows) {
+      const li = el('li', r.id === data.me ? 'me' : '');
+      const who = el('div', 'rank-who');
+      who.append(el('strong', '', r.name + (r.id === data.me ? '（我）' : '')), el('small', '', `${r.rounds} 局`));
+      const pts = el('span', 'rank-points', String(r.points));
+      pts.append(el('small', '', '分'));
+      li.append(el('span', 'rank-no', String(r.rank)), avatar(r), who, pts);
+      if (managing && r.id !== data.me) {
+        const tools = el('div', 'rank-manage');
+        const member = action => C.member.replace('/0/', '/' + r.id + '/').replace('ACTION', action);
+        const doit = (label, action) => button(label, async () => {
+          if (!confirm(`${label}「${r.name}」？`)) return;
+          if (await act('class-msg', () => call(member(action), {}))) { await refresh(); }
+        }, 'text-button');
+        tools.append(doit('重置昵称', 'nickname'), doit('删除头像', 'avatar'), doit('移出班级', 'remove'));
+        li.append(tools);
+      }
+      list.append(li);
+    }
+    if (!data.rows.some(r => r.points)) list.append(el('li', 'rank-empty', period === 'week' ? '本周还没有人得分，快去玩一局吧！' : '还没有人得分，快去玩一局吧！'));
+  }
+  document.querySelectorAll('.rank-tabs button').forEach(b => b.onclick = () => {
+    period = b.dataset.period;
+    document.querySelectorAll('.rank-tabs button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    loadRanking();
+  });
+
+  function render() { renderProfile(); renderClass(); loadRanking(); }
+  async function refresh() { me = await call(C.me); render(); }
+  refresh().catch(e => { $('class-card').textContent = e.message; });
+})();
+</script>
+{% endblock %}
