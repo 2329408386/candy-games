@@ -84,7 +84,7 @@
               {% for r in rows %}
                 <tr>
                   <td>#{{r.id}}</td>
-                  <td><code>{{keys[r.key_hash]}}</code></td>
+                  <td style="white-space:nowrap"><code>{{keys[r.key_hash]}}</code> <button type="button" class="text-button copy-key" data-copy="{{keys[r.key_hash]}}">复制</button></td>
                   <td>
                     {% if archived %}{{r.games|game_names}}{% else %}{% for label in group_labels(license_group_ids(r.id)) %}<span class="tag">{{label}}</span>{% endfor %}{% endif %}
                   </td>
@@ -109,4 +109,14 @@
           </nav>
         </div>
       </section>
+      <script>
+document.addEventListener('click',async e=>{
+    const b=e.target.closest('[data-copy]');
+    if(!b)return;
+    const text=b.dataset.copy;let ok=false;
+    try{if(window.isSecureContext&&navigator.clipboard){await navigator.clipboard.writeText(text);ok=true;}}catch{}
+    if(!ok){const a=document.createElement('textarea');a.value=text;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();try{ok=document.execCommand('copy');}catch{}a.remove();}
+    b.textContent=ok?'已复制 ✓':'复制失败';clearTimeout(b._t);b._t=setTimeout(()=>b.textContent='复制',2000);
+});
+</script>
     {% endblock %}

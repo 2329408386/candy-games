@@ -14,6 +14,8 @@ class Site:
     files: dict  # game id -> HTML file under games/
     admin_hint: str
     admin_scope_header: str
+    url: str = "/"
+    emoji: str = ""
     legacy_html_routes: bool = False
     game_grades: dict = field(default_factory=dict)
 
@@ -41,6 +43,8 @@ class Site:
 CHINESE = Site(
     key="chinese",
     title="语文小游戏",
+    url="/",
+    emoji="📖",
     cookie_name="session",
     secret_env="CHINESE_SECRET",
     legacy_html_routes=True,
@@ -76,6 +80,8 @@ CHINESE = Site(
 MATH = Site(
     key="math",
     title="数学小游戏",
+    url="/math/",
+    emoji="✏️",
     cookie_name="math_session",
     secret_env="MATH_SECRET",
     games={
@@ -98,6 +104,8 @@ MATH = Site(
 ENGLISH = Site(
     key="english",
     title="英语小游戏",
+    url="/english/",
+    emoji="🔤",
     cookie_name="english_session",
     secret_env="ENGLISH_SECRET",
     games={

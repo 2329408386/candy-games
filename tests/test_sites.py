@@ -320,3 +320,24 @@ def test_english_pages_audio_and_units():
         if audio:
             r = client.get("/static/audio/" + audio)
             assert r.status_code == 200 and r.mimetype == "audio/mpeg", game
+
+
+def test_footer_links_other_subjects_not_admin(client, site):
+    html = client.get("/").get_data(as_text=True)
+    assert "管理员入口" not in html
+    cross = re.search(r'<span class="footer-cross">(.*?)</span>\s*\n', html).group(1)
+    assert re.findall(r'href="([^"]+)"', cross) == [s.url for key, s in SITES.items() if key != site]
+
+
+def test_sign_ins_do_not_expire(admin, site, monkeypatch):
+    import time as _time
+    from email.utils import parsedate_to_datetime
+
+    user = SiteClient(site)
+    r = user.activate()
+    expires = parsedate_to_datetime(re.search(r"Expires=([^;]+)", r.headers["Set-Cookie"]).group(1))
+    assert expires.timestamp() - _time.time() > 5 * 365 * 86400
+    later = _time.time() + 30 * 86400
+    monkeypatch.setattr(_time, "time", lambda: later)
+    assert admin.get("/admin").status_code == 200, "admin stays signed in"
+    assert "data-copy=" in admin.get("/admin").get_data(as_text=True)

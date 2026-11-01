@@ -1,0 +1,1 @@
+<span class="footer-cross">也去逛逛{% for other in all_sites.values() if other.key != site.key %}<a href="{{other.url}}"><span aria-hidden="true">{{other.emoji}}</span> {{other.title}}</a>{% endfor %}</span>

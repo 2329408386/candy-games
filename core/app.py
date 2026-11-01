@@ -20,6 +20,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.exceptions import HTTPException
 from itsdangerous import URLSafeSerializer, BadSignature
 from . import schema
+from sites import SITES
 
 ROOT = Path(__file__).resolve().parent.parent
 SHARED_STATIC = ROOT / "shared-static"
@@ -273,7 +274,7 @@ def admin_only(fn):
     @functools.wraps(fn)
     def wrapper(*a, **kw):
         row = admin_row()
-        if not row or session.get("admin_version") != row["version"] or session.get("admin_until", 0) < time.time():
+        if not row or session.get("admin_version") != row["version"]:
             return redirect(url_for("login"))
         if row["must_change"] and request.endpoint != "password":
             return redirect(url_for("password"))
@@ -402,7 +403,8 @@ def create_app(site_config):
         SESSION_COOKIE_NAME=site_config.cookie_name,
         SESSION_COOKIE_HTTPONLY=True,
         SESSION_COOKIE_SAMESITE="Lax",
-        PERMANENT_SESSION_LIFETIME=86400 * 30,
+        # Sign-ins (licenses and the admin) last until signing out; Flask renews the cookie on every visit.
+        PERMANENT_SESSION_LIFETIME=86400 * 3650,
     )
     # Creates tables added by newer releases (CREATE TABLE IF NOT EXISTS), so a deploy needs no migration step.
     schema.initialize(app.config["DATABASE"])
@@ -413,6 +415,7 @@ def create_app(site_config):
     app.jinja_env.globals.update(
         csrf=csrf,
         site=site_config,
+        all_sites=SITES,
         games=site_config.games,
         grades=GRADES,
         grade_names=GRADE_NAMES,
@@ -707,7 +710,7 @@ def register_admin(app):
                 and check_password_hash(row["password"], request.form.get("password", ""))
             ):
                 rotate_admin_session()
-                session.update(admin_version=row["version"], admin_until=int(time.time()) + 28800)
+                session.update(admin_version=row["version"])
                 audit("login")
                 db().commit()
                 return redirect(url_for("dashboard"))

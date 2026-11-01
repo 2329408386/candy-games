@@ -55,7 +55,7 @@
       {% endblock %}
     </main>
     <footer class="site-footer">
-      英语小游戏 <span>·</span> {{'用心管理，让学习更简单' if is_admin else '每天说一句，英语更自信'}}{% if not is_admin %}<a href="{{url_for('login')}}">管理员入口</a>{% endif %}
+      英语小游戏 <span>·</span> {{'用心管理，让学习更简单' if is_admin else '每天说一句，英语更自信'}}{% if not is_admin %}{% include 'cross_sites.html' %}{% endif %}
     </footer>
     {% if not is_admin %}{% include 'contact.html' %}{% endif %}
   </body>

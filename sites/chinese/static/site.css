@@ -86,3 +86,11 @@ button.header-contact:hover{background:var(--green-dark)}
 }
 .game-card{display:flex;flex-direction:column}
 .game-card .card-bottom{margin-top:auto}
+
+/* The caption sits in its own band above the picture, never half on it: the picture is drawn only inside the content box. */
+.hero-art{padding-top:34px;background-origin:content-box;background-clip:content-box}
+.art-note{position:static;display:block;height:24px;line-height:24px;margin:-34px 0 0;transform:none;text-align:center;white-space:nowrap}
+.footer-cross{margin-left:22px;white-space:nowrap}
+.site-footer .footer-cross a{margin-left:12px;display:inline}
+.site-footer .footer-cross a:hover{color:var(--ink);text-decoration:underline}
+@media(max-width:600px){.footer-cross{display:block;margin:12px 0 0}}
