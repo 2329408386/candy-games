@@ -1,0 +1,9 @@
+[Unit]
+Description=Renew the Let's Encrypt IP certificate for candy-games
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+# Short-lived IP certificates last about 6 days; certbot renews when a third of the lifetime is left.
+ExecStart=/opt/certbot/bin/certbot renew -q --deploy-hook "systemctl reload nginx"

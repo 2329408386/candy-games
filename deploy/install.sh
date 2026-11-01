@@ -3,6 +3,7 @@
 #   install.sh activate <release>   install that release and switch to it (rolls back if unhealthy)
 #   install.sh rollback             switch to the release before the current one
 #   install.sh status               show the running revision and the kept releases
+#   install.sh cert                 first issue of the Let's Encrypt IP certificate (https); renewals run from a timer
 # Layout: /opt/candy-games/releases/<time>-<sha>/  code, one per deploy (the newest $KEEP are kept)
 #         /opt/candy-games/venvs/<hash>/           virtualenvs, shared by releases with the same requirements.txt
 #         /opt/candy-games/current, venv           symlinks to the running release and its virtualenv
@@ -10,6 +11,8 @@ set -euo pipefail
 APP=/opt/candy-games
 DATA=/var/lib/candy-games
 KEEP=5
+CERT=/etc/letsencrypt/live/candy-games
+IP=39.106.16.99
 
 running() { basename "$(readlink -f $APP/current)"; }
 releases() { ls -1 $APP/releases | sort; }
@@ -62,12 +65,20 @@ install_config() { # returns 0 when the app unit changed and the service needs a
     install -m 644 "$dir/deploy/nginx-restart.conf" /etc/systemd/system/nginx.service.d/restart.conf
     install -m 644 "$dir/deploy/nginx-http.conf" /etc/nginx/conf.d/candy-games.conf
     install -m 644 "$dir/deploy/nginx-static.conf" /etc/nginx/snippets/candy-games-static.conf
+    install -m 644 "$dir/deploy/nginx-locations.conf" /etc/nginx/snippets/candy-games-locations.conf
     install -m 644 "$dir/deploy/nginx-site.conf" /etc/nginx/sites-available/candy-games
     ln -sfn /etc/nginx/sites-available/candy-games /etc/nginx/sites-enabled/candy-games
+    install -d -m 755 /var/www/acme
+    if [ -f $CERT/fullchain.pem ]; then
+        install -m 644 "$dir/deploy/nginx-tls.conf" /etc/nginx/sites-available/candy-games-tls
+        ln -sfn /etc/nginx/sites-available/candy-games-tls /etc/nginx/sites-enabled/candy-games-tls
+    fi
+    install -m 644 "$dir"/deploy/candy-games-cert.{service,timer} /etc/systemd/system/
     rm -f /etc/nginx/sites-enabled/default
     systemctl daemon-reload
     systemctl enable -q candy-games candy-games-backup.timer candy-games-watchdog.timer
     systemctl start candy-games-backup.timer candy-games-watchdog.timer
+    if [ -x /opt/certbot/bin/certbot ]; then systemctl enable -q --now candy-games-cert.timer; fi
     nginx -t -q
     [ $changed = 1 ]
 }
@@ -119,6 +130,16 @@ rollback)
     install_config "$APP/releases/$previous" && restart=1
     switch "$previous" "$(prepare "$previous")" $restart
     health "$(cat $APP/releases/$previous/REVISION)" && echo "已回滚到 $previous"
+    ;;
+cert)
+    # certbot lives in its own virtualenv: python3 -m venv /opt/certbot && /opt/certbot/bin/pip install certbot
+    [ -x /opt/certbot/bin/certbot ] || { echo "请先安装 certbot 到 /opt/certbot" >&2; exit 1; }
+    install -d -m 755 /var/www/acme
+    /opt/certbot/bin/certbot certonly --non-interactive --agree-tos --register-unsafely-without-email \
+        --cert-name candy-games --webroot -w /var/www/acme --ip-address $IP --preferred-profile shortlived
+    install_config "$APP/current" || true
+    systemctl reload nginx
+    echo "https 已启用：https://$IP/"
     ;;
 status)
     echo "运行中：$(running)（提交 $(cat $APP/current/REVISION)）"
