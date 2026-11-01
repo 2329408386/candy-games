@@ -1,6 +1,6 @@
 // 修改病句: pick a proofreading mark (改正/增补/删除/对调), then the word block or gap, then the word card.
-// An answer is right when the edited sentence equals q.corrected, so any edit that fixes the sentence counts
-// (e.g. deleting either copy of a doubled word).
+// An answer is right when the edited sentence equals q.corrected or the result of another accepted edit, so any
+// edit that gives one of those sentences counts (e.g. deleting either copy of a doubled word).
 (() => {
   'use strict';
   const { el, button } = PK;
@@ -164,7 +164,8 @@
     render,
     afterRender: drawSwap,
     value: (q, a) => (complete(a) ? { value: apply(q, a) } : { incomplete: '还没修改完成，请选好符号、位置和需要的字词。' }),
-    check: (q, value) => value === q.corrected,
+    // Any listed correction counts: q.corrected comes from accepted[0], the rest are other fixes that also keep the meaning.
+    check: (q, value) => value === q.corrected || q.accepted.some(e => apply(q, e) === value),
     solution: q => q.corrected,
     describe: q => q.original,
   });

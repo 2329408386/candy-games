@@ -271,7 +271,7 @@ def apply_edit(q, e):
 
 
 def check_edit(q, bank, game):
-    errors = []
+    errors = [] if q.get("category") and q.get("subtype") else ["缺少 category 或 subtype"]
     if "".join(t["text"] for t in q["tokens"]) != q["original"]:
         errors.append("字词块拼不回原句")
     if q["original"] == q["corrected"]:
@@ -279,13 +279,18 @@ def check_edit(q, bank, game):
     starts = {0}
     for t in q["tokens"]:
         starts.add(max(starts) + len(t["text"]))
+    results = []
     for e in q["accepted"]:
         if e["kind"] in ("replace", "insert") and e["value"] not in q["candidates"]:
             errors.append(f"字词卡中没有 {e['value']}")
         if e["kind"] == "insert" and e["position"] not in starts:
             errors.append(f"插入位置 {e['position']} 不在字词块之间")
-        if apply_edit(q, e) != q["corrected"]:
-            errors.append(f"标准修改得不到改正句：{apply_edit(q, e)}")
+        results.append(apply_edit(q, e))
+    # accepted[0] is the standard correction; any further edits are other fixes that also keep the meaning.
+    if not results or results[0] != q["corrected"]:
+        errors.append(f"标准修改得不到改正句：{results[:1]}")
+    if q["original"] in results or len(set(results)) != len(results):
+        errors.append("其他改法与原句或彼此重复")
     return errors
 
 
@@ -376,7 +381,9 @@ def doc_rows(site, game, bank):
             shown = q["prompt"]
             yield f"- {q['id']}：{shown} 答案：**{'；或 '.join(q['answers'])}**"
         elif t == "edit":
-            yield f"- {q['id']}（{q['category']}）：{q['original']} → **{q['corrected']}**"
+            others = [apply_edit(q, e) for e in q["accepted"][1:]]
+            also = "；也接受 " + " 或 ".join(others) if others else ""
+            yield f"- {q['id']}（{q['category']}·{q['subtype']}）：{q['original']} → **{q['corrected']}**{also}"
         elif t == "measure":
             yield (
                 f"- {q['id']}：{q['object']}，起点{q['startMm']}毫米，终点{q['endMm']}毫米，"
