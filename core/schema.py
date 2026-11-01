@@ -86,3 +86,14 @@ def migrate(d):
                 "UPDATE profiles SET rank_stars=?,rank_progress=? WHERE site=? AND license_id=?", (stars, progress, site, lid)
             )
         d.execute("INSERT INTO migrations VALUES('ranks_from_points',?)", (int(time.time()),))
+    if "ranks_x3" not in done:
+        # Stars became three times as expensive and online PK stopped adding or taking stars: recount from points.
+        totals = d.execute(
+            "SELECT p.site,p.license_id,coalesce(sum(s.points),0) FROM profiles p"
+            " LEFT JOIN scores s ON s.site=p.site AND s.license_id=p.license_id GROUP BY p.site,p.license_id"
+        ).fetchall()
+        for site, lid, total in totals:
+            d.execute(
+                "UPDATE profiles SET rank_stars=?,rank_progress=? WHERE site=? AND license_id=?", (*ranks.replay(total), site, lid)
+            )
+        d.execute("INSERT INTO migrations VALUES('ranks_x3',?)", (int(time.time()),))

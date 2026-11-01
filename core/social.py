@@ -22,7 +22,7 @@ SOLO_PER_DAY = 30  # rounds per user per day and mode that count towards the ran
 TOP_N = 20
 TOP_CACHE_SECONDS = 60
 _top_cache = {}
-MIN_SECONDS_PER_ANSWER = 2
+MIN_SECONDS_PER_ANSWER = 1  # a round now moves on by itself 1 s (right) or 2 s (wrong) after each answer
 BEIJING = 8 * 3600
 
 
@@ -93,7 +93,11 @@ def header_profile():
     if not row:
         return None
     p = profile_row(row["id"])
-    return dict(display(row["id"], p["nickname"] if p else "", p["avatar_ver"] if p else 0), in_class=bool(p and p["class_id"]))
+    return dict(
+        display(row["id"], p["nickname"] if p else "", p["avatar_ver"] if p else 0),
+        in_class=bool(p and p["class_id"]),
+        tier=ranks.badge(p["rank_stars"] if p else 0),
+    )
 
 
 def class_row(cid):

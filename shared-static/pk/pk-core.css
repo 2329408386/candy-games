@@ -108,7 +108,11 @@ button:focus-visible, a:focus-visible, input:focus-visible, summary:focus-visibl
 .pk-controls button { flex: 1; min-width: 0; }
 .primary { border: 0; border-radius: 12px; background: var(--green); color: white; padding: 0.8125rem 1.25rem; font-weight: 600; font-size: 1.0625rem; }
 .primary:hover:not(:disabled) { background: #3f6949; }
-.primary.next { background: #3c6488; }
+.pk-advance { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 0.375rem; color: var(--muted); font-size: 0.9375rem; }
+.pk-advance i { display: block; width: min(100%, 18rem); height: 0.375rem; border-radius: 999px; background: #e7e9df; overflow: hidden; }
+.pk-advance i::after { content: ""; display: block; height: 100%; background: linear-gradient(90deg, #9be15d, #3f8f55); transform: scaleX(0); transform-origin: left; animation: pk-advance var(--wait, 1000ms) linear forwards; }
+@keyframes pk-advance { to { transform: scaleX(1); } }
+@media (prefers-reduced-motion: reduce) { .pk-advance i { display: none; } }
 .secondary { border: 0; border-radius: 12px; background: #e9eee1; color: #3f5546; padding: 0.75rem; font-size: 1rem; }
 .pk-feedback { padding: 1rem 1.125rem; border-radius: 14px; margin: 0.75rem 0; font-size: 0.9375rem; line-height: 1.7; border: 1px solid var(--right-line); background: var(--right); overflow-wrap: anywhere; }
 .pk-feedback.wrong { border-color: var(--wrong-line); background: var(--wrong); }
@@ -315,11 +319,6 @@ mark { background: #ffe797; color: inherit; border-bottom: 3px solid #da9c16; pa
 .pk-online-rank li:nth-child(-n+3) .pk-online-rankno { color: var(--gold); }
 .pk-online-points { font-size: 1.25rem; font-weight: 750; color: var(--green-dark); white-space: nowrap; text-align: right; }
 .pk-online-points small { display: block; font-size: 0.75rem; color: #9a7413; font-weight: 600; }
-.pk-online-points .pk-outcome { display: inline-block; margin-top: 0.125rem; padding: 0 0.5rem; border-radius: 999px; font-weight: 800; color: #fff; background: #9aa5b1; }
-.pk-online-points .pk-outcome.mvp { background: linear-gradient(135deg, #ffb300, #ff6f3c); }
-.pk-online-points .pk-outcome.win { background: #3f8f55; }
-.pk-online-points .pk-outcome.lose { background: #c0563f; }
-.pk-online-points .pk-outcome.protect { background: #7d8995; }
 /* 段位 pill, same as social.css */
 .tier { --t1: #b46a3c; --t2: #f0c39d; display: inline-flex; flex: none; padding: 0 0.5rem; border-radius: 999px; background: linear-gradient(135deg, var(--t2), var(--t1)); color: #fff; font-size: 0.75rem; font-weight: 800; line-height: 1.5; white-space: nowrap; text-shadow: 0 1px 1px rgba(0,0,0,.25); }
 .t-silver { --t1: #7d8995; --t2: #d7dee6; }

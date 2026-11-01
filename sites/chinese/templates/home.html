@@ -15,27 +15,40 @@
         <br>
         课堂上投屏双人PK，课后一个人也能练；答错的题会自动收进错题本。
       </p>
-      <section class="activate-panel" aria-label="激活游戏">
+      <section class="activate-panel{{' licensed' if license}}" aria-label="{{'我的授权' if license else '激活游戏'}}">
+        {% set activate_form %}
         <form id="activate">
-          <input type="hidden" name="csrf" value="{{csrf()}}"><label for="key">已有授权码？在这里激活</label>
+          <input type="hidden" name="csrf" value="{{csrf()}}"><label for="key">{{'换一个授权码' if license else '🔑 已有授权码？在这里激活'}}</label>
           <div class="activate-row">
-            <input id="key" name="key" placeholder="输入你的16位授权码" maxlength="32" required autocomplete="off" autocapitalize="characters"><button id="submit">激活游戏 <span aria-hidden="true">↗</span></button>
+            <input id="key" name="key" placeholder="输入你的16位授权码" maxlength="32" required autocomplete="off" autocapitalize="characters"><button id="submit">{{'激活' if license else '激活游戏'}} <span aria-hidden="true">↗</span></button>
           </div>
         </form>
         <p id="message" role="status"></p>
-        {% if license %}
+        {% endset %}
+        {% if license %}{% set me = header_profile() %}
+          <a class="license-who" href="{{url_for('me_page')}}" title="我的资料和班级">
+            {% include 'avatar.html' %}
+            <span class="license-name"><strong>{{me.name}}</strong><span class="license-badges"><span class="license-ok">✓ 已激活</span><span class="tier t-{{me.tier.key}}">{{me.tier.name}}</span></span></span>
+          </a>
+          <p class="hint">授权学期：{{license_grades(license.id)|grade_names}}</p>
+          <p class="hint">已绑定 {{device_count}} / {{license.device_limit}} 个浏览器 · 授权永久有效</p>
+          <div class="license-links">
+            <a class="button secondary" href="{{url_for('me_page')}}"><span aria-hidden="true">👤</span>我的</a><a class="button secondary" href="{{url_for('ranking_page')}}"><span aria-hidden="true">🏆</span>总榜</a><a class="button secondary" href="{{url_for('mistakes')}}"><span aria-hidden="true">📒</span>错题本</a>
+          </div>
           <div class="activation-state">
-            <p class="success">已授权，可进入下方已解锁的游戏。</p>
+            <details class="license-switch">
+              <summary>更换授权码</summary>
+              {{activate_form}}
+            </details>
             <form method="post" action="{{url_for('logout')}}">
               <input type="hidden" name="csrf" value="{{csrf()}}"><button class="text-button">退出当前授权</button>
             </form>
           </div>
-          <p class="hint">授权学期：{{license_grades(license.id)|grade_names}}</p>
-          <p class="hint">已绑定 {{device_count}} / {{license.device_limit}} 个浏览器 · 授权永久有效</p>
         {% else %}
+          {{activate_form}}
           <p class="hint">还没有授权码？每个游戏都可以免费试玩一局。<button type="button" class="text-button inline-link" data-contact>扫码获取授权码</button></p>
+          <p class="hint">每个授权码可在限定数量的浏览器上使用，换浏览器或清除浏览器数据会占用新名额。</p>
         {% endif %}
-        <p class="hint">每个授权码可在限定数量的浏览器上使用，换浏览器或清除浏览器数据会占用新名额。</p>
       </section>
     </div>
   </section>

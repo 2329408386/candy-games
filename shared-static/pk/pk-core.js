@@ -114,7 +114,9 @@
     settings.voice = voiceOn;
     settings.present = presentOn;
     if (!settings.durations || typeof settings.durations !== 'object' || Array.isArray(settings.durations)) settings.durations = {};
-    settings.durations[cfg.id] = duration;
+    // Only a changed time is remembered, so a new default for the game still reaches everybody else.
+    if (duration === cfg.defaultSeconds) delete settings.durations[cfg.id];
+    else settings.durations[cfg.id] = duration;
     writeStore(SETTINGS_KEY, settings);
   }
 
@@ -352,7 +354,7 @@
   const rules = el('div', 'pk-rules');
   const modeNote = el('p', 'pk-mode-note');
   rules.append(el('h2', '', '怎么玩'), el('p', '', cfg.instructions),
-    el('p', 'pk-scoring', '答对每题加10分，连续答对额外加5分；答错扣5分，最低0分。提交后看解析，点击“下一题”继续。'), modeNote);
+    el('p', 'pk-scoring', '答对每题加10分，连续答对额外加5分；答错扣5分，最低0分。提交后自动进入下一题（答对停1秒，答错停2秒看正确答案）。'), modeNote);
   let tipsBox = null;
   if (cfg.tips?.length) {
     // "**词**" marks a key word to highlight; everything stays text nodes.
@@ -398,7 +400,7 @@
       pk: '两位玩家同时作答，各自抽到不同的题目，得分高者获胜。',
       solo: `一个人练习${PER_PLAYER}题，答错的题会记入本机错题本。`,
       mistakes: `从本机错题本中抽题练习（最多${PER_PLAYER}题），答对后自动移出错题本，每改对一道 +1 分。`,
-      online: `和同学各用自己的设备，同时答同一套${PER_PLAYER}道题，实时比分；2到10人一起玩，前三名有名次奖励（第一名 +20，第二名 +10，第三名 +5；只有两人时 +10 和 +5）。`,
+      online: `和同学各用自己的设备，同时答同一套${PER_PLAYER}道题，实时比分；2到10人一起玩，前三名有名次奖励（第一名 +20，第二名 +10，第三名 +5；只有两人时第一名 +10）。`,
     }[mode];
     go.hidden = mode === 'online';
     onlinePanel.hidden = mode !== 'online';
@@ -657,8 +659,11 @@
   function editable(p) {
     return !expired() && !!current(p) && !round.players[p].result;
   }
+  // After an answer the round moves on by itself: 1 s to enjoy a right answer, 2 s to see the correct one.
+  const ADVANCE_MS = { right: 1000, wrong: 2000 };
   function load(p) {
     const s = round.players[p], q = current(p);
+    clearTimeout(s.advance);
     s.history = [];
     s.result = null;
     s.notice = '';
@@ -735,8 +740,10 @@
       mistakes.add(q, renderer);
     }
     audio.result(correct, p, s.combo);
+    s.wait = correct ? ADVANCE_MS.right : ADVANCE_MS.wrong;
     render(p);
-    $('next-' + p)?.focus({ preventScroll: true });
+    clearTimeout(s.advance);
+    s.advance = setTimeout(() => next(p), s.wait);
   }
   function next(p) {
     const s = round.players[p];
@@ -771,9 +778,10 @@
       controls.append(button('提交答案', () => submit(p), 'primary'));
     } else if (round.running) {
       const last = s.index === s.questions.length - 1;
-      const b = button(last ? '完成本轮' : '下一题', () => next(p), 'primary next');
-      b.id = 'next-' + p;
-      controls.append(b);
+      const bar = el('div', 'pk-advance');
+      bar.style.setProperty('--wait', (s.wait || ADVANCE_MS.right) + 'ms');
+      bar.append(el('i'), el('span', '', last ? '马上完成本轮…' : '马上进入下一题…'));
+      controls.append(bar);
     }
     body.append(controls);
     if (!round.running) body.querySelectorAll('button,input').forEach(b => (b.disabled = true));
@@ -794,6 +802,7 @@
   }
   function finish() {
     if (!round.running) return;
+    round.players.forEach(s => clearTimeout(s.advance));
     round.running = false;
     round.ended = true;
     if (TRIAL) trial.done = true;
@@ -1043,7 +1052,6 @@
       }
       if (o.notice) onlineBar.append(el('p', 'pk-online-notice', o.notice));
     }
-    const OUTCOMES = { mvp: 'MVP +2★', win: '赢 +1★', lose: '输 -1★', protect: '输 · 段位保护', draw: '星数不变' };
     const resultsHolder = el('div', 'pk-online-results');
     function renderResults() {
       const st = o.state;
@@ -1064,18 +1072,15 @@
         if (p.tier) name.append(el('span', 'tier t-' + p.tier.key, p.tier.name));
         who.append(name, el('small', '', `答对 ${p.correct} 题 · 已答 ${p.answered} 题`));
         const pts = el('span', 'pk-online-points', `${p.score} 分`);
-        if (ended && p.outcome) {
-          if (p.points) pts.append(el('small', '', `排行 +${p.points - p.bonus}` + (p.bonus ? ` +${p.bonus} 名次奖励` : '')));
-          const o = OUTCOMES[p.outcome];
-          if (o) pts.append(el('small', 'pk-outcome ' + p.outcome, o));
-        } else if (ended && p.bonus) pts.append(el('small', '', ` +${p.bonus} 名次奖励`));
+        if (ended && p.points) pts.append(el('small', '', `排行 +${p.points - p.bonus}` + (p.bonus ? ` +${p.bonus} 名次奖励` : '')));
+        else if (ended && p.bonus) pts.append(el('small', '', ` +${p.bonus} 名次奖励`));
         li.append(el('span', 'pk-online-rankno', ended ? String(p.rank) : '·'), avatar(p), who, pts);
         list.append(li);
       }
       resultsHolder.append(list);
       if (!ended) return void resultsHolder.append(el('p', 'pk-help', '等其他同学答完或时间到，就公布最终名次…'));
       if (st.practice) {
-        const note = el('p', 'pk-practice-note', '这是自家设备之间的练习赛，不计分。下次邀请同学来PK，前三名都有名次奖励（第一名最多 +20），赢了还能加段位星！');
+        const note = el('p', 'pk-practice-note', '这是自家设备之间的练习赛，不计分。下次邀请同学来PK，前三名都有名次奖励（第一名最多 +20）！');
         if (!st.inClass) {
           const link = el('a', '', '去加入班级');
           link.href = ROOM.me;
@@ -1085,8 +1090,8 @@
       } else if (mine && !mine.counted) {
         resultsHolder.append(el('p', 'pk-help', '同一个账号在这局有好几台设备，只按得分最高的一台计入班级排行。'));
       } else {
-        resultsHolder.append(el('p', 'pk-help', '本局得分的十分之一加名次奖励已计入排行，输赢计入段位：前一半 +1 星（3 人以上的单独第一名 +2），后一半 -1 星（每人每天最多30局联网PK计分）。'));
-        if (mine && mine.tier && mine.outcome) {
+        resultsHolder.append(el('p', 'pk-help', '本局得分的十分之一加名次奖励已计入排行和段位：两人局第一名 +10，三人以上前三名 +20/+10/+5，其他同学不加也不扣（每人每天最多30局联网PK计分）。'));
+        if (mine && mine.tier && mine.points) {
           const t = mine.tier;
           resultsHolder.append(el('p', 'pk-rank-note', `我的段位：${t.name} ` + (t.slots ? '★'.repeat(t.stars) + '☆'.repeat(t.slots - t.stars) : '★×' + t.stars)));
         }
