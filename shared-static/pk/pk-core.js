@@ -1075,10 +1075,21 @@
     }
     function play(st) {
       const questions = st.questions.map(question);
+      const retry = 'pk-room-reload-' + st.code;
       if (questions.some(q => !q)) {
-        o.notice = '题库版本不一致，请刷新页面后重新加入。';
+        // This page's bank is older than the room's questions: reload once (same seat, ?room= rejoins) to fetch it.
+        let reloaded = false;
+        try {
+          reloaded = sessionStorage.getItem(retry) === '1';
+          if (!reloaded) sessionStorage.setItem(retry, '1');
+        } catch {}
+        if (!reloaded) return void location.reload();
+        o.notice = '题目没能加载，请返回首页重新进入这个游戏。';
         return void showLobby();
       }
+      try {
+        sessionStorage.removeItem(retry);
+      } catch {}
       o.begun = true;
       round.mode = 'online';
       startRound({ draws: [questions], deadline: st.deadline * 1000 - o.offset });
@@ -1130,6 +1141,12 @@
       audio.unlock();
       try {
         const st = await promise;
+        if (st.game !== cfg.id) {
+          // The code belongs to another game: open that game's page, which joins the same room (same seat).
+          panelError.textContent = `这个房间玩的是「${st.title}」，正在为你切换…`;
+          location.href = new URL(st.link, location.href).href;
+          return;
+        }
         stop();
         o.code = st.code;
         o.state = null;
