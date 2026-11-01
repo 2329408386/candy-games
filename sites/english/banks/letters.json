@@ -1,1906 +1,1840 @@
 {
- "type": "choice",
- "meta": {"notes": ["题目依据外研版（三起）2024新版三年级上册各单元核心单词和句型自编，非教材原题。", "26个字母分四类：听音选字母、大小写配对、字母顺序、单词首字母，每局各抽5题。"]},
- "draw": {"by": ["category"], "counts": {"听音选字母": 5, "大小写配对": 5, "字母顺序": 5, "单词首字母": 5}},
- "ui": {"instruction": "选出正确的字母，再提交；听音题可以点“再听一遍”。"},
+ "type": "handwrite",
+ "meta": {
+  "notes": [
+   "依据外研版（三起）2024新版三年级上册字母书写要求自编：在英语四线格上手写字母。",
+   "四类各抽 5 题：听音写字母（写大写和小写）、大写写小写、小写写大写、字母顺序（写出后一个字母的大小写）。",
+   "书写在浏览器里自动识别：比对字形，并看字母在四线格里的位置是否正确。"
+  ]
+ },
+ "draw": {"by": ["category"], "counts": {"听音写字母": 5, "大写写小写": 5, "小写写大写": 5, "字母顺序": 5}},
+ "ui": {"instruction": "用手指或鼠标在四线格里写字母，写好后点「提交答案」；写错了可以点「擦掉重写」。"},
  "questions": [
   {
-   "category": "听音选字母",
-   "prompt": "听录音，选出你听到的字母。",
+   "id": "lw-001",
+   "category": "听音写字母",
+   "kind": "listen",
+   "prompt": "听录音，在四线格上写出这个字母的大写和小写。",
+   "answer": "Aa",
    "audio": "en-letter-a.67834366.mp3",
    "audioText": "A",
-   "options": ["Aa", "Hh", "Kk", "Jj"],
-   "answer": "Aa",
-   "explanation": "录音读的是字母 Aa，读音 /eɪ/。注意和 Hh、Kk、Jj 区分。",
+   "explanation": "大写 A 占上两格（第一线到第三线）；小写 a 写在中间一格（第二线到第三线）。",
    "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
     "unit": "字母（全册）",
-    "point": "听音辨字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 听音辨字母",
-    "detailTitle": "查看考点",
-    "detail": "读音相近的字母容易听混：B/D/P/T/V/E/G/Z 都含 /iː/，A/H/J/K 都含 /eɪ/，F/L/M/N/S/X 都含 /e/。"
-   },
-   "id": "lt-001"
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "听音写字母",
+    "label": "字母 · 听音写字母"
+   }
   },
   {
-   "category": "听音选字母",
-   "prompt": "听录音，选出你听到的字母。",
+   "id": "lw-002",
+   "category": "听音写字母",
+   "kind": "listen",
+   "prompt": "听录音，在四线格上写出这个字母的大写和小写。",
+   "answer": "Bb",
    "audio": "en-letter-b.6675f00f.mp3",
    "audioText": "B",
-   "options": ["Bb", "Cc", "Gg", "Ee"],
-   "answer": "Bb",
-   "explanation": "录音读的是字母 Bb，读音 /biː/。注意和 Cc、Gg、Ee 区分。",
+   "explanation": "大写 B 占上两格（第一线到第三线）；小写 b 从第一线写到第三线。",
    "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
     "unit": "字母（全册）",
-    "point": "听音辨字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 听音辨字母",
-    "detailTitle": "查看考点",
-    "detail": "读音相近的字母容易听混：B/D/P/T/V/E/G/Z 都含 /iː/，A/H/J/K 都含 /eɪ/，F/L/M/N/S/X 都含 /e/。"
-   },
-   "id": "lt-002"
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "听音写字母",
+    "label": "字母 · 听音写字母"
+   }
   },
   {
-   "category": "听音选字母",
-   "prompt": "听录音，选出你听到的字母。",
+   "id": "lw-003",
+   "category": "听音写字母",
+   "kind": "listen",
+   "prompt": "听录音，在四线格上写出这个字母的大写和小写。",
+   "answer": "Cc",
    "audio": "en-letter-c.cd923f3c.mp3",
    "audioText": "C",
-   "options": ["Cc", "Tt", "Pp", "Vv"],
-   "answer": "Cc",
-   "explanation": "录音读的是字母 Cc，读音 /siː/。注意和 Tt、Pp、Vv 区分。",
+   "explanation": "大写 C 占上两格（第一线到第三线）；小写 c 写在中间一格（第二线到第三线）。",
    "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
     "unit": "字母（全册）",
-    "point": "听音辨字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 听音辨字母",
-    "detailTitle": "查看考点",
-    "detail": "读音相近的字母容易听混：B/D/P/T/V/E/G/Z 都含 /iː/，A/H/J/K 都含 /eɪ/，F/L/M/N/S/X 都含 /e/。"
-   },
-   "id": "lt-003"
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "听音写字母",
+    "label": "字母 · 听音写字母"
+   }
   },
   {
-   "category": "听音选字母",
-   "prompt": "听录音，选出你听到的字母。",
+   "id": "lw-004",
+   "category": "听音写字母",
+   "kind": "listen",
+   "prompt": "听录音，在四线格上写出这个字母的大写和小写。",
+   "answer": "Dd",
    "audio": "en-letter-d.d9cac4de.mp3",
    "audioText": "D",
-   "options": ["Dd", "Zz", "Bb", "Ee"],
-   "answer": "Dd",
-   "explanation": "录音读的是字母 Dd，读音 /diː/。注意和 Zz、Bb、Ee 区分。",
+   "explanation": "大写 D 占上两格（第一线到第三线）；小写 d 从第一线写到第三线。",
    "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
     "unit": "字母（全册）",
-    "point": "听音辨字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 听音辨字母",
-    "detailTitle": "查看考点",
-    "detail": "读音相近的字母容易听混：B/D/P/T/V/E/G/Z 都含 /iː/，A/H/J/K 都含 /eɪ/，F/L/M/N/S/X 都含 /e/。"
-   },
-   "id": "lt-004"
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "听音写字母",
+    "label": "字母 · 听音写字母"
+   }
   },
   {
-   "category": "听音选字母",
-   "prompt": "听录音，选出你听到的字母。",
+   "id": "lw-005",
+   "category": "听音写字母",
+   "kind": "listen",
+   "prompt": "听录音，在四线格上写出这个字母的大写和小写。",
+   "answer": "Ee",
    "audio": "en-letter-e.f4b5624c.mp3",
    "audioText": "E",
-   "options": ["Ee", "Gg", "Tt", "Dd"],
-   "answer": "Ee",
-   "explanation": "录音读的是字母 Ee，读音 /iː/。注意和 Gg、Tt、Dd 区分。",
+   "explanation": "大写 E 占上两格（第一线到第三线）；小写 e 写在中间一格（第二线到第三线）。",
    "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
     "unit": "字母（全册）",
-    "point": "听音辨字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 听音辨字母",
-    "detailTitle": "查看考点",
-    "detail": "读音相近的字母容易听混：B/D/P/T/V/E/G/Z 都含 /iː/，A/H/J/K 都含 /eɪ/，F/L/M/N/S/X 都含 /e/。"
-   },
-   "id": "lt-005"
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "听音写字母",
+    "label": "字母 · 听音写字母"
+   }
   },
   {
-   "category": "听音选字母",
-   "prompt": "听录音，选出你听到的字母。",
+   "id": "lw-006",
+   "category": "听音写字母",
+   "kind": "listen",
+   "prompt": "听录音，在四线格上写出这个字母的大写和小写。",
+   "answer": "Ff",
    "audio": "en-letter-f.13a10f59.mp3",
    "audioText": "F",
-   "options": ["Ff", "Xx", "Ll", "Mm"],
-   "answer": "Ff",
-   "explanation": "录音读的是字母 Ff，读音 /ef/。注意和 Xx、Ll、Mm 区分。",
+   "explanation": "大写 F 占上两格（第一线到第三线）；小写 f 从第一线写到第三线，横画在第二线。",
    "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
     "unit": "字母（全册）",
-    "point": "听音辨字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 听音辨字母",
-    "detailTitle": "查看考点",
-    "detail": "读音相近的字母容易听混：B/D/P/T/V/E/G/Z 都含 /iː/，A/H/J/K 都含 /eɪ/，F/L/M/N/S/X 都含 /e/。"
-   },
-   "id": "lt-006"
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "听音写字母",
+    "label": "字母 · 听音写字母"
+   }
   },
   {
-   "category": "听音选字母",
-   "prompt": "听录音，选出你听到的字母。",
+   "id": "lw-007",
+   "category": "听音写字母",
+   "kind": "listen",
+   "prompt": "听录音，在四线格上写出这个字母的大写和小写。",
+   "answer": "Gg",
    "audio": "en-letter-g.e22314ff.mp3",
    "audioText": "G",
-   "options": ["Gg", "Cc", "Pp", "Vv"],
-   "answer": "Gg",
-   "explanation": "录音读的是字母 Gg，读音 /dʒiː/。注意和 Cc、Pp、Vv 区分。",
+   "explanation": "大写 G 占上两格（第一线到第三线）；小写 g 从第二线写到第四线。",
    "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
     "unit": "字母（全册）",
-    "point": "听音辨字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 听音辨字母",
-    "detailTitle": "查看考点",
-    "detail": "读音相近的字母容易听混：B/D/P/T/V/E/G/Z 都含 /iː/，A/H/J/K 都含 /eɪ/，F/L/M/N/S/X 都含 /e/。"
-   },
-   "id": "lt-007"
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "听音写字母",
+    "label": "字母 · 听音写字母"
+   }
   },
   {
-   "category": "听音选字母",
-   "prompt": "听录音，选出你听到的字母。",
+   "id": "lw-008",
+   "category": "听音写字母",
+   "kind": "listen",
+   "prompt": "听录音，在四线格上写出这个字母的大写和小写。",
+   "answer": "Hh",
    "audio": "en-letter-h.4d07d02b.mp3",
    "audioText": "H",
-   "options": ["Hh", "Aa", "Kk", "Jj"],
-   "answer": "Hh",
-   "explanation": "录音读的是字母 Hh，读音 /eɪtʃ/。注意和 Aa、Kk、Jj 区分。",
+   "explanation": "大写 H 占上两格（第一线到第三线）；小写 h 从第一线写到第三线。",
    "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
     "unit": "字母（全册）",
-    "point": "听音辨字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 听音辨字母",
-    "detailTitle": "查看考点",
-    "detail": "读音相近的字母容易听混：B/D/P/T/V/E/G/Z 都含 /iː/，A/H/J/K 都含 /eɪ/，F/L/M/N/S/X 都含 /e/。"
-   },
-   "id": "lt-008"
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "听音写字母",
+    "label": "字母 · 听音写字母"
+   }
   },
   {
-   "category": "听音选字母",
-   "prompt": "听录音，选出你听到的字母。",
+   "id": "lw-009",
+   "category": "听音写字母",
+   "kind": "listen",
+   "prompt": "听录音，在四线格上写出这个字母的大写和小写。",
+   "answer": "Ii",
    "audio": "en-letter-i.bdf6e1d0.mp3",
    "audioText": "I",
-   "options": ["Ii", "Yy", "Jj", "Ll"],
-   "answer": "Ii",
-   "explanation": "录音读的是字母 Ii，读音 /aɪ/。注意和 Yy、Jj、Ll 区分。",
+   "explanation": "大写 I 占上两格（第一线到第三线）；小写 i 竖画在中间一格，点在第一格。",
    "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
     "unit": "字母（全册）",
-    "point": "听音辨字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 听音辨字母",
-    "detailTitle": "查看考点",
-    "detail": "读音相近的字母容易听混：B/D/P/T/V/E/G/Z 都含 /iː/，A/H/J/K 都含 /eɪ/，F/L/M/N/S/X 都含 /e/。"
-   },
-   "id": "lt-009"
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "听音写字母",
+    "label": "字母 · 听音写字母"
+   }
   },
   {
-   "category": "听音选字母",
-   "prompt": "听录音，选出你听到的字母。",
+   "id": "lw-010",
+   "category": "听音写字母",
+   "kind": "listen",
+   "prompt": "听录音，在四线格上写出这个字母的大写和小写。",
+   "answer": "Jj",
    "audio": "en-letter-j.46a81f92.mp3",
    "audioText": "J",
-   "options": ["Jj", "Kk", "Aa", "Hh"],
-   "answer": "Jj",
-   "explanation": "录音读的是字母 Jj，读音 /dʒeɪ/。注意和 Kk、Aa、Hh 区分。",
+   "explanation": "大写 J 占上两格（第一线到第三线）；小写 j 从第二线写到第四线，点在第一格。",
    "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
     "unit": "字母（全册）",
-    "point": "听音辨字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 听音辨字母",
-    "detailTitle": "查看考点",
-    "detail": "读音相近的字母容易听混：B/D/P/T/V/E/G/Z 都含 /iː/，A/H/J/K 都含 /eɪ/，F/L/M/N/S/X 都含 /e/。"
-   },
-   "id": "lt-010"
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "听音写字母",
+    "label": "字母 · 听音写字母"
+   }
   },
   {
-   "category": "听音选字母",
-   "prompt": "听录音，选出你听到的字母。",
+   "id": "lw-011",
+   "category": "听音写字母",
+   "kind": "listen",
+   "prompt": "听录音，在四线格上写出这个字母的大写和小写。",
+   "answer": "Kk",
    "audio": "en-letter-k.fa323335.mp3",
    "audioText": "K",
-   "options": ["Kk", "Aa", "Hh", "Jj"],
-   "answer": "Kk",
-   "explanation": "录音读的是字母 Kk，读音 /keɪ/。注意和 Aa、Hh、Jj 区分。",
+   "explanation": "大写 K 占上两格（第一线到第三线）；小写 k 从第一线写到第三线。",
    "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
     "unit": "字母（全册）",
-    "point": "听音辨字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 听音辨字母",
-    "detailTitle": "查看考点",
-    "detail": "读音相近的字母容易听混：B/D/P/T/V/E/G/Z 都含 /iː/，A/H/J/K 都含 /eɪ/，F/L/M/N/S/X 都含 /e/。"
-   },
-   "id": "lt-011"
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "听音写字母",
+    "label": "字母 · 听音写字母"
+   }
   },
   {
-   "category": "听音选字母",
-   "prompt": "听录音，选出你听到的字母。",
+   "id": "lw-012",
+   "category": "听音写字母",
+   "kind": "listen",
+   "prompt": "听录音，在四线格上写出这个字母的大写和小写。",
+   "answer": "Ll",
    "audio": "en-letter-l.5902ef7e.mp3",
    "audioText": "L",
-   "options": ["Ll", "Ff", "Ss", "Xx"],
-   "answer": "Ll",
-   "explanation": "录音读的是字母 Ll，读音 /el/。注意和 Ff、Ss、Xx 区分。",
+   "explanation": "大写 L 占上两格（第一线到第三线）；小写 l 从第一线写到第三线。",
    "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
     "unit": "字母（全册）",
-    "point": "听音辨字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 听音辨字母",
-    "detailTitle": "查看考点",
-    "detail": "读音相近的字母容易听混：B/D/P/T/V/E/G/Z 都含 /iː/，A/H/J/K 都含 /eɪ/，F/L/M/N/S/X 都含 /e/。"
-   },
-   "id": "lt-012"
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "听音写字母",
+    "label": "字母 · 听音写字母"
+   }
   },
   {
-   "category": "听音选字母",
-   "prompt": "听录音，选出你听到的字母。",
+   "id": "lw-013",
+   "category": "听音写字母",
+   "kind": "listen",
+   "prompt": "听录音，在四线格上写出这个字母的大写和小写。",
+   "answer": "Mm",
    "audio": "en-letter-m.949ecbf8.mp3",
    "audioText": "M",
-   "options": ["Mm", "Ll", "Ss", "Nn"],
-   "answer": "Mm",
-   "explanation": "录音读的是字母 Mm，读音 /em/。注意和 Ll、Ss、Nn 区分。",
+   "explanation": "大写 M 占上两格（第一线到第三线）；小写 m 写在中间一格（第二线到第三线）。",
    "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
     "unit": "字母（全册）",
-    "point": "听音辨字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 听音辨字母",
-    "detailTitle": "查看考点",
-    "detail": "读音相近的字母容易听混：B/D/P/T/V/E/G/Z 都含 /iː/，A/H/J/K 都含 /eɪ/，F/L/M/N/S/X 都含 /e/。"
-   },
-   "id": "lt-013"
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "听音写字母",
+    "label": "字母 · 听音写字母"
+   }
   },
   {
-   "category": "听音选字母",
-   "prompt": "听录音，选出你听到的字母。",
+   "id": "lw-014",
+   "category": "听音写字母",
+   "kind": "listen",
+   "prompt": "听录音，在四线格上写出这个字母的大写和小写。",
+   "answer": "Nn",
    "audio": "en-letter-n.5fe272bf.mp3",
    "audioText": "N",
-   "options": ["Nn", "Xx", "Mm", "Ll"],
-   "answer": "Nn",
-   "explanation": "录音读的是字母 Nn，读音 /en/。注意和 Xx、Mm、Ll 区分。",
+   "explanation": "大写 N 占上两格（第一线到第三线）；小写 n 写在中间一格（第二线到第三线）。",
    "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
     "unit": "字母（全册）",
-    "point": "听音辨字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 听音辨字母",
-    "detailTitle": "查看考点",
-    "detail": "读音相近的字母容易听混：B/D/P/T/V/E/G/Z 都含 /iː/，A/H/J/K 都含 /eɪ/，F/L/M/N/S/X 都含 /e/。"
-   },
-   "id": "lt-014"
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "听音写字母",
+    "label": "字母 · 听音写字母"
+   }
   },
   {
-   "category": "听音选字母",
-   "prompt": "听录音，选出你听到的字母。",
+   "id": "lw-015",
+   "category": "听音写字母",
+   "kind": "listen",
+   "prompt": "听录音，在四线格上写出这个字母的大写和小写。",
+   "answer": "Oo",
    "audio": "en-letter-o.6ac5bcd1.mp3",
    "audioText": "O",
-   "options": ["Oo", "Cc", "Aa", "Ee"],
-   "answer": "Oo",
-   "explanation": "录音读的是字母 Oo，读音 /əʊ/。注意和 Cc、Aa、Ee 区分。",
+   "explanation": "大写 O 占上两格（第一线到第三线）；小写 o 写在中间一格（第二线到第三线）。",
    "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
     "unit": "字母（全册）",
-    "point": "听音辨字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 听音辨字母",
-    "detailTitle": "查看考点",
-    "detail": "读音相近的字母容易听混：B/D/P/T/V/E/G/Z 都含 /iː/，A/H/J/K 都含 /eɪ/，F/L/M/N/S/X 都含 /e/。"
-   },
-   "id": "lt-015"
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "听音写字母",
+    "label": "字母 · 听音写字母"
+   }
   },
   {
-   "category": "听音选字母",
-   "prompt": "听录音，选出你听到的字母。",
+   "id": "lw-016",
+   "category": "听音写字母",
+   "kind": "listen",
+   "prompt": "听录音，在四线格上写出这个字母的大写和小写。",
+   "answer": "Pp",
    "audio": "en-letter-p.30d8bb58.mp3",
    "audioText": "P",
-   "options": ["Pp", "Ee", "Dd", "Gg"],
-   "answer": "Pp",
-   "explanation": "录音读的是字母 Pp，读音 /piː/。注意和 Ee、Dd、Gg 区分。",
+   "explanation": "大写 P 占上两格（第一线到第三线）；小写 p 从第二线写到第四线。",
    "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
     "unit": "字母（全册）",
-    "point": "听音辨字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 听音辨字母",
-    "detailTitle": "查看考点",
-    "detail": "读音相近的字母容易听混：B/D/P/T/V/E/G/Z 都含 /iː/，A/H/J/K 都含 /eɪ/，F/L/M/N/S/X 都含 /e/。"
-   },
-   "id": "lt-016"
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "听音写字母",
+    "label": "字母 · 听音写字母"
+   }
   },
   {
-   "category": "听音选字母",
-   "prompt": "听录音，选出你听到的字母。",
+   "id": "lw-017",
+   "category": "听音写字母",
+   "kind": "listen",
+   "prompt": "听录音，在四线格上写出这个字母的大写和小写。",
+   "answer": "Qq",
    "audio": "en-letter-q.83729a83.mp3",
    "audioText": "Q",
-   "options": ["Qq", "Uu", "Ww", "Pp"],
-   "answer": "Qq",
-   "explanation": "录音读的是字母 Qq，读音 /kjuː/。注意和 Uu、Ww、Pp 区分。",
+   "explanation": "大写 Q 占上两格（第一线到第三线）；小写 q 从第二线写到第四线。",
    "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
     "unit": "字母（全册）",
-    "point": "听音辨字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 听音辨字母",
-    "detailTitle": "查看考点",
-    "detail": "读音相近的字母容易听混：B/D/P/T/V/E/G/Z 都含 /iː/，A/H/J/K 都含 /eɪ/，F/L/M/N/S/X 都含 /e/。"
-   },
-   "id": "lt-017"
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "听音写字母",
+    "label": "字母 · 听音写字母"
+   }
   },
   {
-   "category": "听音选字母",
-   "prompt": "听录音，选出你听到的字母。",
+   "id": "lw-018",
+   "category": "听音写字母",
+   "kind": "listen",
+   "prompt": "听录音，在四线格上写出这个字母的大写和小写。",
+   "answer": "Rr",
    "audio": "en-letter-r.cdf520ac.mp3",
    "audioText": "R",
-   "options": ["Rr", "Nn", "Vv", "Ss"],
-   "answer": "Rr",
-   "explanation": "录音读的是字母 Rr，读音 /ɑː/。注意和 Nn、Vv、Ss 区分。",
+   "explanation": "大写 R 占上两格（第一线到第三线）；小写 r 写在中间一格（第二线到第三线）。",
    "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
     "unit": "字母（全册）",
-    "point": "听音辨字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 听音辨字母",
-    "detailTitle": "查看考点",
-    "detail": "读音相近的字母容易听混：B/D/P/T/V/E/G/Z 都含 /iː/，A/H/J/K 都含 /eɪ/，F/L/M/N/S/X 都含 /e/。"
-   },
-   "id": "lt-018"
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "听音写字母",
+    "label": "字母 · 听音写字母"
+   }
   },
   {
-   "category": "听音选字母",
-   "prompt": "听录音，选出你听到的字母。",
+   "id": "lw-019",
+   "category": "听音写字母",
+   "kind": "listen",
+   "prompt": "听录音，在四线格上写出这个字母的大写和小写。",
+   "answer": "Ss",
    "audio": "en-letter-s.45629795.mp3",
    "audioText": "S",
-   "options": ["Ss", "Mm", "Ff", "Ll"],
-   "answer": "Ss",
-   "explanation": "录音读的是字母 Ss，读音 /es/。注意和 Mm、Ff、Ll 区分。",
+   "explanation": "大写 S 占上两格（第一线到第三线）；小写 s 写在中间一格（第二线到第三线）。",
    "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
     "unit": "字母（全册）",
-    "point": "听音辨字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 听音辨字母",
-    "detailTitle": "查看考点",
-    "detail": "读音相近的字母容易听混：B/D/P/T/V/E/G/Z 都含 /iː/，A/H/J/K 都含 /eɪ/，F/L/M/N/S/X 都含 /e/。"
-   },
-   "id": "lt-019"
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "听音写字母",
+    "label": "字母 · 听音写字母"
+   }
   },
   {
-   "category": "听音选字母",
-   "prompt": "听录音，选出你听到的字母。",
+   "id": "lw-020",
+   "category": "听音写字母",
+   "kind": "listen",
+   "prompt": "听录音，在四线格上写出这个字母的大写和小写。",
+   "answer": "Tt",
    "audio": "en-letter-t.92dc3a07.mp3",
    "audioText": "T",
-   "options": ["Tt", "Zz", "Cc", "Bb"],
-   "answer": "Tt",
-   "explanation": "录音读的是字母 Tt，读音 /tiː/。注意和 Zz、Cc、Bb 区分。",
+   "explanation": "大写 T 占上两格（第一线到第三线）；小写 t 上端在第一格中间，写到第三线，横画在第二线。",
    "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
     "unit": "字母（全册）",
-    "point": "听音辨字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 听音辨字母",
-    "detailTitle": "查看考点",
-    "detail": "读音相近的字母容易听混：B/D/P/T/V/E/G/Z 都含 /iː/，A/H/J/K 都含 /eɪ/，F/L/M/N/S/X 都含 /e/。"
-   },
-   "id": "lt-020"
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "听音写字母",
+    "label": "字母 · 听音写字母"
+   }
   },
   {
-   "category": "听音选字母",
-   "prompt": "听录音，选出你听到的字母。",
+   "id": "lw-021",
+   "category": "听音写字母",
+   "kind": "listen",
+   "prompt": "听录音，在四线格上写出这个字母的大写和小写。",
+   "answer": "Uu",
    "audio": "en-letter-u.c5be46f8.mp3",
    "audioText": "U",
-   "options": ["Uu", "Qq", "Ww", "Vv"],
-   "answer": "Uu",
-   "explanation": "录音读的是字母 Uu，读音 /juː/。注意和 Qq、Ww、Vv 区分。",
+   "explanation": "大写 U 占上两格（第一线到第三线）；小写 u 写在中间一格（第二线到第三线）。",
    "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
     "unit": "字母（全册）",
-    "point": "听音辨字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 听音辨字母",
-    "detailTitle": "查看考点",
-    "detail": "读音相近的字母容易听混：B/D/P/T/V/E/G/Z 都含 /iː/，A/H/J/K 都含 /eɪ/，F/L/M/N/S/X 都含 /e/。"
-   },
-   "id": "lt-021"
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "听音写字母",
+    "label": "字母 · 听音写字母"
+   }
   },
   {
-   "category": "听音选字母",
-   "prompt": "听录音，选出你听到的字母。",
+   "id": "lw-022",
+   "category": "听音写字母",
+   "kind": "listen",
+   "prompt": "听录音，在四线格上写出这个字母的大写和小写。",
+   "answer": "Vv",
    "audio": "en-letter-v.35d609e9.mp3",
    "audioText": "V",
-   "options": ["Vv", "Tt", "Pp", "Dd"],
-   "answer": "Vv",
-   "explanation": "录音读的是字母 Vv，读音 /viː/。注意和 Tt、Pp、Dd 区分。",
+   "explanation": "大写 V 占上两格（第一线到第三线）；小写 v 写在中间一格（第二线到第三线）。",
    "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
     "unit": "字母（全册）",
-    "point": "听音辨字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 听音辨字母",
-    "detailTitle": "查看考点",
-    "detail": "读音相近的字母容易听混：B/D/P/T/V/E/G/Z 都含 /iː/，A/H/J/K 都含 /eɪ/，F/L/M/N/S/X 都含 /e/。"
-   },
-   "id": "lt-022"
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "听音写字母",
+    "label": "字母 · 听音写字母"
+   }
   },
   {
-   "category": "听音选字母",
-   "prompt": "听录音，选出你听到的字母。",
+   "id": "lw-023",
+   "category": "听音写字母",
+   "kind": "listen",
+   "prompt": "听录音，在四线格上写出这个字母的大写和小写。",
+   "answer": "Ww",
    "audio": "en-letter-w.486aa567.mp3",
    "audioText": "W",
-   "options": ["Ww", "Uu", "Qq", "Vv"],
-   "answer": "Ww",
-   "explanation": "录音读的是字母 Ww，读音 /ˈdʌbljuː/。注意和 Uu、Qq、Vv 区分。",
+   "explanation": "大写 W 占上两格（第一线到第三线）；小写 w 写在中间一格（第二线到第三线）。",
    "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
     "unit": "字母（全册）",
-    "point": "听音辨字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 听音辨字母",
-    "detailTitle": "查看考点",
-    "detail": "读音相近的字母容易听混：B/D/P/T/V/E/G/Z 都含 /iː/，A/H/J/K 都含 /eɪ/，F/L/M/N/S/X 都含 /e/。"
-   },
-   "id": "lt-023"
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "听音写字母",
+    "label": "字母 · 听音写字母"
+   }
   },
   {
-   "category": "听音选字母",
-   "prompt": "听录音，选出你听到的字母。",
+   "id": "lw-024",
+   "category": "听音写字母",
+   "kind": "listen",
+   "prompt": "听录音，在四线格上写出这个字母的大写和小写。",
+   "answer": "Xx",
    "audio": "en-letter-x.27360e8b.mp3",
    "audioText": "X",
-   "options": ["Xx", "Mm", "Ss", "Ll"],
-   "answer": "Xx",
-   "explanation": "录音读的是字母 Xx，读音 /eks/。注意和 Mm、Ss、Ll 区分。",
+   "explanation": "大写 X 占上两格（第一线到第三线）；小写 x 写在中间一格（第二线到第三线）。",
    "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
     "unit": "字母（全册）",
-    "point": "听音辨字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 听音辨字母",
-    "detailTitle": "查看考点",
-    "detail": "读音相近的字母容易听混：B/D/P/T/V/E/G/Z 都含 /iː/，A/H/J/K 都含 /eɪ/，F/L/M/N/S/X 都含 /e/。"
-   },
-   "id": "lt-024"
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "听音写字母",
+    "label": "字母 · 听音写字母"
+   }
   },
   {
-   "category": "听音选字母",
-   "prompt": "听录音，选出你听到的字母。",
+   "id": "lw-025",
+   "category": "听音写字母",
+   "kind": "listen",
+   "prompt": "听录音，在四线格上写出这个字母的大写和小写。",
+   "answer": "Yy",
    "audio": "en-letter-y.9ec9e7a4.mp3",
    "audioText": "Y",
-   "options": ["Yy", "Ii", "Vv", "Gg"],
-   "answer": "Yy",
-   "explanation": "录音读的是字母 Yy，读音 /waɪ/。注意和 Ii、Vv、Gg 区分。",
+   "explanation": "大写 Y 占上两格（第一线到第三线）；小写 y 从第二线写到第四线。",
    "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
     "unit": "字母（全册）",
-    "point": "听音辨字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 听音辨字母",
-    "detailTitle": "查看考点",
-    "detail": "读音相近的字母容易听混：B/D/P/T/V/E/G/Z 都含 /iː/，A/H/J/K 都含 /eɪ/，F/L/M/N/S/X 都含 /e/。"
-   },
-   "id": "lt-025"
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "听音写字母",
+    "label": "字母 · 听音写字母"
+   }
   },
   {
-   "category": "听音选字母",
-   "prompt": "听录音，选出你听到的字母。",
+   "id": "lw-026",
+   "category": "听音写字母",
+   "kind": "listen",
+   "prompt": "听录音，在四线格上写出这个字母的大写和小写。",
+   "answer": "Zz",
    "audio": "en-letter-z.24fd84da.mp3",
    "audioText": "Z",
-   "options": ["Zz", "Bb", "Dd", "Tt"],
-   "answer": "Zz",
-   "explanation": "录音读的是字母 Zz，读音 /ziː/。注意和 Bb、Dd、Tt 区分。",
+   "explanation": "大写 Z 占上两格（第一线到第三线）；小写 z 写在中间一格（第二线到第三线）。",
    "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
     "unit": "字母（全册）",
-    "point": "听音辨字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 听音辨字母",
-    "detailTitle": "查看考点",
-    "detail": "读音相近的字母容易听混：B/D/P/T/V/E/G/Z 都含 /iː/，A/H/J/K 都含 /eɪ/，F/L/M/N/S/X 都含 /e/。"
-   },
-   "id": "lt-026"
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "听音写字母",
+    "label": "字母 · 听音写字母"
+   }
   },
   {
-   "category": "大小写配对",
-   "prompt": "大写字母 A 对应的小写字母是：",
-   "options": ["a", "e", "o", "d"],
+   "id": "lw-027",
+   "category": "大写写小写",
+   "kind": "upper-to-lower",
+   "prompt": "写出大写字母 A 的小写。",
    "answer": "a",
-   "explanation": "A 的小写是 a，a 的大写是 A。易混字母：e、o、d。",
+   "shown": "A",
+   "explanation": "小写 a 写在中间一格（第二线到第三线）。",
    "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
     "unit": "字母（全册）",
-    "point": "大小写配对",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 大小写配对",
-    "detailTitle": "查看考点",
-    "detail": "b/d/p/q、m/n、u/v、i/j 等形近字母要看清方向和笔画。"
-   },
-   "id": "lt-027"
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "大写写小写",
+    "label": "字母 · 大写写小写"
+   }
   },
   {
-   "category": "大小写配对",
-   "prompt": "小写字母 b 对应的大写字母是：",
-   "options": ["B", "D", "P", "Q"],
-   "answer": "B",
-   "explanation": "B 的小写是 b，b 的大写是 B。易混字母：d、p、q。",
+   "id": "lw-028",
+   "category": "大写写小写",
+   "kind": "upper-to-lower",
+   "prompt": "写出大写字母 B 的小写。",
+   "answer": "b",
+   "shown": "B",
+   "explanation": "小写 b 从第一线写到第三线。",
    "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
     "unit": "字母（全册）",
-    "point": "大小写配对",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 大小写配对",
-    "detailTitle": "查看考点",
-    "detail": "b/d/p/q、m/n、u/v、i/j 等形近字母要看清方向和笔画。"
-   },
-   "id": "lt-028"
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "大写写小写",
+    "label": "字母 · 大写写小写"
+   }
   },
   {
-   "category": "大小写配对",
-   "prompt": "大写字母 C 对应的小写字母是：",
-   "options": ["c", "e", "o", "s"],
+   "id": "lw-029",
+   "category": "大写写小写",
+   "kind": "upper-to-lower",
+   "prompt": "写出大写字母 C 的小写。",
    "answer": "c",
-   "explanation": "C 的小写是 c，c 的大写是 C。易混字母：e、o、s。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "大小写配对",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 大小写配对",
-    "detailTitle": "查看考点",
-    "detail": "b/d/p/q、m/n、u/v、i/j 等形近字母要看清方向和笔画。"
-   },
-   "id": "lt-029"
-  },
-  {
-   "category": "大小写配对",
-   "prompt": "小写字母 d 对应的大写字母是：",
-   "options": ["D", "B", "P", "Q"],
-   "answer": "D",
-   "explanation": "D 的小写是 d，d 的大写是 D。易混字母：b、p、q。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "大小写配对",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 大小写配对",
-    "detailTitle": "查看考点",
-    "detail": "b/d/p/q、m/n、u/v、i/j 等形近字母要看清方向和笔画。"
-   },
-   "id": "lt-030"
-  },
-  {
-   "category": "大小写配对",
-   "prompt": "大写字母 E 对应的小写字母是：",
-   "options": ["e", "a", "c", "o"],
-   "answer": "e",
-   "explanation": "E 的小写是 e，e 的大写是 E。易混字母：a、c、o。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "大小写配对",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 大小写配对",
-    "detailTitle": "查看考点",
-    "detail": "b/d/p/q、m/n、u/v、i/j 等形近字母要看清方向和笔画。"
-   },
-   "id": "lt-031"
-  },
-  {
-   "category": "大小写配对",
-   "prompt": "小写字母 f 对应的大写字母是：",
-   "options": ["F", "T", "L", "K"],
-   "answer": "F",
-   "explanation": "F 的小写是 f，f 的大写是 F。易混字母：t、l、k。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "大小写配对",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 大小写配对",
-    "detailTitle": "查看考点",
-    "detail": "b/d/p/q、m/n、u/v、i/j 等形近字母要看清方向和笔画。"
-   },
-   "id": "lt-032"
-  },
-  {
-   "category": "大小写配对",
-   "prompt": "大写字母 G 对应的小写字母是：",
-   "options": ["g", "q", "j", "y"],
-   "answer": "g",
-   "explanation": "G 的小写是 g，g 的大写是 G。易混字母：q、j、y。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "大小写配对",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 大小写配对",
-    "detailTitle": "查看考点",
-    "detail": "b/d/p/q、m/n、u/v、i/j 等形近字母要看清方向和笔画。"
-   },
-   "id": "lt-033"
-  },
-  {
-   "category": "大小写配对",
-   "prompt": "小写字母 h 对应的大写字母是：",
-   "options": ["H", "N", "K", "B"],
-   "answer": "H",
-   "explanation": "H 的小写是 h，h 的大写是 H。易混字母：n、k、b。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "大小写配对",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 大小写配对",
-    "detailTitle": "查看考点",
-    "detail": "b/d/p/q、m/n、u/v、i/j 等形近字母要看清方向和笔画。"
-   },
-   "id": "lt-034"
-  },
-  {
-   "category": "大小写配对",
-   "prompt": "大写字母 I 对应的小写字母是：",
-   "options": ["i", "j", "l", "t"],
-   "answer": "i",
-   "explanation": "I 的小写是 i，i 的大写是 I。易混字母：j、l、t。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "大小写配对",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 大小写配对",
-    "detailTitle": "查看考点",
-    "detail": "b/d/p/q、m/n、u/v、i/j 等形近字母要看清方向和笔画。"
-   },
-   "id": "lt-035"
-  },
-  {
-   "category": "大小写配对",
-   "prompt": "小写字母 j 对应的大写字母是：",
-   "options": ["J", "I", "G", "Y"],
-   "answer": "J",
-   "explanation": "J 的小写是 j，j 的大写是 J。易混字母：i、g、y。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "大小写配对",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 大小写配对",
-    "detailTitle": "查看考点",
-    "detail": "b/d/p/q、m/n、u/v、i/j 等形近字母要看清方向和笔画。"
-   },
-   "id": "lt-036"
-  },
-  {
-   "category": "大小写配对",
-   "prompt": "大写字母 K 对应的小写字母是：",
-   "options": ["k", "h", "x", "y"],
-   "answer": "k",
-   "explanation": "K 的小写是 k，k 的大写是 K。易混字母：h、x、y。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "大小写配对",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 大小写配对",
-    "detailTitle": "查看考点",
-    "detail": "b/d/p/q、m/n、u/v、i/j 等形近字母要看清方向和笔画。"
-   },
-   "id": "lt-037"
-  },
-  {
-   "category": "大小写配对",
-   "prompt": "小写字母 l 对应的大写字母是：",
-   "options": ["L", "I", "T", "J"],
-   "answer": "L",
-   "explanation": "L 的小写是 l，l 的大写是 L。易混字母：i、t、j。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "大小写配对",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 大小写配对",
-    "detailTitle": "查看考点",
-    "detail": "b/d/p/q、m/n、u/v、i/j 等形近字母要看清方向和笔画。"
-   },
-   "id": "lt-038"
-  },
-  {
-   "category": "大小写配对",
-   "prompt": "大写字母 M 对应的小写字母是：",
-   "options": ["m", "n", "w", "u"],
-   "answer": "m",
-   "explanation": "M 的小写是 m，m 的大写是 M。易混字母：n、w、u。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "大小写配对",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 大小写配对",
-    "detailTitle": "查看考点",
-    "detail": "b/d/p/q、m/n、u/v、i/j 等形近字母要看清方向和笔画。"
-   },
-   "id": "lt-039"
-  },
-  {
-   "category": "大小写配对",
-   "prompt": "小写字母 n 对应的大写字母是：",
-   "options": ["N", "M", "H", "U"],
-   "answer": "N",
-   "explanation": "N 的小写是 n，n 的大写是 N。易混字母：m、h、u。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "大小写配对",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 大小写配对",
-    "detailTitle": "查看考点",
-    "detail": "b/d/p/q、m/n、u/v、i/j 等形近字母要看清方向和笔画。"
-   },
-   "id": "lt-040"
-  },
-  {
-   "category": "大小写配对",
-   "prompt": "大写字母 O 对应的小写字母是：",
-   "options": ["o", "c", "a", "e"],
-   "answer": "o",
-   "explanation": "O 的小写是 o，o 的大写是 O。易混字母：c、a、e。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "大小写配对",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 大小写配对",
-    "detailTitle": "查看考点",
-    "detail": "b/d/p/q、m/n、u/v、i/j 等形近字母要看清方向和笔画。"
-   },
-   "id": "lt-041"
-  },
-  {
-   "category": "大小写配对",
-   "prompt": "小写字母 p 对应的大写字母是：",
-   "options": ["P", "Q", "B", "D"],
-   "answer": "P",
-   "explanation": "P 的小写是 p，p 的大写是 P。易混字母：q、b、d。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "大小写配对",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 大小写配对",
-    "detailTitle": "查看考点",
-    "detail": "b/d/p/q、m/n、u/v、i/j 等形近字母要看清方向和笔画。"
-   },
-   "id": "lt-042"
-  },
-  {
-   "category": "大小写配对",
-   "prompt": "大写字母 Q 对应的小写字母是：",
-   "options": ["q", "p", "g", "d"],
-   "answer": "q",
-   "explanation": "Q 的小写是 q，q 的大写是 Q。易混字母：p、g、d。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "大小写配对",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 大小写配对",
-    "detailTitle": "查看考点",
-    "detail": "b/d/p/q、m/n、u/v、i/j 等形近字母要看清方向和笔画。"
-   },
-   "id": "lt-043"
-  },
-  {
-   "category": "大小写配对",
-   "prompt": "小写字母 r 对应的大写字母是：",
-   "options": ["R", "N", "V", "S"],
-   "answer": "R",
-   "explanation": "R 的小写是 r，r 的大写是 R。易混字母：n、v、s。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "大小写配对",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 大小写配对",
-    "detailTitle": "查看考点",
-    "detail": "b/d/p/q、m/n、u/v、i/j 等形近字母要看清方向和笔画。"
-   },
-   "id": "lt-044"
-  },
-  {
-   "category": "大小写配对",
-   "prompt": "大写字母 S 对应的小写字母是：",
-   "options": ["s", "z", "c", "x"],
-   "answer": "s",
-   "explanation": "S 的小写是 s，s 的大写是 S。易混字母：z、c、x。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "大小写配对",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 大小写配对",
-    "detailTitle": "查看考点",
-    "detail": "b/d/p/q、m/n、u/v、i/j 等形近字母要看清方向和笔画。"
-   },
-   "id": "lt-045"
-  },
-  {
-   "category": "大小写配对",
-   "prompt": "小写字母 t 对应的大写字母是：",
-   "options": ["T", "F", "L", "I"],
-   "answer": "T",
-   "explanation": "T 的小写是 t，t 的大写是 T。易混字母：f、l、i。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "大小写配对",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 大小写配对",
-    "detailTitle": "查看考点",
-    "detail": "b/d/p/q、m/n、u/v、i/j 等形近字母要看清方向和笔画。"
-   },
-   "id": "lt-046"
-  },
-  {
-   "category": "大小写配对",
-   "prompt": "大写字母 U 对应的小写字母是：",
-   "options": ["u", "v", "n", "w"],
-   "answer": "u",
-   "explanation": "U 的小写是 u，u 的大写是 U。易混字母：v、n、w。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "大小写配对",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 大小写配对",
-    "detailTitle": "查看考点",
-    "detail": "b/d/p/q、m/n、u/v、i/j 等形近字母要看清方向和笔画。"
-   },
-   "id": "lt-047"
-  },
-  {
-   "category": "大小写配对",
-   "prompt": "小写字母 v 对应的大写字母是：",
-   "options": ["V", "U", "W", "Y"],
-   "answer": "V",
-   "explanation": "V 的小写是 v，v 的大写是 V。易混字母：u、w、y。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "大小写配对",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 大小写配对",
-    "detailTitle": "查看考点",
-    "detail": "b/d/p/q、m/n、u/v、i/j 等形近字母要看清方向和笔画。"
-   },
-   "id": "lt-048"
-  },
-  {
-   "category": "大小写配对",
-   "prompt": "大写字母 W 对应的小写字母是：",
-   "options": ["w", "v", "m", "u"],
-   "answer": "w",
-   "explanation": "W 的小写是 w，w 的大写是 W。易混字母：v、m、u。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "大小写配对",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 大小写配对",
-    "detailTitle": "查看考点",
-    "detail": "b/d/p/q、m/n、u/v、i/j 等形近字母要看清方向和笔画。"
-   },
-   "id": "lt-049"
-  },
-  {
-   "category": "大小写配对",
-   "prompt": "小写字母 x 对应的大写字母是：",
-   "options": ["X", "K", "Y", "Z"],
-   "answer": "X",
-   "explanation": "X 的小写是 x，x 的大写是 X。易混字母：k、y、z。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "大小写配对",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 大小写配对",
-    "detailTitle": "查看考点",
-    "detail": "b/d/p/q、m/n、u/v、i/j 等形近字母要看清方向和笔画。"
-   },
-   "id": "lt-050"
-  },
-  {
-   "category": "大小写配对",
-   "prompt": "大写字母 Y 对应的小写字母是：",
-   "options": ["y", "v", "g", "j"],
-   "answer": "y",
-   "explanation": "Y 的小写是 y，y 的大写是 Y。易混字母：v、g、j。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "大小写配对",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 大小写配对",
-    "detailTitle": "查看考点",
-    "detail": "b/d/p/q、m/n、u/v、i/j 等形近字母要看清方向和笔画。"
-   },
-   "id": "lt-051"
-  },
-  {
-   "category": "大小写配对",
-   "prompt": "小写字母 z 对应的大写字母是：",
-   "options": ["Z", "S", "X", "C"],
-   "answer": "Z",
-   "explanation": "Z 的小写是 z，z 的大写是 Z。易混字母：s、x、c。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "大小写配对",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 大小写配对",
-    "detailTitle": "查看考点",
-    "detail": "b/d/p/q、m/n、u/v、i/j 等形近字母要看清方向和笔画。"
-   },
-   "id": "lt-052"
-  },
-  {
-   "category": "字母顺序",
-   "prompt": "按字母表顺序，括号里应填：　（ ）　B　C　D",
-   "options": ["A", "E", "F", "O"],
-   "answer": "A",
-   "explanation": "字母表顺序：A B C D，括号里是 A。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "字母顺序",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 字母顺序",
-    "detailTitle": "查看考点",
-    "detail": "熟记26个字母的顺序：Aa Bb Cc Dd Ee Ff Gg / Hh Ii Jj Kk Ll Mm Nn / Oo Pp Qq Rr Ss Tt / Uu Vv Ww Xx Yy Zz。"
-   },
-   "id": "lt-053"
-  },
-  {
-   "category": "字母顺序",
-   "prompt": "按字母表顺序，括号里应填：　A　（ ）　C　D",
-   "options": ["B", "E", "F", "P"],
-   "answer": "B",
-   "explanation": "字母表顺序：A B C D，括号里是 B。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "字母顺序",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 字母顺序",
-    "detailTitle": "查看考点",
-    "detail": "熟记26个字母的顺序：Aa Bb Cc Dd Ee Ff Gg / Hh Ii Jj Kk Ll Mm Nn / Oo Pp Qq Rr Ss Tt / Uu Vv Ww Xx Yy Zz。"
-   },
-   "id": "lt-054"
-  },
-  {
-   "category": "字母顺序",
-   "prompt": "按字母表顺序，括号里应填：　a　b　（ ）　d",
-   "options": ["c", "e", "f", "o"],
-   "answer": "c",
-   "explanation": "字母表顺序：a b c d，括号里是 c。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "字母顺序",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 字母顺序",
-    "detailTitle": "查看考点",
-    "detail": "熟记26个字母的顺序：Aa Bb Cc Dd Ee Ff Gg / Hh Ii Jj Kk Ll Mm Nn / Oo Pp Qq Rr Ss Tt / Uu Vv Ww Xx Yy Zz。"
-   },
-   "id": "lt-055"
-  },
-  {
-   "category": "字母顺序",
-   "prompt": "按字母表顺序，括号里应填：　A　B　C　（ ）",
-   "options": ["D", "E", "F", "P"],
-   "answer": "D",
-   "explanation": "字母表顺序：A B C D，括号里是 D。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "字母顺序",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 字母顺序",
-    "detailTitle": "查看考点",
-    "detail": "熟记26个字母的顺序：Aa Bb Cc Dd Ee Ff Gg / Hh Ii Jj Kk Ll Mm Nn / Oo Pp Qq Rr Ss Tt / Uu Vv Ww Xx Yy Zz。"
-   },
-   "id": "lt-056"
-  },
-  {
-   "category": "字母顺序",
-   "prompt": "按字母表顺序，括号里应填：　（ ）　F　G　H",
-   "options": ["E", "D", "I", "C"],
-   "answer": "E",
-   "explanation": "字母表顺序：E F G H，括号里是 E。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "字母顺序",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 字母顺序",
-    "detailTitle": "查看考点",
-    "detail": "熟记26个字母的顺序：Aa Bb Cc Dd Ee Ff Gg / Hh Ii Jj Kk Ll Mm Nn / Oo Pp Qq Rr Ss Tt / Uu Vv Ww Xx Yy Zz。"
-   },
-   "id": "lt-057"
-  },
-  {
-   "category": "字母顺序",
-   "prompt": "按字母表顺序，括号里应填：　e　（ ）　g　h",
-   "options": ["f", "d", "i", "c"],
-   "answer": "f",
-   "explanation": "字母表顺序：e f g h，括号里是 f。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "字母顺序",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 字母顺序",
-    "detailTitle": "查看考点",
-    "detail": "熟记26个字母的顺序：Aa Bb Cc Dd Ee Ff Gg / Hh Ii Jj Kk Ll Mm Nn / Oo Pp Qq Rr Ss Tt / Uu Vv Ww Xx Yy Zz。"
-   },
-   "id": "lt-058"
-  },
-  {
-   "category": "字母顺序",
-   "prompt": "按字母表顺序，括号里应填：　E　F　（ ）　H",
-   "options": ["G", "D", "I", "C"],
-   "answer": "G",
-   "explanation": "字母表顺序：E F G H，括号里是 G。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "字母顺序",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 字母顺序",
-    "detailTitle": "查看考点",
-    "detail": "熟记26个字母的顺序：Aa Bb Cc Dd Ee Ff Gg / Hh Ii Jj Kk Ll Mm Nn / Oo Pp Qq Rr Ss Tt / Uu Vv Ww Xx Yy Zz。"
-   },
-   "id": "lt-059"
-  },
-  {
-   "category": "字母顺序",
-   "prompt": "按字母表顺序，括号里应填：　E　F　G　（ ）",
-   "options": ["H", "D", "I", "C"],
-   "answer": "H",
-   "explanation": "字母表顺序：E F G H，括号里是 H。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "字母顺序",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 字母顺序",
-    "detailTitle": "查看考点",
-    "detail": "熟记26个字母的顺序：Aa Bb Cc Dd Ee Ff Gg / Hh Ii Jj Kk Ll Mm Nn / Oo Pp Qq Rr Ss Tt / Uu Vv Ww Xx Yy Zz。"
-   },
-   "id": "lt-060"
-  },
-  {
-   "category": "字母顺序",
-   "prompt": "按字母表顺序，括号里应填：　（ ）　j　k　l",
-   "options": ["i", "h", "m", "g"],
-   "answer": "i",
-   "explanation": "字母表顺序：i j k l，括号里是 i。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "字母顺序",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 字母顺序",
-    "detailTitle": "查看考点",
-    "detail": "熟记26个字母的顺序：Aa Bb Cc Dd Ee Ff Gg / Hh Ii Jj Kk Ll Mm Nn / Oo Pp Qq Rr Ss Tt / Uu Vv Ww Xx Yy Zz。"
-   },
-   "id": "lt-061"
-  },
-  {
-   "category": "字母顺序",
-   "prompt": "按字母表顺序，括号里应填：　I　（ ）　K　L",
-   "options": ["J", "H", "M", "G"],
-   "answer": "J",
-   "explanation": "字母表顺序：I J K L，括号里是 J。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "字母顺序",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 字母顺序",
-    "detailTitle": "查看考点",
-    "detail": "熟记26个字母的顺序：Aa Bb Cc Dd Ee Ff Gg / Hh Ii Jj Kk Ll Mm Nn / Oo Pp Qq Rr Ss Tt / Uu Vv Ww Xx Yy Zz。"
-   },
-   "id": "lt-062"
-  },
-  {
-   "category": "字母顺序",
-   "prompt": "按字母表顺序，括号里应填：　I　J　（ ）　L",
-   "options": ["K", "H", "M", "G"],
-   "answer": "K",
-   "explanation": "字母表顺序：I J K L，括号里是 K。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "字母顺序",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 字母顺序",
-    "detailTitle": "查看考点",
-    "detail": "熟记26个字母的顺序：Aa Bb Cc Dd Ee Ff Gg / Hh Ii Jj Kk Ll Mm Nn / Oo Pp Qq Rr Ss Tt / Uu Vv Ww Xx Yy Zz。"
-   },
-   "id": "lt-063"
-  },
-  {
-   "category": "字母顺序",
-   "prompt": "按字母表顺序，括号里应填：　i　j　k　（ ）",
-   "options": ["l", "h", "m", "g"],
-   "answer": "l",
-   "explanation": "字母表顺序：i j k l，括号里是 l。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "字母顺序",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 字母顺序",
-    "detailTitle": "查看考点",
-    "detail": "熟记26个字母的顺序：Aa Bb Cc Dd Ee Ff Gg / Hh Ii Jj Kk Ll Mm Nn / Oo Pp Qq Rr Ss Tt / Uu Vv Ww Xx Yy Zz。"
-   },
-   "id": "lt-064"
-  },
-  {
-   "category": "字母顺序",
-   "prompt": "按字母表顺序，括号里应填：　（ ）　N　O　P",
-   "options": ["M", "L", "Q", "K"],
-   "answer": "M",
-   "explanation": "字母表顺序：M N O P，括号里是 M。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "字母顺序",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 字母顺序",
-    "detailTitle": "查看考点",
-    "detail": "熟记26个字母的顺序：Aa Bb Cc Dd Ee Ff Gg / Hh Ii Jj Kk Ll Mm Nn / Oo Pp Qq Rr Ss Tt / Uu Vv Ww Xx Yy Zz。"
-   },
-   "id": "lt-065"
-  },
-  {
-   "category": "字母顺序",
-   "prompt": "按字母表顺序，括号里应填：　M　（ ）　O　P",
-   "options": ["N", "L", "Q", "K"],
-   "answer": "N",
-   "explanation": "字母表顺序：M N O P，括号里是 N。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "字母顺序",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 字母顺序",
-    "detailTitle": "查看考点",
-    "detail": "熟记26个字母的顺序：Aa Bb Cc Dd Ee Ff Gg / Hh Ii Jj Kk Ll Mm Nn / Oo Pp Qq Rr Ss Tt / Uu Vv Ww Xx Yy Zz。"
-   },
-   "id": "lt-066"
-  },
-  {
-   "category": "字母顺序",
-   "prompt": "按字母表顺序，括号里应填：　m　n　（ ）　p",
-   "options": ["o", "l", "q", "k"],
-   "answer": "o",
-   "explanation": "字母表顺序：m n o p，括号里是 o。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "字母顺序",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 字母顺序",
-    "detailTitle": "查看考点",
-    "detail": "熟记26个字母的顺序：Aa Bb Cc Dd Ee Ff Gg / Hh Ii Jj Kk Ll Mm Nn / Oo Pp Qq Rr Ss Tt / Uu Vv Ww Xx Yy Zz。"
-   },
-   "id": "lt-067"
-  },
-  {
-   "category": "字母顺序",
-   "prompt": "按字母表顺序，括号里应填：　M　N　O　（ ）",
-   "options": ["P", "L", "Q", "K"],
-   "answer": "P",
-   "explanation": "字母表顺序：M N O P，括号里是 P。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "字母顺序",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 字母顺序",
-    "detailTitle": "查看考点",
-    "detail": "熟记26个字母的顺序：Aa Bb Cc Dd Ee Ff Gg / Hh Ii Jj Kk Ll Mm Nn / Oo Pp Qq Rr Ss Tt / Uu Vv Ww Xx Yy Zz。"
-   },
-   "id": "lt-068"
-  },
-  {
-   "category": "字母顺序",
-   "prompt": "按字母表顺序，括号里应填：　（ ）　R　S　T",
-   "options": ["Q", "P", "U", "O"],
-   "answer": "Q",
-   "explanation": "字母表顺序：Q R S T，括号里是 Q。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "字母顺序",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 字母顺序",
-    "detailTitle": "查看考点",
-    "detail": "熟记26个字母的顺序：Aa Bb Cc Dd Ee Ff Gg / Hh Ii Jj Kk Ll Mm Nn / Oo Pp Qq Rr Ss Tt / Uu Vv Ww Xx Yy Zz。"
-   },
-   "id": "lt-069"
-  },
-  {
-   "category": "字母顺序",
-   "prompt": "按字母表顺序，括号里应填：　q　（ ）　s　t",
-   "options": ["r", "p", "u", "o"],
-   "answer": "r",
-   "explanation": "字母表顺序：q r s t，括号里是 r。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "字母顺序",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 字母顺序",
-    "detailTitle": "查看考点",
-    "detail": "熟记26个字母的顺序：Aa Bb Cc Dd Ee Ff Gg / Hh Ii Jj Kk Ll Mm Nn / Oo Pp Qq Rr Ss Tt / Uu Vv Ww Xx Yy Zz。"
-   },
-   "id": "lt-070"
-  },
-  {
-   "category": "字母顺序",
-   "prompt": "按字母表顺序，括号里应填：　Q　R　（ ）　T",
-   "options": ["S", "P", "U", "O"],
-   "answer": "S",
-   "explanation": "字母表顺序：Q R S T，括号里是 S。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "字母顺序",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 字母顺序",
-    "detailTitle": "查看考点",
-    "detail": "熟记26个字母的顺序：Aa Bb Cc Dd Ee Ff Gg / Hh Ii Jj Kk Ll Mm Nn / Oo Pp Qq Rr Ss Tt / Uu Vv Ww Xx Yy Zz。"
-   },
-   "id": "lt-071"
-  },
-  {
-   "category": "字母顺序",
-   "prompt": "按字母表顺序，括号里应填：　Q　R　S　（ ）",
-   "options": ["T", "P", "U", "O"],
-   "answer": "T",
-   "explanation": "字母表顺序：Q R S T，括号里是 T。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "字母顺序",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 字母顺序",
-    "detailTitle": "查看考点",
-    "detail": "熟记26个字母的顺序：Aa Bb Cc Dd Ee Ff Gg / Hh Ii Jj Kk Ll Mm Nn / Oo Pp Qq Rr Ss Tt / Uu Vv Ww Xx Yy Zz。"
-   },
-   "id": "lt-072"
-  },
-  {
-   "category": "字母顺序",
-   "prompt": "按字母表顺序，括号里应填：　（ ）　v　w　x",
-   "options": ["u", "t", "y", "s"],
-   "answer": "u",
-   "explanation": "字母表顺序：u v w x，括号里是 u。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "字母顺序",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 字母顺序",
-    "detailTitle": "查看考点",
-    "detail": "熟记26个字母的顺序：Aa Bb Cc Dd Ee Ff Gg / Hh Ii Jj Kk Ll Mm Nn / Oo Pp Qq Rr Ss Tt / Uu Vv Ww Xx Yy Zz。"
-   },
-   "id": "lt-073"
-  },
-  {
-   "category": "字母顺序",
-   "prompt": "按字母表顺序，括号里应填：　U　（ ）　W　X",
-   "options": ["V", "T", "Y", "S"],
-   "answer": "V",
-   "explanation": "字母表顺序：U V W X，括号里是 V。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "字母顺序",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 字母顺序",
-    "detailTitle": "查看考点",
-    "detail": "熟记26个字母的顺序：Aa Bb Cc Dd Ee Ff Gg / Hh Ii Jj Kk Ll Mm Nn / Oo Pp Qq Rr Ss Tt / Uu Vv Ww Xx Yy Zz。"
-   },
-   "id": "lt-074"
-  },
-  {
-   "category": "字母顺序",
-   "prompt": "按字母表顺序，括号里应填：　U　V　（ ）　X",
-   "options": ["W", "T", "Y", "S"],
-   "answer": "W",
-   "explanation": "字母表顺序：U V W X，括号里是 W。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "字母顺序",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 字母顺序",
-    "detailTitle": "查看考点",
-    "detail": "熟记26个字母的顺序：Aa Bb Cc Dd Ee Ff Gg / Hh Ii Jj Kk Ll Mm Nn / Oo Pp Qq Rr Ss Tt / Uu Vv Ww Xx Yy Zz。"
-   },
-   "id": "lt-075"
-  },
-  {
-   "category": "字母顺序",
-   "prompt": "按字母表顺序，括号里应填：　u　v　w　（ ）",
-   "options": ["x", "t", "y", "s"],
-   "answer": "x",
-   "explanation": "字母表顺序：u v w x，括号里是 x。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "字母顺序",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 字母顺序",
-    "detailTitle": "查看考点",
-    "detail": "熟记26个字母的顺序：Aa Bb Cc Dd Ee Ff Gg / Hh Ii Jj Kk Ll Mm Nn / Oo Pp Qq Rr Ss Tt / Uu Vv Ww Xx Yy Zz。"
-   },
-   "id": "lt-076"
-  },
-  {
-   "category": "字母顺序",
-   "prompt": "按字母表顺序，括号里应填：　W　X　（ ）　Z",
-   "options": ["Y", "V", "U", "G"],
-   "answer": "Y",
-   "explanation": "字母表顺序：W X Y Z，括号里是 Y。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "字母顺序",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 字母顺序",
-    "detailTitle": "查看考点",
-    "detail": "熟记26个字母的顺序：Aa Bb Cc Dd Ee Ff Gg / Hh Ii Jj Kk Ll Mm Nn / Oo Pp Qq Rr Ss Tt / Uu Vv Ww Xx Yy Zz。"
-   },
-   "id": "lt-077"
-  },
-  {
-   "category": "字母顺序",
-   "prompt": "按字母表顺序，括号里应填：　W　X　Y　（ ）",
-   "options": ["Z", "V", "U", "S"],
-   "answer": "Z",
-   "explanation": "字母表顺序：W X Y Z，括号里是 Z。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "字母顺序",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 字母顺序",
-    "detailTitle": "查看考点",
-    "detail": "熟记26个字母的顺序：Aa Bb Cc Dd Ee Ff Gg / Hh Ii Jj Kk Ll Mm Nn / Oo Pp Qq Rr Ss Tt / Uu Vv Ww Xx Yy Zz。"
-   },
-   "id": "lt-078"
-  },
-  {
-   "category": "单词首字母",
-   "prompt": "看图，“钢笔”的英语单词，首字母是：",
-   "figure": "pic",
-   "pic": ["pen"],
-   "picText": "图：钢笔",
-   "options": ["p", "q", "b", "d"],
-   "answer": "p",
-   "explanation": "“钢笔”是 pen，首字母是 p。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "单词首字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 单词首字母",
-    "detailTitle": "查看考点",
-    "detail": "把单词和字母联系起来：先想出单词，再找首字母。"
-   },
-   "id": "lt-079"
-  },
-  {
-   "category": "单词首字母",
-   "prompt": "看图，“书”的英语单词，首字母是：",
-   "figure": "pic",
-   "pic": ["book"],
-   "picText": "图：书",
-   "options": ["b", "d", "p", "q"],
-   "answer": "b",
-   "explanation": "“书”是 book，首字母是 b。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "单词首字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 单词首字母",
-    "detailTitle": "查看考点",
-    "detail": "把单词和字母联系起来：先想出单词，再找首字母。"
-   },
-   "id": "lt-080"
-  },
-  {
-   "category": "单词首字母",
-   "prompt": "看图，“尺子”的英语单词，首字母是：",
-   "figure": "pic",
-   "pic": ["ruler"],
-   "picText": "图：尺子",
-   "options": ["r", "n", "v", "s"],
-   "answer": "r",
-   "explanation": "“尺子”是 ruler，首字母是 r。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "单词首字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 单词首字母",
-    "detailTitle": "查看考点",
-    "detail": "把单词和字母联系起来：先想出单词，再找首字母。"
-   },
-   "id": "lt-081"
-  },
-  {
-   "category": "单词首字母",
-   "prompt": "看图，“橡皮”的英语单词，首字母是：",
-   "figure": "pic",
-   "pic": ["eraser"],
-   "picText": "图：橡皮",
-   "options": ["e", "a", "c", "o"],
-   "answer": "e",
-   "explanation": "“橡皮”是 eraser，首字母是 e。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "单词首字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 单词首字母",
-    "detailTitle": "查看考点",
-    "detail": "把单词和字母联系起来：先想出单词，再找首字母。"
-   },
-   "id": "lt-082"
-  },
-  {
-   "category": "单词首字母",
-   "prompt": "看图，“书包”的英语单词，首字母是：",
-   "figure": "pic",
-   "pic": ["bag"],
-   "picText": "图：书包",
-   "options": ["b", "d", "p", "q"],
-   "answer": "b",
-   "explanation": "“书包”是 bag，首字母是 b。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "单词首字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 单词首字母",
-    "detailTitle": "查看考点",
-    "detail": "把单词和字母联系起来：先想出单词，再找首字母。"
-   },
-   "id": "lt-083"
-  },
-  {
-   "category": "单词首字母",
-   "prompt": "看图，“红色”的英语单词，首字母是：",
-   "figure": "pic",
-   "pic": ["red"],
-   "picText": "图：红色色块",
-   "options": ["r", "n", "v", "s"],
-   "answer": "r",
-   "explanation": "“红色”是 red，首字母是 r。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "单词首字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 单词首字母",
-    "detailTitle": "查看考点",
-    "detail": "把单词和字母联系起来：先想出单词，再找首字母。"
-   },
-   "id": "lt-084"
-  },
-  {
-   "category": "单词首字母",
-   "prompt": "看图，“黄色”的英语单词，首字母是：",
-   "figure": "pic",
-   "pic": ["yellow"],
-   "picText": "图：黄色色块",
-   "options": ["y", "v", "g", "j"],
-   "answer": "y",
-   "explanation": "“黄色”是 yellow，首字母是 y。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "单词首字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 单词首字母",
-    "detailTitle": "查看考点",
-    "detail": "把单词和字母联系起来：先想出单词，再找首字母。"
-   },
-   "id": "lt-085"
-  },
-  {
-   "category": "单词首字母",
-   "prompt": "看图，“绿色”的英语单词，首字母是：",
-   "figure": "pic",
-   "pic": ["green"],
-   "picText": "图：绿色色块",
-   "options": ["g", "q", "j", "y"],
-   "answer": "g",
-   "explanation": "“绿色”是 green，首字母是 g。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "单词首字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 单词首字母",
-    "detailTitle": "查看考点",
-    "detail": "把单词和字母联系起来：先想出单词，再找首字母。"
-   },
-   "id": "lt-086"
-  },
-  {
-   "category": "单词首字母",
-   "prompt": "看图，“蓝色”的英语单词，首字母是：",
-   "figure": "pic",
-   "pic": ["blue"],
-   "picText": "图：蓝色色块",
-   "options": ["b", "d", "p", "q"],
-   "answer": "b",
-   "explanation": "“蓝色”是 blue，首字母是 b。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "单词首字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 单词首字母",
-    "detailTitle": "查看考点",
-    "detail": "把单词和字母联系起来：先想出单词，再找首字母。"
-   },
-   "id": "lt-087"
-  },
-  {
-   "category": "单词首字母",
-   "prompt": "看图，“白色”的英语单词，首字母是：",
-   "figure": "pic",
-   "pic": ["white"],
-   "picText": "图：白色色块",
-   "options": ["w", "v", "m", "u"],
-   "answer": "w",
-   "explanation": "“白色”是 white，首字母是 w。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "单词首字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 单词首字母",
-    "detailTitle": "查看考点",
-    "detail": "把单词和字母联系起来：先想出单词，再找首字母。"
-   },
-   "id": "lt-088"
-  },
-  {
-   "category": "单词首字母",
-   "prompt": "看图，“橙色”的英语单词，首字母是：",
-   "figure": "pic",
-   "pic": ["orange"],
-   "picText": "图：橙色色块",
-   "options": ["o", "c", "a", "e"],
-   "answer": "o",
-   "explanation": "“橙色”是 orange，首字母是 o。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "单词首字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 单词首字母",
-    "detailTitle": "查看考点",
-    "detail": "把单词和字母联系起来：先想出单词，再找首字母。"
-   },
-   "id": "lt-089"
-  },
-  {
-   "category": "单词首字母",
-   "prompt": "看图，“黑色”的英语单词，首字母是：",
-   "figure": "pic",
-   "pic": ["black"],
-   "picText": "图：黑色色块",
-   "options": ["b", "d", "p", "q"],
-   "answer": "b",
-   "explanation": "“黑色”是 black，首字母是 b。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "单词首字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 单词首字母",
-    "detailTitle": "查看考点",
-    "detail": "把单词和字母联系起来：先想出单词，再找首字母。"
-   },
-   "id": "lt-090"
-  },
-  {
-   "category": "单词首字母",
-   "prompt": "看图，“一”的英语单词，首字母是：",
-   "figure": "pic",
-   "pic": ["one"],
-   "picText": "图：1个苹果",
-   "options": ["o", "c", "a", "e"],
-   "answer": "o",
-   "explanation": "“一”是 one，首字母是 o。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "单词首字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 单词首字母",
-    "detailTitle": "查看考点",
-    "detail": "把单词和字母联系起来：先想出单词，再找首字母。"
-   },
-   "id": "lt-091"
-  },
-  {
-   "category": "单词首字母",
-   "prompt": "看图，“二”的英语单词，首字母是：",
-   "figure": "pic",
-   "pic": ["two"],
-   "picText": "图：2个苹果",
-   "options": ["t", "f", "l", "i"],
-   "answer": "t",
-   "explanation": "“二”是 two，首字母是 t。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "单词首字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 单词首字母",
-    "detailTitle": "查看考点",
-    "detail": "把单词和字母联系起来：先想出单词，再找首字母。"
-   },
-   "id": "lt-092"
-  },
-  {
-   "category": "单词首字母",
-   "prompt": "看图，“六”的英语单词，首字母是：",
-   "figure": "pic",
-   "pic": ["six"],
-   "picText": "图：6个苹果",
-   "options": ["s", "z", "c", "x"],
-   "answer": "s",
-   "explanation": "“六”是 six，首字母是 s。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "单词首字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 单词首字母",
-    "detailTitle": "查看考点",
-    "detail": "把单词和字母联系起来：先想出单词，再找首字母。"
-   },
-   "id": "lt-093"
-  },
-  {
-   "category": "单词首字母",
-   "prompt": "看图，“十”的英语单词，首字母是：",
-   "figure": "pic",
-   "pic": ["ten"],
-   "picText": "图：10个苹果",
-   "options": ["t", "f", "l", "i"],
-   "answer": "t",
-   "explanation": "“十”是 ten，首字母是 t。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "单词首字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 单词首字母",
-    "detailTitle": "查看考点",
-    "detail": "把单词和字母联系起来：先想出单词，再找首字母。"
-   },
-   "id": "lt-094"
-  },
-  {
-   "category": "单词首字母",
-   "prompt": "看图，“九”的英语单词，首字母是：",
-   "figure": "pic",
-   "pic": ["nine"],
-   "picText": "图：9个苹果",
-   "options": ["n", "m", "h", "u"],
-   "answer": "n",
-   "explanation": "“九”是 nine，首字母是 n。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "单词首字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 单词首字母",
-    "detailTitle": "查看考点",
-    "detail": "把单词和字母联系起来：先想出单词，再找首字母。"
-   },
-   "id": "lt-095"
-  },
-  {
-   "category": "单词首字母",
-   "prompt": "看图，“妈妈”的英语单词，首字母是：",
-   "figure": "pic",
-   "pic": ["mum"],
-   "picText": "图：妈妈",
-   "options": ["m", "n", "w", "u"],
-   "answer": "m",
-   "explanation": "“妈妈”是 mum，首字母是 m。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "单词首字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 单词首字母",
-    "detailTitle": "查看考点",
-    "detail": "把单词和字母联系起来：先想出单词，再找首字母。"
-   },
-   "id": "lt-096"
-  },
-  {
-   "category": "单词首字母",
-   "prompt": "看图，“爸爸”的英语单词，首字母是：",
-   "figure": "pic",
-   "pic": ["dad"],
-   "picText": "图：爸爸",
-   "options": ["d", "b", "p", "q"],
+   "shown": "C",
+   "explanation": "小写 c 写在中间一格（第二线到第三线）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "大写写小写",
+    "label": "字母 · 大写写小写"
+   }
+  },
+  {
+   "id": "lw-030",
+   "category": "大写写小写",
+   "kind": "upper-to-lower",
+   "prompt": "写出大写字母 D 的小写。",
    "answer": "d",
-   "explanation": "“爸爸”是 dad，首字母是 d。",
+   "shown": "D",
+   "explanation": "小写 d 从第一线写到第三线。",
    "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
     "unit": "字母（全册）",
-    "point": "单词首字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 单词首字母",
-    "detailTitle": "查看考点",
-    "detail": "把单词和字母联系起来：先想出单词，再找首字母。"
-   },
-   "id": "lt-097"
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "大写写小写",
+    "label": "字母 · 大写写小写"
+   }
   },
   {
-   "category": "单词首字母",
-   "prompt": "看图，“妹妹”的英语单词，首字母是：",
-   "figure": "pic",
-   "pic": ["sister"],
-   "picText": "图：妹妹",
-   "options": ["s", "z", "c", "x"],
-   "answer": "s",
-   "explanation": "“妹妹”是 sister，首字母是 s。",
+   "id": "lw-031",
+   "category": "大写写小写",
+   "kind": "upper-to-lower",
+   "prompt": "写出大写字母 E 的小写。",
+   "answer": "e",
+   "shown": "E",
+   "explanation": "小写 e 写在中间一格（第二线到第三线）。",
    "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
     "unit": "字母（全册）",
-    "point": "单词首字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 单词首字母",
-    "detailTitle": "查看考点",
-    "detail": "把单词和字母联系起来：先想出单词，再找首字母。"
-   },
-   "id": "lt-098"
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "大写写小写",
+    "label": "字母 · 大写写小写"
+   }
   },
   {
-   "category": "单词首字母",
-   "prompt": "看图，“爷爷”的英语单词，首字母是：",
-   "figure": "pic",
-   "pic": ["grandpa"],
-   "picText": "图：爷爷",
-   "options": ["g", "q", "j", "y"],
-   "answer": "g",
-   "explanation": "“爷爷”是 grandpa，首字母是 g。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "单词首字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 单词首字母",
-    "detailTitle": "查看考点",
-    "detail": "把单词和字母联系起来：先想出单词，再找首字母。"
-   },
-   "id": "lt-099"
-  },
-  {
-   "category": "单词首字母",
-   "prompt": "看图，“家”的英语单词，首字母是：",
-   "figure": "pic",
-   "pic": ["home"],
-   "picText": "图：房子",
-   "options": ["h", "n", "k", "b"],
-   "answer": "h",
-   "explanation": "“家”是 home，首字母是 h。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "单词首字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 单词首字母",
-    "detailTitle": "查看考点",
-    "detail": "把单词和字母联系起来：先想出单词，再找首字母。"
-   },
-   "id": "lt-100"
-  },
-  {
-   "category": "单词首字母",
-   "prompt": "看图，“房间”的英语单词，首字母是：",
-   "figure": "pic",
-   "pic": ["room"],
-   "picText": "图：房间",
-   "options": ["r", "n", "v", "s"],
-   "answer": "r",
-   "explanation": "“房间”是 room，首字母是 r。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "单词首字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 单词首字母",
-    "detailTitle": "查看考点",
-    "detail": "把单词和字母联系起来：先想出单词，再找首字母。"
-   },
-   "id": "lt-101"
-  },
-  {
-   "category": "单词首字母",
-   "prompt": "看图，“椅子”的英语单词，首字母是：",
-   "figure": "pic",
-   "pic": ["chair"],
-   "picText": "图：椅子",
-   "options": ["c", "e", "o", "s"],
-   "answer": "c",
-   "explanation": "“椅子”是 chair，首字母是 c。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "单词首字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 单词首字母",
-    "detailTitle": "查看考点",
-    "detail": "把单词和字母联系起来：先想出单词，再找首字母。"
-   },
-   "id": "lt-102"
-  },
-  {
-   "category": "单词首字母",
-   "prompt": "看图，“窗户”的英语单词，首字母是：",
-   "figure": "pic",
-   "pic": ["window"],
-   "picText": "图：窗户",
-   "options": ["w", "v", "m", "u"],
-   "answer": "w",
-   "explanation": "“窗户”是 window，首字母是 w。",
-   "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
-    "unit": "字母（全册）",
-    "point": "单词首字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 单词首字母",
-    "detailTitle": "查看考点",
-    "detail": "把单词和字母联系起来：先想出单词，再找首字母。"
-   },
-   "id": "lt-103"
-  },
-  {
-   "category": "单词首字母",
-   "prompt": "看图，“朋友”的英语单词，首字母是：",
-   "figure": "pic",
-   "pic": ["friend"],
-   "picText": "图：两个好朋友",
-   "options": ["f", "t", "l", "k"],
+   "id": "lw-032",
+   "category": "大写写小写",
+   "kind": "upper-to-lower",
+   "prompt": "写出大写字母 F 的小写。",
    "answer": "f",
-   "explanation": "“朋友”是 friend，首字母是 f。",
+   "shown": "F",
+   "explanation": "小写 f 从第一线写到第三线，横画在第二线。",
    "source": {
-    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
     "unit": "字母（全册）",
-    "point": "单词首字母",
-    "type": "依据教材单元知识点自编",
-    "label": "字母 · 单词首字母",
-    "detailTitle": "查看考点",
-    "detail": "把单词和字母联系起来：先想出单词，再找首字母。"
-   },
-   "id": "lt-104"
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "大写写小写",
+    "label": "字母 · 大写写小写"
+   }
+  },
+  {
+   "id": "lw-033",
+   "category": "大写写小写",
+   "kind": "upper-to-lower",
+   "prompt": "写出大写字母 G 的小写。",
+   "answer": "g",
+   "shown": "G",
+   "explanation": "小写 g 从第二线写到第四线。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "大写写小写",
+    "label": "字母 · 大写写小写"
+   }
+  },
+  {
+   "id": "lw-034",
+   "category": "大写写小写",
+   "kind": "upper-to-lower",
+   "prompt": "写出大写字母 H 的小写。",
+   "answer": "h",
+   "shown": "H",
+   "explanation": "小写 h 从第一线写到第三线。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "大写写小写",
+    "label": "字母 · 大写写小写"
+   }
+  },
+  {
+   "id": "lw-035",
+   "category": "大写写小写",
+   "kind": "upper-to-lower",
+   "prompt": "写出大写字母 I 的小写。",
+   "answer": "i",
+   "shown": "I",
+   "explanation": "小写 i 竖画在中间一格，点在第一格。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "大写写小写",
+    "label": "字母 · 大写写小写"
+   }
+  },
+  {
+   "id": "lw-036",
+   "category": "大写写小写",
+   "kind": "upper-to-lower",
+   "prompt": "写出大写字母 J 的小写。",
+   "answer": "j",
+   "shown": "J",
+   "explanation": "小写 j 从第二线写到第四线，点在第一格。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "大写写小写",
+    "label": "字母 · 大写写小写"
+   }
+  },
+  {
+   "id": "lw-037",
+   "category": "大写写小写",
+   "kind": "upper-to-lower",
+   "prompt": "写出大写字母 K 的小写。",
+   "answer": "k",
+   "shown": "K",
+   "explanation": "小写 k 从第一线写到第三线。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "大写写小写",
+    "label": "字母 · 大写写小写"
+   }
+  },
+  {
+   "id": "lw-038",
+   "category": "大写写小写",
+   "kind": "upper-to-lower",
+   "prompt": "写出大写字母 L 的小写。",
+   "answer": "l",
+   "shown": "L",
+   "explanation": "小写 l 从第一线写到第三线。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "大写写小写",
+    "label": "字母 · 大写写小写"
+   }
+  },
+  {
+   "id": "lw-039",
+   "category": "大写写小写",
+   "kind": "upper-to-lower",
+   "prompt": "写出大写字母 M 的小写。",
+   "answer": "m",
+   "shown": "M",
+   "explanation": "小写 m 写在中间一格（第二线到第三线）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "大写写小写",
+    "label": "字母 · 大写写小写"
+   }
+  },
+  {
+   "id": "lw-040",
+   "category": "大写写小写",
+   "kind": "upper-to-lower",
+   "prompt": "写出大写字母 N 的小写。",
+   "answer": "n",
+   "shown": "N",
+   "explanation": "小写 n 写在中间一格（第二线到第三线）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "大写写小写",
+    "label": "字母 · 大写写小写"
+   }
+  },
+  {
+   "id": "lw-041",
+   "category": "大写写小写",
+   "kind": "upper-to-lower",
+   "prompt": "写出大写字母 O 的小写。",
+   "answer": "o",
+   "shown": "O",
+   "explanation": "小写 o 写在中间一格（第二线到第三线）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "大写写小写",
+    "label": "字母 · 大写写小写"
+   }
+  },
+  {
+   "id": "lw-042",
+   "category": "大写写小写",
+   "kind": "upper-to-lower",
+   "prompt": "写出大写字母 P 的小写。",
+   "answer": "p",
+   "shown": "P",
+   "explanation": "小写 p 从第二线写到第四线。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "大写写小写",
+    "label": "字母 · 大写写小写"
+   }
+  },
+  {
+   "id": "lw-043",
+   "category": "大写写小写",
+   "kind": "upper-to-lower",
+   "prompt": "写出大写字母 Q 的小写。",
+   "answer": "q",
+   "shown": "Q",
+   "explanation": "小写 q 从第二线写到第四线。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "大写写小写",
+    "label": "字母 · 大写写小写"
+   }
+  },
+  {
+   "id": "lw-044",
+   "category": "大写写小写",
+   "kind": "upper-to-lower",
+   "prompt": "写出大写字母 R 的小写。",
+   "answer": "r",
+   "shown": "R",
+   "explanation": "小写 r 写在中间一格（第二线到第三线）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "大写写小写",
+    "label": "字母 · 大写写小写"
+   }
+  },
+  {
+   "id": "lw-045",
+   "category": "大写写小写",
+   "kind": "upper-to-lower",
+   "prompt": "写出大写字母 S 的小写。",
+   "answer": "s",
+   "shown": "S",
+   "explanation": "小写 s 写在中间一格（第二线到第三线）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "大写写小写",
+    "label": "字母 · 大写写小写"
+   }
+  },
+  {
+   "id": "lw-046",
+   "category": "大写写小写",
+   "kind": "upper-to-lower",
+   "prompt": "写出大写字母 T 的小写。",
+   "answer": "t",
+   "shown": "T",
+   "explanation": "小写 t 上端在第一格中间，写到第三线，横画在第二线。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "大写写小写",
+    "label": "字母 · 大写写小写"
+   }
+  },
+  {
+   "id": "lw-047",
+   "category": "大写写小写",
+   "kind": "upper-to-lower",
+   "prompt": "写出大写字母 U 的小写。",
+   "answer": "u",
+   "shown": "U",
+   "explanation": "小写 u 写在中间一格（第二线到第三线）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "大写写小写",
+    "label": "字母 · 大写写小写"
+   }
+  },
+  {
+   "id": "lw-048",
+   "category": "大写写小写",
+   "kind": "upper-to-lower",
+   "prompt": "写出大写字母 V 的小写。",
+   "answer": "v",
+   "shown": "V",
+   "explanation": "小写 v 写在中间一格（第二线到第三线）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "大写写小写",
+    "label": "字母 · 大写写小写"
+   }
+  },
+  {
+   "id": "lw-049",
+   "category": "大写写小写",
+   "kind": "upper-to-lower",
+   "prompt": "写出大写字母 W 的小写。",
+   "answer": "w",
+   "shown": "W",
+   "explanation": "小写 w 写在中间一格（第二线到第三线）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "大写写小写",
+    "label": "字母 · 大写写小写"
+   }
+  },
+  {
+   "id": "lw-050",
+   "category": "大写写小写",
+   "kind": "upper-to-lower",
+   "prompt": "写出大写字母 X 的小写。",
+   "answer": "x",
+   "shown": "X",
+   "explanation": "小写 x 写在中间一格（第二线到第三线）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "大写写小写",
+    "label": "字母 · 大写写小写"
+   }
+  },
+  {
+   "id": "lw-051",
+   "category": "大写写小写",
+   "kind": "upper-to-lower",
+   "prompt": "写出大写字母 Y 的小写。",
+   "answer": "y",
+   "shown": "Y",
+   "explanation": "小写 y 从第二线写到第四线。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "大写写小写",
+    "label": "字母 · 大写写小写"
+   }
+  },
+  {
+   "id": "lw-052",
+   "category": "大写写小写",
+   "kind": "upper-to-lower",
+   "prompt": "写出大写字母 Z 的小写。",
+   "answer": "z",
+   "shown": "Z",
+   "explanation": "小写 z 写在中间一格（第二线到第三线）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "大写写小写",
+    "label": "字母 · 大写写小写"
+   }
+  },
+  {
+   "id": "lw-053",
+   "category": "小写写大写",
+   "kind": "lower-to-upper",
+   "prompt": "写出小写字母 a 的大写。",
+   "answer": "A",
+   "shown": "a",
+   "explanation": "大写 A 占上两格（第一线到第三线）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "小写写大写",
+    "label": "字母 · 小写写大写"
+   }
+  },
+  {
+   "id": "lw-054",
+   "category": "小写写大写",
+   "kind": "lower-to-upper",
+   "prompt": "写出小写字母 b 的大写。",
+   "answer": "B",
+   "shown": "b",
+   "explanation": "大写 B 占上两格（第一线到第三线）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "小写写大写",
+    "label": "字母 · 小写写大写"
+   }
+  },
+  {
+   "id": "lw-055",
+   "category": "小写写大写",
+   "kind": "lower-to-upper",
+   "prompt": "写出小写字母 c 的大写。",
+   "answer": "C",
+   "shown": "c",
+   "explanation": "大写 C 占上两格（第一线到第三线）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "小写写大写",
+    "label": "字母 · 小写写大写"
+   }
+  },
+  {
+   "id": "lw-056",
+   "category": "小写写大写",
+   "kind": "lower-to-upper",
+   "prompt": "写出小写字母 d 的大写。",
+   "answer": "D",
+   "shown": "d",
+   "explanation": "大写 D 占上两格（第一线到第三线）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "小写写大写",
+    "label": "字母 · 小写写大写"
+   }
+  },
+  {
+   "id": "lw-057",
+   "category": "小写写大写",
+   "kind": "lower-to-upper",
+   "prompt": "写出小写字母 e 的大写。",
+   "answer": "E",
+   "shown": "e",
+   "explanation": "大写 E 占上两格（第一线到第三线）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "小写写大写",
+    "label": "字母 · 小写写大写"
+   }
+  },
+  {
+   "id": "lw-058",
+   "category": "小写写大写",
+   "kind": "lower-to-upper",
+   "prompt": "写出小写字母 f 的大写。",
+   "answer": "F",
+   "shown": "f",
+   "explanation": "大写 F 占上两格（第一线到第三线）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "小写写大写",
+    "label": "字母 · 小写写大写"
+   }
+  },
+  {
+   "id": "lw-059",
+   "category": "小写写大写",
+   "kind": "lower-to-upper",
+   "prompt": "写出小写字母 g 的大写。",
+   "answer": "G",
+   "shown": "g",
+   "explanation": "大写 G 占上两格（第一线到第三线）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "小写写大写",
+    "label": "字母 · 小写写大写"
+   }
+  },
+  {
+   "id": "lw-060",
+   "category": "小写写大写",
+   "kind": "lower-to-upper",
+   "prompt": "写出小写字母 h 的大写。",
+   "answer": "H",
+   "shown": "h",
+   "explanation": "大写 H 占上两格（第一线到第三线）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "小写写大写",
+    "label": "字母 · 小写写大写"
+   }
+  },
+  {
+   "id": "lw-061",
+   "category": "小写写大写",
+   "kind": "lower-to-upper",
+   "prompt": "写出小写字母 i 的大写。",
+   "answer": "I",
+   "shown": "i",
+   "explanation": "大写 I 占上两格（第一线到第三线）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "小写写大写",
+    "label": "字母 · 小写写大写"
+   }
+  },
+  {
+   "id": "lw-062",
+   "category": "小写写大写",
+   "kind": "lower-to-upper",
+   "prompt": "写出小写字母 j 的大写。",
+   "answer": "J",
+   "shown": "j",
+   "explanation": "大写 J 占上两格（第一线到第三线）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "小写写大写",
+    "label": "字母 · 小写写大写"
+   }
+  },
+  {
+   "id": "lw-063",
+   "category": "小写写大写",
+   "kind": "lower-to-upper",
+   "prompt": "写出小写字母 k 的大写。",
+   "answer": "K",
+   "shown": "k",
+   "explanation": "大写 K 占上两格（第一线到第三线）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "小写写大写",
+    "label": "字母 · 小写写大写"
+   }
+  },
+  {
+   "id": "lw-064",
+   "category": "小写写大写",
+   "kind": "lower-to-upper",
+   "prompt": "写出小写字母 l 的大写。",
+   "answer": "L",
+   "shown": "l",
+   "explanation": "大写 L 占上两格（第一线到第三线）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "小写写大写",
+    "label": "字母 · 小写写大写"
+   }
+  },
+  {
+   "id": "lw-065",
+   "category": "小写写大写",
+   "kind": "lower-to-upper",
+   "prompt": "写出小写字母 m 的大写。",
+   "answer": "M",
+   "shown": "m",
+   "explanation": "大写 M 占上两格（第一线到第三线）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "小写写大写",
+    "label": "字母 · 小写写大写"
+   }
+  },
+  {
+   "id": "lw-066",
+   "category": "小写写大写",
+   "kind": "lower-to-upper",
+   "prompt": "写出小写字母 n 的大写。",
+   "answer": "N",
+   "shown": "n",
+   "explanation": "大写 N 占上两格（第一线到第三线）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "小写写大写",
+    "label": "字母 · 小写写大写"
+   }
+  },
+  {
+   "id": "lw-067",
+   "category": "小写写大写",
+   "kind": "lower-to-upper",
+   "prompt": "写出小写字母 o 的大写。",
+   "answer": "O",
+   "shown": "o",
+   "explanation": "大写 O 占上两格（第一线到第三线）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "小写写大写",
+    "label": "字母 · 小写写大写"
+   }
+  },
+  {
+   "id": "lw-068",
+   "category": "小写写大写",
+   "kind": "lower-to-upper",
+   "prompt": "写出小写字母 p 的大写。",
+   "answer": "P",
+   "shown": "p",
+   "explanation": "大写 P 占上两格（第一线到第三线）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "小写写大写",
+    "label": "字母 · 小写写大写"
+   }
+  },
+  {
+   "id": "lw-069",
+   "category": "小写写大写",
+   "kind": "lower-to-upper",
+   "prompt": "写出小写字母 q 的大写。",
+   "answer": "Q",
+   "shown": "q",
+   "explanation": "大写 Q 占上两格（第一线到第三线）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "小写写大写",
+    "label": "字母 · 小写写大写"
+   }
+  },
+  {
+   "id": "lw-070",
+   "category": "小写写大写",
+   "kind": "lower-to-upper",
+   "prompt": "写出小写字母 r 的大写。",
+   "answer": "R",
+   "shown": "r",
+   "explanation": "大写 R 占上两格（第一线到第三线）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "小写写大写",
+    "label": "字母 · 小写写大写"
+   }
+  },
+  {
+   "id": "lw-071",
+   "category": "小写写大写",
+   "kind": "lower-to-upper",
+   "prompt": "写出小写字母 s 的大写。",
+   "answer": "S",
+   "shown": "s",
+   "explanation": "大写 S 占上两格（第一线到第三线）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "小写写大写",
+    "label": "字母 · 小写写大写"
+   }
+  },
+  {
+   "id": "lw-072",
+   "category": "小写写大写",
+   "kind": "lower-to-upper",
+   "prompt": "写出小写字母 t 的大写。",
+   "answer": "T",
+   "shown": "t",
+   "explanation": "大写 T 占上两格（第一线到第三线）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "小写写大写",
+    "label": "字母 · 小写写大写"
+   }
+  },
+  {
+   "id": "lw-073",
+   "category": "小写写大写",
+   "kind": "lower-to-upper",
+   "prompt": "写出小写字母 u 的大写。",
+   "answer": "U",
+   "shown": "u",
+   "explanation": "大写 U 占上两格（第一线到第三线）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "小写写大写",
+    "label": "字母 · 小写写大写"
+   }
+  },
+  {
+   "id": "lw-074",
+   "category": "小写写大写",
+   "kind": "lower-to-upper",
+   "prompt": "写出小写字母 v 的大写。",
+   "answer": "V",
+   "shown": "v",
+   "explanation": "大写 V 占上两格（第一线到第三线）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "小写写大写",
+    "label": "字母 · 小写写大写"
+   }
+  },
+  {
+   "id": "lw-075",
+   "category": "小写写大写",
+   "kind": "lower-to-upper",
+   "prompt": "写出小写字母 w 的大写。",
+   "answer": "W",
+   "shown": "w",
+   "explanation": "大写 W 占上两格（第一线到第三线）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "小写写大写",
+    "label": "字母 · 小写写大写"
+   }
+  },
+  {
+   "id": "lw-076",
+   "category": "小写写大写",
+   "kind": "lower-to-upper",
+   "prompt": "写出小写字母 x 的大写。",
+   "answer": "X",
+   "shown": "x",
+   "explanation": "大写 X 占上两格（第一线到第三线）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "小写写大写",
+    "label": "字母 · 小写写大写"
+   }
+  },
+  {
+   "id": "lw-077",
+   "category": "小写写大写",
+   "kind": "lower-to-upper",
+   "prompt": "写出小写字母 y 的大写。",
+   "answer": "Y",
+   "shown": "y",
+   "explanation": "大写 Y 占上两格（第一线到第三线）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "小写写大写",
+    "label": "字母 · 小写写大写"
+   }
+  },
+  {
+   "id": "lw-078",
+   "category": "小写写大写",
+   "kind": "lower-to-upper",
+   "prompt": "写出小写字母 z 的大写。",
+   "answer": "Z",
+   "shown": "z",
+   "explanation": "大写 Z 占上两格（第一线到第三线）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "小写写大写",
+    "label": "字母 · 小写写大写"
+   }
+  },
+  {
+   "id": "lw-079",
+   "category": "字母顺序",
+   "kind": "next",
+   "prompt": "字母 Aa 后面是哪个字母？写出它的大写和小写。",
+   "answer": "Bb",
+   "shown": "Aa",
+   "explanation": "大写 B 占上两格（第一线到第三线）；小写 b 从第一线写到第三线。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "字母顺序",
+    "label": "字母 · 字母顺序"
+   }
+  },
+  {
+   "id": "lw-080",
+   "category": "字母顺序",
+   "kind": "next",
+   "prompt": "字母 Bb 后面是哪个字母？写出它的大写和小写。",
+   "answer": "Cc",
+   "shown": "Bb",
+   "explanation": "大写 C 占上两格（第一线到第三线）；小写 c 写在中间一格（第二线到第三线）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "字母顺序",
+    "label": "字母 · 字母顺序"
+   }
+  },
+  {
+   "id": "lw-081",
+   "category": "字母顺序",
+   "kind": "next",
+   "prompt": "字母 Cc 后面是哪个字母？写出它的大写和小写。",
+   "answer": "Dd",
+   "shown": "Cc",
+   "explanation": "大写 D 占上两格（第一线到第三线）；小写 d 从第一线写到第三线。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "字母顺序",
+    "label": "字母 · 字母顺序"
+   }
+  },
+  {
+   "id": "lw-082",
+   "category": "字母顺序",
+   "kind": "next",
+   "prompt": "字母 Dd 后面是哪个字母？写出它的大写和小写。",
+   "answer": "Ee",
+   "shown": "Dd",
+   "explanation": "大写 E 占上两格（第一线到第三线）；小写 e 写在中间一格（第二线到第三线）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "字母顺序",
+    "label": "字母 · 字母顺序"
+   }
+  },
+  {
+   "id": "lw-083",
+   "category": "字母顺序",
+   "kind": "next",
+   "prompt": "字母 Ee 后面是哪个字母？写出它的大写和小写。",
+   "answer": "Ff",
+   "shown": "Ee",
+   "explanation": "大写 F 占上两格（第一线到第三线）；小写 f 从第一线写到第三线，横画在第二线。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "字母顺序",
+    "label": "字母 · 字母顺序"
+   }
+  },
+  {
+   "id": "lw-084",
+   "category": "字母顺序",
+   "kind": "next",
+   "prompt": "字母 Ff 后面是哪个字母？写出它的大写和小写。",
+   "answer": "Gg",
+   "shown": "Ff",
+   "explanation": "大写 G 占上两格（第一线到第三线）；小写 g 从第二线写到第四线。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "字母顺序",
+    "label": "字母 · 字母顺序"
+   }
+  },
+  {
+   "id": "lw-085",
+   "category": "字母顺序",
+   "kind": "next",
+   "prompt": "字母 Gg 后面是哪个字母？写出它的大写和小写。",
+   "answer": "Hh",
+   "shown": "Gg",
+   "explanation": "大写 H 占上两格（第一线到第三线）；小写 h 从第一线写到第三线。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "字母顺序",
+    "label": "字母 · 字母顺序"
+   }
+  },
+  {
+   "id": "lw-086",
+   "category": "字母顺序",
+   "kind": "next",
+   "prompt": "字母 Hh 后面是哪个字母？写出它的大写和小写。",
+   "answer": "Ii",
+   "shown": "Hh",
+   "explanation": "大写 I 占上两格（第一线到第三线）；小写 i 竖画在中间一格，点在第一格。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "字母顺序",
+    "label": "字母 · 字母顺序"
+   }
+  },
+  {
+   "id": "lw-087",
+   "category": "字母顺序",
+   "kind": "next",
+   "prompt": "字母 Ii 后面是哪个字母？写出它的大写和小写。",
+   "answer": "Jj",
+   "shown": "Ii",
+   "explanation": "大写 J 占上两格（第一线到第三线）；小写 j 从第二线写到第四线，点在第一格。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "字母顺序",
+    "label": "字母 · 字母顺序"
+   }
+  },
+  {
+   "id": "lw-088",
+   "category": "字母顺序",
+   "kind": "next",
+   "prompt": "字母 Jj 后面是哪个字母？写出它的大写和小写。",
+   "answer": "Kk",
+   "shown": "Jj",
+   "explanation": "大写 K 占上两格（第一线到第三线）；小写 k 从第一线写到第三线。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "字母顺序",
+    "label": "字母 · 字母顺序"
+   }
+  },
+  {
+   "id": "lw-089",
+   "category": "字母顺序",
+   "kind": "next",
+   "prompt": "字母 Kk 后面是哪个字母？写出它的大写和小写。",
+   "answer": "Ll",
+   "shown": "Kk",
+   "explanation": "大写 L 占上两格（第一线到第三线）；小写 l 从第一线写到第三线。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "字母顺序",
+    "label": "字母 · 字母顺序"
+   }
+  },
+  {
+   "id": "lw-090",
+   "category": "字母顺序",
+   "kind": "next",
+   "prompt": "字母 Ll 后面是哪个字母？写出它的大写和小写。",
+   "answer": "Mm",
+   "shown": "Ll",
+   "explanation": "大写 M 占上两格（第一线到第三线）；小写 m 写在中间一格（第二线到第三线）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "字母顺序",
+    "label": "字母 · 字母顺序"
+   }
+  },
+  {
+   "id": "lw-091",
+   "category": "字母顺序",
+   "kind": "next",
+   "prompt": "字母 Mm 后面是哪个字母？写出它的大写和小写。",
+   "answer": "Nn",
+   "shown": "Mm",
+   "explanation": "大写 N 占上两格（第一线到第三线）；小写 n 写在中间一格（第二线到第三线）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "字母顺序",
+    "label": "字母 · 字母顺序"
+   }
+  },
+  {
+   "id": "lw-092",
+   "category": "字母顺序",
+   "kind": "next",
+   "prompt": "字母 Nn 后面是哪个字母？写出它的大写和小写。",
+   "answer": "Oo",
+   "shown": "Nn",
+   "explanation": "大写 O 占上两格（第一线到第三线）；小写 o 写在中间一格（第二线到第三线）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "字母顺序",
+    "label": "字母 · 字母顺序"
+   }
+  },
+  {
+   "id": "lw-093",
+   "category": "字母顺序",
+   "kind": "next",
+   "prompt": "字母 Oo 后面是哪个字母？写出它的大写和小写。",
+   "answer": "Pp",
+   "shown": "Oo",
+   "explanation": "大写 P 占上两格（第一线到第三线）；小写 p 从第二线写到第四线。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "字母顺序",
+    "label": "字母 · 字母顺序"
+   }
+  },
+  {
+   "id": "lw-094",
+   "category": "字母顺序",
+   "kind": "next",
+   "prompt": "字母 Pp 后面是哪个字母？写出它的大写和小写。",
+   "answer": "Qq",
+   "shown": "Pp",
+   "explanation": "大写 Q 占上两格（第一线到第三线）；小写 q 从第二线写到第四线。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "字母顺序",
+    "label": "字母 · 字母顺序"
+   }
+  },
+  {
+   "id": "lw-095",
+   "category": "字母顺序",
+   "kind": "next",
+   "prompt": "字母 Qq 后面是哪个字母？写出它的大写和小写。",
+   "answer": "Rr",
+   "shown": "Qq",
+   "explanation": "大写 R 占上两格（第一线到第三线）；小写 r 写在中间一格（第二线到第三线）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "字母顺序",
+    "label": "字母 · 字母顺序"
+   }
+  },
+  {
+   "id": "lw-096",
+   "category": "字母顺序",
+   "kind": "next",
+   "prompt": "字母 Rr 后面是哪个字母？写出它的大写和小写。",
+   "answer": "Ss",
+   "shown": "Rr",
+   "explanation": "大写 S 占上两格（第一线到第三线）；小写 s 写在中间一格（第二线到第三线）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "字母顺序",
+    "label": "字母 · 字母顺序"
+   }
+  },
+  {
+   "id": "lw-097",
+   "category": "字母顺序",
+   "kind": "next",
+   "prompt": "字母 Ss 后面是哪个字母？写出它的大写和小写。",
+   "answer": "Tt",
+   "shown": "Ss",
+   "explanation": "大写 T 占上两格（第一线到第三线）；小写 t 上端在第一格中间，写到第三线，横画在第二线。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "字母顺序",
+    "label": "字母 · 字母顺序"
+   }
+  },
+  {
+   "id": "lw-098",
+   "category": "字母顺序",
+   "kind": "next",
+   "prompt": "字母 Tt 后面是哪个字母？写出它的大写和小写。",
+   "answer": "Uu",
+   "shown": "Tt",
+   "explanation": "大写 U 占上两格（第一线到第三线）；小写 u 写在中间一格（第二线到第三线）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "字母顺序",
+    "label": "字母 · 字母顺序"
+   }
+  },
+  {
+   "id": "lw-099",
+   "category": "字母顺序",
+   "kind": "next",
+   "prompt": "字母 Uu 后面是哪个字母？写出它的大写和小写。",
+   "answer": "Vv",
+   "shown": "Uu",
+   "explanation": "大写 V 占上两格（第一线到第三线）；小写 v 写在中间一格（第二线到第三线）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "字母顺序",
+    "label": "字母 · 字母顺序"
+   }
+  },
+  {
+   "id": "lw-100",
+   "category": "字母顺序",
+   "kind": "next",
+   "prompt": "字母 Vv 后面是哪个字母？写出它的大写和小写。",
+   "answer": "Ww",
+   "shown": "Vv",
+   "explanation": "大写 W 占上两格（第一线到第三线）；小写 w 写在中间一格（第二线到第三线）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（字母书写）",
+    "unit": "字母（全册）",
+    "type": "依据教材字母书写要求自编",
+    "detailTitle": "四线格书写规则",
+    "detail": "英语本有四条线，第三条是红线（基线）。大写字母都占上两格；a c e m n o r s u v w x z 在中间一格；b d f h k l 顶到第一线；g j p q y 下到第四线；i 和 j 的点在第一格。",
+    "point": "字母顺序",
+    "label": "字母 · 字母顺序"
+   }
   }
  ]
 }

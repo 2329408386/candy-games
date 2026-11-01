@@ -1,1 +1,1 @@
-<span class="footer-cross">也去逛逛{% for other in all_sites.values() if other.key != site.key %}<a href="{{other.url}}"><span aria-hidden="true">{{other.emoji}}</span> {{other.title}}</a>{% endfor %}</span>
+<span class="footer-cross">也去逛逛{% for other in all_sites.values() if other.key != site.key %}<a href="{{other.url}}"><span aria-hidden="true">{{other.emoji}}</span> {{other.title}}</a>{% endfor %}{% if request.scheme == "http" %}<a href="{{request.path}}" data-secure title="切换到 https 安全连接（读句子需要用麦克风）"><span aria-hidden="true">🔒</span> 安全连接</a>{% endif %}</span>

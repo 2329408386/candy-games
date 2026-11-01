@@ -21,3 +21,12 @@ def test_engine_grading():
         pytest.skip("node not installed")
     r = subprocess.run(["node", str(ROOT / "tests" / "test_engine.cjs")], capture_output=True, text=True)
     assert r.returncode == 0, r.stdout + r.stderr
+
+
+def test_handwriting_recogniser():
+    import shutil, pytest
+
+    if not shutil.which("node"):
+        pytest.skip("node not installed")
+    r = subprocess.run(["node", str(ROOT / "tests" / "test_handwrite.cjs")], capture_output=True, text=True)
+    assert r.returncode == 0, r.stdout + r.stderr

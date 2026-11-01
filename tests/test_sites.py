@@ -312,11 +312,11 @@ def test_english_pages_audio_and_units():
         page = client.get("/games/" + game).get_data(as_text=True)
         assert "/pk/types/english.js?v=" in page and "/pk/types/english.css?v=" in page, game
         bank = client.get(f"/games/{game}/bank.json").get_json()
-        if game != "letters":
+        if game != "letters":  # 字母奇妙屋 covers all 26 letters, not units
             assert bank["ui"]["units"] == ["U1", "U2", "U3", "U4", "U5", "U6"], game
         audio = next((q["audio"] for q in bank["questions"] if "audio" in q), None)
         # Listening games have no same-screen 双人PK (both players would hear each other's recording).
-        assert ('"noPk": true' in page) == (game in ("listen-word", "listen-judge")), game
+        assert ('"noPk": true' in page) == (game in ("listen-word", "read")), game
         if audio:
             r = client.get("/static/audio/" + audio)
             assert r.status_code == 200 and r.mimetype == "audio/mpeg", game
@@ -326,7 +326,10 @@ def test_footer_links_other_subjects_not_admin(client, site):
     html = client.get("/").get_data(as_text=True)
     assert "管理员入口" not in html
     cross = re.search(r'<span class="footer-cross">(.*?)</span>\s*\n', html).group(1)
-    assert re.findall(r'href="([^"]+)"', cross) == [s.url for key, s in SITES.items() if key != site]
+    assert re.findall(r'href="([^"]+)">', cross) == [s.url for key, s in SITES.items() if key != site]
+    # on http the footer also offers https (needed by the microphone in 读句子)
+    assert re.search(r'href="[^"]*" data-secure', cross)
+    assert "data-secure" not in client.get("/", base_url="https://localhost").get_data(as_text=True).split("footer-cross")[1]
 
 
 def test_sign_ins_do_not_expire(admin, site, monkeypatch):

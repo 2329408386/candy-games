@@ -288,6 +288,7 @@
   //   check(q, value, ctx)    -> boolean
   //   solution(q)             -> correct answer as text;  describe(q) -> one-line question text (mistake book)
   //   history                 -> false hides 撤回/清空;  afterRender(q, a, ctx, node) -> optional, runs after insertion
+  //   submitButton            -> false hides 提交答案: the renderer calls ctx.submit() itself (读句子 after scoring)
   const renderers = {};
   let bank = null, renderer = null;
 
@@ -460,7 +461,7 @@
     modeNote.textContent = {
       pk: '两位玩家同时作答，各自抽到不同的题目，得分高者获胜。',
       solo: `一个人练习${PER_PLAYER}题，答错的题会记入本机错题本。` +
-        (cfg.noPk ? (ROOM ? '听力题要听录音，两人共用一个喇叭会互相干扰，所以没有双人PK；想和同学比赛，请用「联网PK」。' : '听力题要听录音，两人共用一个喇叭会互相干扰，所以没有双人PK。') : ''),
+        (cfg.noPk ? (cfg.noPkReason || '听力题要听录音，两人共用一个喇叭会互相干扰，') + (ROOM ? '所以没有双人PK；想和同学比赛，请用「联网PK」。' : '所以没有双人PK。') : ''),
       mistakes: `从本机错题本中抽题练习（最多${PER_PLAYER}题），答对后自动移出错题本，每改对一道 +1 分。`,
       online: `和同学各用自己的设备，同时答同一套${PER_PLAYER}道题，实时比分；2到10人一起玩，前三名有名次奖励（第一名 +20，第二名 +10，第三名 +5；只有两人时第一名 +10）。`,
     }[mode];
@@ -759,6 +760,9 @@
       mutate(fn) {
         if (editable(p)) fn(s.a);
       },
+      submit() {
+        submit(p);
+      },
       notice(text) {
         s.notice = text;
         const node = $('notice-' + p);
@@ -840,7 +844,7 @@
     const controls = el('div', 'pk-controls');
     if (!s.result && round.running) {
       if (renderer.history !== false) controls.append(button('撤回', () => undo(p), 'secondary'), button('清空', () => clearAnswer(p), 'secondary'));
-      controls.append(button('提交答案', () => submit(p), 'primary'));
+      if (renderer.submitButton !== false) controls.append(button('提交答案', () => submit(p), 'primary'));
     } else if (round.running) {
       const last = s.index === s.questions.length - 1;
       const bar = el('div', 'pk-advance');
@@ -1424,6 +1428,9 @@
     url,
     // Plays a recording from the site's static/audio/ folder (english listening questions).
     say: name => audio.speak(url('static/audio/' + name)),
+    page: PAGE,
+    // Silences music, effects and recordings while the microphone records (读句子); quiet(false) brings music back.
+    quiet: on => (on ? audio.stop() : audio.resume()),
     // test hooks
     _round: round, _submit: submit, _next: next, _current: current,
   };

@@ -387,6 +387,17 @@ def bank_json(game):
     return cached[1]
 
 
+def shared_script(name):
+    """<script> for a file in shared-static/, versioned by its content like the ?v= references in templates."""
+    path = ROOT / "shared-static" / name
+    mtime = path.stat().st_mtime
+    cached = _banks.get(path)
+    if not cached or cached[0] != mtime:
+        version = hashlib.sha256(path.read_bytes()).hexdigest()[:8]
+        cached = _banks[path] = (mtime, f'<script src="{url_for("home")}static/shared/{name}?v={version}"></script>')
+    return cached[1]
+
+
 GUARD = """<script>(function(){async function check(){const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),5000);try{let r=await fetch('SESSION_URL',{cache:'no-store',signal:controller.signal});if(!r.ok)location.replace('HOME_URL');}catch(e){location.replace('HOME_URL');}finally{clearTimeout(timeout);}}setInterval(check,30000);addEventListener('pageshow',check);document.addEventListener('visibilitychange',()=>{if(!document.hidden)check();});})();</script>"""
 
 
@@ -493,6 +504,10 @@ def create_app(site_config):
 
     register_social(app)
     register_rooms(app)
+    if site_config.key == "english":
+        from .speech import register_speech
+
+        register_speech(app)
     return app
 
 
@@ -562,7 +577,11 @@ def register_public(app):
             extra = ""
         else:
             return render_template("denied.html"), 403
+        if "speech" in app.view_functions and (current(game) or page["trial"]):
+            # 读句子 posts recordings here (core/speech.py, English site only).
+            page["speech"] = {"url": url_for("speech", game=game), "csrf": url_for("csrf_token")}
         script = "<script>window.PK_PAGE=" + json.dumps(page, ensure_ascii=False).replace("</", "<\\/") + ";</script>"
+        script = shared_script("social/carry.js") + script
         return Response(game_html(game).replace("</body>", script + extra + "</body>"), mimetype="text/html")
 
     @app.get("/games/<game>/bank.json")

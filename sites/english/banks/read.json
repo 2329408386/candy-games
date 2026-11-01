@@ -1,0 +1,2074 @@
+{
+ "type": "read",
+ "meta": {
+  "notes": [
+   "句子取自外研版（三起）2024新版三年级上册各单元的核心句型和课文对话句，每单元 20 句。",
+   "学生朗读后由阿里云「一句话识别」转成文字，按读对的单词比例打分，80 分及以上算读对；缩写（I'm / I am）两种读法都算对。"
+  ]
+ },
+ "draw": {
+  "by": ["unit"],
+  "alternatives": [
+   {"U1": 4, "U2": 4, "U3": 3, "U4": 3, "U5": 3, "U6": 3},
+   {"U1": 3, "U2": 3, "U3": 4, "U4": 4, "U5": 3, "U6": 3},
+   {"U1": 3, "U2": 3, "U3": 3, "U4": 3, "U5": 4, "U6": 4},
+   {"U1": 4, "U2": 3, "U3": 3, "U4": 4, "U5": 3, "U6": 3},
+   {"U1": 3, "U2": 4, "U3": 3, "U4": 3, "U5": 4, "U6": 3},
+   {"U1": 3, "U2": 3, "U3": 4, "U4": 3, "U5": 3, "U6": 4}
+  ]
+ },
+ "ui": {
+  "instruction": "先点「听示范」，再点「开始读」大声读句子，读完点「读完了」。",
+  "units": ["U1", "U2", "U3", "U4", "U5", "U6"],
+  "unitNames": {
+   "U1": "Unit 1 Let's be friends! · 交朋友",
+   "U2": "Unit 2 My school things · 学习用品",
+   "U3": "Unit 3 It's a colourful world! · 颜色",
+   "U4": "Unit 4 Fun with numbers · 数字",
+   "U5": "Unit 5 We're family · 家庭成员",
+   "U6": "Unit 6 My sweet home · 我的家"
+  }
+ },
+ "questions": [
+  {
+   "id": "rd-001",
+   "unit": "U1",
+   "category": "read",
+   "text": "Hello, I'm Lily.",
+   "zh": "你好，我是莉莉。",
+   "audio": "en-hello-i-m-lily.cb5b92b4.mp3",
+   "audioText": "Hello, I'm Lily.",
+   "explanation": "「Hello, I'm Lily.」的意思是「你好，我是莉莉」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 1 Let's be friends! · 交朋友",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 1 · 交朋友"
+   }
+  },
+  {
+   "id": "rd-002",
+   "unit": "U1",
+   "category": "read",
+   "text": "Hi, I'm Tom.",
+   "zh": "你好，我是汤姆。",
+   "audio": "en-hi-i-m-tom.3b345244.mp3",
+   "audioText": "Hi, I'm Tom.",
+   "explanation": "「Hi, I'm Tom.」的意思是「你好，我是汤姆」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 1 Let's be friends! · 交朋友",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 1 · 交朋友"
+   }
+  },
+  {
+   "id": "rd-003",
+   "unit": "U1",
+   "category": "read",
+   "text": "Hi, my name is Amy.",
+   "zh": "你好，我的名字是埃米。",
+   "audio": "en-hi-my-name-is-amy.91edc903.mp3",
+   "audioText": "Hi, my name is Amy.",
+   "explanation": "「Hi, my name is Amy.」的意思是「你好，我的名字是埃米」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 1 Let's be friends! · 交朋友",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 1 · 交朋友"
+   }
+  },
+  {
+   "id": "rd-004",
+   "unit": "U1",
+   "category": "read",
+   "text": "My name is Sam.",
+   "zh": "我的名字是萨姆。",
+   "audio": "en-my-name-is-sam.412ca2ac.mp3",
+   "audioText": "My name is Sam.",
+   "explanation": "「My name is Sam.」的意思是「我的名字是萨姆」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 1 Let's be friends! · 交朋友",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 1 · 交朋友"
+   }
+  },
+  {
+   "id": "rd-005",
+   "unit": "U1",
+   "category": "read",
+   "text": "What's your name?",
+   "zh": "你叫什么名字？",
+   "audio": "en-what-s-your-name.8dbc6348.mp3",
+   "audioText": "What's your name?",
+   "explanation": "「What's your name?」的意思是「你叫什么名字」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 1 Let's be friends! · 交朋友",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 1 · 交朋友"
+   }
+  },
+  {
+   "id": "rd-006",
+   "unit": "U1",
+   "category": "read",
+   "text": "Nice to meet you.",
+   "zh": "很高兴见到你。",
+   "audio": "en-nice-to-meet-you.cd15e374.mp3",
+   "audioText": "Nice to meet you.",
+   "explanation": "「Nice to meet you.」的意思是「很高兴见到你」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 1 Let's be friends! · 交朋友",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 1 · 交朋友"
+   }
+  },
+  {
+   "id": "rd-007",
+   "unit": "U1",
+   "category": "read",
+   "text": "Nice to meet you, too.",
+   "zh": "我也很高兴见到你。",
+   "audio": "en-nice-to-meet-you-too.024d8cf4.mp3",
+   "audioText": "Nice to meet you, too.",
+   "explanation": "「Nice to meet you, too.」的意思是「我也很高兴见到你」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 1 Let's be friends! · 交朋友",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 1 · 交朋友"
+   }
+  },
+  {
+   "id": "rd-008",
+   "unit": "U1",
+   "category": "read",
+   "text": "Let's be friends!",
+   "zh": "我们做朋友吧！",
+   "audio": "en-let-s-be-friends.b0959ba2.mp3",
+   "audioText": "Let's be friends!",
+   "explanation": "「Let's be friends!」的意思是「我们做朋友吧」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 1 Let's be friends! · 交朋友",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 1 · 交朋友"
+   }
+  },
+  {
+   "id": "rd-009",
+   "unit": "U1",
+   "category": "read",
+   "text": "We're friends.",
+   "zh": "我们是朋友。",
+   "audio": "en-we-re-friends.89340baf.mp3",
+   "audioText": "We're friends.",
+   "explanation": "「We're friends.」的意思是「我们是朋友」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 1 Let's be friends! · 交朋友",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 1 · 交朋友"
+   }
+  },
+  {
+   "id": "rd-010",
+   "unit": "U1",
+   "category": "read",
+   "text": "We're good friends.",
+   "zh": "我们是好朋友。",
+   "audio": "en-we-re-good-friends.c89d20f0.mp3",
+   "audioText": "We're good friends.",
+   "explanation": "「We're good friends.」的意思是「我们是好朋友」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 1 Let's be friends! · 交朋友",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 1 · 交朋友"
+   }
+  },
+  {
+   "id": "rd-011",
+   "unit": "U1",
+   "category": "read",
+   "text": "He's my friend.",
+   "zh": "他是我的朋友。",
+   "audio": "en-he-s-my-friend.72868cee.mp3",
+   "audioText": "He's my friend.",
+   "explanation": "「He's my friend.」的意思是「他是我的朋友」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 1 Let's be friends! · 交朋友",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 1 · 交朋友"
+   }
+  },
+  {
+   "id": "rd-012",
+   "unit": "U1",
+   "category": "read",
+   "text": "She's my friend.",
+   "zh": "她是我的朋友。",
+   "audio": "en-she-s-my-friend.d765fa85.mp3",
+   "audioText": "She's my friend.",
+   "explanation": "「She's my friend.」的意思是「她是我的朋友」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 1 Let's be friends! · 交朋友",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 1 · 交朋友"
+   }
+  },
+  {
+   "id": "rd-013",
+   "unit": "U1",
+   "category": "read",
+   "text": "He's my friend Sam.",
+   "zh": "他是我的朋友萨姆。",
+   "audio": "en-he-s-my-friend-sam.0cffd326.mp3",
+   "audioText": "He's my friend Sam.",
+   "explanation": "「He's my friend Sam.」的意思是「他是我的朋友萨姆」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 1 Let's be friends! · 交朋友",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 1 · 交朋友"
+   }
+  },
+  {
+   "id": "rd-014",
+   "unit": "U1",
+   "category": "read",
+   "text": "She's my friend Lily.",
+   "zh": "她是我的朋友莉莉。",
+   "audio": "en-she-s-my-friend-lily.b1e27e38.mp3",
+   "audioText": "She's my friend Lily.",
+   "explanation": "「She's my friend Lily.」的意思是「她是我的朋友莉莉」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 1 Let's be friends! · 交朋友",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 1 · 交朋友"
+   }
+  },
+  {
+   "id": "rd-015",
+   "unit": "U1",
+   "category": "read",
+   "text": "I'm nine.",
+   "zh": "我九岁了。",
+   "audio": "en-i-m-nine.3793beb1.mp3",
+   "audioText": "I'm nine.",
+   "explanation": "「I'm nine.」的意思是「我九岁了」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 1 Let's be friends! · 交朋友",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 1 · 交朋友"
+   }
+  },
+  {
+   "id": "rd-016",
+   "unit": "U1",
+   "category": "read",
+   "text": "He's nine.",
+   "zh": "他九岁了。",
+   "audio": "en-he-s-nine.b0930326.mp3",
+   "audioText": "He's nine.",
+   "explanation": "「He's nine.」的意思是「他九岁了」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 1 Let's be friends! · 交朋友",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 1 · 交朋友"
+   }
+  },
+  {
+   "id": "rd-017",
+   "unit": "U1",
+   "category": "read",
+   "text": "She's Amy.",
+   "zh": "她是埃米。",
+   "audio": "en-she-s-amy.c4d7ed2d.mp3",
+   "audioText": "She's Amy.",
+   "explanation": "「She's Amy.」的意思是「她是埃米」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 1 Let's be friends! · 交朋友",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 1 · 交朋友"
+   }
+  },
+  {
+   "id": "rd-018",
+   "unit": "U1",
+   "category": "read",
+   "text": "Goodbye, Amy!",
+   "zh": "再见，埃米！",
+   "audio": "en-goodbye-amy.efdcff62.mp3",
+   "audioText": "Goodbye, Amy!",
+   "explanation": "「Goodbye, Amy!」的意思是「再见，埃米」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 1 Let's be friends! · 交朋友",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 1 · 交朋友"
+   }
+  },
+  {
+   "id": "rd-019",
+   "unit": "U1",
+   "category": "read",
+   "text": "Bye, Tom!",
+   "zh": "再见，汤姆！",
+   "audio": "en-bye-tom.3a16c86a.mp3",
+   "audioText": "Bye, Tom!",
+   "explanation": "「Bye, Tom!」的意思是「再见，汤姆」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 1 Let's be friends! · 交朋友",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 1 · 交朋友"
+   }
+  },
+  {
+   "id": "rd-020",
+   "unit": "U1",
+   "category": "read",
+   "text": "Hello, Sam!",
+   "zh": "你好，萨姆！",
+   "audio": "en-hello-sam.27f0b249.mp3",
+   "audioText": "Hello, Sam!",
+   "explanation": "「Hello, Sam!」的意思是「你好，萨姆」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 1 Let's be friends! · 交朋友",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 1 · 交朋友"
+   }
+  },
+  {
+   "id": "rd-021",
+   "unit": "U2",
+   "category": "read",
+   "text": "This is a pen.",
+   "zh": "这是一支钢笔。",
+   "audio": "en-this-is-a-pen.627f1e35.mp3",
+   "audioText": "This is a pen.",
+   "explanation": "「This is a pen.」的意思是「这是一支钢笔」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 2 My school things · 学习用品",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 2 · 学习用品"
+   }
+  },
+  {
+   "id": "rd-022",
+   "unit": "U2",
+   "category": "read",
+   "text": "This is a pencil.",
+   "zh": "这是一支铅笔。",
+   "audio": "en-this-is-a-pencil.1a1313c3.mp3",
+   "audioText": "This is a pencil.",
+   "explanation": "「This is a pencil.」的意思是「这是一支铅笔」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 2 My school things · 学习用品",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 2 · 学习用品"
+   }
+  },
+  {
+   "id": "rd-023",
+   "unit": "U2",
+   "category": "read",
+   "text": "This is a book.",
+   "zh": "这是一本书。",
+   "audio": "en-this-is-a-book.51ad380f.mp3",
+   "audioText": "This is a book.",
+   "explanation": "「This is a book.」的意思是「这是一本书」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 2 My school things · 学习用品",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 2 · 学习用品"
+   }
+  },
+  {
+   "id": "rd-024",
+   "unit": "U2",
+   "category": "read",
+   "text": "This is a ruler.",
+   "zh": "这是一把尺子。",
+   "audio": "en-this-is-a-ruler.7e317cb9.mp3",
+   "audioText": "This is a ruler.",
+   "explanation": "「This is a ruler.」的意思是「这是一把尺子」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 2 My school things · 学习用品",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 2 · 学习用品"
+   }
+  },
+  {
+   "id": "rd-025",
+   "unit": "U2",
+   "category": "read",
+   "text": "This is an eraser.",
+   "zh": "这是一块橡皮。",
+   "audio": "en-this-is-an-eraser.9744fa0f.mp3",
+   "audioText": "This is an eraser.",
+   "explanation": "「This is an eraser.」的意思是「这是一块橡皮」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 2 My school things · 学习用品",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 2 · 学习用品"
+   }
+  },
+  {
+   "id": "rd-026",
+   "unit": "U2",
+   "category": "read",
+   "text": "This is a pencil box.",
+   "zh": "这是一个铅笔盒。",
+   "audio": "en-this-is-a-pencil-box.bc3dfdfb.mp3",
+   "audioText": "This is a pencil box.",
+   "explanation": "「This is a pencil box.」的意思是「这是一个铅笔盒」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 2 My school things · 学习用品",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 2 · 学习用品"
+   }
+  },
+  {
+   "id": "rd-027",
+   "unit": "U2",
+   "category": "read",
+   "text": "This is my bag.",
+   "zh": "这是我的书包。",
+   "audio": "en-this-is-my-bag.8ec3186c.mp3",
+   "audioText": "This is my bag.",
+   "explanation": "「This is my bag.」的意思是「这是我的书包」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 2 My school things · 学习用品",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 2 · 学习用品"
+   }
+  },
+  {
+   "id": "rd-028",
+   "unit": "U2",
+   "category": "read",
+   "text": "This is my book.",
+   "zh": "这是我的书。",
+   "audio": "en-this-is-my-book.0da310e1.mp3",
+   "audioText": "This is my book.",
+   "explanation": "「This is my book.」的意思是「这是我的书」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 2 My school things · 学习用品",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 2 · 学习用品"
+   }
+  },
+  {
+   "id": "rd-029",
+   "unit": "U2",
+   "category": "read",
+   "text": "This is your ruler.",
+   "zh": "这是你的尺子。",
+   "audio": "en-this-is-your-ruler.567c3e5a.mp3",
+   "audioText": "This is your ruler.",
+   "explanation": "「This is your ruler.」的意思是「这是你的尺子」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 2 My school things · 学习用品",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 2 · 学习用品"
+   }
+  },
+  {
+   "id": "rd-030",
+   "unit": "U2",
+   "category": "read",
+   "text": "This is your eraser.",
+   "zh": "这是你的橡皮。",
+   "audio": "en-this-is-your-eraser.746b108a.mp3",
+   "audioText": "This is your eraser.",
+   "explanation": "「This is your eraser.」的意思是「这是你的橡皮」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 2 My school things · 学习用品",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 2 · 学习用品"
+   }
+  },
+  {
+   "id": "rd-031",
+   "unit": "U2",
+   "category": "read",
+   "text": "That is a bag.",
+   "zh": "那是一个书包。",
+   "audio": "en-that-is-a-bag.c9c9fd3e.mp3",
+   "audioText": "That is a bag.",
+   "explanation": "「That is a bag.」的意思是「那是一个书包」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 2 My school things · 学习用品",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 2 · 学习用品"
+   }
+  },
+  {
+   "id": "rd-032",
+   "unit": "U2",
+   "category": "read",
+   "text": "That is a ruler.",
+   "zh": "那是一把尺子。",
+   "audio": "en-that-is-a-ruler.8f3af756.mp3",
+   "audioText": "That is a ruler.",
+   "explanation": "「That is a ruler.」的意思是「那是一把尺子」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 2 My school things · 学习用品",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 2 · 学习用品"
+   }
+  },
+  {
+   "id": "rd-033",
+   "unit": "U2",
+   "category": "read",
+   "text": "That is my pencil box.",
+   "zh": "那是我的铅笔盒。",
+   "audio": "en-that-is-my-pencil-box.9d836723.mp3",
+   "audioText": "That is my pencil box.",
+   "explanation": "「That is my pencil box.」的意思是「那是我的铅笔盒」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 2 My school things · 学习用品",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 2 · 学习用品"
+   }
+  },
+  {
+   "id": "rd-034",
+   "unit": "U2",
+   "category": "read",
+   "text": "That is your pen.",
+   "zh": "那是你的钢笔。",
+   "audio": "en-that-is-your-pen.1ec44692.mp3",
+   "audioText": "That is your pen.",
+   "explanation": "「That is your pen.」的意思是「那是你的钢笔」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 2 My school things · 学习用品",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 2 · 学习用品"
+   }
+  },
+  {
+   "id": "rd-035",
+   "unit": "U2",
+   "category": "read",
+   "text": "That is your bag.",
+   "zh": "那是你的书包。",
+   "audio": "en-that-is-your-bag.1e9da868.mp3",
+   "audioText": "That is your bag.",
+   "explanation": "「That is your bag.」的意思是「那是你的书包」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 2 My school things · 学习用品",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 2 · 学习用品"
+   }
+  },
+  {
+   "id": "rd-036",
+   "unit": "U2",
+   "category": "read",
+   "text": "Here you are.",
+   "zh": "给你。",
+   "audio": "en-here-you-are.c8a62e2e.mp3",
+   "audioText": "Here you are.",
+   "explanation": "「Here you are.」的意思是「给你」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 2 My school things · 学习用品",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 2 · 学习用品"
+   }
+  },
+  {
+   "id": "rd-037",
+   "unit": "U2",
+   "category": "read",
+   "text": "Here you are, Amy.",
+   "zh": "给你，埃米。",
+   "audio": "en-here-you-are-amy.95d390ac.mp3",
+   "audioText": "Here you are, Amy.",
+   "explanation": "「Here you are, Amy.」的意思是「给你，埃米」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 2 My school things · 学习用品",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 2 · 学习用品"
+   }
+  },
+  {
+   "id": "rd-038",
+   "unit": "U2",
+   "category": "read",
+   "text": "Thank you.",
+   "zh": "谢谢你。",
+   "audio": "en-thank-you.43ea0d84.mp3",
+   "audioText": "Thank you.",
+   "explanation": "「Thank you.」的意思是「谢谢你」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 2 My school things · 学习用品",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 2 · 学习用品"
+   }
+  },
+  {
+   "id": "rd-039",
+   "unit": "U2",
+   "category": "read",
+   "text": "Thank you, Mum.",
+   "zh": "谢谢您，妈妈。",
+   "audio": "en-thank-you-mum.8a4ce473.mp3",
+   "audioText": "Thank you, Mum.",
+   "explanation": "「Thank you, Mum.」的意思是「谢谢您，妈妈」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 2 My school things · 学习用品",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 2 · 学习用品"
+   }
+  },
+  {
+   "id": "rd-040",
+   "unit": "U2",
+   "category": "read",
+   "text": "Thank you, Tom.",
+   "zh": "谢谢你，汤姆。",
+   "audio": "en-thank-you-tom.41290a4c.mp3",
+   "audioText": "Thank you, Tom.",
+   "explanation": "「Thank you, Tom.」的意思是「谢谢你，汤姆」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 2 My school things · 学习用品",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 2 · 学习用品"
+   }
+  },
+  {
+   "id": "rd-041",
+   "unit": "U3",
+   "category": "read",
+   "text": "I see red.",
+   "zh": "我看见了红色。",
+   "audio": "en-i-see-red.0d6eb2f1.mp3",
+   "audioText": "I see red.",
+   "explanation": "「I see red.」的意思是「我看见了红色」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 3 It's a colourful world! · 颜色",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 3 · 颜色"
+   }
+  },
+  {
+   "id": "rd-042",
+   "unit": "U3",
+   "category": "read",
+   "text": "I see blue.",
+   "zh": "我看见了蓝色。",
+   "audio": "en-i-see-blue.13bd5ac7.mp3",
+   "audioText": "I see blue.",
+   "explanation": "「I see blue.」的意思是「我看见了蓝色」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 3 It's a colourful world! · 颜色",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 3 · 颜色"
+   }
+  },
+  {
+   "id": "rd-043",
+   "unit": "U3",
+   "category": "read",
+   "text": "I see green.",
+   "zh": "我看见了绿色。",
+   "audio": "en-i-see-green.e24a648c.mp3",
+   "audioText": "I see green.",
+   "explanation": "「I see green.」的意思是「我看见了绿色」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 3 It's a colourful world! · 颜色",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 3 · 颜色"
+   }
+  },
+  {
+   "id": "rd-044",
+   "unit": "U3",
+   "category": "read",
+   "text": "I see orange.",
+   "zh": "我看见了橙色。",
+   "audio": "en-i-see-orange.dd2e0e41.mp3",
+   "audioText": "I see orange.",
+   "explanation": "「I see orange.」的意思是「我看见了橙色」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 3 It's a colourful world! · 颜色",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 3 · 颜色"
+   }
+  },
+  {
+   "id": "rd-045",
+   "unit": "U3",
+   "category": "read",
+   "text": "I see red and blue.",
+   "zh": "我看见了红色和蓝色。",
+   "audio": "en-i-see-red-and-blue.2031022c.mp3",
+   "audioText": "I see red and blue.",
+   "explanation": "「I see red and blue.」的意思是「我看见了红色和蓝色」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 3 It's a colourful world! · 颜色",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 3 · 颜色"
+   }
+  },
+  {
+   "id": "rd-046",
+   "unit": "U3",
+   "category": "read",
+   "text": "I see yellow and green.",
+   "zh": "我看见了黄色和绿色。",
+   "audio": "en-i-see-yellow-and-green.ea8310cc.mp3",
+   "audioText": "I see yellow and green.",
+   "explanation": "「I see yellow and green.」的意思是「我看见了黄色和绿色」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 3 It's a colourful world! · 颜色",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 3 · 颜色"
+   }
+  },
+  {
+   "id": "rd-047",
+   "unit": "U3",
+   "category": "read",
+   "text": "I see black and white.",
+   "zh": "我看见了黑色和白色。",
+   "audio": "en-i-see-black-and-white.ebb458ee.mp3",
+   "audioText": "I see black and white.",
+   "explanation": "「I see black and white.」的意思是「我看见了黑色和白色」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 3 It's a colourful world! · 颜色",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 3 · 颜色"
+   }
+  },
+  {
+   "id": "rd-048",
+   "unit": "U3",
+   "category": "read",
+   "text": "It's red.",
+   "zh": "它是红色的。",
+   "audio": "en-it-s-red.e1019038.mp3",
+   "audioText": "It's red.",
+   "explanation": "「It's red.」的意思是「它是红色的」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 3 It's a colourful world! · 颜色",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 3 · 颜色"
+   }
+  },
+  {
+   "id": "rd-049",
+   "unit": "U3",
+   "category": "read",
+   "text": "It's yellow.",
+   "zh": "它是黄色的。",
+   "audio": "en-it-s-yellow.f7aa15c8.mp3",
+   "audioText": "It's yellow.",
+   "explanation": "「It's yellow.」的意思是「它是黄色的」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 3 It's a colourful world! · 颜色",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 3 · 颜色"
+   }
+  },
+  {
+   "id": "rd-050",
+   "unit": "U3",
+   "category": "read",
+   "text": "It's blue.",
+   "zh": "它是蓝色的。",
+   "audio": "en-it-s-blue.5a153dc8.mp3",
+   "audioText": "It's blue.",
+   "explanation": "「It's blue.」的意思是「它是蓝色的」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 3 It's a colourful world! · 颜色",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 3 · 颜色"
+   }
+  },
+  {
+   "id": "rd-051",
+   "unit": "U3",
+   "category": "read",
+   "text": "It's brown.",
+   "zh": "它是棕色的。",
+   "audio": "en-it-s-brown.4bb13674.mp3",
+   "audioText": "It's brown.",
+   "explanation": "「It's brown.」的意思是「它是棕色的」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 3 It's a colourful world! · 颜色",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 3 · 颜色"
+   }
+  },
+  {
+   "id": "rd-052",
+   "unit": "U3",
+   "category": "read",
+   "text": "It's black and white.",
+   "zh": "它是黑白色的。",
+   "audio": "en-it-s-black-and-white.c8e37666.mp3",
+   "audioText": "It's black and white.",
+   "explanation": "「It's black and white.」的意思是「它是黑白色的」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 3 It's a colourful world! · 颜色",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 3 · 颜色"
+   }
+  },
+  {
+   "id": "rd-053",
+   "unit": "U3",
+   "category": "read",
+   "text": "It's a red apple.",
+   "zh": "它是一个红苹果。",
+   "audio": "en-it-s-a-red-apple.4a11b5f3.mp3",
+   "audioText": "It's a red apple.",
+   "explanation": "「It's a red apple.」的意思是「它是一个红苹果」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 3 It's a colourful world! · 颜色",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 3 · 颜色"
+   }
+  },
+  {
+   "id": "rd-054",
+   "unit": "U3",
+   "category": "read",
+   "text": "It's a black bag.",
+   "zh": "它是一个黑色的书包。",
+   "audio": "en-it-s-a-black-bag.14f67f0a.mp3",
+   "audioText": "It's a black bag.",
+   "explanation": "「It's a black bag.」的意思是「它是一个黑色的书包」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 3 It's a colourful world! · 颜色",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 3 · 颜色"
+   }
+  },
+  {
+   "id": "rd-055",
+   "unit": "U3",
+   "category": "read",
+   "text": "It's a green book.",
+   "zh": "它是一本绿色的书。",
+   "audio": "en-it-s-a-green-book.00f266dd.mp3",
+   "audioText": "It's a green book.",
+   "explanation": "「It's a green book.」的意思是「它是一本绿色的书」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 3 It's a colourful world! · 颜色",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 3 · 颜色"
+   }
+  },
+  {
+   "id": "rd-056",
+   "unit": "U3",
+   "category": "read",
+   "text": "It's an orange ruler.",
+   "zh": "它是一把橙色的尺子。",
+   "audio": "en-it-s-an-orange-ruler.047522c1.mp3",
+   "audioText": "It's an orange ruler.",
+   "explanation": "「It's an orange ruler.」的意思是「它是一把橙色的尺子」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 3 It's a colourful world! · 颜色",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 3 · 颜色"
+   }
+  },
+  {
+   "id": "rd-057",
+   "unit": "U3",
+   "category": "read",
+   "text": "My bag is red.",
+   "zh": "我的书包是红色的。",
+   "audio": "en-my-bag-is-red.c6bf23df.mp3",
+   "audioText": "My bag is red.",
+   "explanation": "「My bag is red.」的意思是「我的书包是红色的」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 3 It's a colourful world! · 颜色",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 3 · 颜色"
+   }
+  },
+  {
+   "id": "rd-058",
+   "unit": "U3",
+   "category": "read",
+   "text": "My pen is blue.",
+   "zh": "我的钢笔是蓝色的。",
+   "audio": "en-my-pen-is-blue.a769d158.mp3",
+   "audioText": "My pen is blue.",
+   "explanation": "「My pen is blue.」的意思是「我的钢笔是蓝色的」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 3 It's a colourful world! · 颜色",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 3 · 颜色"
+   }
+  },
+  {
+   "id": "rd-059",
+   "unit": "U3",
+   "category": "read",
+   "text": "The pencil is yellow.",
+   "zh": "这支铅笔是黄色的。",
+   "audio": "en-the-pencil-is-yellow.8a7574ef.mp3",
+   "audioText": "The pencil is yellow.",
+   "explanation": "「The pencil is yellow.」的意思是「这支铅笔是黄色的」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 3 It's a colourful world! · 颜色",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 3 · 颜色"
+   }
+  },
+  {
+   "id": "rd-060",
+   "unit": "U3",
+   "category": "read",
+   "text": "I see a yellow pencil.",
+   "zh": "我看见一支黄色的铅笔。",
+   "audio": "en-i-see-a-yellow-pencil.2c6f88f2.mp3",
+   "audioText": "I see a yellow pencil.",
+   "explanation": "「I see a yellow pencil.」的意思是「我看见一支黄色的铅笔」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 3 It's a colourful world! · 颜色",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 3 · 颜色"
+   }
+  },
+  {
+   "id": "rd-061",
+   "unit": "U4",
+   "category": "read",
+   "text": "One, two, three.",
+   "zh": "一，二，三。",
+   "audio": "en-one-two-three.e5bfa06f.mp3",
+   "audioText": "One, two, three.",
+   "explanation": "「One, two, three.」的意思是「一，二，三」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 4 Fun with numbers · 数字",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 4 · 数字"
+   }
+  },
+  {
+   "id": "rd-062",
+   "unit": "U4",
+   "category": "read",
+   "text": "Four, five, six.",
+   "zh": "四，五，六。",
+   "audio": "en-four-five-six.b3dbe349.mp3",
+   "audioText": "Four, five, six.",
+   "explanation": "「Four, five, six.」的意思是「四，五，六」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 4 Fun with numbers · 数字",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 4 · 数字"
+   }
+  },
+  {
+   "id": "rd-063",
+   "unit": "U4",
+   "category": "read",
+   "text": "How many?",
+   "zh": "多少个？",
+   "audio": "en-how-many.83275a1d.mp3",
+   "audioText": "How many?",
+   "explanation": "「How many?」的意思是「多少个」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 4 Fun with numbers · 数字",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 4 · 数字"
+   }
+  },
+  {
+   "id": "rd-064",
+   "unit": "U4",
+   "category": "read",
+   "text": "How many books?",
+   "zh": "多少本书？",
+   "audio": "en-how-many-books.79fefe61.mp3",
+   "audioText": "How many books?",
+   "explanation": "「How many books?」的意思是「多少本书」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 4 Fun with numbers · 数字",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 4 · 数字"
+   }
+  },
+  {
+   "id": "rd-065",
+   "unit": "U4",
+   "category": "read",
+   "text": "How many pencils?",
+   "zh": "多少支铅笔？",
+   "audio": "en-how-many-pencils.edf013ea.mp3",
+   "audioText": "How many pencils?",
+   "explanation": "「How many pencils?」的意思是「多少支铅笔」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 4 Fun with numbers · 数字",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 4 · 数字"
+   }
+  },
+  {
+   "id": "rd-066",
+   "unit": "U4",
+   "category": "read",
+   "text": "How many bags?",
+   "zh": "多少个书包？",
+   "audio": "en-how-many-bags.8f2ea56a.mp3",
+   "audioText": "How many bags?",
+   "explanation": "「How many bags?」的意思是「多少个书包」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 4 Fun with numbers · 数字",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 4 · 数字"
+   }
+  },
+  {
+   "id": "rd-067",
+   "unit": "U4",
+   "category": "read",
+   "text": "How many rulers?",
+   "zh": "多少把尺子？",
+   "audio": "en-how-many-rulers.5e9a3f9c.mp3",
+   "audioText": "How many rulers?",
+   "explanation": "「How many rulers?」的意思是「多少把尺子」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 4 Fun with numbers · 数字",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 4 · 数字"
+   }
+  },
+  {
+   "id": "rd-068",
+   "unit": "U4",
+   "category": "read",
+   "text": "I see two bags.",
+   "zh": "我看见两个书包。",
+   "audio": "en-i-see-two-bags.52ebc18d.mp3",
+   "audioText": "I see two bags.",
+   "explanation": "「I see two bags.」的意思是「我看见两个书包」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 4 Fun with numbers · 数字",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 4 · 数字"
+   }
+  },
+  {
+   "id": "rd-069",
+   "unit": "U4",
+   "category": "read",
+   "text": "I see three pens.",
+   "zh": "我看见三支钢笔。",
+   "audio": "en-i-see-three-pens.d88d4781.mp3",
+   "audioText": "I see three pens.",
+   "explanation": "「I see three pens.」的意思是「我看见三支钢笔」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 4 Fun with numbers · 数字",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 4 · 数字"
+   }
+  },
+  {
+   "id": "rd-070",
+   "unit": "U4",
+   "category": "read",
+   "text": "I see five books.",
+   "zh": "我看见五本书。",
+   "audio": "en-i-see-five-books.6ba955f7.mp3",
+   "audioText": "I see five books.",
+   "explanation": "「I see five books.」的意思是「我看见五本书」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 4 Fun with numbers · 数字",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 4 · 数字"
+   }
+  },
+  {
+   "id": "rd-071",
+   "unit": "U4",
+   "category": "read",
+   "text": "I see six books.",
+   "zh": "我看见六本书。",
+   "audio": "en-i-see-six-books.2ce9e80a.mp3",
+   "audioText": "I see six books.",
+   "explanation": "「I see six books.」的意思是「我看见六本书」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 4 Fun with numbers · 数字",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 4 · 数字"
+   }
+  },
+  {
+   "id": "rd-072",
+   "unit": "U4",
+   "category": "read",
+   "text": "I see seven rulers.",
+   "zh": "我看见七把尺子。",
+   "audio": "en-i-see-seven-rulers.6bfc748b.mp3",
+   "audioText": "I see seven rulers.",
+   "explanation": "「I see seven rulers.」的意思是「我看见七把尺子」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 4 Fun with numbers · 数字",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 4 · 数字"
+   }
+  },
+  {
+   "id": "rd-073",
+   "unit": "U4",
+   "category": "read",
+   "text": "I see eight apples.",
+   "zh": "我看见八个苹果。",
+   "audio": "en-i-see-eight-apples.ef9a8e8b.mp3",
+   "audioText": "I see eight apples.",
+   "explanation": "「I see eight apples.」的意思是「我看见八个苹果」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 4 Fun with numbers · 数字",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 4 · 数字"
+   }
+  },
+  {
+   "id": "rd-074",
+   "unit": "U4",
+   "category": "read",
+   "text": "I see ten pencils.",
+   "zh": "我看见十支铅笔。",
+   "audio": "en-i-see-ten-pencils.d3e1b49c.mp3",
+   "audioText": "I see ten pencils.",
+   "explanation": "「I see ten pencils.」的意思是「我看见十支铅笔」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 4 Fun with numbers · 数字",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 4 · 数字"
+   }
+  },
+  {
+   "id": "rd-075",
+   "unit": "U4",
+   "category": "read",
+   "text": "One and one is two.",
+   "zh": "一加一等于二。",
+   "audio": "en-one-and-one-is-two.33276a29.mp3",
+   "audioText": "One and one is two.",
+   "explanation": "「One and one is two.」的意思是「一加一等于二」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 4 Fun with numbers · 数字",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 4 · 数字"
+   }
+  },
+  {
+   "id": "rd-076",
+   "unit": "U4",
+   "category": "read",
+   "text": "Two and three is five.",
+   "zh": "二加三等于五。",
+   "audio": "en-two-and-three-is-five.359809d9.mp3",
+   "audioText": "Two and three is five.",
+   "explanation": "「Two and three is five.」的意思是「二加三等于五」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 4 Fun with numbers · 数字",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 4 · 数字"
+   }
+  },
+  {
+   "id": "rd-077",
+   "unit": "U4",
+   "category": "read",
+   "text": "Five and five is ten.",
+   "zh": "五加五等于十。",
+   "audio": "en-five-and-five-is-ten.49b62fd4.mp3",
+   "audioText": "Five and five is ten.",
+   "explanation": "「Five and five is ten.」的意思是「五加五等于十」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 4 Fun with numbers · 数字",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 4 · 数字"
+   }
+  },
+  {
+   "id": "rd-078",
+   "unit": "U4",
+   "category": "read",
+   "text": "Six and two is eight.",
+   "zh": "六加二等于八。",
+   "audio": "en-six-and-two-is-eight.5851a303.mp3",
+   "audioText": "Six and two is eight.",
+   "explanation": "「Six and two is eight.」的意思是「六加二等于八」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 4 Fun with numbers · 数字",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 4 · 数字"
+   }
+  },
+  {
+   "id": "rd-079",
+   "unit": "U4",
+   "category": "read",
+   "text": "I'm eight.",
+   "zh": "我八岁了。",
+   "audio": "en-i-m-eight.27ef402a.mp3",
+   "audioText": "I'm eight.",
+   "explanation": "「I'm eight.」的意思是「我八岁了」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 4 Fun with numbers · 数字",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 4 · 数字"
+   }
+  },
+  {
+   "id": "rd-080",
+   "unit": "U4",
+   "category": "read",
+   "text": "I'm ten.",
+   "zh": "我十岁了。",
+   "audio": "en-i-m-ten.91421c40.mp3",
+   "audioText": "I'm ten.",
+   "explanation": "「I'm ten.」的意思是「我十岁了」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 4 Fun with numbers · 数字",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 4 · 数字"
+   }
+  },
+  {
+   "id": "rd-081",
+   "unit": "U5",
+   "category": "read",
+   "text": "This is my family.",
+   "zh": "这是我的家人。",
+   "audio": "en-this-is-my-family.7db0d717.mp3",
+   "audioText": "This is my family.",
+   "explanation": "「This is my family.」的意思是「这是我的家人」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 5 We're family · 家庭成员",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 5 · 家庭成员"
+   }
+  },
+  {
+   "id": "rd-082",
+   "unit": "U5",
+   "category": "read",
+   "text": "This is my mum.",
+   "zh": "这是我的妈妈。",
+   "audio": "en-this-is-my-mum.a8813f0e.mp3",
+   "audioText": "This is my mum.",
+   "explanation": "「This is my mum.」的意思是「这是我的妈妈」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 5 We're family · 家庭成员",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 5 · 家庭成员"
+   }
+  },
+  {
+   "id": "rd-083",
+   "unit": "U5",
+   "category": "read",
+   "text": "This is my dad.",
+   "zh": "这是我的爸爸。",
+   "audio": "en-this-is-my-dad.07b75b24.mp3",
+   "audioText": "This is my dad.",
+   "explanation": "「This is my dad.」的意思是「这是我的爸爸」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 5 We're family · 家庭成员",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 5 · 家庭成员"
+   }
+  },
+  {
+   "id": "rd-084",
+   "unit": "U5",
+   "category": "read",
+   "text": "This is my grandma.",
+   "zh": "这是我的奶奶。",
+   "audio": "en-this-is-my-grandma.5fa1ac93.mp3",
+   "audioText": "This is my grandma.",
+   "explanation": "「This is my grandma.」的意思是「这是我的奶奶」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 5 We're family · 家庭成员",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 5 · 家庭成员"
+   }
+  },
+  {
+   "id": "rd-085",
+   "unit": "U5",
+   "category": "read",
+   "text": "This is my grandpa.",
+   "zh": "这是我的爷爷。",
+   "audio": "en-this-is-my-grandpa.178fc57f.mp3",
+   "audioText": "This is my grandpa.",
+   "explanation": "「This is my grandpa.」的意思是「这是我的爷爷」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 5 We're family · 家庭成员",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 5 · 家庭成员"
+   }
+  },
+  {
+   "id": "rd-086",
+   "unit": "U5",
+   "category": "read",
+   "text": "This is my sister.",
+   "zh": "这是我的姐姐。",
+   "audio": "en-this-is-my-sister.06444d09.mp3",
+   "audioText": "This is my sister.",
+   "explanation": "「This is my sister.」的意思是「这是我的姐姐」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 5 We're family · 家庭成员",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 5 · 家庭成员"
+   }
+  },
+  {
+   "id": "rd-087",
+   "unit": "U5",
+   "category": "read",
+   "text": "This is my brother.",
+   "zh": "这是我的弟弟。",
+   "audio": "en-this-is-my-brother.e6d87a7a.mp3",
+   "audioText": "This is my brother.",
+   "explanation": "「This is my brother.」的意思是「这是我的弟弟」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 5 We're family · 家庭成员",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 5 · 家庭成员"
+   }
+  },
+  {
+   "id": "rd-088",
+   "unit": "U5",
+   "category": "read",
+   "text": "She's my mum.",
+   "zh": "她是我的妈妈。",
+   "audio": "en-she-s-my-mum.d20ee6fb.mp3",
+   "audioText": "She's my mum.",
+   "explanation": "「She's my mum.」的意思是「她是我的妈妈」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 5 We're family · 家庭成员",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 5 · 家庭成员"
+   }
+  },
+  {
+   "id": "rd-089",
+   "unit": "U5",
+   "category": "read",
+   "text": "He's my dad.",
+   "zh": "他是我的爸爸。",
+   "audio": "en-he-s-my-dad.398464bf.mp3",
+   "audioText": "He's my dad.",
+   "explanation": "「He's my dad.」的意思是「他是我的爸爸」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 5 We're family · 家庭成员",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 5 · 家庭成员"
+   }
+  },
+  {
+   "id": "rd-090",
+   "unit": "U5",
+   "category": "read",
+   "text": "She's my grandma.",
+   "zh": "她是我的奶奶。",
+   "audio": "en-she-s-my-grandma.fc4f1df7.mp3",
+   "audioText": "She's my grandma.",
+   "explanation": "「She's my grandma.」的意思是「她是我的奶奶」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 5 We're family · 家庭成员",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 5 · 家庭成员"
+   }
+  },
+  {
+   "id": "rd-091",
+   "unit": "U5",
+   "category": "read",
+   "text": "He's my grandpa.",
+   "zh": "他是我的爷爷。",
+   "audio": "en-he-s-my-grandpa.dea206cc.mp3",
+   "audioText": "He's my grandpa.",
+   "explanation": "「He's my grandpa.」的意思是「他是我的爷爷」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 5 We're family · 家庭成员",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 5 · 家庭成员"
+   }
+  },
+  {
+   "id": "rd-092",
+   "unit": "U5",
+   "category": "read",
+   "text": "He's my brother.",
+   "zh": "他是我的哥哥。",
+   "audio": "en-he-s-my-brother.822e75a3.mp3",
+   "audioText": "He's my brother.",
+   "explanation": "「He's my brother.」的意思是「他是我的哥哥」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 5 We're family · 家庭成员",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 5 · 家庭成员"
+   }
+  },
+  {
+   "id": "rd-093",
+   "unit": "U5",
+   "category": "read",
+   "text": "She's my sister.",
+   "zh": "她是我的妹妹。",
+   "audio": "en-she-s-my-sister.e6cd05fe.mp3",
+   "audioText": "She's my sister.",
+   "explanation": "「She's my sister.」的意思是「她是我的妹妹」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 5 We're family · 家庭成员",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 5 · 家庭成员"
+   }
+  },
+  {
+   "id": "rd-094",
+   "unit": "U5",
+   "category": "read",
+   "text": "We're family.",
+   "zh": "我们是一家人。",
+   "audio": "en-we-re-family.21158c6e.mp3",
+   "audioText": "We're family.",
+   "explanation": "「We're family.」的意思是「我们是一家人」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 5 We're family · 家庭成员",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 5 · 家庭成员"
+   }
+  },
+  {
+   "id": "rd-095",
+   "unit": "U5",
+   "category": "read",
+   "text": "We're a happy family.",
+   "zh": "我们是幸福的一家人。",
+   "audio": "en-we-re-a-happy-family.9a917e86.mp3",
+   "audioText": "We're a happy family.",
+   "explanation": "「We're a happy family.」的意思是「我们是幸福的一家人」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 5 We're family · 家庭成员",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 5 · 家庭成员"
+   }
+  },
+  {
+   "id": "rd-096",
+   "unit": "U5",
+   "category": "read",
+   "text": "I love my family.",
+   "zh": "我爱我的家人。",
+   "audio": "en-i-love-my-family.bb83e18e.mp3",
+   "audioText": "I love my family.",
+   "explanation": "「I love my family.」的意思是「我爱我的家人」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 5 We're family · 家庭成员",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 5 · 家庭成员"
+   }
+  },
+  {
+   "id": "rd-097",
+   "unit": "U5",
+   "category": "read",
+   "text": "Look, this is my family.",
+   "zh": "看，这是我的家人。",
+   "audio": "en-look-this-is-my-family.502436a5.mp3",
+   "audioText": "Look, this is my family.",
+   "explanation": "「Look, this is my family.」的意思是「看，这是我的家人」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 5 We're family · 家庭成员",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 5 · 家庭成员"
+   }
+  },
+  {
+   "id": "rd-098",
+   "unit": "U5",
+   "category": "read",
+   "text": "Mum, this is Amy.",
+   "zh": "妈妈，这是埃米。",
+   "audio": "en-mum-this-is-amy.424f6bfb.mp3",
+   "audioText": "Mum, this is Amy.",
+   "explanation": "「Mum, this is Amy.」的意思是「妈妈，这是埃米」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 5 We're family · 家庭成员",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 5 · 家庭成员"
+   }
+  },
+  {
+   "id": "rd-099",
+   "unit": "U5",
+   "category": "read",
+   "text": "Dad, this is my friend.",
+   "zh": "爸爸，这是我的朋友。",
+   "audio": "en-dad-this-is-my-friend.65861521.mp3",
+   "audioText": "Dad, this is my friend.",
+   "explanation": "「Dad, this is my friend.」的意思是「爸爸，这是我的朋友」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 5 We're family · 家庭成员",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 5 · 家庭成员"
+   }
+  },
+  {
+   "id": "rd-100",
+   "unit": "U5",
+   "category": "read",
+   "text": "Hello, Grandma!",
+   "zh": "您好，奶奶！",
+   "audio": "en-hello-grandma.9bfb92ef.mp3",
+   "audioText": "Hello, Grandma!",
+   "explanation": "「Hello, Grandma!」的意思是「您好，奶奶」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 5 We're family · 家庭成员",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 5 · 家庭成员"
+   }
+  },
+  {
+   "id": "rd-101",
+   "unit": "U6",
+   "category": "read",
+   "text": "This is my home.",
+   "zh": "这是我的家。",
+   "audio": "en-this-is-my-home.fab9999f.mp3",
+   "audioText": "This is my home.",
+   "explanation": "「This is my home.」的意思是「这是我的家」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 6 My sweet home · 我的家",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 6 · 我的家"
+   }
+  },
+  {
+   "id": "rd-102",
+   "unit": "U6",
+   "category": "read",
+   "text": "This is my room.",
+   "zh": "这是我的房间。",
+   "audio": "en-this-is-my-room.f4dc6391.mp3",
+   "audioText": "This is my room.",
+   "explanation": "「This is my room.」的意思是「这是我的房间」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 6 My sweet home · 我的家",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 6 · 我的家"
+   }
+  },
+  {
+   "id": "rd-103",
+   "unit": "U6",
+   "category": "read",
+   "text": "This is my sweet home.",
+   "zh": "这是我温馨的家。",
+   "audio": "en-this-is-my-sweet-home.18dd1e65.mp3",
+   "audioText": "This is my sweet home.",
+   "explanation": "「This is my sweet home.」的意思是「这是我温馨的家」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 6 My sweet home · 我的家",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 6 · 我的家"
+   }
+  },
+  {
+   "id": "rd-104",
+   "unit": "U6",
+   "category": "read",
+   "text": "Look at my room.",
+   "zh": "看看我的房间。",
+   "audio": "en-look-at-my-room.b0989d8a.mp3",
+   "audioText": "Look at my room.",
+   "explanation": "「Look at my room.」的意思是「看看我的房间」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 6 My sweet home · 我的家",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 6 · 我的家"
+   }
+  },
+  {
+   "id": "rd-105",
+   "unit": "U6",
+   "category": "read",
+   "text": "This is a desk.",
+   "zh": "这是一张书桌。",
+   "audio": "en-this-is-a-desk.60df6bb8.mp3",
+   "audioText": "This is a desk.",
+   "explanation": "「This is a desk.」的意思是「这是一张书桌」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 6 My sweet home · 我的家",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 6 · 我的家"
+   }
+  },
+  {
+   "id": "rd-106",
+   "unit": "U6",
+   "category": "read",
+   "text": "This is a chair.",
+   "zh": "这是一把椅子。",
+   "audio": "en-this-is-a-chair.2c4a7385.mp3",
+   "audioText": "This is a chair.",
+   "explanation": "「This is a chair.」的意思是「这是一把椅子」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 6 My sweet home · 我的家",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 6 · 我的家"
+   }
+  },
+  {
+   "id": "rd-107",
+   "unit": "U6",
+   "category": "read",
+   "text": "This is a bed.",
+   "zh": "这是一张床。",
+   "audio": "en-this-is-a-bed.f90bc769.mp3",
+   "audioText": "This is a bed.",
+   "explanation": "「This is a bed.」的意思是「这是一张床」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 6 My sweet home · 我的家",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 6 · 我的家"
+   }
+  },
+  {
+   "id": "rd-108",
+   "unit": "U6",
+   "category": "read",
+   "text": "This is a door.",
+   "zh": "这是一扇门。",
+   "audio": "en-this-is-a-door.16a78a31.mp3",
+   "audioText": "This is a door.",
+   "explanation": "「This is a door.」的意思是「这是一扇门」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 6 My sweet home · 我的家",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 6 · 我的家"
+   }
+  },
+  {
+   "id": "rd-109",
+   "unit": "U6",
+   "category": "read",
+   "text": "This is a window.",
+   "zh": "这是一扇窗户。",
+   "audio": "en-this-is-a-window.34824662.mp3",
+   "audioText": "This is a window.",
+   "explanation": "「This is a window.」的意思是「这是一扇窗户」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 6 My sweet home · 我的家",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 6 · 我的家"
+   }
+  },
+  {
+   "id": "rd-110",
+   "unit": "U6",
+   "category": "read",
+   "text": "I see a door and a window.",
+   "zh": "我看见一扇门和一扇窗户。",
+   "audio": "en-i-see-a-door-and-a-window.7ef152cf.mp3",
+   "audioText": "I see a door and a window.",
+   "explanation": "「I see a door and a window.」的意思是「我看见一扇门和一扇窗户」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 6 My sweet home · 我的家",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 6 · 我的家"
+   }
+  },
+  {
+   "id": "rd-111",
+   "unit": "U6",
+   "category": "read",
+   "text": "Where's my pen?",
+   "zh": "我的钢笔在哪里？",
+   "audio": "en-where-s-my-pen.0380dc94.mp3",
+   "audioText": "Where's my pen?",
+   "explanation": "「Where's my pen?」的意思是「我的钢笔在哪里」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 6 My sweet home · 我的家",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 6 · 我的家"
+   }
+  },
+  {
+   "id": "rd-112",
+   "unit": "U6",
+   "category": "read",
+   "text": "Where's my ruler?",
+   "zh": "我的尺子在哪里？",
+   "audio": "en-where-s-my-ruler.f378764e.mp3",
+   "audioText": "Where's my ruler?",
+   "explanation": "「Where's my ruler?」的意思是「我的尺子在哪里」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 6 My sweet home · 我的家",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 6 · 我的家"
+   }
+  },
+  {
+   "id": "rd-113",
+   "unit": "U6",
+   "category": "read",
+   "text": "Where's the cat?",
+   "zh": "猫在哪里？",
+   "audio": "en-where-s-the-cat.99615440.mp3",
+   "audioText": "Where's the cat?",
+   "explanation": "「Where's the cat?」的意思是「猫在哪里」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 6 My sweet home · 我的家",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 6 · 我的家"
+   }
+  },
+  {
+   "id": "rd-114",
+   "unit": "U6",
+   "category": "read",
+   "text": "It's on the desk.",
+   "zh": "它在书桌上。",
+   "audio": "en-it-s-on-the-desk.c5d38a8e.mp3",
+   "audioText": "It's on the desk.",
+   "explanation": "「It's on the desk.」的意思是「它在书桌上」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 6 My sweet home · 我的家",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 6 · 我的家"
+   }
+  },
+  {
+   "id": "rd-115",
+   "unit": "U6",
+   "category": "read",
+   "text": "It's on the bed.",
+   "zh": "它在床上。",
+   "audio": "en-it-s-on-the-bed.3f0d7f4c.mp3",
+   "audioText": "It's on the bed.",
+   "explanation": "「It's on the bed.」的意思是「它在床上」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 6 My sweet home · 我的家",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 6 · 我的家"
+   }
+  },
+  {
+   "id": "rd-116",
+   "unit": "U6",
+   "category": "read",
+   "text": "It's in the bag.",
+   "zh": "它在书包里。",
+   "audio": "en-it-s-in-the-bag.e9200ec5.mp3",
+   "audioText": "It's in the bag.",
+   "explanation": "「It's in the bag.」的意思是「它在书包里」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 6 My sweet home · 我的家",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 6 · 我的家"
+   }
+  },
+  {
+   "id": "rd-117",
+   "unit": "U6",
+   "category": "read",
+   "text": "It's in the pencil box.",
+   "zh": "它在铅笔盒里。",
+   "audio": "en-it-s-in-the-pencil-box.ce5ac579.mp3",
+   "audioText": "It's in the pencil box.",
+   "explanation": "「It's in the pencil box.」的意思是「它在铅笔盒里」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 6 My sweet home · 我的家",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 6 · 我的家"
+   }
+  },
+  {
+   "id": "rd-118",
+   "unit": "U6",
+   "category": "read",
+   "text": "My pen is in the bag.",
+   "zh": "我的钢笔在书包里。",
+   "audio": "en-my-pen-is-in-the-bag.8dbb5ce4.mp3",
+   "audioText": "My pen is in the bag.",
+   "explanation": "「My pen is in the bag.」的意思是「我的钢笔在书包里」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 6 My sweet home · 我的家",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 6 · 我的家"
+   }
+  },
+  {
+   "id": "rd-119",
+   "unit": "U6",
+   "category": "read",
+   "text": "My bag is on the chair.",
+   "zh": "我的书包在椅子上。",
+   "audio": "en-my-bag-is-on-the-chair.c4f042ea.mp3",
+   "audioText": "My bag is on the chair.",
+   "explanation": "「My bag is on the chair.」的意思是「我的书包在椅子上」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 6 My sweet home · 我的家",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 6 · 我的家"
+   }
+  },
+  {
+   "id": "rd-120",
+   "unit": "U6",
+   "category": "read",
+   "text": "The cat is on the bed.",
+   "zh": "猫在床上。",
+   "audio": "en-the-cat-is-on-the-bed.c2dcbe6c.mp3",
+   "audioText": "The cat is on the bed.",
+   "explanation": "「The cat is on the bed.」的意思是「猫在床上」。先听示范，再看着句子大声读，每个单词都要读出来。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语",
+    "unit": "Unit 6 My sweet home · 我的家",
+    "point": "朗读单元核心句",
+    "type": "单元核心句型",
+    "label": "Unit 6 · 我的家"
+   }
+  }
+ ]
+}

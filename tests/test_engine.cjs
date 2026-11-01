@@ -69,7 +69,7 @@ for (const q of bank('math', 'measure').questions) {
 }
 // Choice: the key is right, every other option is wrong.
 for (const [site, games] of [['chinese', ['reading', 'similar-char', 'polyphone']], ['math', ['conversion', 'mental', 'units', 'directions']],
-  ['english', ['listen-word', 'scene', 'letters', 'listen-judge']]]) {
+  ['english', ['listen-word', 'scene']]]) {
   for (const game of games) {
     for (const q of bank(site, game).questions) {
       for (const o of q.options) assert.strictEqual(renderers.choice.check(q, o), String(o) === String(q.answer), `${game} ${q.id} ${o}`);
@@ -80,7 +80,7 @@ for (const [site, games] of [['chinese', ['reading', 'similar-char', 'polyphone'
 // English pictures: every picture a bank names is drawn by types/english.js (plain text counts only for emoji).
 vm.runInNewContext(fs.readFileSync(path.join(ROOT, 'shared-static/pk/types/english.js'), 'utf8'), { PK, window: {} });
 const known = name => PK.pictureKeys.has(name) || !/[A-Za-z]/.test(name);
-for (const game of ['listen-word', 'scene', 'letters', 'listen-judge']) {
+for (const game of ['listen-word', 'scene']) {
   for (const q of bank('english', game).questions) {
     if (q.pictures) for (const o of q.options) assert.ok(PK.pictureKeys.has(o), `${game} ${q.id}: no picture for option ${o}`);
     for (const item of q.pic || []) {
@@ -102,5 +102,21 @@ for (const q of sentences.questions) {
   const swapped = [order[1], order[0], ...order.slice(2)];
   const text = renderers.tiles.value(q, { selection: swapped, kept: [] }, ctx).value;
   if (text !== q.answers[0]) assert.ok(!renderers.tiles.check(q, text), `${q.id} swapped words graded right`);
+}
+// 字母奇妙屋: each answer letter's own template, written in its box, is read as that letter; an empty box is incomplete.
+vm.runInNewContext(fs.readFileSync(path.join(ROOT, 'shared-static/pk/types/handwrite.js'), 'utf8'), { PK, window: {} });
+for (const q of bank('english', 'letters').questions) {
+  const boxes = [...q.answer].map(c => PK.handwriting.templates[c]);
+  assert.strictEqual(renderers.handwrite.value(q, {}, { view: { boxes } }).value, q.answer, q.id);
+  assert.ok(renderers.handwrite.check(q, q.answer), q.id);
+  assert.ok(renderers.handwrite.value(q, {}, { view: { boxes: boxes.map(() => []) } }).incomplete, `${q.id} empty box accepted`);
+}
+
+// 读句子: a reading counts from 80 points; an unread sentence is incomplete.
+vm.runInNewContext(fs.readFileSync(path.join(ROOT, 'shared-static/pk/types/read.js'), 'utf8'), { PK, window: {} });
+for (const q of bank('english', 'read').questions) {
+  assert.ok(renderers.read.value(q, { score: null }).incomplete, q.id);
+  assert.ok(renderers.read.check(q, renderers.read.value(q, { score: 80, heard: '' }).value), q.id);
+  assert.ok(!renderers.read.check(q, renderers.read.value(q, { score: 79, heard: '' }).value), q.id);
 }
 console.log('engine ok');

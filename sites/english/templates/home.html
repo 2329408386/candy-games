@@ -89,14 +89,14 @@
             {% set name=games[id] %}
             <article class="game-card">
               <div class="game-top">
-                <span class="game-icon en-icon" aria-hidden="true">{{ {'listen-word':'🎧','scene':'🎬','letters':'Aa','sentence':'🧩','listen-judge':'👂'}[id] }}</span><span class="game-number">{{'%02d'|format(grade_games.index(id)+1)}}</span>
+                <span class="game-icon en-icon" aria-hidden="true">{{ {'listen-word':'🎧','scene':'🎬','letters':'Aa','sentence':'🧩','read':'🎤'}[id] }}</span><span class="game-number">{{'%02d'|format(grade_games.index(id)+1)}}</span>
               </div>
               <h3>{{name}}</h3>
               <p>
-                {{ {'listen-word':'听录音，选出听到的单词或图片，全册单词一网打尽。','scene':'看图看情景，选出最合适的应答，单元卷、口语必考。','letters':'26个字母认读、大小写配对、字母顺序和首字母。','sentence':'打乱的单词排一排，拼出每个单元的核心句型。','listen-judge':'听句子，判断和图片是否相符，练出好耳朵。'}[id] }}
+                {{ {'listen-word':'听录音，选出听到的单词或图片，全册单词一网打尽。','scene':'看图看情景，选出最合适的应答，单元卷、口语必考。','letters':'在英语四线格上动手写字母，大写小写都要写规范。','sentence':'打乱的单词排一排，拼出每个单元的核心句型。','read':'看着课本里的句子大声读，智能评分，读准每一个单词。'}[id] }}
               </p>
               <div class="card-bottom">
-                {% if license and id in unlocked %}<a class="game-link" href="{{url_for('game_page',game=id)}}">开始游戏<svg aria-hidden="true"><use href="#i-arrow"/></svg></a>{% elif id not in trials_used %}<a class="game-link trial-link" href="{{url_for('game_page',game=id)}}">免费试玩一局<svg aria-hidden="true"><use href="#i-arrow"/></svg></a>{% else %}<span class="locked"><svg aria-hidden="true"><use href="#i-lock"/></svg>试玩已结束</span><button type="button" class="text-button inline-link" data-contact>获取授权码</button>{% endif %}
+                {% if license and id in unlocked %}<a class="game-link" href="{{url_for('game_page',game=id)}}"{% if id == 'read' %} data-secure{% endif %}>开始游戏<svg aria-hidden="true"><use href="#i-arrow"/></svg></a>{% elif id not in trials_used %}<a class="game-link trial-link" href="{{url_for('game_page',game=id)}}"{% if id == 'read' %} data-secure{% endif %}>免费试玩一局<svg aria-hidden="true"><use href="#i-arrow"/></svg></a>{% else %}<span class="locked"><svg aria-hidden="true"><use href="#i-lock"/></svg>试玩已结束</span><button type="button" class="text-button inline-link" data-contact>获取授权码</button>{% endif %}
               </div>
             </article>
           {% endfor %}

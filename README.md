@@ -22,12 +22,14 @@
 
 ## 游戏规则
 - 语文、数学每款游戏题库 100 题，每局每人抽 20 题（按题型均衡抽取），同局双方不重复。可选双人PK、单人练习、错题重练。
-- 英语（外研版三起 2024 三年级上册，A组 5 款：听音识词、情景选择、字母奇妙屋、句子拼图、听力判断）：除字母奇妙屋外，题库按单元标 `unit`（U1—U6），开始页可选「期末综合」（各单元按 4/3 题混合抽 20 题）或单个单元（只抽该单元：单人 20 题，同屏双人平分、最多各 20 题）；联网PK 用房主选的单元。听音题带录音（`sites/english/static/audio/`），出题时自动播放一次，可点「再听一遍」重听；听音识词、听力判断两人共用喇叭会互相干扰，所以没有同屏双人PK（配置 `"noPk": true`），比赛用联网PK。
+- 英语（外研版三起 2024 三年级上册，A组 5 款：听音识词、情景选择、字母奇妙屋、句子拼图、读句子）：除字母奇妙屋外，题库按单元标 `unit`（U1—U6），开始页可选「期末综合」（各单元按 4/3 题混合抽 20 题）或单个单元（只抽该单元：单人 20 题，同屏双人平分、最多各 20 题）；联网PK 用房主选的单元。听音题带录音（`sites/english/static/audio/`），出题时自动播放一次，可点「再听一遍」重听；听音识词、读句子两人同时用喇叭或麦克风会互相干扰，所以没有同屏双人PK（配置 `"noPk": true`），比赛用联网PK。
+- 字母奇妙屋（`types/handwrite.js`）：在英语四线格里手写字母（每格宽同田字格、高同英语本四线三格，第三线红色）。浏览器内识别：$P 点云比字形，再看字母在四线里的上下位置（大写占上两格、b d h k l 顶到第一线、g j p q y 到第四线），所以 C/c、O/o、P/p 这类能分开；I 和 l 都算对。`tests/test_handwrite.cjs` 用变形后的模板检查识别率。
+- 读句子（`types/read.js` + `core/speech.py`）：每单元 20 句课内核心句，先听示范（Kokoro 合成），再点「开始读」录音（16 kHz PCM，最长 10 秒），服务器转给阿里云「一句话识别」，按读对的单词比例打分，80 分算对；缩写、mom/mum、数字等两种写法都算。浏览器只允许 https 页面用麦克风，http 页面会提示切换。阿里云配置只放在服务器 `secret.env`：`ALIYUN_AK_ID`、`ALIYUN_AK_SECRET`（需有智能语音交互权限）、`NLS_APPKEY`（项目识别模型须为英语 16k）；没配置时提示「语音评测暂未开通」。限流：每个授权每 2 秒 1 次、每天 300 次，试玩每天 25 次，全站同时最多 3 个评测。
 - 题库只能在授权后通过 `/games/<游戏>/bank.json` 获取。
 - 免费试玩：未授权的浏览器每个游戏可玩一局（点开始即用掉，记录在 `trials` 表，按会话里的设备令牌区分），试玩只下发够一局的题；结束后弹出管理员微信二维码（`shared-static/contact/`）。首页右上角「获取授权码」也会打开这个二维码。
 - 游戏页右上角「投屏」：整体放大字号并全屏，适合教室投影；按 Esc 退出全屏时同时退出投屏。
 - 答错的题记入本机错题本（localStorage `<站点>-mistakes-v1`，如 `chinese-mistakes-v1`，最多 300 条），首页右上角「错题本」查看；错题重练答对即移出。
-- 默认时长：语文标点PK、的地得PK 150 秒，其余语文游戏 180 秒；数学 150 秒；英语字母奇妙屋 150 秒，其余英语游戏 180 秒。开始页右上角可设 30—1800 秒，开局后锁定。
+- 默认时长：语文标点PK、的地得PK 150 秒，其余语文游戏 180 秒；数学 150 秒；英语字母奇妙屋 240 秒、读句子 300 秒，其余英语游戏 180 秒。开始页右上角可设 30—1800 秒，开局后锁定。
 - 计分（两站相同）：答对 +10，连对额外 +5，答错 −5（最低 0）。
 - 时长、声音开关和英语的单元选择保存在浏览器 localStorage `<站点>-pk-settings-v1`。
 - 音效素材与许可见 `shared-static/game-audio-v3/SOURCES.md`。
@@ -90,6 +92,8 @@ deploy/deploy.sh rollback   # 切回上一个版本
 ## 服务器运维
 - 服务：`systemctl status candy-games`；日志：`journalctl -u candy-games`。
 - 新增站点（如英语站）：先在 `/var/lib/candy-games/secret.env` 加上该站的密钥（如 `ENGLISH_SECRET=<随机64位>`）再发布；发布后运行 `manage.py seed --site <站点>`，建好各学期「A组」并把管理员初始密码写到 `/var/lib/candy-games/<站点>/管理员初始凭据.txt`。
+- https：Let's Encrypt 给 IP 签的短期证书（约 6 天），certbot 装在 `/opt/certbot`，`candy-games-cert.timer` 每天两次续期并重载 nginx；首次签发用 `/opt/candy-games/current/deploy/install.sh cert`。http 和 https 内容完全一样（共用 `deploy/nginx-locations.conf`），不强制跳转；授权 Cookie 两边通用，错题本和设置存在浏览器 localStorage、两边各一份，从 http 点「🔒 安全连接」或读句子时会带过去合并（`shared-static/social/carry.js`）。
+- 登录：授权和后台登录的 Cookie 有效期 10 年、每次访问续期，相当于永久；后台改密码后其它设备的后台登录失效。
 - 自动恢复：进程退出后 1 秒内由 systemd 重新拉起（不限次数）；`candy-games-watchdog.timer` 每 30 秒检查两个站点的 `/health`，卡死时自动重启服务；nginx 也设置了自动重启。
 - 备份：`candy-games-backup.timer` 每天 03:15 备份到 `/var/lib/candy-games/backups/`，保留 30 天；每次发布前也备份一次。
 - 异地备份：在开发机上运行 `deploy/pull-backups.sh`，把服务器备份（含 secret.env）拉到 `~/candy-games-backups/`；需要每天自动拉取时，按脚本开头的说明加入开发机 crontab。

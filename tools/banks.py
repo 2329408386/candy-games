@@ -4,7 +4,8 @@
   python tools/banks.py --fix      rewrite banks in the canonical format and regenerate docs/<site>/*.md
 
 Each game has sites/<site>/banks/<game>.json:
-  type       renderer in shared-static/pk/ ("choice", "blanks", "tiles", "expand", "edit" or "measure")
+  type       renderer in shared-static/pk/ ("choice", "blanks", "tiles", "expand", "edit", "measure", "read" or
+             "handwrite")
   draw       how each player's 20 questions are drawn (see draw_plans)
   ui         per-game options for the renderer (task, instruction, blankOptions, lettered, allowUnusedCards,
              joiner: text between word cards, units/unitNames: the start page offers 期末综合 or one unit)
@@ -343,6 +344,40 @@ def check_measure(q, bank, game):
     return errors
 
 
+def check_read(q, bank, game):
+    """读句子: the sentence the child reads (text), its meaning (zh) and the model reading (audio = text)."""
+    errors = []
+    if not q.get("text") or not q.get("zh"):
+        errors.append("缺少 text 或 zh")
+    if not q.get("audio") or q.get("audioText") != q.get("text"):
+        errors.append("示范录音的 audioText 必须与 text 相同")
+    return errors
+
+
+HANDWRITE_KINDS = {"listen": 2, "upper-to-lower": 1, "lower-to-upper": 1, "next": 2}
+
+
+def check_handwrite(q, bank, game):
+    """字母奇妙屋: answer is the letters to write, one per box ("Bb", "b" or "B")."""
+    errors = []
+    answer = q.get("answer", "")
+    if q.get("kind") not in HANDWRITE_KINDS:
+        return [f"未知 kind {q.get('kind')}"]
+    if len(answer) != HANDWRITE_KINDS[q["kind"]] or not answer.isascii() or not answer.isalpha():
+        errors.append(f"answer 应为 {HANDWRITE_KINDS[q['kind']]} 个字母：{answer}")
+    elif len(answer) == 2 and (answer[0] != answer[0].upper() or answer[1] != answer[0].lower()):
+        errors.append(f"两格题应先大写后小写：{answer}")
+    if q["kind"] == "listen" and not q.get("audio"):
+        errors.append("听音题缺少录音")
+    if q["kind"] == "upper-to-lower" and q.get("shown") != answer.upper():
+        errors.append("shown 应为对应大写")
+    if q["kind"] == "lower-to-upper" and q.get("shown") != answer.lower():
+        errors.append("shown 应为对应小写")
+    if q["kind"] == "next" and (len(q.get("shown", "")) != 2 or ord(q["shown"][0]) + 1 != ord(answer[0])):
+        errors.append("next 题 shown 的下一个字母应为 answer")
+    return errors
+
+
 CHECKS = {
     "choice": check_choice,
     "blanks": check_blanks,
@@ -350,6 +385,8 @@ CHECKS = {
     "expand": check_expand,
     "edit": check_edit,
     "measure": check_measure,
+    "read": check_read,
+    "handwrite": check_handwrite,
 }
 
 
@@ -429,6 +466,10 @@ def doc_rows(site, game, bank):
             others = [apply_edit(q, e) for e in q["accepted"][1:]]
             also = "；也接受 " + " 或 ".join(others) if others else ""
             yield f"- {q['id']}（{q['category']}·{q['subtype']}）：{q['original']} → **{q['corrected']}**{also}"
+        elif t == "read":
+            yield f"- {q['id']}（{q['unit']}）：**{q['text']}** {q['zh']}"
+        elif t == "handwrite":
+            yield f"- {q['id']}：{q['prompt']} 答案：**{q['answer']}**"
         elif t == "measure":
             yield (
                 f"- {q['id']}：{q['object']}，起点{q['startMm']}毫米，终点{q['endMm']}毫米，"

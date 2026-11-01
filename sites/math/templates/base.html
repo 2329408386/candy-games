@@ -9,6 +9,7 @@
     <title>{% block title %}数学小游戏{% endblock %}</title>
     <link rel="stylesheet" href="{{asset('site.css')}}">
     {% if not is_admin %}<link rel="stylesheet" href="{{url_for('home')}}static/shared/social/social.css?v=3d8997ae">{% endif %}
+    {% if not is_admin %}<script src="{{url_for('home')}}static/shared/social/carry.js?v=c6bbdc49"></script>{% endif %}
   </head>
   <body class="{{'admin-body' if is_admin else 'student-body'}}">
     <svg xmlns="http://www.w3.org/2000/svg" style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">

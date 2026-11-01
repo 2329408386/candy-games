@@ -97,3 +97,9 @@ def migrate(d):
                 "UPDATE profiles SET rank_stars=?,rank_progress=? WHERE site=? AND license_id=?", (*ranks.replay(total), site, lid)
             )
         d.execute("INSERT INTO migrations VALUES('ranks_x3',?)", (int(time.time()),))
+    if "english_read_replaces_listen_judge" not in done:
+        # 听力判断PK became 读句子 (game id "read"): it takes over the old game's place in its group, so everyone
+        # licensed for that group gets the new game. Old scores keep the old id and simply stop being shown.
+        d.execute("UPDATE OR IGNORE game_memberships SET game='read' WHERE site='english' AND game='listen-judge'")
+        d.execute("DELETE FROM game_memberships WHERE site='english' AND game='listen-judge'")
+        d.execute("INSERT INTO migrations VALUES('english_read_replaces_listen_judge',?)", (int(time.time()),))
