@@ -352,6 +352,29 @@ def test_admin_quota_on_license_detail(db):
     db.commit()
 
 
+def test_worker_threads_beat_and_grade(models, klass, db):
+    import threading
+
+    t, cid, aid = klass
+    db.execute("DELETE FROM ess_meta WHERE key='worker_seen'")
+    db.commit()
+    s, _ = student_client(db, cid)
+    sid = jpost(s, f"/api/write/{aid}", {"text": ESSAY}).get_json()["id"]
+    stop = threading.Event()
+    threads = [threading.Thread(target=worker.thread_main, args=(stop,)) for _ in range(worker.THREADS)]
+    for th in threads:
+        th.start()
+    deadline = time.time() + 10
+    while time.time() < deadline and s.get(f"/api/submissions/{sid}/state").get_json()["status"] != "review":
+        time.sleep(0.1)
+    stop.set()
+    for th in threads:
+        th.join(5)
+    assert s.get(f"/api/submissions/{sid}/state").get_json()["status"] == "review"
+    assert db.execute("SELECT value FROM ess_meta WHERE key='worker_seen'").fetchone()
+    assert SiteClient("teacher").get("/health").get_json()["worker_seen"]
+
+
 def test_grading_helpers():
     text = "第一段。\n\n第二 段有空格。"
     assert grading.locate(text, "第二段有空格") == (text.index("第二"), len(text) - 1)

@@ -176,6 +176,11 @@ def work(d, stop=None, once=False):
             d.commit()
 
 
+def thread_main(stop=None):
+    """One worker thread. Its connection must be opened here: sqlite3 connections belong to their thread."""
+    work(connect(), stop)
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--once", action="store_true")
@@ -188,7 +193,7 @@ def main():
     if args.once:
         work(connect(), once=True)
         return
-    threads = [threading.Thread(target=work, args=(connect(),), daemon=True) for _ in range(THREADS)]
+    threads = [threading.Thread(target=thread_main, daemon=True) for _ in range(THREADS)]
     for t in threads:
         t.start()
     log.info("essay worker started with %d threads", THREADS)
