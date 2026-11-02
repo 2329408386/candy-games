@@ -111,6 +111,23 @@ for (const q of bank('english', 'letters').questions) {
   assert.ok(renderers.handwrite.check(q, q.answer), q.id);
   assert.ok(renderers.handwrite.value(q, {}, { view: { boxes: boxes.map(() => []) } }).incomplete, `${q.id} empty box accepted`);
 }
+{
+  // 写错时说清楚错在哪儿
+  const { diagnose, templates: T } = PK.handwriting;
+  const shift = (strokes, dy) => strokes.map(st => st.map(([x, y]) => [x, y + dy]));
+  assert.strictEqual(diagnose(T.a, 'a'), '', 'a right letter has no diagnosis');
+  assert.match(diagnose(T.C, 'c'), /太大.*小写 c 只占中间一格/);
+  assert.match(diagnose(T.c, 'C'), /太小.*大写 C/);
+  assert.match(diagnose(shift(T.O, 0.9), 'O'), /位置不对：.*红线/);
+  assert.match(diagnose(T.B, 'b'), /你写的是大写 B，题目要的是小写 b/);
+  assert.match(diagnose(T.d, 'b'), /更像小写 d。b 的半圆在竖线右边/);
+  assert.match(diagnose(T.R, 'P'), /更像大写 R。P 只有上面一个半圆/);
+  assert.match(diagnose(shift(T.b, 1), 'b'), /形状对了，位置不对：.*第一线/);
+  assert.match(diagnose([], 'b'), /空/);
+  assert.match(diagnose(T.l, 'L'), /你写的是小写 l，题目要的是大写 L/);
+  const q = { answer: 'b' }, ctx = { view: { boxes: [T.d] } };
+  assert.strictEqual(renderers.handwrite.diagnose(q, 'd', ctx), diagnose(T.d, 'b'));
+}
 
 // 读句子: a reading counts from 80 points; an unread sentence is incomplete.
 vm.runInNewContext(fs.readFileSync(path.join(ROOT, 'shared-static/pk/types/read.js'), 'utf8'), { PK, window: {} });

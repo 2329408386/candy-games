@@ -54,6 +54,7 @@
       for (const m of items) {
         const li = el('li');
         li.append(el('p', 'mistake-text', m.text), el('p', 'hint', `正确答案：${m.answer}${m.count > 1 ? ` · 错过 ${m.count} 次` : ''}`));
+        if (m.why) li.append(el('p', 'mistake-why', '✏️ 哪里没写好：' + m.why));
         ol.append(li);
       }
       card.append(head, ol);

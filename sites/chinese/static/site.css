@@ -93,4 +93,4 @@ button.header-contact:hover{background:var(--green-dark)}
 .footer-cross{margin-left:22px;white-space:nowrap}
 .site-footer .footer-cross a{margin-left:12px;display:inline}
 .site-footer .footer-cross a:hover{color:var(--ink);text-decoration:underline}
-@media(max-width:600px){.footer-cross{display:block;margin:12px 0 0}}
+@media(max-width:600px){.footer-cross{display:block;margin:12px 0 0;white-space:normal}.footer-cross a{margin:0 6px;white-space:nowrap}}

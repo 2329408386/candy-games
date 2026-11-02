@@ -15,7 +15,7 @@
 @media(max-width:600px){.game-grid.en-grid{grid-template-columns:1fr}.en-grid .game-card{padding:22px}}
 
 @media(max-width:600px){.header-note{max-width:none;white-space:nowrap}}
-.header-actions{display:flex;gap:18px;align-items:center}.header-link{font-size:14px;font-weight:650;padding:7px 16px;border:1px solid var(--line);border-radius:999px;background:var(--white);white-space:nowrap}.mistake-book .section-heading .secondary{white-space:nowrap}.mistake-game{margin:0 0 18px}.mistake-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.mistake-head h3{margin:0}.mistake-actions{display:flex;gap:14px;align-items:center;white-space:nowrap}.mistake-actions .text-button{white-space:nowrap}.mistake-items{margin:12px 0 0;padding-left:22px}.mistake-items li{padding:8px 0;border-top:1px solid var(--line)}.mistake-game p.mistake-text{margin:0;min-height:0;color:var(--ink);font-size:14px}.mistake-game p.hint{min-height:0;margin:2px 0 0}.mistake-items .hint{margin:2px 0 0;padding:0;min-height:0}@media(max-width:600px){.header-actions .header-note{display:none}}
+.header-actions{display:flex;gap:18px;align-items:center}.header-link{font-size:14px;font-weight:650;padding:7px 16px;border:1px solid var(--line);border-radius:999px;background:var(--white);white-space:nowrap}.mistake-book .section-heading .secondary{white-space:nowrap}.mistake-game{margin:0 0 18px}.mistake-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.mistake-head h3{margin:0}.mistake-actions{display:flex;gap:14px;align-items:center;white-space:nowrap}.mistake-actions .text-button{white-space:nowrap}.mistake-items{margin:12px 0 0;padding-left:22px}.mistake-items li{padding:8px 0;border-top:1px solid var(--line)}.mistake-game p.mistake-text{margin:0;min-height:0;color:var(--ink);font-size:14px}.mistake-game p.hint{min-height:0;margin:2px 0 0}.mistake-items .hint{margin:2px 0 0;padding:0;min-height:0}.mistake-game p.mistake-why{margin:6px 0 0;padding:4px 10px;border-left:4px solid #e08a2e;border-radius:8px;background:#fff3d6;color:#5a3a10;font-size:14px;font-weight:600;min-height:0}@media(max-width:600px){.header-actions .header-note{display:none}}
 
 /* whole card is the link; trial and contact */
 .game-card .game-link::after{content:'';position:absolute;inset:0;border-radius:inherit}
@@ -99,4 +99,4 @@ button.header-contact:hover{background:var(--green-dark)}
 .footer-cross{margin-left:22px;white-space:nowrap}
 .site-footer .footer-cross a{margin-left:12px;display:inline}
 .site-footer .footer-cross a:hover{color:var(--ink);text-decoration:underline}
-@media(max-width:600px){.footer-cross{display:block;margin:12px 0 0}}
+@media(max-width:600px){.footer-cross{display:block;margin:12px 0 0;white-space:normal}.footer-cross a{margin:0 6px;white-space:nowrap}}

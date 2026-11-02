@@ -138,6 +138,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, summary:focus-visibl
 .pk-wrong-item p { margin: 0.25rem 0; }
 .pk-wrong-q { font-weight: 600; }
 .pk-wrong-why { color: var(--muted); font-size: 0.875rem; }
+.pk-why { padding: 0.4rem 0.7rem; border-left: 4px solid #e08a2e; border-radius: 8px; background: #fff3d6; color: #5a3a10; font-weight: 600; }
 .pk-result-actions { display: flex; gap: 0.75rem; justify-content: center; margin-top: 1.125rem; }
 .pk-result-actions button { min-width: 10rem; }
 

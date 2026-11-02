@@ -132,12 +132,13 @@
     all: () => readStore(MISTAKES_KEY, {}),
     // Only ids still in the bank count, so removed or replaced questions drop out of 错题重练.
     ids: () => Object.values(mistakes.all()).filter(m => m.game === cfg.id && (!bank || bank.questions.some(q => q.id === m.id))).map(m => m.id),
-    add(q, renderer) {
+    add(q, renderer, why) {
       const book = mistakes.all();
       const key = cfg.id + '/' + q.id;
       const old = book[key];
       book[key] = { game: cfg.id, id: q.id, text: renderer.describe(q).slice(0, 160), answer: renderer.solution(q).slice(0, 160),
         count: (old?.count || 0) + 1, last: Date.now() };
+      if (why) book[key].why = why.slice(0, 200);
       const keys = Object.keys(book);
       if (keys.length > MISTAKE_LIMIT) {
         keys.sort((a, b) => book[a].last - book[b].last).slice(0, keys.length - MISTAKE_LIMIT).forEach(k => delete book[k]);
@@ -287,6 +288,8 @@
   //   value(q, a, ctx)        -> {value} or {incomplete: '提示'}
   //   check(q, value, ctx)    -> boolean
   //   solution(q)             -> correct answer as text;  describe(q) -> one-line question text (mistake book)
+  //   diagnose(q, value, ctx) -> optional: for a wrong answer, what exactly is wrong with it (shown with the answer,
+  //                              in the round's mistakes and in the mistake book)
   //   history                 -> false hides 撤回/清空;  afterRender(q, a, ctx, node) -> optional, runs after insertion
   //   submitButton            -> false hides 提交答案: the renderer calls ctx.submit() itself (读句子 after scoring)
   const renderers = {};
@@ -674,7 +677,7 @@
     round.running = true;
     round.ended = false;
     round.deadline = preset ? preset.deadline : Date.now() + duration * 1000;
-    round.players = draws.map(questions => ({ questions, index: 0, score: 0, combo: 0, correct: 0, wrong: [], marks: [], a: null, view: null,
+    round.players = draws.map(questions => ({ questions, index: 0, score: 0, combo: 0, correct: 0, wrong: [], whys: {}, marks: [], a: null, view: null,
       history: [], result: null, notice: '' }));
     round.ticket = SCORE && (round.mode === 'solo' || round.mode === 'mistakes')
       ? scorePost(SCORE.start, { mode: round.mode }).then(d => d.round, () => null) : null;
@@ -797,6 +800,9 @@
     }
     const correct = !!renderer.check(q, answer.value, ctx);
     s.result = { correct, value: answer.value };
+    if (!correct && renderer.diagnose) {
+      try { s.result.why = renderer.diagnose(q, answer.value, ctx) || ''; } catch { s.result.why = ''; }
+    }
     s.marks.push(correct);
     if (round.mode === 'online') online.report(s.marks.length - 1, correct);
     if (correct) {
@@ -808,7 +814,8 @@
       s.combo = 0;
       s.score = Math.max(0, s.score - 5);
       s.wrong.push(q);
-      mistakes.add(q, renderer);
+      s.whys[q.id] = s.result.why;
+      mistakes.add(q, renderer, s.result.why);
     }
     audio.result(correct, p, s.combo);
     s.wait = correct ? ADVANCE_MS.right : ADVANCE_MS.wrong;
@@ -863,6 +870,7 @@
     box.setAttribute('role', 'status');
     box.append(el('strong', '', s.result.correct ? (s.combo > 1 ? '答对了！+15分' : '答对了！+10分') : '再想一想，看看解析'));
     box.append(el('p', '', '正确答案：' + renderer.solution(q)));
+    if (!s.result.correct && s.result.why) box.append(el('p', 'pk-why', '✏️ 哪里没写好：' + s.result.why));
     box.append(el('p', '', q.explanation));
     if (q.source.detail) {
       const details = el('details');
@@ -930,7 +938,9 @@
       list.append(el('summary', '', `${players.length > 1 ? NAMES[p] + '的' : '本局'}错题（${s.wrong.length}）`));
       for (const q of s.wrong) {
         const item = el('div', 'pk-wrong-item');
-        item.append(el('p', 'pk-wrong-q', renderer.describe(q)), el('p', '', '正确答案：' + renderer.solution(q)), el('p', 'pk-wrong-why', q.explanation));
+        item.append(el('p', 'pk-wrong-q', renderer.describe(q)), el('p', '', '正确答案：' + renderer.solution(q)));
+        if (s.whys?.[q.id]) item.append(el('p', 'pk-why', '✏️ 哪里没写好：' + s.whys[q.id]));
+        item.append(el('p', 'pk-wrong-why', q.explanation));
         list.append(item);
       }
       resultScreen.append(list);
