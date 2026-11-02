@@ -1,25 +1,39 @@
 /* 语文老师工作台: draws a review the way a Chinese teacher marks an exercise book, in red pen.
  *
  * RedPen.render(container, data) — data comes from redpen_data() in core/essay/__init__.py:
- *   text, title, marks [{type, start, end, fix, note}], total, max, level, summary, praise, advice,
+ *   text, title, student, marks [{type, start, end, fix, note}], total, max, level, showScore, summary,
  *   pages [{src, w, h, lines: [{s, e, b: [x1, y1, x2, y2] (0–1000)}]}], onPhoto.
+ * RedPen.exportPdf(container) — the same drawing on A4 pages, as a PDF to print.
+ *
  * With onPhoto the marks are drawn on the student's own photos: every recognised line knows which characters of
  * the text it holds and where it is, and a character's place within its line is estimated from its position
  * (handwriting is roughly even). Otherwise (typed essays) the text is laid out on squared composition paper
  * (作文纸) and the same marks are drawn there; photos without usable line places are shown above it.
  *
- * Marks: 好词好句 — wavy line under it; 错别字 — circled, the right word written above; 用词不当 / 病句 /
- * 标点 — underlined; 修改建议 — bracketed; each with a short note in the gap between lines. Tapping a mark shows
- * the full note. The score and level go in the top right corner; the comments are written under the essay.
+ * Drawing goes layout → scene (paths, handwritten text, images) → renderer: SVG on the page (tap a mark for its
+ * full note), canvas for the PDF, so both look the same.
+ *
+ * Proofreading marks (修改符号, the shapes of the 修改病句 PK game in shared-static, pk types edit.js): the correction
+ * of an error (quote → fix) is diffed character by character and drawn as 改正号 (loop the wrong characters, the
+ * right ones written above), 增补号 (∧ under the gap, the missing characters above), 删除号 (loop with a pig's
+ * tail), 对调号 (the line under one part and over the other); a correction too tangled for marks is underlined and
+ * written out in the margin. 好词 get circles under each character, 好句 a wavy line, 修改建议 brackets, 分段 the
+ * 分段号. Short notes are written on the photo between the lines; notes that do not fit go in the margins on both
+ * sides, joined to their place by a hand-drawn line. The score goes in the top right corner, the 总评 under the
+ * essay — all in a handwriting font with every character a little crooked, like a real pen.
  */
 (function () {
   'use strict';
   const RED = '#d2342a';
-  const FONT = "RedPen, 'Kaiti SC', STKaiti, KaiTi, 'BiauKai', serif";
+  const PEN_FONT = "RedPen, 'Kaiti SC', STKaiti, KaiTi, serif";
+  const TYPED_FONT = "'Kaiti SC', STKaiti, KaiTi, serif";
   const NS = 'http://www.w3.org/2000/svg';
-  const KIND = { 好词好句: 'good', 错别字: 'typo', 用词不当: 'word', 病句: 'line', 标点: 'line', 修改建议: 'tip' };
-  const NOTE_CHARS = 12;
+  const KIND = { 好词好句: 'good', 错别字: 'typo', 用词不当: 'word', 病句: 'line', 标点: 'line', 修改建议: 'tip', 分段: 'para' };
+  const INLINE_CHARS = 8; // notes longer than this go in the margin
+  const FIX_INLINE = 6; // corrections longer than this are written out in the margin
   const COLS = 20;
+  const MARGIN = 0.26; // each margin, as a share of the photo's width
+  const NO_LINE_START = '，。、；：？！”’）》…—';
 
   function el(name, attrs, parent) {
     const node = document.createElementNS(NS, name);
@@ -34,14 +48,29 @@
 
   const weight = (c) => (/[\x20-\x7e]/.test(c) ? 0.55 : 1);
   const textWidth = (s, size) => [...s].reduce((a, c) => a + weight(c), 0) * size;
+  const f1 = (n) => n.toFixed(1);
 
   // A seeded wobble, so a hand-drawn line looks the same every time the page is drawn.
   function rng(seed) {
-    let x = seed * 9301 + 49297;
+    let x = Math.abs(Math.floor(seed)) % 233280;
     return () => ((x = (x * 9301 + 49297) % 233280) / 233280) - 0.5;
   }
 
-  /* Segments of a mark: one box per line it touches. lines: [{s, e, x1, y1, x2, y2, text}] in drawing units. */
+  /* A pen stroke through points: each segment bows a little, like a hand. */
+  function stroke(points, rand, amp) {
+    let d = 'M' + f1(points[0][0]) + ' ' + f1(points[0][1]);
+    for (let k = 1; k < points.length; k++) {
+      const [x0, y0] = points[k - 1], [x1, y1] = points[k];
+      const len = Math.hypot(x1 - x0, y1 - y0) || 1;
+      const bow = rand() * amp;
+      const mx = (x0 + x1) / 2 - ((y1 - y0) / len) * bow, my = (y0 + y1) / 2 + ((x1 - x0) / len) * bow;
+      d += ' Q' + f1(mx) + ' ' + f1(my) + ' ' + f1(x1 + rand() * amp * 0.3) + ' ' + f1(y1 + rand() * amp * 0.3);
+    }
+    return d;
+  }
+
+  /* ---- where characters are ---- */
+  /* Segments of a range of characters: one box per line it touches. lines: [{s, e, x1, y1, x2, y2, text}]. */
   function segments(lines, mark) {
     const out = [];
     for (const L of lines) {
@@ -56,47 +85,75 @@
     return out;
   }
 
-  function wavy(seg, g, sw, rand) {
-    const y = seg.y2 + seg.h * 0.14, amp = seg.h * 0.09, step = seg.h * 0.22;
-    let d = 'M' + seg.x1.toFixed(1) + ' ' + y.toFixed(1), up = true;
-    for (let x = seg.x1; x < seg.x2; x += step) {
-      const nx = Math.min(seg.x2, x + step);
-      d += ' Q' + ((x + nx) / 2).toFixed(1) + ' ' + (y + (up ? -amp : amp) * (1 + rand() * 0.3)).toFixed(1) + ' ' + nx.toFixed(1) + ' ' + y.toFixed(1);
-      up = !up;
+  /* The gap before character k (an insertion point): x and the line's box. */
+  function gapAt(lines, k) {
+    const after = segments(lines, { start: k, end: k + 1 })[0];
+    const before = segments(lines, { start: k - 1, end: k })[0];
+    // Inside a line the gap is the left edge of the next character; at the end of a line, the right edge of the last.
+    if (after) return { ...after, x: after.x1 };
+    if (before) return { ...before, x: before.x2 };
+    return null;
+  }
+
+  /* ---- the correction, character by character ---- */
+  /* Hunks turning a into b ({a0, a1, ins}, positions in a), or a swap, or null when too tangled to draw. */
+  function editOps(a, b) {
+    a = [...a];
+    b = [...b];
+    const n = a.length, m = b.length;
+    if (!m || n > 120 || m > 160) return null;
+    const dp = Array.from({ length: n + 1 }, () => new Int16Array(m + 1));
+    for (let i = n - 1; i >= 0; i--) for (let j = m - 1; j >= 0; j--) dp[i][j] = a[i] === b[j] ? dp[i + 1][j + 1] + 1 : Math.max(dp[i + 1][j], dp[i][j + 1]);
+    const hunks = [];
+    let i = 0, j = 0, cur = null;
+    const open = () => cur || (cur = { a0: i, a1: i, ins: '' });
+    while (i < n || j < m) {
+      if (i < n && j < m && a[i] === b[j]) {
+        if (cur) hunks.push(cur), (cur = null);
+        i++, j++;
+      } else if (j >= m || (i < n && dp[i + 1][j] >= dp[i][j + 1])) {
+        open().a1 = ++i;
+      } else {
+        open().ins += b[j++];
+      }
     }
-    el('path', { d, class: 'ink', 'stroke-width': sw }, g);
-  }
-
-  function underline(seg, g, sw, rand) {
-    const y = seg.y2 + seg.h * 0.12;
-    const mid = (seg.x1 + seg.x2) / 2;
-    el('path', { d: `M${seg.x1} ${y + rand() * seg.h * 0.05} Q${mid} ${y + rand() * seg.h * 0.12} ${seg.x2} ${y + rand() * seg.h * 0.05}`, class: 'ink', 'stroke-width': sw }, g);
-  }
-
-  function circle(seg, g, sw, rand) {
-    const cx = (seg.x1 + seg.x2) / 2, cy = (seg.y1 + seg.y2) / 2;
-    const rx = (seg.x2 - seg.x1) / 2 + seg.h * 0.28, ry = seg.h * 0.66;
-    // An ellipse drawn in one stroke that overshoots its start a little, like a pen does.
-    const pts = [];
-    for (let k = 0; k <= 26; k++) {
-      const t = -0.6 + (k / 24) * Math.PI * 2;
-      const r = 1 + rand() * 0.06;
-      pts.push([cx + rx * r * Math.cos(t), cy + ry * r * Math.sin(t)]);
+    if (cur) hunks.push(cur);
+    if (!hunks.length) return null;
+    if (hunks.length === 2) {
+      const [h, k] = hunks;
+      const del = (x) => !x.ins && x.a1 > x.a0, ins = (x) => x.ins && x.a1 === x.a0;
+      if (k.a0 > h.a1 && del(h) && ins(k) && a.slice(h.a0, h.a1).join('') === k.ins) return { swap: [h.a0, h.a1, k.a0] };
+      if (k.a0 > h.a1 && ins(h) && del(k) && a.slice(k.a0, k.a1).join('') === h.ins) return { swap: [h.a0, k.a0, k.a1] };
     }
-    el('path', { d: 'M' + pts.map((p) => p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' L'), class: 'ink', 'stroke-width': sw }, g);
+    const changed = hunks.reduce((s, x) => s + (x.a1 - x.a0) + [...x.ins].length, 0);
+    if (hunks.length > 3 || changed > 0.6 * (n + m) || hunks.some((x) => [...x.ins].length > FIX_INLINE)) return null;
+    return { hunks };
   }
 
-  function bracket(seg, g, sw, first, last) {
-    const pad = seg.h * 0.18, y1 = seg.y1 - pad * 0.6, y2 = seg.y2 + pad * 0.6, hook = seg.h * 0.22;
-    if (first) el('path', { d: `M${seg.x1 - pad + hook} ${y1} L${seg.x1 - pad} ${y1} L${seg.x1 - pad} ${y2}`, class: 'ink', 'stroke-width': sw }, g);
-    if (last) el('path', { d: `M${seg.x2 + pad - hook} ${y2} L${seg.x2 + pad} ${y2} L${seg.x2 + pad} ${y1}`, class: 'ink', 'stroke-width': sw }, g);
-  }
+  /* ---- scene ---- */
+  const path = (d, sw, extra) => Object.assign({ t: 'path', d, sw }, extra || {});
+  const pen = (s, x, y, size, seed, extra) => Object.assign({ t: 'text', s, x, y, size, seed }, extra || {});
 
-  function shortNote(m) {
-    let s = (m.note || '').trim();
-    if (!s && m.fix && KIND[m.type] !== 'typo') s = KIND[m.type] === 'tip' ? '可以写得更好' : '改：' + m.fix;
-    if (!s) return '';
-    return [...s].length > NOTE_CHARS ? [...s].slice(0, NOTE_CHARS - 1).join('') + '…' : s;
+  /* Where each character of handwritten text goes: uneven spacing, a drifting baseline, each one a little turned. */
+  function glyphs(item) {
+    const chars = [...item.s];
+    if (!item.seed && item.seed !== 0) {
+      let x = item.x - (item.anchor === 'middle' ? textWidth(item.s, item.size) / 2 : 0);
+      return chars.map((c) => {
+        const g = { c, x, y: item.y, rot: 0 };
+        x += weight(c) * item.size;
+        return g;
+      });
+    }
+    const r = rng(item.seed * 7 + 13);
+    const slope = r() * 0.05;
+    const advance = chars.map((c) => weight(c) * item.size * (0.97 + r() * 0.12));
+    let x = item.x - (item.anchor === 'middle' ? advance.reduce((a, b) => a + b, 0) / 2 : 0);
+    return chars.map((c, k) => {
+      const g = { c, x: x + r() * item.size * 0.05, y: item.y + r() * item.size * 0.09 + slope * (x - item.x), rot: r() * 7 };
+      x += advance[k];
+      return g;
+    });
   }
 
   function overlap(a, b) {
@@ -104,7 +161,7 @@
     return w > 0 && h > 0 ? w * h : 0;
   }
 
-  /* Writes text in red where it overlaps the fewest other notes and words. */
+  /* The least crowded place near a mark for a short note; null when every place covers the writing. */
   function place(text, size, near, sheet, taken, obstacles) {
     const w = textWidth(text, size), h = size * 1.15;
     const gap = near.h * 0.2;
@@ -124,157 +181,597 @@
       if (cost < bestCost) (best = box), (bestCost = cost);
       if (!cost) break;
     }
+    if (bestCost > w * h * 0.25) return null;
     taken.push(best);
     return best;
   }
 
-  function write(g, text, x, y, size, extra) {
-    const t = el('text', Object.assign({ x, y, 'font-size': size.toFixed(1), class: 'pen' }, extra || {}), g);
-    t.textContent = text;
-    return t;
+  /* ---- the marks ---- */
+  function loop(seg, rand, k) {
+    const cx = (seg.x1 + seg.x2) / 2, cy = (seg.y1 + seg.y2) / 2;
+    const rx = (seg.x2 - seg.x1) / 2 + seg.h * 0.22, ry = seg.h * 0.62;
+    // An ellipse drawn in one stroke that overshoots its start a little, like a pen does.
+    const pts = [];
+    for (let j = 0; j <= 26; j++) {
+      const t = -0.6 + (j / 24) * Math.PI * 2;
+      const r = 1 + rand() * 0.07 * (k || 1);
+      pts.push([cx + rx * r * Math.cos(t), cy + ry * r * Math.sin(t)]);
+    }
+    return { d: 'M' + pts.map((p) => f1(p[0]) + ' ' + f1(p[1])).join(' L'), top: [cx + rx * 0.35, cy - ry * 0.94], right: [cx + rx * 0.92, cy - ry * 0.4] };
   }
 
-  /* Draws every mark on one surface (a photo or a sheet of squared paper). */
-  function drawMarks(svg, data, lines, sheet, firstLine) {
+  function wavy(seg, rand) {
+    const y = seg.y2 + seg.h * 0.14, amp = seg.h * 0.09, step = seg.h * 0.22;
+    let d = 'M' + f1(seg.x1) + ' ' + f1(y), up = true;
+    for (let x = seg.x1; x < seg.x2; x += step) {
+      const nx = Math.min(seg.x2, x + step);
+      d += ' Q' + f1((x + nx) / 2) + ' ' + f1(y + (up ? -amp : amp) * (1 + rand() * 0.3)) + ' ' + f1(nx) + ' ' + f1(y + rand() * amp * 0.2);
+      up = !up;
+    }
+    return d;
+  }
+
+  function underline(seg, rand) {
+    const y = seg.y2 + seg.h * 0.12;
+    return stroke([[seg.x1, y + rand() * seg.h * 0.05], [(seg.x1 + seg.x2) / 2, y + rand() * seg.h * 0.08], [seg.x2, y + rand() * seg.h * 0.05]], rand, seg.h * 0.05);
+  }
+
+  function dots(seg, count, rand) {
+    // 圈点: a small circle under each character.
+    let d = '';
+    const w = (seg.x2 - seg.x1) / count, r = Math.min(w, seg.h) * 0.11;
+    for (let k = 0; k < count; k++) {
+      const cx = seg.x1 + w * (k + 0.5) + rand() * r, cy = seg.y2 + seg.h * 0.22 + rand() * r * 0.6;
+      d += `M${f1(cx + r)} ${f1(cy)} A${f1(r)} ${f1(r * (0.85 + rand() * 0.2))} 0 1 1 ${f1(cx + r - 0.01)} ${f1(cy - r * 0.3)} `;
+    }
+    return d;
+  }
+
+  function bracket(seg, first, last, rand) {
+    const pad = seg.h * 0.18, y1 = seg.y1 - pad * 0.6, y2 = seg.y2 + pad * 0.6, hook = seg.h * 0.22;
+    let d = '';
+    if (first) d += stroke([[seg.x1 - pad + hook, y1], [seg.x1 - pad, y1 + rand()], [seg.x1 - pad, y2]], rand, seg.h * 0.04) + ' ';
+    if (last) d += stroke([[seg.x2 + pad - hook, y2], [seg.x2 + pad, y2 + rand()], [seg.x2 + pad, y1]], rand, seg.h * 0.04);
+    return d;
+  }
+
+  function pigtail(at, h, rand) {
+    // 删除号's tail: up out of the loop, a small curl, then off to the right.
+    const [x, y] = at, u = h * 0.32;
+    return `M${f1(x)} ${f1(y)} C${f1(x + u * 0.6)} ${f1(y - u * 1.4)} ${f1(x + u * 2.1)} ${f1(y - u * 1.2)} ${f1(x + u * 1.5)} ${f1(y - u * 0.5)}` +
+      ` C${f1(x + u * 0.9)} ${f1(y + u * 0.1)} ${f1(x + u * 0.6)} ${f1(y - u * 1.6 + rand() * u * 0.3)} ${f1(x + u * 2.6)} ${f1(y - u * 1.9)}`;
+  }
+
+  function swapLine(a, b, rand) {
+    // 对调号: down at the start, under the first part, up between them, over the second part, down at the end.
+    const lo = Math.max(a.y2, b.y2) + a.h * 0.16, hi = Math.min(a.y1, b.y1) - a.h * 0.16;
+    return stroke([[a.x1, hi + a.h * 0.2], [a.x1, lo], [a.x2, lo], [b.x1, hi], [b.x2, hi], [b.x2, lo - a.h * 0.2]], rand, a.h * 0.06);
+  }
+
+  function paraMark(seg, rand) {
+    // 分段号: a bent line in front of where the new paragraph starts, reaching back into the line before.
+    const x = seg.x1 - seg.h * 0.12, h = seg.h;
+    return stroke([[x - h * 1.6, seg.y1 - h * 0.18], [x, seg.y1 - h * 0.18], [x, seg.y2 + h * 0.18], [x + h * 0.9, seg.y2 + h * 0.18]], rand, h * 0.05);
+  }
+
+  /* Draws every mark on one surface (a photo or a sheet of squared paper), in content coordinates; notes that do
+   * not fit on the surface are returned for the margins. */
+  function drawMarks(data, lines, sheet) {
+    const items = [], margin = [];
     const taken = [], obstacles = lines.map((L) => ({ x1: L.x1, y1: L.y1, x2: L.x2, y2: L.y2 }));
     data.marks.forEach((m, i) => {
       const segs = segments(lines, m);
       if (!segs.length) return;
       const kind = KIND[m.type] || 'tip';
-      const h = segs[0].h, sw = Math.max(1.6, h * 0.075);
-      const rand = rng(m.start * 31 + m.end);
-      const g = el('g', { class: 'mark mark-' + kind, 'data-i': i, tabindex: 0, role: 'button', 'aria-label': m.type + '：' + (m.note || m.fix || '') }, svg);
-      segs.forEach((seg, k) => {
-        el('rect', { x: seg.x1 - h * 0.3, y: seg.y1 - h * 0.4, width: seg.x2 - seg.x1 + h * 0.6, height: seg.h + h * 0.8, class: 'hit' }, g);
-        if (kind === 'good') wavy(seg, g, sw, rand);
-        else if (kind === 'typo') circle(seg, g, sw, rand);
-        else if (kind === 'tip') bracket(seg, g, sw, k === 0, k === segs.length - 1);
-        else underline(seg, g, sw, rand);
-      });
+      const h = segs[0].h, sw = Math.max(1.4, h * 0.07);
+      const rand = rng(m.start * 31 + m.end * 7 + i);
+      const g = { t: 'group', mark: i, items: [] };
+      items.push(g);
+      const draw = (d, w) => g.items.push(path(d, w || sw));
+      const write = (s, x, y, size) => g.items.push(pen(s, x, y, size, m.start + x));
+      for (const seg of segs) g.items.push({ t: 'hit', x: seg.x1 - h * 0.3, y: seg.y1 - h * 0.4, w: seg.x2 - seg.x1 + h * 0.6, h: seg.h + h * 0.8 });
       const first = segs[0], last = segs[segs.length - 1];
-      const size = Math.max(sheet.minFont, h * 0.62);
-      if ((kind === 'typo' || (kind === 'word' && m.fix && [...m.fix].length <= 6)) && m.fix) {
-        // The right word, written small above the wrong one.
-        const fs = Math.max(sheet.minFont, h * 0.6);
-        const w = textWidth(m.fix, fs), cx = (first.x1 + first.x2) / 2;
-        const box = { x1: cx - w / 2, y1: first.y1 - h * 0.12 - fs * 1.1, x2: cx + w / 2, y2: first.y1 - h * 0.12 };
+      const fs = Math.max(sheet.minFont * 1.2, h * 0.85);
+      // A correction written small above the line, joined by a short stroke from the mark.
+      const above = (s, from, cx, line) => {
+        const w = textWidth(s, fs);
+        // Right of the stroke's end, so the stroke never crosses the characters.
+        const box = { x1: Math.max(sheet.x1, Math.min(sheet.x2 - w, from ? from[0] + fs * 0.2 : cx - w / 2)), y2: line.y1 - h * 0.1 };
+        box.x2 = box.x1 + w;
+        box.y1 = box.y2 - fs * 1.05;
+        for (const t of taken) if (overlap(box, t)) (box.y1 -= fs * 0.4), (box.y2 -= fs * 0.4);
         taken.push(box);
-        write(g, m.fix, box.x1, box.y2 - fs * 0.15, fs);
+        write(s, box.x1, box.y2 - fs * 0.12, fs);
+        if (from) draw(stroke([from, [box.x1 - fs * 0.08, box.y2 - fs * 0.3]], rand, h * 0.03), sw * 0.85);
+      };
+      let note = (m.note || '').trim(), long = '';
+      if (kind === 'good') {
+        const count = m.end - m.start;
+        if (count <= 4 && segs.length === 1) draw(dots(first, count, rand), sw * 0.8);
+        else for (const seg of segs) draw(wavy(seg, rand));
+        note = note || '好！';
+      } else if (kind === 'tip') {
+        segs.forEach((seg, k) => draw(bracket(seg, k === 0, k === segs.length - 1, rand)));
+        if (m.fix) long = (note ? note + '　' : '') + '可以写成：' + m.fix;
+      } else if (kind === 'para') {
+        draw(paraMark(first, rand));
+        note = note || '另起一段';
+      } else {
+        const quote = data.text.slice(m.start, m.end);
+        const ops = m.fix ? editOps(quote, m.fix) : null;
+        const sub = (a0, a1) => segments(lines, { start: m.start + a0, end: m.start + a1 });
+        if (ops && ops.swap) {
+          const [p0, p1, p2] = ops.swap, A = sub(p0, p1), B = sub(p1, p2);
+          if (A.length === 1 && B.length === 1 && Math.abs(A[0].y1 - B[0].y1) < A[0].h * 0.5) draw(swapLine(A[0], B[0], rand));
+          else for (const seg of segs) draw(underline(seg, rand)), (long = '改为：' + m.fix);
+        } else if (ops) {
+          for (const hk of ops.hunks) {
+            if (hk.a1 > hk.a0) {
+              const S = sub(hk.a0, hk.a1);
+              if (!S.length) continue;
+              const lp = loop(S[0], rand);
+              draw(lp.d);
+              for (const seg of S.slice(1)) draw(loop(seg, rand).d);
+              if (hk.ins) above(hk.ins, lp.top, (S[0].x1 + S[0].x2) / 2, S[0]);
+              else draw(pigtail(lp.right, S[0].h, rand), sw * 0.9); // 删除号
+            } else {
+              const gap = gapAt(lines, m.start + hk.a0);
+              if (!gap) continue;
+              const x = gap.x, gh = gap.h;
+              // 增补号: ∧ under the gap, a stroke up through it to the missing characters.
+              draw(stroke([[x - gh * 0.2, gap.y2 + gh * 0.32], [x, gap.y2 + gh * 0.02], [x + gh * 0.2, gap.y2 + gh * 0.32]], rand, gh * 0.03));
+              draw(stroke([[x, gap.y2 + gh * 0.02], [x + rand() * gh * 0.05, gap.y1 - gh * 0.12]], rand, gh * 0.04), sw * 0.85);
+              above(hk.ins, [x, gap.y1 - gh * 0.12], x + textWidth(hk.ins, fs) * 0.25, gap);
+            }
+          }
+        } else {
+          for (const seg of segs) draw(underline(seg, rand));
+          if (m.fix) long = '改为：' + m.fix;
+        }
+        if (kind === 'typo' && !long) note = ''; // the right word above says it all; the full note is a tap away
       }
-      const note = kind === 'good' ? (m.note ? shortNote(m) : '好！') : kind === 'typo' ? '' : shortNote(m);
-      if (note) {
-        const box = place(note, size, last, sheet, taken, obstacles);
-        write(g, note, box.x1, box.y2 - size * 0.18, size);
+      if (long) note = note && !long.startsWith(note) ? note + '　' + long : long;
+      if (!note) return;
+      const size = Math.max(sheet.minFont * 1.1, h * 0.62);
+      const box = [...note].length <= INLINE_CHARS && !long ? place(note, size, last, sheet, taken, obstacles) : null;
+      if (box) write(note, box.x1, box.y2 - size * 0.18, size);
+      else {
+        // The leader starts from whichever part of the mark is nearest that margin.
+        const L = segs.reduce((a, b) => (b.x1 < a.x1 ? b : a)), R = segs.reduce((a, b) => (b.x2 > a.x2 ? b : a));
+        margin.push({ i, text: note, left: [L.x1 - h * 0.25, (L.y1 + L.y2) / 2], right: [R.x2 + h * 0.25, (R.y1 + R.y2) / 2], h });
       }
     });
-    if (firstLine) drawScore(svg, data, sheet, firstLine);
+    return { items, margin };
   }
 
-  function drawScore(svg, data, sheet, line) {
+  function drawScore(data, sheet, line) {
     const size = Math.max(22, (sheet.x2 - sheet.x1) * 0.055);
-    const g = el('g', { class: 'score' }, svg);
     const label = data.showScore ? data.total + '分' : '';
-    const width = (label ? textWidth(label, size * 1.1) + size * 0.25 : 0) + textWidth(data.level, size * 0.95);
+    const lw0 = label ? textWidth(label, size * 1.1) + size * 0.25 : 0;
+    const width = lw0 + textWidth(data.level, size * 0.95);
     const x = sheet.x2 - width - size * 0.6;
     const y = Math.max(sheet.y1 + size * 1.05, line.y1 - size * 0.2);
-    g.setAttribute('transform', `rotate(-7 ${x} ${y})`);
-    if (label) write(g, label, x, y, size * 1.1);
-    const lx = x + (label ? textWidth(label, size * 1.1) + size * 0.25 : 0);
-    write(g, data.level, lx, y, size * 0.95);
+    const g = { t: 'group', rot: -7, cx: x, cy: y, items: [] };
+    if (label) g.items.push(pen(label, x, y, size * 1.1, 3));
+    const lx = x + lw0;
+    g.items.push(pen(data.level, lx, y, size * 0.95, 5));
     const lw = textWidth(data.level, size * 0.95);
-    for (const dy of [size * 0.2, size * 0.36]) el('path', { d: `M${lx - 2} ${y + dy} Q${lx + lw / 2} ${y + dy + 3} ${lx + lw + 4} ${y + dy - 2}`, class: 'ink', 'stroke-width': size * 0.06 }, g);
+    for (const dy of [size * 0.2, size * 0.36]) g.items.push(path(`M${f1(lx - 2)} ${f1(y + dy)} Q${f1(lx + lw / 2)} ${f1(y + dy + 3)} ${f1(lx + lw + 4)} ${f1(y + dy - 2)}`, size * 0.06));
+    return g;
+  }
+
+  /* Breaks a note into lines of at most `per` characters, never starting a line with a closing mark. */
+  function wrap(text, per) {
+    const out = [];
+    let line = [];
+    for (const c of text) {
+      if (line.length >= per && !NO_LINE_START.includes(c)) out.push(line.join('')), (line = []);
+      line.push(c);
+    }
+    if (line.length) out.push(line.join(''));
+    return out;
+  }
+
+  /* A page: the surface in the middle, margins on both sides when some notes need them. */
+  function framePage(content, cw, ch, notes, noteSize) {
+    if (!notes.length) return { w: cw, h: ch, items: content };
+    const M = Math.round(cw * MARGIN), pad = M * 0.09;
+    const per = Math.max(3, Math.floor((M - pad * 2) / noteSize));
+    const lineH = noteSize * 1.3;
+    const sides = { left: [], right: [] };
+    for (const n of notes) sides[n.left[0] < cw - n.right[0] ? 'left' : 'right'].push(n); // the nearer margin
+    // Too many notes on one side: hand the extra ones to the other side.
+    const need = (list) => list.reduce((s, n) => s + wrap(n.text, per).length * lineH + noteSize * 0.6, 0);
+    for (const [a, b] of [['left', 'right'], ['right', 'left']])
+      while (need(sides[a]) > ch * 0.95 && need(sides[b]) < need(sides[a]) - lineH * 2) {
+        const mid = sides[a].reduce((best, n) => (!best || Math.abs(n.left[0] - cw / 2) < Math.abs(best.left[0] - cw / 2) ? n : best), null);
+        sides[a].splice(sides[a].indexOf(mid), 1);
+        sides[b].push(mid);
+      }
+    const over = [];
+    let bottom = ch;
+    for (const side of ['left', 'right']) {
+      const list = sides[side].sort((p, q) => p[side][1] - q[side][1]);
+      const placed = [];
+      let y = noteSize * 0.4;
+      for (const n of list) {
+        const rows = wrap(n.text, per);
+        const height = rows.length * lineH;
+        const top = Math.max(y, n[side][1] - lineH * 0.6);
+        placed.push({ n, rows, top, height });
+        y = top + height + noteSize * 0.5;
+      }
+      // Pull the stack up when it runs past the bottom of the page.
+      let excess = y - ch;
+      for (let k = placed.length - 1; k >= 0 && excess > 0; k--) {
+        const room = k ? placed[k].top - (placed[k - 1].top + placed[k - 1].height + noteSize * 0.5) : placed[k].top - noteSize * 0.4;
+        const lift = Math.min(excess, Math.max(0, room));
+        for (let j = k; j < placed.length; j++) placed[j].top -= lift;
+        excess -= lift;
+      }
+      for (const p of placed) {
+        const g = { t: 'group', mark: p.n.i, items: [] };
+        const width = Math.max(...p.rows.map((r) => textWidth(r, noteSize)));
+        const x = side === 'left' ? M - pad - width : M + cw + pad;
+        p.rows.forEach((r, k) => g.items.push(pen(r, x, p.top + noteSize * 0.95 + k * lineH, noteSize, p.n.i * 17 + k)));
+        g.items.push({ t: 'hit', x: x - pad * 0.5, y: p.top - 4, w: width + pad, h: p.height + 8 });
+        // The leader: a loose curve from the note to the mark, the way a teacher swings the pen across.
+        const rand = rng(p.n.i * 131 + 7);
+        const [ax0, ay] = p.n[side];
+        const ax = ax0 + M;
+        const ex = side === 'left' ? M - pad * 0.45 : M + cw + pad * 0.45, ey = p.top + noteSize * 0.55;
+        const dx = ax - ex;
+        const sw = Math.max(1.2, p.n.h * 0.05);
+        g.items.push(path(`M${f1(ex)} ${f1(ey)} C${f1(ex + dx * 0.35)} ${f1(ey + rand() * noteSize * 1.6)} ${f1(ax - dx * 0.3)} ${f1(ay + rand() * noteSize * 1.6 - noteSize * 0.4)} ${f1(ax)} ${f1(ay)}`, sw));
+        g.items.push(path(`M${f1(ax)} ${f1(ay)} l${f1((side === 'left' ? -1 : 1) * p.n.h * 0.12)} ${f1(-p.n.h * 0.16)}`, sw));
+        over.push(g);
+        bottom = Math.max(bottom, p.top + p.height + noteSize * 0.5);
+      }
+    }
+    const items = [
+      { t: 'fill', x: 0, y: 0, w: cw + M * 2, h: bottom, color: '#fffdf6' },
+      { t: 'group', tx: M, items: content },
+      ...over,
+    ];
+    return { w: cw + M * 2, h: bottom, items };
   }
 
   /* ---- surfaces ---- */
-  function photoPage(page, data, isFirst) {
-    const wrap = document.createElement('div');
-    wrap.className = 'rp-page';
-    wrap.style.aspectRatio = page.w + ' / ' + page.h;
-    const img = document.createElement('img');
-    img.src = page.src;
-    img.alt = '作文照片';
-    wrap.appendChild(img);
-    const svg = el('svg', { viewBox: `0 0 ${page.w} ${page.h}`, preserveAspectRatio: 'none' });
-    svg.style.setProperty('--sw', 1);
-    wrap.appendChild(svg);
+  function photoScene(page, data, isFirst) {
     const sx = page.w / 1000, sy = page.h / 1000;
     const lines = page.lines.map((l) => ({
       s: l.s, e: l.e, text: data.text.slice(l.s, l.e),
       x1: l.b[0] * sx, y1: l.b[1] * sy, x2: l.b[2] * sx, y2: l.b[3] * sy,
     }));
     const sheet = { x1: page.w * 0.01, y1: page.h * 0.005, x2: page.w * 0.99, y2: page.h * 0.995, minFont: page.w * 0.034 };
-    drawMarks(svg, data, lines, sheet, isFirst && lines[0]);
-    return wrap;
+    const { items, margin } = drawMarks(data, lines, sheet);
+    const content = [{ t: 'img', src: page.src, x: 0, y: 0, w: page.w, h: page.h }, ...items];
+    if (isFirst && lines[0]) content.push(drawScore(data, sheet, lines[0]));
+    return framePage(content, page.w, page.h, margin, page.w * 0.038);
+  }
+
+  function plainPhotoScene(page) {
+    return { w: page.w, h: page.h, items: [{ t: 'img', src: page.src, x: 0, y: 0, w: page.w, h: page.h }] };
   }
 
   /* Squared composition paper: COLS cells a row, paragraphs indented two cells, a gap under each row for notes. */
-  function paperPage(data) {
+  function paperScene(data) {
     const cell = 40, gap = 40, row = cell + gap, margin = 34;
     const width = COLS * cell + margin * 2;
     const lines = [];
     const chars = [];
     let r = 1, c = 0; // row 0 holds the title
-    const paragraphs = [];
     let start = 0;
-    data.text.split('\n').forEach((p) => {
-      paragraphs.push({ s: start, text: p });
+    for (const p of data.text.split('\n')) {
+      const ps = start;
       start += p.length + 1;
-    });
-    for (const p of paragraphs) {
-      if (!p.text.trim()) continue;
+      if (!p.trim()) continue;
       c = 2;
-      let lineStart = p.s;
-      for (let k = 0; k < p.text.length; k++) {
+      let lineStart = ps;
+      for (let k = 0; k < p.length; k++) {
         if (c >= COLS) {
-          lines.push({ s: lineStart, e: p.s + k, row: r, c0: lineStart === p.s ? 2 : 0 });
-          r++, (c = 0), (lineStart = p.s + k);
+          lines.push({ s: lineStart, e: ps + k, row: r, c0: lineStart === ps ? 2 : 0 });
+          r++, (c = 0), (lineStart = ps + k);
         }
-        chars.push({ ch: p.text[k], row: r, col: c });
+        chars.push({ ch: p[k], row: r, col: c });
         c++;
       }
-      lines.push({ s: lineStart, e: p.s + p.text.length, row: r, c0: lineStart === p.s ? 2 : 0 });
+      lines.push({ s: lineStart, e: ps + p.length, row: r, c0: lineStart === ps ? 2 : 0 });
       r++;
     }
     const rows = Math.max(r, 4);
     const height = margin * 2 + rows * row;
-    const wrap = document.createElement('div');
-    wrap.className = 'rp-page paper';
-    wrap.style.aspectRatio = width + ' / ' + height;
-    const svg = el('svg', { viewBox: `0 0 ${width} ${height}` });
-    wrap.appendChild(svg);
     const top = (rw) => margin + rw * row + gap * 0.5;
-    const grid = el('g', { class: 'grid' }, svg);
-    for (let rw = 0; rw < rows; rw++) el('rect', { x: margin, y: top(rw), width: COLS * cell, height: cell }, grid);
-    let d = '';
-    for (let rw = 0; rw < rows; rw++) for (let k = 1; k < COLS; k++) d += `M${margin + k * cell} ${top(rw)}v${cell}`;
-    el('path', { d }, grid);
-    const ink = el('g', { class: 'typed' }, svg);
-    if (data.title) {
-      const t = el('text', { x: width / 2, y: top(0) + cell * 0.78, 'font-size': cell * 0.75, 'text-anchor': 'middle' }, ink);
-      t.textContent = data.title;
+    const content = [{ t: 'fill', x: 0, y: 0, w: width, h: height, color: '#fffef8' }];
+    let boxes = '', cells = '';
+    for (let rw = 0; rw < rows; rw++) {
+      boxes += `M${margin} ${top(rw)}h${COLS * cell}v${cell}h${-COLS * cell}Z`;
+      for (let k = 1; k < COLS; k++) cells += `M${margin + k * cell} ${top(rw)}v${cell}`;
     }
-    for (const ch of chars) {
-      const t = el('text', { x: margin + ch.col * cell + cell / 2, y: top(ch.row) + cell * 0.78, 'font-size': cell * 0.72, 'text-anchor': 'middle' }, ink);
-      t.textContent = ch.ch;
-    }
+    content.push(path(boxes, 1.2, { color: '#b9d3b4' }), path(cells, 1, { color: '#cfe1cb' }));
+    if (data.title) content.push({ t: 'text', s: data.title, x: width / 2, y: top(0) + cell * 0.78, size: cell * 0.75, anchor: 'middle', typed: true });
+    for (const ch of chars) content.push({ t: 'text', s: ch.ch, x: margin + ch.col * cell + cell / 2, y: top(ch.row) + cell * 0.78, size: cell * 0.72, anchor: 'middle', typed: true });
     const placed = lines.map((L) => ({
       s: L.s, e: L.e, text: '国'.repeat(L.e - L.s), // one cell per character, whatever it is
       x1: margin + L.c0 * cell, x2: margin + (L.c0 + (L.e - L.s)) * cell, y1: top(L.row), y2: top(L.row) + cell,
     }));
     const sheet = { x1: 4, y1: 4, x2: width - 4, y2: height - 4, minFont: 22 };
-    drawMarks(svg, data, placed, sheet, { y1: top(0) + cell });
-    return wrap;
+    const { items, margin: notes } = drawMarks(data, placed, sheet);
+    content.push(...items, drawScore(data, sheet, { y1: top(0) + cell }));
+    return framePage(content, width, height, notes, 26);
   }
 
-  function comments(data) {
-    const box = document.createElement('div');
-    box.className = 'rp-comment';
-    let html = '';
-    if (data.summary) html += '<p class="rp-summary">' + esc(data.summary) + '</p>';
-    if (data.praise.length) html += '<p><span class="rp-tag">好在</span>' + data.praise.map(esc).join('；') + '</p>';
-    if (data.advice.length) html += '<p><span class="rp-tag">改一改</span>' + data.advice.map(esc).join('；') + '</p>';
-    html += '<p class="rp-sign">' + (data.showScore ? esc(data.total) + ' / ' + esc(data.max) + ' 分　' : '') + esc(data.level) + '</p>';
-    box.innerHTML = html;
+  /* The 总评: one paragraph in the teacher's hand under the essay, the score signed at the end. */
+  function summaryScene(data) {
+    const W = 1000, size = 40, lineH = size * 1.75, left = 70;
+    const per = Math.floor((W - left * 2) / size);
+    const items = [{ t: 'fill', x: 0, y: 0, w: W, h: 10, color: '#fffef8' }];
+    let y = 80;
+    items.push(pen('总评：', left - 20, y, size * 1.05, 11));
+    y += lineH;
+    const text = '　　' + (data.summary || '').trim();
+    if ((data.summary || '').trim())
+      wrap(text, per).forEach((row, k) => {
+        items.push(pen(row, left + (k % 2 ? 4 : -3), y, size, 100 + k));
+        y += lineH;
+      });
+    const sign = (data.showScore ? data.total + '分　' : '') + data.level;
+    const sw = textWidth(sign, size * 1.15);
+    const sx = W - left - sw;
+    items.push(pen(sign, sx, y + size * 0.2, size * 1.15, 77));
+    items.push(path(`M${f1(sx - 6)} ${f1(y + size * 0.55)} Q${f1(sx + sw / 2)} ${f1(y + size * 0.75)} ${f1(sx + sw + 10)} ${f1(y + size * 0.45)}`, 3));
+    const h = y + size * 1.6;
+    items[0].h = h;
+    return { w: W, h, items, summary: true };
+  }
+
+  function scenes(data) {
+    const out = [];
+    if (data.onPhoto) data.pages.forEach((p, k) => out.push(photoScene(p, data, k === 0)));
+    else {
+      for (const p of data.pages) out.push(plainPhotoScene(p));
+      out.push(paperScene(data));
+    }
+    out.push(summaryScene(data));
+    return out;
+  }
+
+  /* ---- SVG renderer ---- */
+  function toSvg(scene, data) {
+    const svg = el('svg', { viewBox: `0 0 ${f1(scene.w)} ${f1(scene.h)}`, width: '100%' });
+    const add = (item, parent) => {
+      if (item.t === 'group') {
+        const tf = (item.tx || item.ty ? `translate(${f1(item.tx || 0)} ${f1(item.ty || 0)}) ` : '') + (item.rot ? `rotate(${item.rot} ${f1(item.cx)} ${f1(item.cy)})` : '');
+        const attrs = tf ? { transform: tf } : {};
+        if (item.mark !== undefined) {
+          const m = data.marks[item.mark];
+          Object.assign(attrs, { class: 'mark', 'data-i': item.mark, tabindex: 0, role: 'button', 'aria-label': m.type + '：' + (m.note || m.fix || '') });
+        }
+        const g = el('g', attrs, parent);
+        for (const it of item.items) add(it, g);
+      } else if (item.t === 'path') {
+        el('path', Object.assign({ d: item.d, 'stroke-width': f1(item.sw) }, item.color ? { stroke: item.color, fill: 'none' } : { class: 'ink' }), parent);
+      } else if (item.t === 'fill') {
+        el('rect', { x: item.x, y: item.y, width: f1(item.w), height: f1(item.h), fill: item.color }, parent);
+      } else if (item.t === 'img') {
+        el('image', { href: item.src, x: item.x, y: item.y, width: item.w, height: item.h, preserveAspectRatio: 'none' }, parent);
+      } else if (item.t === 'hit') {
+        el('rect', { x: f1(item.x), y: f1(item.y), width: f1(item.w), height: f1(item.h), class: 'hit' }, parent);
+      } else if (item.t === 'text') {
+        const gs = glyphs(item);
+        const t = el('text', {
+          x: gs.map((g) => f1(g.x)).join(' '),
+          y: gs.map((g) => f1(g.y)).join(' '),
+          'font-size': f1(item.size),
+          class: item.typed ? 'typed' : 'pen',
+        }, parent);
+        if (!item.typed) t.setAttribute('rotate', gs.map((g) => g.rot.toFixed(1)).join(' '));
+        t.textContent = item.s;
+      }
+    };
+    for (const it of scene.items) add(it, svg);
+    return svg;
+  }
+
+  /* ---- canvas renderer (for the PDF) ---- */
+  function drawCanvas(ctx, scene, images) {
+    const draw = (item) => {
+      ctx.save();
+      if (item.t === 'group') {
+        if (item.tx || item.ty) ctx.translate(item.tx || 0, item.ty || 0);
+        if (item.rot) {
+          ctx.translate(item.cx, item.cy);
+          ctx.rotate((item.rot * Math.PI) / 180);
+          ctx.translate(-item.cx, -item.cy);
+        }
+        item.items.forEach(draw);
+      } else if (item.t === 'path') {
+        ctx.strokeStyle = item.color || RED;
+        ctx.globalAlpha = item.color ? 1 : 0.92;
+        ctx.lineWidth = item.sw;
+        ctx.lineCap = ctx.lineJoin = 'round';
+        ctx.stroke(new Path2D(item.d));
+      } else if (item.t === 'fill') {
+        ctx.fillStyle = item.color;
+        ctx.fillRect(item.x, item.y, item.w, item.h);
+      } else if (item.t === 'img') {
+        if (images[item.src]) ctx.drawImage(images[item.src], item.x, item.y, item.w, item.h);
+      } else if (item.t === 'text') {
+        ctx.font = `${item.size}px ${item.typed ? TYPED_FONT : PEN_FONT}`;
+        ctx.textBaseline = 'alphabetic';
+        for (const g of glyphs(item)) {
+          ctx.save();
+          ctx.translate(g.x, g.y);
+          ctx.rotate((g.rot * Math.PI) / 180);
+          if (!item.typed) {
+            ctx.strokeStyle = '#fffdf7';
+            ctx.lineWidth = item.size * 0.2;
+            ctx.lineJoin = 'round';
+            ctx.strokeText(g.c, 0, 0);
+          }
+          ctx.fillStyle = item.typed ? '#2b2b2b' : RED;
+          ctx.fillText(g.c, 0, 0);
+          ctx.restore();
+        }
+      }
+      ctx.restore();
+    };
+    scene.items.forEach(draw);
+  }
+
+  function sources(scene, out) {
+    const walk = (items) => items.forEach((it) => (it.t === 'img' ? out.add(it.src) : it.t === 'group' && walk(it.items)));
+    walk(scene.items);
+    return out;
+  }
+
+  /* A PDF of A4 pages, each one JPEG image (no library needed). */
+  function makePdf(pages) {
+    const A4 = [595.28, 841.89];
+    const enc = new TextEncoder();
+    const parts = [];
+    let size = 0;
+    const offsets = [];
+    const put = (x) => {
+      const b = typeof x === 'string' ? enc.encode(x) : x;
+      parts.push(b);
+      size += b.length;
+    };
+    const obj = (n, body) => {
+      offsets[n] = size;
+      put(n + ' 0 obj\n');
+      body();
+      put('\nendobj\n');
+    };
+    put('%PDF-1.4\n%\xe2\xe3\xcf\xd3\n');
+    const kids = pages.map((_, k) => 3 + k * 3 + ' 0 R').join(' ');
+    obj(1, () => put('<< /Type /Catalog /Pages 2 0 R >>'));
+    obj(2, () => put(`<< /Type /Pages /Kids [${kids}] /Count ${pages.length} >>`));
+    pages.forEach((p, k) => {
+      const n = 3 + k * 3;
+      obj(n, () => put(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${A4[0]} ${A4[1]}] /Resources << /XObject << /Im0 ${n + 2} 0 R >> >> /Contents ${n + 1} 0 R >>`));
+      const content = `q ${A4[0]} 0 0 ${A4[1]} 0 0 cm /Im0 Do Q`;
+      obj(n + 1, () => put(`<< /Length ${content.length} >>\nstream\n${content}\nendstream`));
+      obj(n + 2, () => {
+        put(`<< /Type /XObject /Subtype /Image /Width ${p.w} /Height ${p.h} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${p.jpeg.length} >>\nstream\n`);
+        put(p.jpeg);
+        put('\nendstream');
+      });
+    });
+    const xref = size;
+    const count = 3 + pages.length * 3;
+    let table = `xref\n0 ${count}\n0000000000 65535 f \n`;
+    for (let n = 1; n < count; n++) table += String(offsets[n]).padStart(10, '0') + ' 00000 n \n';
+    put(table + `trailer\n<< /Size ${count} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF\n`);
+    return new Blob(parts, { type: 'application/pdf' });
+  }
+
+  async function exportPdf(container, button) {
+    const data = container.rpData, list = container.rpScenes;
+    if (!data || !list) return;
+    const label = button && button.textContent;
+    if (button) (button.disabled = true), (button.textContent = '正在生成…');
+    try {
+      try {
+        await document.fonts.load('40px RedPen', '老师批改');
+      } catch (e) {}
+      const images = {};
+      const srcs = new Set();
+      list.forEach((s) => sources(s, srcs));
+      await Promise.all(
+        [...srcs].map(async (src) => {
+          const img = new Image();
+          img.src = src;
+          try {
+            await img.decode();
+            images[src] = img;
+          } catch (e) {}
+        })
+      );
+      const W = 1654, H = 2339, pad = 110; // A4 at 200 dpi
+      const pages = [];
+      let canvas, ctx, y;
+      const fresh = () => {
+        canvas = document.createElement('canvas');
+        canvas.width = W;
+        canvas.height = H;
+        ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, 0, W, H);
+        y = pad;
+        pages.push(canvas);
+      };
+      fresh();
+      // Header: the title, the student, the score.
+      ctx.fillStyle = '#222';
+      ctx.textAlign = 'center';
+      ctx.font = `bold 52px ${TYPED_FONT}`;
+      ctx.fillText('《' + (data.title || '作文') + '》', W / 2, y + 44);
+      ctx.font = `30px ${TYPED_FONT}`;
+      ctx.fillStyle = '#666';
+      const who = [data.student, (data.showScore ? data.total + ' / ' + data.max + ' 分　' : '') + data.level].filter(Boolean).join('　·　');
+      ctx.fillText(who, W / 2, y + 96);
+      ctx.textAlign = 'left';
+      y += 140;
+      for (const s of list) {
+        let k = (W - pad * 2) / s.w;
+        // Shrinking to 70 % keeps it on this page; any smaller and it gets a page of its own.
+        if (s.h * k * 0.7 > H - pad - y && y > pad + 160) fresh();
+        k = Math.min(k, (H - pad - y) / s.h);
+        const x = (W - s.w * k) / 2;
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.scale(k, k);
+        drawCanvas(ctx, s, images);
+        ctx.restore();
+        y += s.h * k + 36;
+      }
+      const jpegs = await Promise.all(
+        pages.map(
+          (c) =>
+            new Promise((done) =>
+              c.toBlob(async (b) => done({ w: W, h: H, jpeg: new Uint8Array(await b.arrayBuffer()) }), 'image/jpeg', 0.88)
+            )
+        )
+      );
+      const blob = makePdf(jpegs);
+      const name = ['《' + (data.title || '作文') + '》', data.student, '批改'].filter(Boolean).join('-').replace(/[\\/:*?"<>|]/g, '') + '.pdf';
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = name;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
+      container.rpLastPdf = blob; // for tests
+    } finally {
+      if (button) (button.disabled = false), (button.textContent = label);
+    }
+  }
+
+  /* ---- legend: each symbol drawn on two make-believe characters ---- */
+  function legend() {
+    const box = document.createElement('p');
+    box.className = 'rp-legend';
+    const h = 20, fake = [{ s: 0, e: 3, text: '国国国', x1: 6, y1: 8, x2: 66, y2: 8 + h }];
+    const sym = {
+      写得好: (r) => wavy({ x1: 6, x2: 66, y1: 8, y2: 8 + h, h }, r),
+      好词: (r) => dots({ x1: 6, x2: 66, y1: 8, y2: 8 + h, h }, 3, r),
+      改正: (r) => loop(segments(fake, { start: 1, end: 2 })[0], r).d + ' M44 6 L52 0',
+      增补: (r) => stroke([[30, 36], [36, 26], [42, 36]], r, 1) + ' M36 26 L36 4 L44 4',
+      删除: (r) => { const l = loop(segments(fake, { start: 1, end: 2 })[0], r); return l.d + ' ' + pigtail(l.right, h, r); },
+      对调: (r) => swapLine(segments(fake, { start: 0, end: 1 })[0], segments(fake, { start: 1, end: 3 })[0], r),
+      可以更好: (r) => bracket(segments(fake, { start: 0, end: 3 })[0], true, true, r),
+      分段: (r) => paraMark(segments(fake, { start: 2, end: 3 })[0], r),
+    };
+    for (const name in sym) {
+      const span = document.createElement('span');
+      const svg = el('svg', { viewBox: '0 -4 74 44', width: 54, height: 32, 'aria-hidden': 'true' }, span);
+      el('path', { d: sym[name](rng(name.length * 11)), class: 'ink', 'stroke-width': 2 }, svg);
+      span.appendChild(document.createTextNode(name));
+      box.appendChild(span);
+    }
     return box;
   }
 
@@ -291,7 +788,7 @@
       const quote = data.text.slice(m.start, m.end);
       pop.innerHTML =
         '<strong>' + esc(m.type) + '</strong><q>' + esc(quote) + '</q>' +
-        (m.fix && m.type !== '好词好句' ? '<p>改成：<b>' + esc(m.fix) + '</b></p>' : '') +
+        (m.fix && m.type !== '好词好句' ? '<p>' + (m.type === '修改建议' ? '可以写成' : '改成') + '：<b>' + esc(m.fix) + '</b></p>' : '') +
         (m.note ? '<p>' + esc(m.note) + '</p>' : '');
       pop.hidden = false;
       const r = container.getBoundingClientRect(), gr = g.getBoundingClientRect();
@@ -317,25 +814,17 @@
     container.innerHTML = '';
     container.rpData = data;
     container.classList.add('redpen');
-    if (data.onPhoto) {
-      data.pages.forEach((p, k) => container.appendChild(photoPage(p, data, k === 0)));
-    } else {
-      for (const p of data.pages) {
-        const img = document.createElement('img');
-        img.className = 'photo-plain';
-        img.src = p.src;
-        img.alt = '作文照片';
-        container.appendChild(img);
-      }
-      container.appendChild(paperPage(data));
+    const list = scenes(data);
+    container.rpScenes = list;
+    for (const s of list) {
+      const wrap = document.createElement('div');
+      wrap.className = 'rp-page' + (s.summary ? ' rp-summary' : '');
+      wrap.appendChild(toSvg(s, data));
+      container.appendChild(wrap);
     }
-    container.appendChild(comments(data));
-    const legend = document.createElement('p');
-    legend.className = 'rp-legend';
-    legend.innerHTML = '<span>〰 写得好</span><span>◯ 错别字</span><span>＿ 要改</span><span>［ ］ 可以更好</span>';
-    container.appendChild(legend);
+    container.appendChild(legend());
     popup(container);
   }
 
-  window.RedPen = { render, segments };
+  window.RedPen = { render, exportPdf, segments, editOps };
 })();

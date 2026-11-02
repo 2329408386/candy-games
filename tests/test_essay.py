@@ -180,7 +180,7 @@ def test_full_flow(models, klass, db):
     assert row["status"] == "review"
     review = json.loads(db.execute("SELECT ai FROM ess_reviews WHERE submission_id=?", (sid,)).fetchone()[0])
     # Scores clamped to the band maximum (中年级 norms = 4, out of 25); total and level computed by the server.
-    assert review["dims"]["norms"]["score"] == 4 and review["total"] == 8 + 4 + 6 + 4 and review["level"] == "良"
+    assert review["dims"]["norms"]["score"] == 4 and review["total"] == 8 + 4 + 6 + 4 and review["level"] == "优"
     quotes = [m["quote"] for m in review["marks"]]
     assert "原文里没有这句话" not in quotes  # made-up quote dropped
     assert "游来游去" in quotes  # found despite the whitespace difference
@@ -436,13 +436,25 @@ def test_grading_helpers():
     text = "第一段。\n\n第二 段有空格。"
     assert grading.locate(text, "第二段有空格") == (text.index("第二"), len(text) - 1)
     assert grading.locate(text, "没有") is None
-    assert [grading.level_of(n) for n in (25, 23, 22, 19, 18, 15, 14, 0)] == ["优", "优", "良", "良", "及格", "及格", "待提高", "待提高"]
+    assert [grading.level_of(n) for n in (25, 22, 21, 19, 18, 15, 14, 0)] == ["优", "优", "良", "良", "及格", "及格", "待提高", "待提高"]
     assert all(sum(b["max"].values()) == grading.TOTAL == 25 for b in grading.BANDS.values())
     assert grading.clean_text("  a  \r\n\r\n\r\n\r\nb　") == "  a\n\nb"
     essay = {"grade": 1, "genre": "看图写话", "requirement": "", "min_chars": 0, "title": "", "text": ESSAY}
     with pytest.raises(ValueError):
         grading.clean_review({"dims": {}}, essay)
+    # A careful review keeps many marks (up to 20 errors), the 分段 type, and a summary of a whole paragraph.
+    dims = {k: {"score": 3} for k in grading.DIMS}
+    many = [{"quote": ESSAY[i : i + 2], "type": "标点", "fix": "X", "note": "标点要改"} for i in range(0, 50, 2)]
+    long_summary = "你" * 150
+    cleaned = grading.clean_review(
+        {"dims": dims, "marks": many + [{"quote": ESSAY[60:64], "type": "分段", "fix": "", "note": "这里另起一段"}], "summary": long_summary},
+        essay,
+    )
+    assert sum(m["type"] == "标点" for m in cleaned["marks"]) == 20
+    assert [m["type"] for m in cleaned["marks"] if m["type"] == "分段"] == ["分段"]
+    assert cleaned["summary"] == long_summary and cleaned["praise"] == [] and cleaned["advice"] == []
     msgs = grading.grade_messages(essay)
+    assert "最短" in msgs[0]["content"] and "总评" in msgs[0]["content"]
     assert "第一学段" in msgs[0]["content"] and "拼音" in msgs[0]["content"] and ESSAY in msgs[1]["content"]
     assert "{band}" not in msgs[0]["content"] and "{anchors}" not in msgs[0]["content"]
     assert llm.parse_json('好的\n```json\n{"a": 1}\n```') == {"a": 1}

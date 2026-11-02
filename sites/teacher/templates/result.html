@@ -11,6 +11,11 @@
   </div>
   <div class="redpen" id="redpen"></div>
   {% if not project and not as_teacher %}<p class="hint center">点一点红笔批注，可以看到老师写的详细说明。</p>{% endif %}
+  {% if not project %}<p class="rp-export"><button type="button" class="secondary" id="rp-export">导出打印（PDF）</button></p>{% endif %}
 {% endblock %}
 {% block page_data %}<script>window.REDPEN={{redpen|tojson}};</script>{% endblock %}
-{% block scripts %}<script src="{{asset('redpen.js')}}"></script><script>RedPen.render(document.getElementById('redpen'), window.REDPEN);</script>{% endblock %}
+{% block scripts %}<script src="{{asset('redpen.js')}}"></script><script>
+  const pen = document.getElementById('redpen'), exportButton = document.getElementById('rp-export');
+  RedPen.render(pen, window.REDPEN);
+  if (exportButton) exportButton.addEventListener('click', () => RedPen.exportPdf(pen, exportButton));
+</script>{% endblock %}

@@ -295,7 +295,7 @@
   };
 
   function typeClass(type) {
-    return { 错别字: 'typo', 用词不当: 'word', 病句: 'sentence', 标点: 'punct', 好词好句: 'good', 修改建议: 'tip' }[type] || 'tip';
+    return { 错别字: 'typo', 用词不当: 'word', 病句: 'sentence', 标点: 'punct', 好词好句: 'good', 修改建议: 'tip', 分段: 'para' }[type] || 'tip';
   }
   WB.typeClass = typeClass;
 
@@ -317,8 +317,8 @@
   if (window.REVIEW) document.addEventListener('DOMContentLoaded', () => reviewEditor(window.REVIEW));
 
   function levelOf(total) {
-    // Out of 25: 优 23–25, 良 19–22, 及格 15–18 (grading.level_of).
-    return total >= 23 ? '优' : total >= 19 ? '良' : total >= 15 ? '及格' : '待提高';
+    // Out of 25: 优 22–25, 良 19–21, 及格 15–18 (grading.level_of).
+    return total >= 22 ? '优' : total >= 19 ? '良' : total >= 15 ? '及格' : '待提高';
   }
 
   function reviewEditor(page) {
@@ -343,8 +343,6 @@
         total,
         level: levelOf(total),
         summary: summary.value.trim(),
-        praise: lines(praise),
-        advice: lines(advice),
       });
     }
 
@@ -500,15 +498,10 @@
       drawTotal();
     });
 
-    const lines = (el) => el.value.split('\n').map((s) => s.trim()).filter(Boolean);
     const summary = root.querySelector('[name=summary]');
-    const praise = root.querySelector('[name=praise]');
-    const advice = root.querySelector('[name=advice]');
     const keepExample = root.querySelector('[name=keep_example]');
     summary.value = state.summary || '';
-    praise.value = (state.praise || []).join('\n');
-    advice.value = (state.advice || []).join('\n');
-    for (const el of [summary, praise, advice]) el.addEventListener('input', setDirty);
+    summary.addEventListener('input', setDirty);
     if (keepExample) {
       keepExample.checked = state.keep_example;
       keepExample.addEventListener('change', setDirty);
@@ -519,8 +512,6 @@
         dims: Object.fromEntries(Object.entries(state.dims).map(([k, d]) => [k, { score: d.score }])),
         marks: state.marks.map((m) => ({ type: m.type, start: m.start, end: m.end, fix: m.fix || '', note: m.note || '' })),
         summary: summary.value,
-        praise: lines(praise),
-        advice: lines(advice),
         keep_example: keepExample ? keepExample.checked : false,
       };
       status.textContent = '正在保存…';

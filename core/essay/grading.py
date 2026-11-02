@@ -4,7 +4,7 @@ Pipeline (run by the worker, core/essay/worker.py):
   0. ocr    — photos only: the ocr step's vision model copies each page line by line, with each line's box on the
               photo (prompts/ocr.md); assemble() joins the lines into the essay text and keeps where every line is,
               so the result page can draw the marks on the photo in red pen.
-  1. grade  — the grade step's model returns dims / marks / praise / advice / example / summary (prompts/grade.md).
+  1. grade  — the grade step's model returns dims / marks / summary (one encouraging paragraph) (prompts/grade.md).
   2. clean  — the server keeps only what fits the schema: scores are clamped to each dimension's maximum, the total
               and level are computed here (never taken from the model), and every quote must occur in the essay
               text exactly (whitespace aside), otherwise the mark is dropped. Offsets of the quotes are stored so
@@ -23,7 +23,7 @@ from pathlib import Path
 PROMPTS = Path(__file__).resolve().parent.parent.parent / "sites" / "teacher" / "prompts"
 DIMS = {"content": "内容", "structure": "结构", "language": "语言", "norms": "规范"}
 ERROR_TYPES = ("错别字", "用词不当", "病句", "标点")
-MARK_TYPES = ERROR_TYPES + ("好词好句", "修改建议")
+MARK_TYPES = ERROR_TYPES + ("好词好句", "修改建议", "分段")
 LEVELS = ("待提高", "及格", "良", "优")
 TOTAL = 25  # every band's maxima add up to this (prompts/bands.json)
 FLAGS = {
@@ -35,10 +35,11 @@ FLAGS = {
     "disagree": "复核等级相差较大，建议细看",
 }
 MAX_TEXT = 3000
-MAX_MARKS = 24
-# Marks kept per kind: the review is written on the student's page in red pen, so it stays short.
-MARK_LIMITS = {"error": 8, "好词好句": 3, "修改建议": 2}
-NOTE_MAX = 24
+MAX_MARKS = 40
+# Marks kept per kind: the review is careful (every real problem is pointed out); long notes go in the page margins.
+MARK_LIMITS = {"error": 20, "好词好句": 6, "修改建议": 5, "分段": 3}
+NOTE_MAX = 40
+SUMMARY_MAX = 200
 
 
 def _read(name):
@@ -66,8 +67,8 @@ def band_of(grade):
 
 
 def level_of(total):
-    """优 23–25, 良 19–22, 及格 15–18, below that 待提高 (90 / 75 / 60 % of 25)."""
-    return "优" if total >= 23 else "良" if total >= 19 else "及格" if total >= 15 else "待提高"
+    """优 22–25, 良 19–21, 及格 15–18, below that 待提高."""
+    return "优" if total >= 22 else "良" if total >= 19 else "及格" if total >= 15 else "待提高"
 
 
 def clean_text(text):
@@ -212,7 +213,7 @@ def clean_review(raw, essay):
             if example_span and _str(example.get("revised"), 600)
             else None
         ),
-        "summary": _str(raw.get("summary"), 100),
+        "summary": _str(raw.get("summary"), SUMMARY_MAX),
         "teacher_note": _str(raw.get("teacher_note"), 200),
         "flags": [f for f in dict.fromkeys(raw.get("flags") or []) if f in FLAGS and f not in ("unchecked", "disagree")]
         if isinstance(raw.get("flags"), list)

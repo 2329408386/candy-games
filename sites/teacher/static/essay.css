@@ -91,6 +91,7 @@ mark.mk{background:none}
 .mk-punct{background:#e9e1f4 !important;box-shadow:inset 0 -2px 0 var(--purple)}
 .mk-good{background:#dcefd7 !important;box-shadow:inset 0 -2px 0 var(--green)}
 .mk-tip{background:#dfeaf5 !important;box-shadow:inset 0 -2px 0 var(--blue)}
+.mk-para{background:#efe6f7 !important;box-shadow:inset 0 -2px 0 #8a5cb8}
 .mk.active{outline:2px solid var(--ink);outline-offset:1px}
 .mk sup{font-size:11px;color:var(--muted);margin-left:1px}
 .legend{display:flex;flex-wrap:wrap;gap:10px;font-size:13px;margin:14px 0 0}
@@ -240,37 +241,29 @@ mark.mk{background:none}
 .typed-alt>summary{cursor:pointer;color:var(--green);font-size:14px;margin:4px 0}
 .photo-plain{display:block;max-width:100%;border-radius:12px;border:1px solid var(--line);margin:0 auto 14px}
 
-/* red pen (static/redpen.js?v=f093ee12) */
-@font-face{font-family:RedPen;src:url(redpen-font.0924cd57.woff2) format('woff2');font-display:swap}
-.redpen{position:relative;max-width:860px;margin:0 auto}
+/* red pen (static/redpen.js?v=7897882d) */
+@font-face{font-family:RedPen;src:url(redpen-font.c25475b2.woff2) format('woff2');font-display:swap}
+.redpen{position:relative;max-width:1040px;margin:0 auto}
 .rp-page{position:relative;width:100%;margin:0 0 16px;border-radius:6px;overflow:hidden;box-shadow:0 6px 24px #344b3818;background:#fff}
-.rp-page>img{position:absolute;inset:0;width:100%;height:100%;display:block}
-.rp-page>svg{position:absolute;inset:0;width:100%;height:100%}
-.rp-page.paper{background:#fffef8}
-.rp-page .grid rect{fill:none;stroke:#b9d3b4;stroke-width:1.2}
-.rp-page .grid path{fill:none;stroke:#cfe1cb;stroke-width:1}
-.rp-page .typed text{fill:#2b2b2b;font-family:'Kaiti SC',STKaiti,KaiTi,serif}
+.rp-page>svg{display:block;width:100%;height:auto}
+.redpen .typed{fill:#2b2b2b;font-family:'Kaiti SC',STKaiti,KaiTi,serif}
 .redpen .ink{fill:none;stroke:#d2342a;stroke-linecap:round;stroke-linejoin:round;opacity:.92}
-.redpen .pen{fill:#d2342a;font-family:RedPen,'Kaiti SC',STKaiti,KaiTi,serif;paint-order:stroke;stroke:#fffdf7;stroke-width:.22em;stroke-linejoin:round}
+.redpen .pen{fill:#d2342a;font-family:RedPen,'Kaiti SC',STKaiti,KaiTi,serif;paint-order:stroke;stroke:#fffdf7;stroke-width:.2em;stroke-linejoin:round}
 .redpen .mark{cursor:pointer;outline:none}
 .redpen .mark .hit{fill:transparent;stroke:none}
 .redpen .mark:hover .ink,.redpen .mark:focus .ink{stroke:#a3170f}
 .redpen .mark:focus .hit{fill:#d2342a14}
-.redpen .score .pen{stroke-width:.16em}
-.rp-comment{background:#fffef8;border:1px solid #efe6d8;border-radius:6px;box-shadow:0 6px 24px #344b3812;padding:18px 24px;margin:0 0 12px;color:#d2342a;font-family:RedPen,'Kaiti SC',STKaiti,KaiTi,serif;font-size:21px;line-height:1.75;background-image:repeating-linear-gradient(transparent 0 35px,#e9e2d3 35px 36px);background-position:0 12px}
-.rp-comment p{margin:0 0 2px}
-.rp-tag{display:inline-block;border:1.5px solid currentColor;border-radius:6px;font-size:.8em;padding:0 6px;margin-right:8px;line-height:1.4}
-.rp-sign{text-align:right;font-size:1.15em}
-.rp-legend{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;font-size:13px;color:var(--muted);margin:4px 0 0}
-.rp-legend span{white-space:nowrap}
+.rp-summary{background:#fffef8}
+.rp-legend{display:flex;gap:6px 14px;flex-wrap:wrap;justify-content:center;font-size:13px;color:var(--muted);margin:4px 0 0}
+.rp-legend span{white-space:nowrap;display:inline-flex;align-items:center;gap:2px}
+.rp-legend .ink{fill:none;stroke:#d2342a;stroke-linecap:round;stroke-linejoin:round}
 .rp-pop{position:absolute;z-index:10;max-width:min(320px,calc(100% - 16px));background:var(--white);border:1px solid #efd6d2;border-radius:12px;box-shadow:0 12px 32px #0002;padding:12px 14px;font-size:15px;line-height:1.7}
 .rp-pop strong{display:inline-block;color:#d2342a;margin-right:8px}
 .rp-pop p{margin:4px 0 0}
 .rp-pop b{color:#d2342a}
+.rp-export{display:flex;justify-content:center;gap:10px;margin:14px auto 0}
 .redpen.compact{max-width:none}
-.redpen.compact .rp-comment{font-size:18px}
-.projection .redpen{max-width:min(1200px,100%)}
-.projection .rp-comment{font-size:30px}
+.projection .redpen{max-width:min(1400px,100%)}
 .correct-text{margin-top:16px}
 .trial-next{margin-top:20px;max-width:860px;margin-left:auto;margin-right:auto}
 .essay-pane .tabs{margin-bottom:12px}
@@ -279,7 +272,6 @@ mark.mk{background:none}
 @media(max-width:600px){
   .me-name{max-width:6em}
   .me-menu>summary{padding-right:10px}
-  .rp-comment{font-size:18px;padding:14px 16px}
   .photo-item{width:30%}
   .photo-item img{width:100%;height:auto;aspect-ratio:3/4}
 }

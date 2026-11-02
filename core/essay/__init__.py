@@ -461,15 +461,14 @@ def redpen_data(sub, review, show_score=True):
         "marks": [{k: m[k] for k in ("type", "start", "end", "fix", "note")} for m in review["marks"]],
         "total": review["total"],
         "max": grading.TOTAL,
-        "level": review["level"],
+        "level": grading.level_of(review["total"]),
         "showScore": show_score,
+        "student": sub["student_name"] if "student_name" in sub.keys() else "",
         "summary": review.get("summary") or "",
-        "praise": review.get("praise") or [],
-        "advice": review.get("advice") or [],
     }
 
 
-MARK_CLASS = {"错别字": "typo", "用词不当": "word", "病句": "sentence", "标点": "punct", "好词好句": "good", "修改建议": "tip"}
+MARK_CLASS = {"错别字": "typo", "用词不当": "word", "病句": "sentence", "标点": "punct", "好词好句": "good", "修改建议": "tip", "分段": "para"}
 
 
 def register_essay(app):
@@ -905,7 +904,7 @@ def result_view(sub, as_teacher):
         "result.html",
         sub=sub,
         final=final,
-        redpen=redpen_data(sub, final),
+        redpen={**redpen_data(sub, final), **({"student": ""} if request.args.get("anon") == "1" else {})},
         previous=previous and json.loads(previous["final"]),
         as_teacher=as_teacher,
         project=as_teacher and request.args.get("project") == "1",
