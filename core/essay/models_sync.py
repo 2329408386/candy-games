@@ -179,6 +179,8 @@ def sync(d, only=None):
         if not best:
             if not present and models:
                 _note(d, slot, f"{slot['model']} 已不在服务商的模型列表里，也没找到同系列的新版本，请手动选择模型", True)
+            elif slot["auto_alert"] or slot["auto_note"].startswith(("检查新版本失败", "发现 ")):
+                _note(d, slot, "", False)  # the list was read and the model is fine: drop the old warning
             continue
         try:
             smoke_test(slot, best["id"])

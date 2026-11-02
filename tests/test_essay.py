@@ -512,3 +512,11 @@ def test_fetch_models_retries_without_key(monkeypatch):
     provider = {"base_url": "https://opencode.ai/inference/v1/", "key_enc": llm.encrypt_key("sk-abc-123456")}
     assert models_sync.fetch_models(provider) == [{"id": "glm-5.3-flash"}]
     assert seen == ["Bearer sk-abc-123456", None]
+
+
+def test_successful_check_clears_old_warnings(models, db):
+    db.execute("UPDATE ess_steps SET auto_note='检查新版本失败：模型列表 HTTP 404',auto_alert=0 WHERE step='grade'")
+    db.execute("UPDATE ess_meta SET value='0' WHERE key='models_checked'")
+    db.commit()
+    models_sync.sync(db)
+    assert db.execute("SELECT auto_note FROM ess_steps WHERE step='grade'").fetchone()[0] == ""
