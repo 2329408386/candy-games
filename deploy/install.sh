@@ -116,7 +116,7 @@ activate() {
         echo "发布完成：$release"
         # 语文老师工作台: the first release with it creates its admin account (credentials in a private file).
         if [ -f "$APP/current/sites/teacher/prompts/grade.md" ]; then
-            (set -a; . $DATA/secret.env; cd $APP/current && runuser -u candy-games -- env GAME_DATA=$DATA "$APP/venv/bin/python" manage.py seed --site teacher | grep -v "^初始化完成") || echo "工作台初始化失败（不影响已发布的版本）" >&2
+            (set -a; . $DATA/secret.env; cd $APP/current && runuser -u candy-games -- env GAME_DATA=$DATA "$APP/venv/bin/python" manage.py seed --site teacher | { grep -v "^初始化完成" || true; }) || echo "工作台初始化失败（不影响已发布的版本）" >&2
         fi
     else
         echo "健康检查失败" >&2
