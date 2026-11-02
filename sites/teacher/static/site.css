@@ -100,3 +100,4 @@ button.header-contact:hover{background:var(--green-dark)}
 .test-result{font-size:14px;margin-left:8px;white-space:normal}
 .stat small{display:block;color:var(--muted);font-size:12px}
 @media(max-width:900px){.step-slots{grid-template-columns:1fr}}
+.check-inline{display:flex;align-items:center;gap:8px;font-weight:500}.alert-text{color:#b5483c}

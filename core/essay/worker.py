@@ -12,7 +12,7 @@ has reached the daily budget (ess_meta 'daily_budget', yuan); the submission's `
 """
 
 import argparse, json, logging, sqlite3, threading, time
-from . import grading, llm
+from . import grading, llm, models_sync
 
 THREADS = 3
 RETRY_DELAYS = (30, 120, 600)
@@ -160,6 +160,12 @@ def work(d, stop=None, once=False):
         if time.time() - last_beat > 30:
             heartbeat(d)
             last_beat = time.time()
+            if models_sync.due(d):
+                try:
+                    models_sync.sync(d)  # takes the slot under a lock, so only one thread runs it
+                except Exception:
+                    log.exception("model version check failed")
+                    d.rollback()
         job = claim(d)
         if not job:
             if once:

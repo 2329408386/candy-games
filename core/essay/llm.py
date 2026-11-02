@@ -23,11 +23,17 @@ USER_AGENT = "candy-games-essay/1.0 (+http://39.106.16.99/teacher/)"
 
 
 class LLMError(Exception):
-    """A call that failed; retry says whether trying again later (or with the backup model) may help."""
+    """A call that failed; retry says whether trying again later (or with the backup model) may help;
+    model_missing that the provider says the model does not exist (models_sync may find its successor)."""
+
+    model_missing = False
 
     def __init__(self, message, retry=True):
         super().__init__(message)
         self.retry = retry
+
+
+MODEL_MISSING = re.compile(r"model.{0,40}(not.{0,10}(found|exist|support|available)|does ?n.t exist|unknown|invalid)|(no|unknown|invalid) model|模型.{0,10}(不存在|不支持|下线)", re.I | re.S)
 
 
 class NotConfigured(LLMError):
@@ -157,7 +163,9 @@ def post(row, body):
     except urllib.error.HTTPError as e:
         detail = e.read()[:300].decode(errors="replace")
         # 400/401/403/404 are configuration problems; the backup may still work, but retrying this one won't.
-        raise LLMError(f"HTTP {e.code}: {detail}", retry=e.code in (408, 409, 429) or e.code >= 500) from None
+        error = LLMError(f"HTTP {e.code}: {detail}", retry=e.code in (408, 409, 429) or e.code >= 500)
+        error.model_missing = e.code in (400, 404) and bool(MODEL_MISSING.search(detail))
+        raise error from None
     except (urllib.error.URLError, TimeoutError, OSError) as e:
         raise LLMError(f"连接失败：{e}") from None
     except ValueError:
@@ -199,7 +207,19 @@ def chat(d, step, messages, *, json_mode=False, license_id=0, submission_id=None
     errors, retry = [], False
     for row in rows:
         try:
-            content, *tokens = post(row, request_body(row, messages, json_mode))
+            try:
+                content, *tokens = post(row, request_body(row, messages, json_mode))
+            except LLMError as e:
+                if not (e.model_missing and row["auto_mode"] != "fixed"):
+                    raise
+                # Renamed or retired: switch the slot to the newest model of its series and try that once.
+                from . import models_sync
+
+                log_usage(d, row, license_id, submission_id, step, (0, 0, 0), False)
+                if not models_sync.sync(d, only=(row["step"], row["slot"])):
+                    raise
+                row = next(r for r in step_rows(d, step) if r["slot"] == row["slot"])
+                content, *tokens = post(row, request_body(row, messages, json_mode))
         except LLMError as e:
             log_usage(d, row, license_id, submission_id, step, (0, 0, 0), False)
             errors.append(f"{SLOTS[row['slot']]}：{e}")

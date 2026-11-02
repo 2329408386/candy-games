@@ -81,6 +81,18 @@ def initialize(path):
             d.execute("ALTER TABLE profiles ADD COLUMN rank_progress INTEGER NOT NULL DEFAULT 0")
         if "pk_outcome" not in {r[1] for r in d.execute("PRAGMA table_info(pk_seats)")}:
             d.execute("ALTER TABLE pk_seats ADD COLUMN pk_outcome TEXT NOT NULL DEFAULT ''")
+        columns = {r[1] for r in d.execute("PRAGMA table_info(ess_steps)")}
+        if "auto_mode" not in columns:  # 版本策略, see core/essay/models_sync.py
+            for column in (
+                "auto_mode TEXT NOT NULL DEFAULT 'latest'",
+                "series TEXT NOT NULL DEFAULT ''",
+                "prev_model TEXT NOT NULL DEFAULT ''",
+                "auto_at INTEGER",
+                "auto_note TEXT NOT NULL DEFAULT ''",
+                "auto_alert INTEGER NOT NULL DEFAULT 0",
+                "auto_price INTEGER NOT NULL DEFAULT 1",
+            ):
+                d.execute("ALTER TABLE ess_steps ADD COLUMN " + column)
         migrate(d)
     path.chmod(0o600)
 

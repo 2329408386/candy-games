@@ -4,7 +4,9 @@ each teacher license's quota (student seats and essays a month). Both need the s
 import json, re, time
 from flask import abort, flash, jsonify, redirect, render_template, request, url_for
 from core.app import admin_only, audit, db, integer_field, license_row
-from . import llm, month_start
+from . import llm, models_sync, month_start
+
+AUTO_MODES = {"latest": "自动跟随最新版本", "replace": "只在下线时自动替换", "fixed": "固定，不自动改"}
 from .worker import spent_today, today_start
 
 
@@ -79,6 +81,11 @@ def _step_form():
         "price_out": _float("price_out", 0, 1000, "输出价格", 0),
         "peak_factor": _float("peak_factor", 1, 10, "高峰倍数", 1),
         "peak_hours": peak_hours,
+        "auto_mode": request.form.get("auto_mode") if request.form.get("auto_mode") in AUTO_MODES else "latest",
+        "auto_price": int(bool(request.form.get("auto_price"))),
+        "series": models_sync.series(model),
+        "auto_note": "",
+        "auto_alert": 0,
     }
 
 
@@ -136,11 +143,27 @@ def register(app):
                     details = {"step": step, "slot": slot, **(values or {"cleared": True})}
                 elif action == "budget":
                     budget = _float("daily_budget", 0, 100000, "每日花费上限", 0)
+                    rate = _float("usd_cny", 1, 20, "美元汇率", models_sync.USD_CNY)
+                    for key, value in (("daily_budget", budget), ("usd_cny", rate)):
+                        d.execute(
+                            "INSERT INTO ess_meta VALUES(?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value", (key, str(value))
+                        )
+                    details = {"daily_budget": budget, "usd_cny": rate}
+                elif action == "models_check":
+                    # The worker runs the check within half a minute (model calls do not belong in a web request).
+                    d.execute("INSERT INTO ess_meta VALUES('models_checked','0') ON CONFLICT(key) DO UPDATE SET value='0'")
+                    details = {}
+                elif action == "revert":
+                    step, slot = request.form.get("step"), request.form.get("slot")
+                    row = d.execute("SELECT * FROM ess_steps WHERE step=? AND slot=?", (step, slot)).fetchone()
+                    if not row or not row["prev_model"]:
+                        raise ValueError("没有可以改回的模型")
                     d.execute(
-                        "INSERT INTO ess_meta VALUES('daily_budget',?) ON CONFLICT(key) DO UPDATE SET value=excluded.value",
-                        (str(budget),),
+                        "UPDATE ess_steps SET model=?,prev_model=?,series=?,auto_mode='fixed',auto_note=?,auto_alert=0 WHERE step=? AND slot=?",
+                        (row["prev_model"], row["model"], models_sync.series(row["prev_model"]),
+                         f"已改回 {row['prev_model']}，版本策略改为固定", step, slot),
                     )
-                    details = {"daily_budget": budget}
+                    details = {"step": step, "slot": slot, "from": row["model"], "to": row["prev_model"]}
                 else:
                     abort(400)
                 audit("essay_" + action, details=json.dumps(details, ensure_ascii=False))
@@ -153,6 +176,8 @@ def register(app):
         providers = d.execute("SELECT * FROM ess_providers ORDER BY id").fetchall()
         steps = {(r["step"], r["slot"]): r for r in d.execute("SELECT * FROM ess_steps")}
         budget = d.execute("SELECT value FROM ess_meta WHERE key='daily_budget'").fetchone()
+        rate = d.execute("SELECT value FROM ess_meta WHERE key='usd_cny'").fetchone()
+        checked = d.execute("SELECT value FROM ess_meta WHERE key='models_checked'").fetchone()
         seen = d.execute("SELECT value FROM ess_meta WHERE key='worker_seen'").fetchone()
         month = month_start()
         usage = {
@@ -183,6 +208,9 @@ def register(app):
             providers=providers,
             steps=steps,
             budget=float(budget[0]) if budget else 0,
+            usd_cny=float(rate[0]) if rate else models_sync.USD_CNY,
+            models_checked=int(checked[0]) if checked else 0,
+            AUTO_MODES=AUTO_MODES,
             worker_seen=int(seen[0]) if seen else None,
             now=int(time.time()),
             usage=usage,
@@ -208,7 +236,7 @@ def register(app):
             row = {
                 **dict(provider), "provider_id": provider["id"], "provider_name": provider["name"], "model": model,
                 "temperature": None, "max_tokens": None, "extra": "", "price_in": 0, "price_cached": 0, "price_out": 0,
-                "peak_factor": 1, "peak_hours": "",
+                "peak_factor": 1, "peak_hours": "", "auto_mode": "fixed",
             }
         row = {**row, "timeout": min(row["timeout"] or 20, 20)}  # stays under the web worker's 30 s limit
         body = llm.request_body(row, [{"role": "user", "content": "请只回复两个字：你好"}], False)

@@ -4,7 +4,7 @@ Model calls are faked (core.essay.llm.post), so nothing here touches the network
 import json, re, time
 import pytest
 from conftest import KEYS, TEACHER2_KEY, SiteClient
-from core.essay import grading, llm, worker
+from core.essay import grading, llm, models_sync, worker
 
 ESSAY = (
     "今天是星期天，我和妈妈去公园玩。公园里的花开得真美，红的像火，粉的像霞。\n\n"
@@ -70,7 +70,9 @@ def models(monkeypatch, db):
         [("grade", "main", "big", 4.0, 0.2, 12.0), ("check", "main", "small", 1.0, 0.0, 2.0)],
     )
     db.execute("DELETE FROM ess_meta WHERE key='daily_budget'")
+    db.execute("INSERT OR REPLACE INTO ess_meta VALUES('models_checked',?)", (str(int(time.time())),))
     db.commit()
+    monkeypatch.setattr(models_sync, "fetch_models", lambda provider: [{"id": "big"}, {"id": "small"}, {"id": "spare"}])
     return fake
 
 
@@ -400,3 +402,96 @@ def test_grading_helpers():
     assert llm.in_peak("9-12,14-18", monday10) and not llm.in_peak("9-12,14-18", monday10 + 5 * 86400)
     row = {"price_in": 2.0, "price_cached": 0.5, "price_out": 8.0, "peak_factor": 2.0, "peak_hours": "9-12"}
     assert llm.cost(row, 1000, 400, 100, monday10) == pytest.approx(2 * (600 * 2 + 400 * 0.5 + 100 * 8) / 1e6)
+
+
+# ---- 版本策略: models_sync ----
+OPENCODE = [
+    {"id": "deepseek-v4.1-flash", "type": "chat", "release_date": "2026-09-10", "capabilities": {"structured_output": True}},
+    {"id": "deepseek-v4-pro", "type": "chat"},
+    {"id": "glm-5.3", "type": "chat"},
+    {"id": "glm-5.3-flash", "type": "chat"},
+    {"id": "glm-5.4-flash-preview", "type": "chat"},
+    {"id": "hy4-preview", "type": "chat"},
+    {"id": "muse-spark-1.3-contributor", "type": "chat"},
+]
+
+
+def test_series_and_version():
+    assert models_sync.series("deepseek-v4.1-flash") == "deepseek-#-flash" == models_sync.series("DeepSeek-V5-Flash")
+    assert models_sync.series("glm-5.3-flash") == "glm-#-flash" != models_sync.series("glm-5.3")
+    assert models_sync.series("qwen3.8-flash") == "qwen#-flash"
+    assert models_sync.version("deepseek-v4.1-flash") == (4, 1) < models_sync.version("deepseek-v4.10-flash") == (4, 10)
+    slot = {"model": "glm-5.3-flash", "series": "", "auto_mode": "latest", "step": "check"}
+    assert models_sync.pick(slot, OPENCODE) is None  # already newest; the preview is another series
+    newer = OPENCODE + [{"id": "glm-5.4-flash", "type": "chat"}, {"id": "glm-6", "type": "chat"}]
+    assert models_sync.pick(slot, newer)["id"] == "glm-5.4-flash"
+    assert models_sync.pick(dict(slot, auto_mode="replace"), newer) is None  # still listed
+    gone = [m for m in newer if m["id"] != "glm-5.3-flash"]
+    assert models_sync.pick(dict(slot, auto_mode="replace"), gone)["id"] == "glm-5.4-flash"
+    assert models_sync.pick(dict(slot, auto_mode="fixed"), gone) is None
+    # Capabilities: no JSON for grading, no images for OCR.
+    assert models_sync.pick(slot, OPENCODE + [{"id": "glm-5.9-flash", "capabilities": {"structured_output": False}}]) is None
+    ocr = {"model": "qwen-vl-ocr-1", "series": "", "auto_mode": "latest", "step": "ocr"}
+    assert models_sync.pick(ocr, [{"id": "qwen-vl-ocr-2", "modalities": {"input": ["text"]}}]) is None
+
+
+def test_price_from_cost():
+    cost = {
+        "text": {"input": {"price": 0.15, "cache": {"read": 0.003}}, "output": {"price": 0.6}},
+        "multipliers": [{"when": {"utc_days": {"in": ["mon", "tue", "wed", "thu", "fri"]}, "any": [
+            {"all": [{"utc_hours": {"gte": "01:00"}}, {"utc_hours": {"lt": "04:00"}}]},
+            {"all": [{"utc_hours": {"gte": "06:00"}}, {"utc_hours": {"lt": "10:00"}}]}]}, "factor": 2}],
+    }
+    p = models_sync.price_from_cost(cost, 7.0)
+    assert (p["price_in"], p["price_cached"], p["price_out"]) == (1.05, 0.021, 4.2)
+    assert p["peak_hours"] == "9-12,14-18" and p["peak_factor"] == 2
+    assert models_sync.price_from_cost({"weird": 1}, 7) is None
+
+
+def test_sync_switches_after_smoke_test_and_reverts(models, db, monkeypatch):
+    listing = [{"id": "big"}, {"id": "small"}, {"id": "small-2", "cost": {"text": {"input": {"price": 1}, "output": {"price": 2}}}}]
+    monkeypatch.setattr(models_sync, "fetch_models", lambda provider: listing)
+    db.execute("UPDATE ess_steps SET model='small-1' WHERE step='check'")
+    db.execute("UPDATE ess_meta SET value='0' WHERE key='models_checked'")
+    db.commit()
+    models.fail = {"small-2"}  # the test request fails: no switch
+    assert models_sync.sync(db) == {}
+    assert db.execute("SELECT model FROM ess_steps WHERE step='check'").fetchone()[0] == "small-1"
+    models.fail = set()
+    assert models_sync.sync(db) == {}  # checked a moment ago: not due
+    db.execute("UPDATE ess_meta SET value='0' WHERE key='models_checked'")
+    db.commit()
+    assert models_sync.sync(db) == {("check", "main"): "small-2"}
+    row = db.execute("SELECT * FROM ess_steps WHERE step='check'").fetchone()
+    assert row["prev_model"] == "small-1" and "small-2" in row["auto_note"] and row["price_in"] == 7.1 and row["price_out"] == 14.2
+    assert db.execute("SELECT 1 FROM audit WHERE action='essay_auto_model'").fetchone()
+    a = SiteClient("teacher")
+    a.login()
+    a.post("/admin/models", {"action": "revert", "step": "check", "slot": "main"})
+    row = db.execute("SELECT * FROM ess_steps WHERE step='check'").fetchone()
+    assert row["model"] == "small-1" and row["auto_mode"] == "fixed"
+    page = a.get("/admin/models").get_data(as_text=True)
+    assert "版本策略" in page and "立即检查更新" in page
+
+
+def test_missing_model_switches_and_retries(models, klass, db, monkeypatch):
+    t, cid, aid = klass
+    monkeypatch.setattr(models_sync, "fetch_models", lambda provider: [{"id": "big-v2"}, {"id": "small"}])
+    db.execute("UPDATE ess_steps SET model='big-v1' WHERE step='grade'")
+    db.commit()
+    real = models.__call__
+
+    def post(row, body):
+        if row["model"] == "big-v1" and "复核" not in body["messages"][0]["content"][:60]:
+            e = llm.LLMError("HTTP 404: The model `big-v1` does not exist", retry=False)
+            e.model_missing = bool(llm.MODEL_MISSING.search("The model `big-v1` does not exist"))
+            raise e
+        return real(row, body)
+
+    monkeypatch.setattr(llm, "post", post)
+    s, _ = student_client(db, cid)
+    sid = jpost(s, f"/api/write/{aid}", {"text": ESSAY}).get_json()["id"]
+    run_worker()
+    assert db.execute("SELECT status FROM ess_submissions WHERE id=?", (sid,)).fetchone()[0] == "review"
+    assert db.execute("SELECT model FROM ess_steps WHERE step='grade' AND slot='main'").fetchone()[0] == "big-v2"
+    assert llm.MODEL_MISSING.search("Model not found: x") and not llm.MODEL_MISSING.search("rate limit exceeded")

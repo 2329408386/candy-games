@@ -16,6 +16,14 @@
     <div class="stat {{'highlight' if worker_seen and now - worker_seen < 120 else ''}}"><span>批改进程</span><strong>{% if worker_seen and now - worker_seen < 120 %}运行中{% else %}未运行{% endif %}</strong>{% if usage.queued %}<small>排队 {{usage.queued}} 篇</small>{% endif %}</div>
   </div>
 
+  {% for key, st in steps.items() if st.auto_alert %}
+    <div class="notice error" role="alert">{{STEPS[key[0]]}} · {{SLOTS[key[1]]}}：{{st.auto_note}}</div>
+  {% endfor %}
+  <section class="panel" id="versions">
+    <h2>模型版本自动更新</h2>
+    <p class="hint">「自动跟随最新版本」的步骤，每 6 小时检查一次服务商的模型列表：同一系列出了新版本（例如 deepseek-v4.1-flash → deepseek-v4.2-flash），或者原来的模型下线、改名，就先发一条测试请求，通过后自动换成新的 id，并按列表里的价格更新单价。批改时如果服务商说模型不存在，也会马上检查一次。上次检查：{{(models_checked|datetime) if models_checked else '还没有检查过'}}。</p>
+    <form method="post"><input type="hidden" name="csrf" value="{{csrf()}}"><input type="hidden" name="action" value="models_check"><input type="hidden" name="anchor" value="#versions"><button class="secondary">立即检查更新</button> <small class="hint">半分钟内由批改进程执行，稍后刷新本页查看结果。</small></form>
+  </section>
   <section class="panel" id="providers">
     <h2>服务商</h2>
     <p class="hint">例如阿里云百炼 <code>https://dashscope.aliyuncs.com/compatible-mode/v1</code>、DeepSeek <code>https://api.deepseek.com/v1</code>。API Key 加密保存，页面上只显示最后 4 位。</p>
@@ -54,7 +62,8 @@
       <div class="step-slots">
         {% for slot, slot_name in SLOTS.items() %}
           {% set s = steps.get((step, slot)) %}
-          <form method="post" class="step-form">
+          <div class="step-form">
+          <form method="post">
             <input type="hidden" name="csrf" value="{{csrf()}}"><input type="hidden" name="action" value="step"><input type="hidden" name="step" value="{{step}}"><input type="hidden" name="slot" value="{{slot}}"><input type="hidden" name="anchor" value="#step-{{step}}">
             <h3>{{slot_name}}</h3>
             <div class="fields-row">
@@ -75,8 +84,17 @@
               <div class="form-field"><label>高峰时段</label><input name="peak_hours" value="{{s.peak_hours if s else ''}}" placeholder="例如 9-12,14-18（北京时间工作日）"></div>
               <div class="form-field"><label>高峰价格倍数</label><input name="peak_factor" value="{{s.peak_factor if s else ''}}" placeholder="例如 2；不填为 1"></div>
             </div>
+            <div class="fields-row">
+              <div class="form-field"><label>版本策略</label><select name="auto_mode">{% for k, label in AUTO_MODES.items() %}<option value="{{k}}"{{' selected' if (s.auto_mode if s else 'latest') == k}}>{{label}}</option>{% endfor %}</select></div>
+              <div class="form-field"><label>&nbsp;</label><label class="check-inline"><input type="checkbox" name="auto_price"{{' checked' if not s or s.auto_price}}> 换模型时按列表价格自动更新单价</label></div>
+            </div>
             <div class="form-actions"><button>保存{{slot_name}}</button>{% if s %}<button type="button" class="secondary" data-test-step="{{step}}" data-test-slot="{{slot}}">测试</button><span class="test-result" role="status"></span>{% endif %}</div>
           </form>
+          {% if s and s.auto_note %}<p class="hint {{'alert-text' if s.auto_alert}}">{{s.auto_note}}{% if s.auto_at %} · {{s.auto_at|datetime}}{% endif %}</p>{% endif %}
+          {% if s and s.prev_model %}
+            <form method="post" onsubmit="return confirm('改回 {{s.prev_model}}？版本策略会改为固定。')"><input type="hidden" name="csrf" value="{{csrf()}}"><input type="hidden" name="action" value="revert"><input type="hidden" name="step" value="{{step}}"><input type="hidden" name="slot" value="{{slot}}"><input type="hidden" name="anchor" value="#step-{{step}}"><button class="secondary">改回上一个（{{s.prev_model}}）</button></form>
+          {% endif %}
+          </div>
         {% endfor %}
       </div>
     </section>
@@ -87,6 +105,7 @@
     <form method="post" class="fields-row">
       <input type="hidden" name="csrf" value="{{csrf()}}"><input type="hidden" name="action" value="budget"><input type="hidden" name="anchor" value="#budget">
       <div class="form-field"><label>元 / 天（北京时间）</label><input name="daily_budget" value="{{budget or ''}}" placeholder="0 或不填表示不限"><small>今天的花费达到上限后，新的作文先排队，第二天自动继续批改。花费按上面填写的价格折算。</small></div>
+      <div class="form-field"><label>美元汇率</label><input name="usd_cny" value="{{usd_cny}}"><small>自动更新单价时，把服务商的美元价格换算成人民币。</small></div>
       <div class="form-actions"><button>保存</button></div>
     </form>
   </section>
