@@ -414,7 +414,9 @@
   }
   const rules = el('div', 'pk-rules');
   const modeNote = el('p', 'pk-mode-note');
-  rules.append(el('h2', '', '怎么玩'), el('p', '', cfg.instructions),
+  rules.append(el('h2', '', '怎么玩'));
+  if (cfg.highlight) rules.append(el('p', 'pk-highlight', cfg.highlight)); // one point the player must not miss
+  rules.append(el('p', '', cfg.instructions),
     el('p', 'pk-scoring', '答对每题加10分，连续答对额外加5分；答错扣5分，最低0分。提交后自动进入下一题（答对停1秒，答错停2秒看正确答案）。'), modeNote);
   let tipsBox = null;
   if (cfg.tips?.length) {
