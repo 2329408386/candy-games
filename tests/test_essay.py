@@ -320,6 +320,13 @@ def test_admin_model_settings(db):
     row = db.execute("SELECT * FROM ess_providers WHERE name='百炼'").fetchone()
     assert row["base_url"].endswith("/v1") and row["key_tail"] == "1234" and "sk-secret" not in row["key_enc"]
     assert llm.decrypt_key(row["key_enc"]) == "sk-secret-ABCD1234"
+    # Anthropic-style endpoints are refused; a pasted …/chat/completions is trimmed to the base.
+    a.post("/admin/models", {"action": "provider_add", "name": "错的", "base_url": "https://opencode.ai/inference/anthropic/v1/messages", "api_key": "sk-x-12345678", "timeout": "60", "concurrency": "2"})
+    assert not db.execute("SELECT 1 FROM ess_providers WHERE name='错的'").fetchone()
+    a.post("/admin/models", {"action": "provider_add", "name": "全地址", "base_url": "https://api.deepseek.com/v1/chat/completions", "api_key": "sk-x-12345678", "timeout": "60", "concurrency": "2"})
+    assert db.execute("SELECT base_url FROM ess_providers WHERE name='全地址'").fetchone()[0] == "https://api.deepseek.com/v1"
+    db.execute("DELETE FROM ess_providers WHERE name='全地址'")
+    db.commit()
     # Leaving the key empty keeps it.
     a.post("/admin/models", {"action": "provider_edit", "id": row["id"], "name": "百炼2", "base_url": "https://a.b/v1", "api_key": "", "timeout": "60", "concurrency": "2"})
     assert llm.decrypt_key(db.execute("SELECT key_enc FROM ess_providers WHERE id=?", (row["id"],)).fetchone()[0]) == "sk-secret-ABCD1234"

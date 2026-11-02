@@ -26,6 +26,10 @@ def _provider_form(existing=None):
     if not name:
         raise ValueError("请填写服务商名称")
     base_url = request.form.get("base_url", "").strip().rstrip("/")
+    if base_url.endswith("/chat/completions"):
+        base_url = base_url[: -len("/chat/completions")]  # the full endpoint pasted: keep the base
+    if base_url.endswith("/messages") or "/anthropic" in base_url:
+        raise ValueError("这里要填 OpenAI 兼容接口的地址（以 /v1 结尾，请求会发到 …/v1/chat/completions），不能填 Anthropic 格式的 /messages 地址")
     if not re.fullmatch(r"https?://[^\s/]+(/[^\s]*)?", base_url) or len(base_url) > 300:
         raise ValueError("服务地址要以 http:// 或 https:// 开头，例如 https://api.deepseek.com/v1")
     key = request.form.get("api_key", "").strip()

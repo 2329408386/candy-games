@@ -19,6 +19,7 @@ from cryptography.fernet import Fernet, InvalidToken
 STEPS = {"ocr": "照片识别（OCR）", "grade": "作文批改", "check": "批改复核"}
 SLOTS = {"main": "主模型", "backup": "备用模型"}
 BEIJING = 8 * 3600
+USER_AGENT = "candy-games-essay/1.0 (+http://39.106.16.99/teacher/)"
 
 
 class LLMError(Exception):
@@ -142,7 +143,13 @@ def post(row, body):
     req = urllib.request.Request(
         url,
         data=json.dumps(body, ensure_ascii=False).encode(),
-        headers={"Content-Type": "application/json", "Authorization": "Bearer " + decrypt_key(row["key_enc"])},
+        # An explicit User-Agent: Cloudflare in front of some providers rejects urllib's default (error code 1010).
+        headers={
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "User-Agent": USER_AGENT,
+            "Authorization": "Bearer " + decrypt_key(row["key_enc"]),
+        },
     )
     try:
         with _semaphore(row), urllib.request.urlopen(req, timeout=row["timeout"] or 120) as r:
