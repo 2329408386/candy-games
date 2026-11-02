@@ -2,10 +2,15 @@ import argparse, datetime, json, os, secrets, shutil, sqlite3, time, zipfile
 from werkzeug.security import generate_password_hash
 from core import schema
 from core.app import create_app, data_dir, db, csv_response, group_map, group_labels, GRADES
-from sites import SITES
+from sites import ALL_SITES as SITES
 
 os.umask(0o077)
-SITE_URLS = {"chinese": "http://39.106.16.99", "math": "http://39.106.16.99/math", "english": "http://39.106.16.99/english"}
+SITE_URLS = {
+    "chinese": "http://39.106.16.99",
+    "math": "http://39.106.16.99/math",
+    "english": "http://39.106.16.99/english",
+    "teacher": "http://39.106.16.99/teacher",
+}
 
 
 def site_dir(site):

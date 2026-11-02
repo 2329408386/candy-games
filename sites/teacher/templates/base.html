@@ -1,0 +1,49 @@
+{% set is_admin = request.path.startswith('/admin') %}
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="theme-color" content="#f8f5ec">
+    <link rel="icon" href="data:,">
+    <title>{% block title %}语文老师工作台{% endblock %}</title>
+    <link rel="stylesheet" href="{{asset('site.css')}}">
+    {% if not is_admin %}<link rel="stylesheet" href="{{asset('essay.css')}}">{% endif %}
+    {% block head %}{% endblock %}
+  </head>
+  <body class="{{'admin-body' if is_admin else 'student-body workbench'}}{% block body_class %}{% endblock %}">
+    <svg xmlns="http://www.w3.org/2000/svg" style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
+    <defs>
+      <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 6v15M3 4c4-1 6 0 9 2 3-2 5-3 9-2v15c-4-1-6 0-9 2-3-2-5-3-9-2z"/></symbol>
+      <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M20 3C5 1 1 9 6 16s15 1 14-13ZM4 21 16 9"/></symbol>
+      <symbol id="i-pen" viewBox="0 0 24 24"><path d="m15 4 5 5M3 21l2-7L17 2l5 5L10 19zM5 14l5 5"/></symbol>
+      <symbol id="i-grid" viewBox="0 0 24 24">
+        <rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>
+      </symbol>
+    </defs>
+    </svg>
+    <header class="site-header">
+      <a class="brand" href="{{url_for('dashboard') if is_admin else url_for('home')}}"><span class="brand-icon"><svg><use href="#i-pen"/></svg></span><span>语文老师工作台<small>{{'管理工作台' if is_admin else '小学作文批改'}}</small></span></a>
+      {% if is_admin %}
+        <nav aria-label="管理导航">
+          <a href="{{url_for('home')}}">工作台首页 <span aria-hidden="true">↗</span></a>{% if session.get('admin_version') %}<a href="{{url_for('dashboard')}}">授权管理</a><a href="{{url_for('models_page')}}">模型设置</a><a href="{{url_for('password')}}">修改密码</a>
+          <form method="post" action="{{url_for('admin_logout')}}">
+            <input type="hidden" name="csrf" value="{{csrf()}}"><button class="text-button">退出后台</button>
+          </form>
+        {% endif %}
+      </nav>
+      {% else %}<span class="header-actions">{% block header_actions %}{% endblock %}</span>{% endif %}
+    </header>
+    <main class="{{'admin-main' if is_admin else 'student-main'}}">
+      {% with messages=get_flashed_messages(with_categories=true) %}{% for category,message in messages %}
+      <div class="notice {{category}}" role="status">{{message}}</div>
+      {% endfor %}{% endwith %}
+      {% block content %}
+      {% endblock %}
+    </main>
+    <footer class="site-footer">
+      语文老师工作台 <span>·</span> {{'用心管理，让学习更简单' if is_admin else '每一篇作文，都值得认真读'}}{% if not is_admin %}{% include 'cross_sites.html' %}{% endif %}
+    </footer>
+    {% if not is_admin %}<script>window.WB_CSRF={{url_for('csrf_token')|tojson}};</script>{% block page_data %}{% endblock %}<script src="{{asset('essay.js')}}"></script>{% block scripts %}{% endblock %}{% endif %}
+  </body>
+</html>

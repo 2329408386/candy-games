@@ -18,6 +18,7 @@ class Site:
     emoji: str = ""
     legacy_html_routes: bool = False
     game_grades: dict = field(default_factory=dict)
+    kind: str = "games"  # "games" (the game sites) or "workbench" (语文老师工作台, core/essay)
 
     def __post_init__(self):
         if not self.game_grades:
@@ -125,4 +126,21 @@ ENGLISH = Site(
     admin_hint="按学期和游戏组分配授权，填写备注后将授权码发送给用户。",
     admin_scope_header="授权年级／学期／组",
 )
+# 语文老师工作台: licenses, devices and the admin come from core/app.py like the game sites; everything else is
+# core/essay. It is not in SITES (which lists the game sites with banks and game pages); ALL_SITES has all four.
+TEACHER = Site(
+    key="teacher",
+    title="语文老师工作台",
+    url="/teacher/",
+    emoji="📝",
+    cookie_name="teacher_session",
+    secret_env="TEACHER_SECRET",
+    kind="workbench",
+    games={"essay": "作文批改"},
+    files={},
+    game_grades={"essay": "g1-t1"},
+    admin_hint="生成老师授权码，在授权详情里设置学生名额和每月批改篇数。",
+    admin_scope_header="授权内容",
+)
 SITES = {"chinese": CHINESE, "math": MATH, "english": ENGLISH}
+ALL_SITES = {**SITES, "teacher": TEACHER}

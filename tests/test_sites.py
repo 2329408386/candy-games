@@ -1,7 +1,7 @@
 import re
 import pytest
 from conftest import SiteClient, KEYS, FLASK, PREFIX, other_site, bank_size
-from sites import SITES
+from sites import ALL_SITES, SITES
 
 
 @pytest.fixture(autouse=True)
@@ -329,7 +329,7 @@ def test_footer_links_other_subjects_not_admin(client, site):
     html = client.get("/").get_data(as_text=True)
     assert "管理员入口" not in html
     cross = re.search(r'<span class="footer-cross">(.*?)</span>\s*\n', html).group(1)
-    assert re.findall(r'href="([^"]+)">', cross) == [s.url for key, s in SITES.items() if key != site]
+    assert re.findall(r'href="([^"]+)">', cross) == [s.url for key, s in ALL_SITES.items() if key != site]
     # on http the footer also offers https (needed by the microphone in 读句子)
     assert re.search(r'href="[^"]*" data-secure', cross)
     assert "data-secure" not in client.get("/", base_url="https://localhost").get_data(as_text=True).split("footer-cross")[1]

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}我的班级 · 语文老师工作台{% endblock %}
+{% block header_actions %}<span class="header-note">老师</span><button type="button" class="header-link" data-post="{{url_for('logout')}}" data-confirm="退出后，这台设备需要重新输入授权码。确定退出？">退出</button>{% endblock %}
+{% block content %}
+  <div class="wb-heading">
+    <div>
+      <h1>我的班级</h1>
+      <p class="muted">学生 {{students_used}} / {{quota.students}} 人 · 本月已批改 {{monthly_used}} / {{quota.monthly}} 篇</p>
+    </div>
+  </div>
+  <div class="wb-grid">
+    {% for c in classes %}
+      <a class="wb-card class-card" href="{{url_for('class_page', cid=c.id)}}">
+        <h2>{{c.name}}</h2>
+        <p class="muted">{{c.grade}}年级 · {{c.students}} 名学生 · 班级码 <code>{{c.code}}</code></p>
+        {% if c.pending %}<span class="badge">{{c.pending}} 篇等审核</span>{% endif %}
+      </a>
+    {% endfor %}
+    {% if classes|length < max_classes %}
+      <section class="wb-card">
+        <h2>新建班级</h2>
+        <form id="class-create" class="wb-form">
+          <label>班级名称<input name="name" maxlength="20" required placeholder="例如 三年级二班"></label>
+          <label>年级<select name="grade" required>{% for n in range(1, 7) %}<option value="{{n}}"{{' selected' if n == 3}}>{{n}}年级</option>{% endfor %}</select></label>
+          <p class="wb-error" role="alert"></p>
+          <button>建班</button>
+        </form>
+      </section>
+    {% endif %}
+  </div>
+{% endblock %}
+{% block scripts %}<script>WB.form('#class-create', {{url_for('class_create')|tojson}}, (r) => (location.href = r.url));</script>{% endblock %}

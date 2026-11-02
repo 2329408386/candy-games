@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+{% block title %}模型设置 · {{site.title}}{% endblock %}
+{% block content %}
+  <div class="page-heading">
+    <div>
+      <span class="eyebrow">管理工作台</span>
+      <h1>模型设置</h1>
+      <p>服务地址、API Key 和每一步用的模型都在这里配置，保存后马上生效，不用重新部署。支持任何 OpenAI 兼容接口。</p>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><span>今天花费</span><strong>¥{{'%.2f'|format(usage.today)}}</strong></div>
+    <div class="stat"><span>本月花费</span><strong>¥{{'%.2f'|format(usage.month)}}</strong></div>
+    <div class="stat"><span>今天批改</span><strong>{{usage.essays_today}} 篇</strong></div>
+    <div class="stat {{'highlight' if worker_seen and now - worker_seen < 120 else ''}}"><span>批改进程</span><strong>{% if worker_seen and now - worker_seen < 120 %}运行中{% else %}未运行{% endif %}</strong>{% if usage.queued %}<small>排队 {{usage.queued}} 篇</small>{% endif %}</div>
+  </div>
+
+  <section class="panel" id="providers">
+    <h2>服务商</h2>
+    <p class="hint">例如阿里云百炼 <code>https://dashscope.aliyuncs.com/compatible-mode/v1</code>、DeepSeek <code>https://api.deepseek.com/v1</code>。API Key 加密保存，页面上只显示最后 4 位。</p>
+    {% for p in providers %}
+      <details class="provider">
+        <summary><strong>{{p.name}}</strong> · <code>{{p.base_url}}</code> · Key {{('…' + p.key_tail) if p.key_tail else ('已设置' if p.key_enc else '未设置')}} · 超时 {{p.timeout}} 秒 · 同时 {{p.concurrency}} 个</summary>
+        <form method="post" class="provider-form">
+          <input type="hidden" name="csrf" value="{{csrf()}}"><input type="hidden" name="action" value="provider_edit"><input type="hidden" name="id" value="{{p.id}}"><input type="hidden" name="anchor" value="#providers">
+          {% with p=p %}{% include 'provider_fields.html' %}{% endwith %}
+          <div class="form-actions"><button>保存</button></div>
+        </form>
+        <form method="post" onsubmit="return confirm('删除服务商「{{p.name}}」？')">
+          <input type="hidden" name="csrf" value="{{csrf()}}"><input type="hidden" name="action" value="provider_delete"><input type="hidden" name="id" value="{{p.id}}">
+          <button class="danger">删除</button>
+        </form>
+        <form class="test-form" data-provider="{{p.id}}">
+          <div class="fields-row"><div class="form-field"><label>测试连接：模型名称</label><input name="model" placeholder="例如 deepseek-v4-pro"></div></div>
+          <button type="submit" class="secondary">测试</button><span class="test-result" role="status"></span>
+        </form>
+      </details>
+    {% endfor %}
+    <details class="provider" {{'open' if not providers}}>
+      <summary>＋ 添加服务商</summary>
+      <form method="post" class="provider-form">
+        <input type="hidden" name="csrf" value="{{csrf()}}"><input type="hidden" name="action" value="provider_add"><input type="hidden" name="anchor" value="#providers">
+        {% with p=None %}{% include 'provider_fields.html' %}{% endwith %}
+        <div class="form-actions"><button>添加</button></div>
+      </form>
+    </details>
+  </section>
+
+  {% for step, step_name in STEPS.items() %}
+    <section class="panel" id="step-{{step}}">
+      <h2>{{step_name}}</h2>
+      <p class="hint">{{ {'ocr': '把学生作文的照片识别成文字（拍照提交下一期上线）。需要能看图的模型，例如 qwen-vl-ocr。', 'grade': '给作文打分、写评语和标注，质量最关键，建议用旗舰模型。必须支持 JSON 输出。', 'check': '逐条复核批改里的错别字、病句等标注，去掉误判，并独立给出等级。可以用便宜一些的模型。'}[step] }}主模型出错、超时或被限流时，自动改用备用模型。</p>
+      <div class="step-slots">
+        {% for slot, slot_name in SLOTS.items() %}
+          {% set s = steps.get((step, slot)) %}
+          <form method="post" class="step-form">
+            <input type="hidden" name="csrf" value="{{csrf()}}"><input type="hidden" name="action" value="step"><input type="hidden" name="step" value="{{step}}"><input type="hidden" name="slot" value="{{slot}}"><input type="hidden" name="anchor" value="#step-{{step}}">
+            <h3>{{slot_name}}</h3>
+            <div class="fields-row">
+              <div class="form-field"><label>服务商</label><select name="provider_id"><option value="">（不使用）</option>{% for p in providers %}<option value="{{p.id}}"{{' selected' if s and s.provider_id == p.id}}>{{p.name}}</option>{% endfor %}</select></div>
+              <div class="form-field"><label>模型名称</label><input name="model" value="{{s.model if s else ''}}" placeholder="{{ {'ocr': 'qwen-vl-ocr', 'grade': 'deepseek-v4-pro', 'check': 'deepseek-flash'}[step] }}"></div>
+            </div>
+            <div class="fields-row">
+              <div class="form-field"><label>温度</label><input name="temperature" value="{{s.temperature if s and s.temperature is not none else ''}}" placeholder="不填用默认，批改建议 0.3"></div>
+              <div class="form-field"><label>最大输出 token</label><input name="max_tokens" value="{{s.max_tokens if s and s.max_tokens else ''}}" placeholder="不填用默认"></div>
+            </div>
+            <div class="form-field"><label>额外参数（JSON，合并进请求）</label><input name="extra" value="{{s.extra if s else ''}}" placeholder='例如 {"enable_thinking": false}；某个键写 null 表示去掉它'></div>
+            <div class="fields-row">
+              <div class="form-field"><label>输入价格</label><input name="price_in" value="{{s.price_in if s else ''}}" placeholder="元 / 百万 token"></div>
+              <div class="form-field"><label>缓存命中价格</label><input name="price_cached" value="{{s.price_cached if s else ''}}" placeholder="元 / 百万 token"></div>
+              <div class="form-field"><label>输出价格</label><input name="price_out" value="{{s.price_out if s else ''}}" placeholder="元 / 百万 token"></div>
+            </div>
+            <div class="fields-row">
+              <div class="form-field"><label>高峰时段</label><input name="peak_hours" value="{{s.peak_hours if s else ''}}" placeholder="例如 9-12,14-18（北京时间工作日）"></div>
+              <div class="form-field"><label>高峰价格倍数</label><input name="peak_factor" value="{{s.peak_factor if s else ''}}" placeholder="例如 2；不填为 1"></div>
+            </div>
+            <div class="form-actions"><button>保存{{slot_name}}</button>{% if s %}<button type="button" class="secondary" data-test-step="{{step}}" data-test-slot="{{slot}}">测试</button><span class="test-result" role="status"></span>{% endif %}</div>
+          </form>
+        {% endfor %}
+      </div>
+    </section>
+  {% endfor %}
+
+  <section class="panel" id="budget">
+    <h2>每日花费上限</h2>
+    <form method="post" class="fields-row">
+      <input type="hidden" name="csrf" value="{{csrf()}}"><input type="hidden" name="action" value="budget"><input type="hidden" name="anchor" value="#budget">
+      <div class="form-field"><label>元 / 天（北京时间）</label><input name="daily_budget" value="{{budget or ''}}" placeholder="0 或不填表示不限"><small>今天的花费达到上限后，新的作文先排队，第二天自动继续批改。花费按上面填写的价格折算。</small></div>
+      <div class="form-actions"><button>保存</button></div>
+    </form>
+  </section>
+
+  <section class="panel">
+    <h2>本月用量</h2>
+    <table>
+      <thead><tr><th>模型</th><th>步骤</th><th>调用</th><th>成功</th><th>输入 token</th><th>其中缓存</th><th>输出 token</th><th>花费</th></tr></thead>
+      <tbody>
+        {% for u in usage.by_model %}<tr><td>{{u.model}}</td><td>{{STEPS.get(u.step, u.step)}}</td><td>{{u.calls}}</td><td>{{u.ok}}</td><td>{{u.tin}}</td><td>{{u.tcached}}</td><td>{{u.tout}}</td><td>¥{{'%.3f'|format(u.cost)}}</td></tr>{% else %}<tr><td colspan="8" class="hint">本月还没有调用。</td></tr>{% endfor %}
+      </tbody>
+    </table>
+    {% if usage.by_license %}
+      <h3>按老师授权</h3>
+      <table>
+        <thead><tr><th>授权编号</th><th>备注</th><th>批改篇数</th><th>花费</th></tr></thead>
+        <tbody>{% for u in usage.by_license %}<tr><td><a href="{{url_for('detail', lid=u.license_id)}}">#{{u.license_id}}</a></td><td>{{u.buyer or ''}}</td><td>{{u.essays}}</td><td>¥{{'%.3f'|format(u.cost)}}</td></tr>{% endfor %}</tbody>
+      </table>
+    {% endif %}
+    {% if usage.failures %}
+      <h3>最近的错误</h3>
+      <table>
+        <thead><tr><th>作文</th><th>尝试</th><th>当前状态</th><th>错误</th></tr></thead>
+        <tbody>{% for j in usage.failures %}<tr><td>#{{j.submission_id}}</td><td>{{j.attempts}}</td><td>{{j.status}}</td><td><small>{{j.error}}</small></td></tr>{% endfor %}</tbody>
+      </table>
+    {% endif %}
+  </section>
+  <script>
+    (function () {
+      const url = {{url_for('models_test')|tojson}}, csrf = {{csrf()|tojson}};
+      async function test(fields, out) {
+        out.textContent = ' 正在测试…';
+        const body = new FormData();
+        body.append('csrf', csrf);
+        for (const [k, v] of Object.entries(fields)) body.append(k, v);
+        try {
+          const r = await (await fetch(url, { method: 'POST', body })).json();
+          out.textContent = (r.ok ? ' ✅ ' : ' ❌ ') + r.message + (r.seconds !== undefined ? '（' + r.seconds + ' 秒）' : '');
+        } catch (e) {
+          out.textContent = ' ❌ 请求失败';
+        }
+      }
+      document.querySelectorAll('.test-form').forEach((f) =>
+        f.addEventListener('submit', (e) => {
+          e.preventDefault();
+          test({ provider_id: f.dataset.provider, model: f.model.value }, f.querySelector('.test-result'));
+        })
+      );
+      document.querySelectorAll('[data-test-step]').forEach((b) =>
+        b.addEventListener('click', () => test({ step: b.dataset.testStep, slot: b.dataset.testSlot }, b.nextElementSibling))
+      );
+    })();
+  </script>
+{% endblock %}

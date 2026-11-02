@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block title %}{{klass.name}} · 语文老师工作台{% endblock %}
+{% block header_actions %}<a class="header-link" href="{{url_for('home')}}">我的班级</a>{% endblock %}
+{% block content %}
+  <div class="wb-heading">
+    <div>
+      <h1>{{klass.name}}</h1>
+      <p class="muted">{{klass.grade}}年级 · 班级码 <code class="big-code">{{klass.code}}</code> · 学生登录时要填</p>
+    </div>
+    <details class="wb-menu">
+      <summary>班级设置</summary>
+      <form id="class-edit" class="wb-form">
+        <label>班级名称<input name="name" maxlength="20" required value="{{klass.name}}"></label>
+        <label>年级<select name="grade">{% for n in range(1, 7) %}<option value="{{n}}"{{' selected' if n == klass.grade}}>{{n}}年级</option>{% endfor %}</select></label>
+        <p class="wb-error" role="alert"></p>
+        <button>保存</button>
+      </form>
+      <button type="button" class="danger" data-post="{{url_for('class_archive', cid=klass.id)}}" data-confirm="解散后学生不能再登录，作文记录也看不到了。确定解散「{{klass.name}}」？">解散班级</button>
+    </details>
+  </div>
+
+  <section class="wb-section">
+    <div class="wb-section-head">
+      <h2>作文作业</h2>
+    </div>
+    {% if assignments %}
+      <table class="wb-table">
+        <thead><tr><th>题目</th><th>文体</th><th>截止</th><th>已交</th><th>等审核</th><th></th></tr></thead>
+        <tbody>
+          {% for a in assignments %}
+            <tr>
+              <td><a href="{{url_for('assignment_page', aid=a.id)}}">{{a.title}}</a>{% if a.closed_at %} <span class="tag off">已停止提交</span>{% endif %}</td>
+              <td>{{a.genre}}</td>
+              <td>{{a.due_at|date or '—'}}</td>
+              <td>{{a.submitted}} / {{students|length}}</td>
+              <td>{% if a.pending %}<span class="badge">{{a.pending}}</span>{% else %}0{% endif %}</td>
+              <td><a class="button small" href="{{url_for('assignment_page', aid=a.id)}}">查看</a></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p class="hint">还没有布置作文。</p>
+    {% endif %}
+    <details class="wb-card wb-fold"{{' open' if not assignments}}>
+      <summary>＋ 布置新作文</summary>
+      {% set a = None %}{% include 'assignment_form.html' %}
+    </details>
+  </section>
+
+  <section class="wb-section">
+    <div class="wb-section-head">
+      <h2>学生（{{students|length}} 人）</h2>
+      {% if students %}<a class="button secondary small" href="{{url_for('class_slips', cid=klass.id)}}" target="_blank">打印登录条</a>{% endif %}
+    </div>
+    {% if students %}
+      <table class="wb-table roster">
+        <thead><tr><th>#</th><th>姓名</th><th>口令</th><th></th></tr></thead>
+        <tbody>
+          {% for s in students %}
+            <tr>
+              <td>{{loop.index}}</td>
+              <td>{{s.name}}</td>
+              <td><code>{{s.pin}}</code>{% if s.locked_until > 0 %} <span class="tag off" title="口令输错太多次">已暂时锁定</span>{% endif %}</td>
+              <td class="row-actions">
+                <button type="button" class="link-button" data-post="{{url_for('student_pin', sid=s.id)}}" data-confirm="给 {{s.name}} 换一个新口令？旧口令马上失效。">换口令</button>
+                <button type="button" class="link-button danger-text" data-post="{{url_for('student_remove', sid=s.id)}}" data-confirm="把 {{s.name}} 移出班级？">移出</button>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+    <details class="wb-card wb-fold"{{' open' if not students}}>
+      <summary>＋ 添加学生</summary>
+      <form id="students-add" class="wb-form">
+        <label>学生姓名（一行一个，也可以用逗号、顿号隔开）<textarea name="names" rows="6" required placeholder="王小明&#10;李华&#10;…"></textarea></label>
+        <p class="hint">系统会给每个学生生成 4 位口令。学生名额还剩 {{quota.students - students_used}} 个。可以只写小名或学号，不必写全名。</p>
+        <p class="wb-error" role="alert"></p>
+        <button>添加</button>
+      </form>
+    </details>
+  </section>
+{% endblock %}
+{% block scripts %}
+  <script>
+    WB.form('#class-edit', {{url_for('class_edit', cid=klass.id)|tojson}}, () => location.reload());
+    WB.form('#students-add', {{url_for('students_add', cid=klass.id)|tojson}}, () => location.reload());
+    WB.form('#assignment-form', {{url_for('assignment_create', cid=klass.id)|tojson}}, (r) => (location.href = r.url));
+  </script>
+{% endblock %}

@@ -1,0 +1,181 @@
+/* 语文老师工作台 pages (site.css carries the shared base). Projection first: big readable text, calm colors. */
+.workbench{--red:#b5483c;--amber:#b7791f;--blue:#3c6e9e;--purple:#7b5aa6;--soft:#f3f1e8}
+.workbench .student-main{max-width:1280px}
+.workbench h1{font-size:30px;line-height:1.3;margin:0 0 6px}
+.workbench h2{font-size:19px;margin:0 0 10px}
+.workbench h3{font-size:16px;margin:0 0 10px}
+.workbench .muted{color:var(--muted);margin:0}
+.workbench .hint{color:var(--muted);font-size:14px;margin:8px 0}
+.workbench code{background:var(--soft);padding:1px 6px;border-radius:6px;font-size:.95em}
+.workbench .big-code{font-size:1.15em;letter-spacing:2px;color:var(--ink)}
+.workbench button,.workbench .button{flex:none}
+.workbench .button.small,.workbench button.small{min-height:34px;padding:4px 12px;font-size:14px}
+.workbench .link-button{background:none;border:0;color:var(--green);padding:2px 4px;min-height:0;font-weight:500}
+.workbench .link-button:hover{background:none;color:var(--green-dark);text-decoration:underline}
+.workbench .danger,.workbench button.danger{background:#fff;color:var(--red);border-color:#ecd3cf}
+.workbench .danger-text{color:var(--red)}
+.workbench .header-link{cursor:pointer}
+.workbench .notice{padding:12px 16px;border-radius:12px;background:#eef3ea;margin:0 0 16px}
+.workbench .notice.error{background:#fbeceb;color:var(--red)}
+.workbench .tag{display:inline-block;font-size:12px;padding:1px 8px;border-radius:999px;background:#eef3ea;color:var(--green-dark)}
+.workbench .tag.off{background:#f7ebe0;color:#9a5b1f}
+.workbench .badge{display:inline-block;min-width:24px;padding:1px 9px;border-radius:999px;background:var(--amber);color:#fff;font-size:13px;font-weight:650;text-align:center}
+
+.wb-hero{text-align:center;padding:30px 0 10px}
+.wb-hero h1{font-size:36px}
+.wb-hero p{color:var(--muted);font-size:17px}
+.wb-entry{display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:860px;margin:24px auto}
+.wb-card{background:var(--white);border:1px solid var(--line);border-radius:18px;padding:22px 24px;box-shadow:var(--shadow)}
+a.wb-card{color:var(--ink);display:block;transition:transform .15s,border-color .15s}
+a.wb-card:hover{transform:translateY(-2px);border-color:#c9d6c3}
+.wb-form{display:flex;flex-direction:column;gap:12px}
+.wb-form label,.review-pane label{display:flex;flex-direction:column;gap:5px;font-size:14px;color:var(--muted);font-weight:550}
+.wb-form label.check,.review-pane label.check{flex-direction:row;align-items:center;gap:8px;color:var(--ink);font-weight:500}
+.wb-form input:not([type=checkbox]),.wb-form select,.wb-form textarea,.review-pane input,.review-pane select,.review-pane textarea{font:inherit;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 12px;width:100%}
+.wb-form textarea,.review-pane textarea{resize:vertical;line-height:1.7}
+.wb-form button{align-self:flex-start}
+.wb-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.wb-error{color:var(--red);margin:0;min-height:0;font-size:14px}
+.wb-error:empty{display:none}
+
+.wb-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;margin:6px 0 22px}
+.wb-heading .heading-actions{display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap;justify-content:flex-end}
+.requirement{background:var(--soft);border-radius:12px;padding:10px 14px;margin:10px 0 0;white-space:pre-wrap;max-width:760px}
+.wb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px}
+.class-card h2{font-size:22px}
+.class-card .badge{margin-top:12px}
+.wb-section{margin:28px 0}
+.wb-section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+.wb-section-head h2{margin:0}
+.wb-fold{margin-top:16px}
+.wb-fold>summary,.wb-menu>summary{cursor:pointer;font-weight:650;color:var(--green)}
+.wb-fold[open]>summary{margin-bottom:14px}
+.wb-menu{position:relative}
+.wb-menu>summary{list-style:none;border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 16px}
+.wb-menu>summary::-webkit-details-marker{display:none}
+.wb-menu[open]>*:not(summary){margin-top:10px}
+.wb-menu[open]{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:12px;box-shadow:var(--shadow);position:absolute;right:30px;z-index:5;width:min(520px,calc(100vw - 32px))}
+.wb-menu[open]>summary{border:0;padding:0 0 4px}
+.wb-menu[open] .wb-form{margin-bottom:12px}
+
+.wb-table{width:100%;border-collapse:collapse;background:var(--white);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.wb-table th,.wb-table td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line);vertical-align:middle}
+.wb-table th{font-size:13px;color:var(--muted);font-weight:600;background:#fbfaf4}
+.wb-table tr:last-child td{border-bottom:0}
+.row-actions{white-space:nowrap;text-align:right}
+.status{display:inline-block;font-size:13px;padding:2px 10px;border-radius:999px;background:var(--soft);color:var(--muted);white-space:nowrap}
+.status-review{background:#fdf1dc;color:#8a5a12}
+.status-published{background:#e3efe0;color:var(--green-dark)}
+.status-failed{background:#fbeceb;color:var(--red)}
+.status-queued,.status-grading{background:#e6eef7;color:var(--blue)}
+.status-todo{background:var(--green);color:#fff}
+.wb-list{display:flex;flex-direction:column;gap:14px;max-width:860px}
+.assignment-card{display:flex !important;justify-content:space-between;align-items:center;gap:16px}
+.assignment-card h2{margin:0 0 4px}
+.attempts{display:flex;flex-direction:column;gap:6px;margin:0 0 16px}
+.attempt{background:var(--white);border:1px solid var(--line);border-radius:12px;padding:9px 14px}
+.wb-dialog{border:0;border-radius:18px;padding:24px;width:min(720px,calc(100vw - 32px));box-shadow:0 30px 80px #0003}
+.wb-dialog::backdrop{background:#2f443866}
+.form-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+/* essay text and marks */
+.essay-text{font-size:19px;line-height:2.1;letter-spacing:.5px;white-space:normal;word-break:break-all}
+.essay-text.plain{white-space:pre-wrap}
+.mk{border-radius:4px;padding:1px 0;cursor:pointer;color:inherit;text-decoration:none}
+mark.mk{background:none}
+.mk-typo{background:#fbe1dd !important;box-shadow:inset 0 -2px 0 var(--red)}
+.mk-word,.mk-sentence{background:#fdecc8 !important;box-shadow:inset 0 -2px 0 var(--amber)}
+.mk-punct{background:#e9e1f4 !important;box-shadow:inset 0 -2px 0 var(--purple)}
+.mk-good{background:#dcefd7 !important;box-shadow:inset 0 -2px 0 var(--green)}
+.mk-tip{background:#dfeaf5 !important;box-shadow:inset 0 -2px 0 var(--blue)}
+.mk.active{outline:2px solid var(--ink);outline-offset:1px}
+.mk sup{font-size:11px;color:var(--muted);margin-left:1px}
+.legend{display:flex;flex-wrap:wrap;gap:10px;font-size:13px;margin:14px 0 0}
+.legend .mk{padding:1px 6px;cursor:default}
+.chip{display:inline-flex;align-items:center;border-radius:6px;padding:0 6px;font-size:13px}
+.chip select{border:0 !important;background:transparent !important;padding:2px 0 !important;width:auto !important;font-size:13px;font-weight:650}
+
+/* review page */
+.review-layout,.result-layout{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:22px;align-items:start}
+.essay-pane{position:sticky;top:12px;max-height:calc(100vh - 24px);overflow:auto}
+.pane-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px}
+.pane-head h2{margin:0}
+.review-pane,.result-pane{display:flex;flex-direction:column;gap:16px}
+.review-pane label{margin-bottom:10px}
+.score-total{display:flex;align-items:baseline;gap:8px;margin-bottom:10px}
+.score-total strong{font-size:42px;line-height:1}
+.score-total em{font-style:normal;font-size:20px;font-weight:700;color:var(--green-dark);background:#e3efe0;border-radius:10px;padding:2px 12px;margin-left:8px}
+.dim-row{display:grid !important;grid-template-columns:3.5em 5em 2.5em 1fr;align-items:center;gap:8px !important;flex-direction:row !important;margin:0 0 6px !important}
+.dim-row input{padding:5px 8px !important}
+.dim-row em{font-style:normal;font-size:13px;font-weight:400;color:var(--muted)}
+.flags{display:flex;flex-wrap:wrap;gap:6px}
+.mark-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.mark-item{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:#fff}
+.mark-item.active{border-color:var(--green);box-shadow:0 0 0 2px #cfe0c9}
+.mark-head{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.mark-head q{flex:1;font-size:16px}
+.mark-item label{flex-direction:row !important;align-items:center;margin:4px 0 0 !important}
+.mark-item label input{padding:5px 9px !important}
+.rejected{margin-top:16px;border-top:1px dashed var(--line);padding-top:12px}
+.rejected h4{margin:0 0 8px;font-size:14px;color:var(--muted)}
+.rejected ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:8px;font-size:14px}
+.example{background:var(--soft);border-radius:12px;padding:10px 14px;margin-top:6px}
+.example p{margin:4px 0}
+.review-actions{display:flex;gap:10px;align-items:center;justify-content:flex-end;position:sticky;bottom:0;background:linear-gradient(transparent,var(--paper) 30%);padding:14px 0 6px}
+.save-status{color:var(--muted);font-size:14px;margin-right:auto}
+.model-note{font-size:12px}
+.waiting{display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;margin-bottom:18px}
+.spinner{width:34px;height:34px;border-radius:50%;border:4px solid var(--line);border-top-color:var(--green);animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* result page */
+.result-head{display:flex;justify-content:space-between;align-items:center;gap:20px;margin:6px 0 22px}
+.level-badge{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:110px;min-height:110px;border-radius:50%;background:#e3efe0;color:var(--green-dark);text-align:center}
+.level-badge strong{font-size:38px;line-height:1.1}
+.level-badge small{font-size:13px}
+.level-badge.level-良{background:#e6eef7;color:var(--blue)}
+.level-badge.level-中{background:#fdf1dc;color:#8a5a12}
+.level-badge.level-待提高{background:#f3ece4;color:#8a5a3c}
+.level-badge.level-待提高 strong{font-size:26px}
+.summary{font-size:17px;line-height:1.9;margin:0}
+.praise ul,.advice ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;font-size:16px}
+.example .before{text-decoration:line-through;text-decoration-color:#c9a59f;color:var(--muted)}
+.example .after{font-weight:550}
+.dim-bar{display:grid;grid-template-columns:3em 1fr 4.5em;align-items:center;gap:10px;margin:8px 0}
+.dim-bar .bar{height:10px;border-radius:999px;background:var(--soft);overflow:hidden}
+.dim-bar .bar i{display:block;height:100%;background:var(--green);border-radius:999px}
+.dim-bar em{font-style:normal;font-size:14px;color:var(--muted)}
+.marks-view{margin-top:22px}
+.marks-view ol{margin:0;padding-left:24px;display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:8px 24px}
+.marks-view li{font-size:15px}
+.marks-view li:target{background:#fff6d6;border-radius:8px}
+
+/* 投屏讲评 */
+.projection .site-header{min-height:60px;padding:10px 30px}
+.projection .student-main{max-width:none;padding:8px 40px 30px}
+.projection .essay-text{font-size:28px;line-height:2.1}
+.projection h1{font-size:40px}
+.projection .summary,.projection .praise ul,.projection .advice ul{font-size:22px}
+.projection .marks-view li{font-size:20px}
+.projection .site-footer{display:none}
+
+@media(max-width:900px){
+  .review-layout,.result-layout{grid-template-columns:1fr}
+  .essay-pane{position:static;max-height:none}
+  .wb-entry{grid-template-columns:1fr}
+  .wb-row{grid-template-columns:1fr}
+  .wb-heading,.result-head{flex-direction:column}
+  .wb-heading .heading-actions{justify-content:flex-start}
+  .wb-menu[open]{position:static;width:auto}
+}
+@media(max-width:600px){
+  .workbench h1{font-size:24px}
+  .wb-card{padding:16px}
+  .essay-text{font-size:17px}
+  .wb-table th:nth-child(3),.wb-table td:nth-child(3){display:none}
+  .wb-table th,.wb-table td{padding:9px 8px}
+  .level-badge{min-width:86px;min-height:86px}
+  .level-badge strong{font-size:30px}
+}
+@media print{.site-header,.site-footer,.legend{display:none}.wb-card{box-shadow:none}}
+.wb-table td{font-size:15px;color:var(--ink)}

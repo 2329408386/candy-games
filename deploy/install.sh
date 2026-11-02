@@ -22,7 +22,7 @@ health() { # waits until every site answers with the expected revision on every 
     for _ in $(seq 1 30); do
         local ok=1
         for _ in 1 2 3 4 5 6; do
-            for path in /health /math/health /english/health; do
+            for path in /health /math/health /english/health /teacher/health; do
                 curl -fsS -m 3 "http://127.0.0.1:18082$path" 2>/dev/null | grep -q "\"revision\":\"$want\"" || ok=0
             done
         done
@@ -50,7 +50,7 @@ prepare() { # installs units, nginx config and the virtualenv for a release; pri
     # Import the app with this venv before switching, so a broken release never replaces a working one.
     local scratch
     scratch=$(mktemp -d)
-    (cd "$dir" && GAME_DATA=$scratch CHINESE_SECRET=check MATH_SECRET=check ENGLISH_SECRET=check "$venv/bin/python" -c "import wsgi" >&2) ||
+    (cd "$dir" && GAME_DATA=$scratch CHINESE_SECRET=check MATH_SECRET=check ENGLISH_SECRET=check "$venv/bin/python" -c "import wsgi; import core.essay.worker" >&2) ||
         { rm -rf "$scratch"; echo "新版本无法启动（import wsgi 失败）" >&2; exit 1; }
     rm -rf "$scratch"
     [ -x "$venv/bin/gunicorn" ] && "$venv/bin/gunicorn" --version >/dev/null
@@ -61,6 +61,13 @@ install_config() { # returns 0 when the app unit changed and the service needs a
     local dir=$1 changed=1
     cmp -s "$dir/deploy/candy-games.service" /etc/systemd/system/candy-games.service && changed=0
     install -m 644 "$dir"/deploy/candy-games{,-backup,-watchdog}.service "$dir"/deploy/candy-games-{backup,watchdog}.timer /etc/systemd/system/
+    # Releases from before the workbench have no worker unit: stop it when rolling back to one of them.
+    if [ -f "$dir/deploy/candy-games-essay-worker.service" ]; then
+        install -m 644 "$dir/deploy/candy-games-essay-worker.service" /etc/systemd/system/
+    elif [ -f /etc/systemd/system/candy-games-essay-worker.service ]; then
+        systemctl disable -q --now candy-games-essay-worker || true
+        rm -f /etc/systemd/system/candy-games-essay-worker.service
+    fi
     install -d /etc/systemd/system/nginx.service.d
     install -m 644 "$dir/deploy/nginx-restart.conf" /etc/systemd/system/nginx.service.d/restart.conf
     install -m 644 "$dir/deploy/nginx-http.conf" /etc/nginx/conf.d/candy-games.conf
@@ -90,6 +97,11 @@ switch() { # points current and venv at a release, then reloads (or restarts whe
     ln -sfn "releases/$release" $APP/current.new && mv -T $APP/current.new $APP/current
     if [ "$restart" = 1 ] || ! systemctl is-active -q candy-games; then systemctl restart candy-games; else systemctl reload candy-games; fi
     systemctl reload nginx
+    # The essay worker runs the release's code: restart it on every switch (it has no graceful reload).
+    if [ -f /etc/systemd/system/candy-games-essay-worker.service ]; then
+        systemctl enable -q candy-games-essay-worker
+        systemctl restart candy-games-essay-worker
+    fi
 }
 
 activate() {
@@ -102,6 +114,10 @@ activate() {
     switch "$release" "$venv" $restart
     if health "$(cat $APP/releases/$release/REVISION)"; then
         echo "发布完成：$release"
+        # 语文老师工作台: the first release with it creates its admin account (credentials in a private file).
+        if [ -f "$APP/current/sites/teacher/prompts/grade.md" ]; then
+            (set -a; . $DATA/secret.env; cd $APP/current && runuser -u candy-games -- env GAME_DATA=$DATA "$APP/venv/bin/python" manage.py seed --site teacher | grep -v "^初始化完成") || echo "工作台初始化失败（不影响已发布的版本）" >&2
+        fi
     else
         echo "健康检查失败" >&2
         if [ -n "$previous" ] && [ "$previous" != "$release" ]; then

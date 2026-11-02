@@ -1,0 +1,240 @@
+"""Back office pages of the workbench: 模型设置 (providers, the model of each step, prices, daily budget, usage) and
+each teacher license's quota (student seats and essays a month). Both need the site's admin sign-in."""
+
+import json, re, time
+from flask import abort, flash, jsonify, redirect, render_template, request, url_for
+from core.app import admin_only, audit, db, integer_field, license_row
+from . import llm, month_start
+from .worker import spent_today, today_start
+
+
+def _float(name, low, high, label, default=None):
+    raw = request.form.get(name, "").strip()
+    if raw == "" and default is not None:
+        return default
+    try:
+        value = float(raw)
+    except ValueError:
+        raise ValueError(f"{label}要填数字") from None
+    if not low <= value <= high:
+        raise ValueError(f"{label}要在 {low}—{high} 之间")
+    return value
+
+
+def _provider_form(existing=None):
+    name = " ".join(request.form.get("name", "").split())[:30]
+    if not name:
+        raise ValueError("请填写服务商名称")
+    base_url = request.form.get("base_url", "").strip().rstrip("/")
+    if not re.fullmatch(r"https?://[^\s/]+(/[^\s]*)?", base_url) or len(base_url) > 300:
+        raise ValueError("服务地址要以 http:// 或 https:// 开头，例如 https://api.deepseek.com/v1")
+    key = request.form.get("api_key", "").strip()
+    if key and (len(key) > 500 or any(c.isspace() for c in key)):
+        raise ValueError("API Key 格式不正确")
+    if not key and not existing:
+        raise ValueError("请填写 API Key")
+    try:
+        timeout = integer_field("timeout", 5, 600)
+        concurrency = integer_field("concurrency", 1, 20)
+    except ValueError:
+        raise ValueError("超时要在 5—600 秒之间，同时请求数要在 1—20 之间") from None
+    return name, base_url, key, timeout, concurrency
+
+
+def _step_form():
+    provider = request.form.get("provider_id", "")
+    model = request.form.get("model", "").strip()
+    if provider == "" or not model:
+        return None  # clearing the slot
+    if not db().execute("SELECT 1 FROM ess_providers WHERE id=?", (provider,)).fetchone():
+        raise ValueError("请选择服务商")
+    if len(model) > 100 or any(c.isspace() for c in model):
+        raise ValueError("模型名称格式不正确")
+    temperature = request.form.get("temperature", "").strip()
+    max_tokens = request.form.get("max_tokens", "").strip()
+    extra = request.form.get("extra", "").strip()
+    if extra:
+        try:
+            parsed = json.loads(extra)
+        except ValueError:
+            raise ValueError("额外参数要是 JSON 对象，例如 {\"enable_thinking\": false}") from None
+        if not isinstance(parsed, dict) or {"model", "messages"} & set(parsed):
+            raise ValueError("额外参数要是 JSON 对象，而且不能包含 model 和 messages")
+        extra = json.dumps(parsed, ensure_ascii=False)
+    peak_hours = request.form.get("peak_hours", "").strip()
+    if not llm.valid_peak_hours(peak_hours):
+        raise ValueError("高峰时段的格式是 9-12,14-18（北京时间，周一到周五）")
+    return {
+        "provider_id": int(provider),
+        "model": model,
+        "temperature": _float("temperature", 0, 2, "温度") if temperature else None,
+        "max_tokens": int(_float("max_tokens", 1, 200000, "最大输出 token")) if max_tokens else None,
+        "extra": extra,
+        "price_in": _float("price_in", 0, 1000, "输入价格", 0),
+        "price_cached": _float("price_cached", 0, 1000, "缓存命中价格", 0),
+        "price_out": _float("price_out", 0, 1000, "输出价格", 0),
+        "peak_factor": _float("peak_factor", 1, 10, "高峰倍数", 1),
+        "peak_hours": peak_hours,
+    }
+
+
+def register(app):
+    @app.route("/admin/models", methods=["GET", "POST"])
+    @admin_only
+    def models_page():
+        d = db()
+        if request.method == "POST":
+            action = request.form.get("action", "")
+            d.execute("BEGIN IMMEDIATE")
+            try:
+                if action in ("provider_add", "provider_edit"):
+                    existing = None
+                    if action == "provider_edit":
+                        existing = d.execute("SELECT * FROM ess_providers WHERE id=?", (request.form.get("id"),)).fetchone()
+                        if not existing:
+                            abort(404)
+                    name, base_url, key, timeout, concurrency = _provider_form(existing)
+                    if existing:
+                        d.execute(
+                            "UPDATE ess_providers SET name=?,base_url=?,timeout=?,concurrency=? WHERE id=?",
+                            (name, base_url, timeout, concurrency, existing["id"]),
+                        )
+                        if key:
+                            d.execute(
+                                "UPDATE ess_providers SET key_enc=?,key_tail=? WHERE id=?",
+                                (llm.encrypt_key(key), llm.key_tail(key), existing["id"]),
+                            )
+                    else:
+                        d.execute(
+                            "INSERT INTO ess_providers(name,base_url,key_enc,key_tail,timeout,concurrency,created_at) VALUES(?,?,?,?,?,?,?)",
+                            (name, base_url, llm.encrypt_key(key), llm.key_tail(key), timeout, concurrency, int(time.time())),
+                        )
+                    details = {"name": name, "base_url": base_url, "key_changed": bool(key), "timeout": timeout, "concurrency": concurrency}
+                elif action == "provider_delete":
+                    pid = request.form.get("id")
+                    if d.execute("SELECT 1 FROM ess_steps WHERE provider_id=?", (pid,)).fetchone():
+                        raise ValueError("还有步骤在用这个服务商，请先把那些步骤换掉")
+                    d.execute("DELETE FROM ess_providers WHERE id=?", (pid,))
+                    details = {"id": pid}
+                elif action == "step":
+                    step, slot = request.form.get("step"), request.form.get("slot")
+                    if step not in llm.STEPS or slot not in llm.SLOTS:
+                        abort(400)
+                    values = _step_form()
+                    if values is None:
+                        d.execute("DELETE FROM ess_steps WHERE step=? AND slot=?", (step, slot))
+                    else:
+                        d.execute(
+                            "INSERT INTO ess_steps(step,slot," + ",".join(values) + ") VALUES(?,?," + ",".join("?" * len(values)) + ")"
+                            " ON CONFLICT(step,slot) DO UPDATE SET " + ",".join(f"{k}=excluded.{k}" for k in values),
+                            (step, slot, *values.values()),
+                        )
+                    details = {"step": step, "slot": slot, **(values or {"cleared": True})}
+                elif action == "budget":
+                    budget = _float("daily_budget", 0, 100000, "每日花费上限", 0)
+                    d.execute(
+                        "INSERT INTO ess_meta VALUES('daily_budget',?) ON CONFLICT(key) DO UPDATE SET value=excluded.value",
+                        (str(budget),),
+                    )
+                    details = {"daily_budget": budget}
+                else:
+                    abort(400)
+                audit("essay_" + action, details=json.dumps(details, ensure_ascii=False))
+                d.commit()
+                flash("已保存，马上生效", "success")
+            except ValueError as e:
+                d.rollback()
+                flash(str(e), "error")
+            return redirect(url_for("models_page") + request.form.get("anchor", ""))
+        providers = d.execute("SELECT * FROM ess_providers ORDER BY id").fetchall()
+        steps = {(r["step"], r["slot"]): r for r in d.execute("SELECT * FROM ess_steps")}
+        budget = d.execute("SELECT value FROM ess_meta WHERE key='daily_budget'").fetchone()
+        seen = d.execute("SELECT value FROM ess_meta WHERE key='worker_seen'").fetchone()
+        month = month_start()
+        usage = {
+            "today": spent_today(d),
+            "month": d.execute("SELECT coalesce(sum(cost),0) FROM ess_usage WHERE created_at>=?", (month,)).fetchone()[0],
+            "essays_today": d.execute(
+                "SELECT count(DISTINCT submission_id) FROM ess_usage WHERE step='grade' AND ok=1 AND created_at>=?", (today_start(),)
+            ).fetchone()[0],
+            "by_model": d.execute(
+                "SELECT model,step,count(*) calls,sum(ok) ok,sum(tokens_in) tin,sum(tokens_cached) tcached,sum(tokens_out) tout,sum(cost) cost"
+                " FROM ess_usage WHERE created_at>=? GROUP BY model,step ORDER BY cost DESC",
+                (month,),
+            ).fetchall(),
+            "by_license": d.execute(
+                "SELECT u.license_id,l.buyer,count(DISTINCT u.submission_id) essays,sum(u.cost) cost FROM ess_usage u"
+                " LEFT JOIN licenses l ON l.site='teacher' AND l.id=u.license_id WHERE u.created_at>=?"
+                " GROUP BY u.license_id ORDER BY cost DESC LIMIT 20",
+                (month,),
+            ).fetchall(),
+            "failures": d.execute(
+                "SELECT j.*,s.status FROM ess_jobs j JOIN ess_submissions s ON s.id=j.submission_id"
+                " WHERE j.error!='' ORDER BY j.id DESC LIMIT 10"
+            ).fetchall(),
+            "queued": d.execute("SELECT count(*) FROM ess_jobs WHERE status IN ('queued','running')").fetchone()[0],
+        }
+        return render_template(
+            "models.html",
+            providers=providers,
+            steps=steps,
+            budget=float(budget[0]) if budget else 0,
+            worker_seen=int(seen[0]) if seen else None,
+            now=int(time.time()),
+            usage=usage,
+            STEPS=llm.STEPS,
+            SLOTS=llm.SLOTS,
+        )
+
+    @app.post("/admin/models/test")
+    @admin_only
+    def models_test():
+        """A tiny request through one provider (with a given model) or one configured step slot, run right here."""
+        d = db()
+        step, slot = request.form.get("step"), request.form.get("slot")
+        if step:
+            row = next((r for r in llm.step_rows(d, step) if r["slot"] == slot), None)
+            if not row:
+                return jsonify(ok=False, message="这个步骤还没有配置模型")
+        else:
+            provider = d.execute("SELECT * FROM ess_providers WHERE id=?", (request.form.get("provider_id"),)).fetchone()
+            model = request.form.get("model", "").strip()
+            if not provider or not model:
+                return jsonify(ok=False, message="请选择服务商并填写模型名称")
+            row = {
+                **dict(provider), "provider_id": provider["id"], "provider_name": provider["name"], "model": model,
+                "temperature": None, "max_tokens": None, "extra": "", "price_in": 0, "price_cached": 0, "price_out": 0,
+                "peak_factor": 1, "peak_hours": "",
+            }
+        row = {**row, "timeout": min(row["timeout"] or 20, 20)}  # stays under the web worker's 30 s limit
+        body = llm.request_body(row, [{"role": "user", "content": "请只回复两个字：你好"}], False)
+        body["max_tokens"] = 20
+        started = time.time()
+        try:
+            content, tin, tcached, tout = llm.post(row, body)
+        except llm.LLMError as e:
+            return jsonify(ok=False, message=str(e), seconds=round(time.time() - started, 1))
+        return jsonify(
+            ok=True, message=content[:100] or "（返回了空内容）", seconds=round(time.time() - started, 1), tokens=[tin, tcached, tout]
+        )
+
+    @app.post("/admin/licenses/<int:lid>/essay_quota")
+    @admin_only
+    def essay_quota_save(lid):
+        if not license_row(lid):
+            abort(404)
+        try:
+            students = integer_field("students", 1, 2000)
+            monthly = integer_field("monthly", 0, 100000)
+        except ValueError:
+            flash("学生名额要在 1—2000 之间，每月篇数要在 0—100000 之间", "error")
+            return redirect(url_for("detail", lid=lid))
+        d = db()
+        d.execute(
+            "INSERT INTO ess_quota VALUES(?,?,?) ON CONFLICT(license_id) DO UPDATE SET students=excluded.students,monthly=excluded.monthly",
+            (lid, students, monthly),
+        )
+        audit("essay_quota", lid, f"学生 {students} 人，每月 {monthly} 篇")
+        d.commit()
+        flash("已保存名额", "success")
+        return redirect(url_for("detail", lid=lid))

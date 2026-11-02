@@ -7,6 +7,7 @@ DB_NAME = "games.sqlite3"
 # Permissions and grades come from license_groups -> game_groups. licenses.grade_scopes and
 # generation_batches.grade_scopes are deprecated mirrors: still written so older releases can be rolled back to,
 # never read.
+# ess_*: 语文老师工作台 (site 'teacher' only, so no site column), see core/essay/__init__.py.
 # migrations: one-off data changes already applied (see initialize).
 # trials records the one free round each browser (session device token) may play per game.
 # profiles/classes/scores/rounds: see core/social.py (one license = one user, in at most one class); pk_rooms/pk_seats: core/rooms.py (rooms/room_players are the unused, license-keyed predecessors).
@@ -41,6 +42,25 @@ CREATE INDEX IF NOT EXISTS pk_rooms_host ON pk_rooms(site,host,status);
 CREATE TABLE IF NOT EXISTS pk_seats(site TEXT NOT NULL,code TEXT NOT NULL,seat TEXT NOT NULL,license_id INTEGER NOT NULL,device TEXT NOT NULL,score INTEGER NOT NULL DEFAULT 0,combo INTEGER NOT NULL DEFAULT 0,correct INTEGER NOT NULL DEFAULT 0,answered INTEGER NOT NULL DEFAULT 0,bonus INTEGER NOT NULL DEFAULT 0,counted INTEGER NOT NULL DEFAULT 0,last_answer REAL NOT NULL DEFAULT 0,joined_at INTEGER NOT NULL,last_seen INTEGER NOT NULL,PRIMARY KEY(site,code,seat),UNIQUE(site,code,device));
 CREATE TABLE IF NOT EXISTS rounds(site TEXT NOT NULL,id TEXT NOT NULL,license_id INTEGER NOT NULL,game TEXT NOT NULL,started_at INTEGER NOT NULL,PRIMARY KEY(site,id));
 CREATE TABLE IF NOT EXISTS migrations(name TEXT PRIMARY KEY,done_at INTEGER NOT NULL);
+""" + """
+CREATE TABLE IF NOT EXISTS ess_quota(license_id INTEGER PRIMARY KEY,students INTEGER NOT NULL,monthly INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS ess_classes(id INTEGER PRIMARY KEY,license_id INTEGER NOT NULL,name TEXT NOT NULL,grade INTEGER NOT NULL CHECK(grade BETWEEN 1 AND 6),code TEXT NOT NULL UNIQUE,created_at INTEGER NOT NULL,archived_at INTEGER);
+CREATE INDEX IF NOT EXISTS ess_classes_owner ON ess_classes(license_id);
+CREATE TABLE IF NOT EXISTS ess_students(id INTEGER PRIMARY KEY,class_id INTEGER NOT NULL REFERENCES ess_classes(id),name TEXT NOT NULL,pin TEXT NOT NULL,pin_ver INTEGER NOT NULL DEFAULT 1,fails INTEGER NOT NULL DEFAULT 0,locked_until INTEGER NOT NULL DEFAULT 0,created_at INTEGER NOT NULL,removed_at INTEGER);
+CREATE UNIQUE INDEX IF NOT EXISTS ess_students_name ON ess_students(class_id,name) WHERE removed_at IS NULL;
+CREATE TABLE IF NOT EXISTS ess_assignments(id INTEGER PRIMARY KEY,class_id INTEGER NOT NULL REFERENCES ess_classes(id),title TEXT NOT NULL,requirement TEXT NOT NULL,genre TEXT NOT NULL,min_chars INTEGER NOT NULL DEFAULT 0,due_at INTEGER,auto_publish INTEGER NOT NULL DEFAULT 0,created_at INTEGER NOT NULL,closed_at INTEGER);
+CREATE INDEX IF NOT EXISTS ess_assignments_class ON ess_assignments(class_id);
+CREATE TABLE IF NOT EXISTS ess_submissions(id INTEGER PRIMARY KEY,assignment_id INTEGER NOT NULL REFERENCES ess_assignments(id),student_id INTEGER NOT NULL REFERENCES ess_students(id),attempt INTEGER NOT NULL,source TEXT NOT NULL,title TEXT NOT NULL DEFAULT '',text TEXT NOT NULL,status TEXT NOT NULL,hold TEXT NOT NULL DEFAULT '',created_at INTEGER NOT NULL,graded_at INTEGER,published_at INTEGER,UNIQUE(assignment_id,student_id,attempt));
+CREATE INDEX IF NOT EXISTS ess_submissions_status ON ess_submissions(status);
+CREATE TABLE IF NOT EXISTS ess_reviews(submission_id INTEGER PRIMARY KEY REFERENCES ess_submissions(id),ai TEXT NOT NULL,final TEXT,model TEXT NOT NULL,prompt_version TEXT NOT NULL,created_at INTEGER NOT NULL,edited_at INTEGER);
+CREATE TABLE IF NOT EXISTS ess_jobs(id INTEGER PRIMARY KEY,submission_id INTEGER NOT NULL REFERENCES ess_submissions(id),kind TEXT NOT NULL,status TEXT NOT NULL,attempts INTEGER NOT NULL DEFAULT 0,run_after INTEGER NOT NULL,locked_at INTEGER,error TEXT NOT NULL DEFAULT '',created_at INTEGER NOT NULL);
+CREATE INDEX IF NOT EXISTS ess_jobs_queue ON ess_jobs(status,run_after);
+CREATE TABLE IF NOT EXISTS ess_usage(id INTEGER PRIMARY KEY,license_id INTEGER NOT NULL,submission_id INTEGER,step TEXT NOT NULL,model TEXT NOT NULL,tokens_in INTEGER NOT NULL,tokens_cached INTEGER NOT NULL,tokens_out INTEGER NOT NULL,cost REAL NOT NULL,ok INTEGER NOT NULL,created_at INTEGER NOT NULL);
+CREATE INDEX IF NOT EXISTS ess_usage_time ON ess_usage(created_at);
+CREATE INDEX IF NOT EXISTS ess_usage_license ON ess_usage(license_id,created_at);
+CREATE TABLE IF NOT EXISTS ess_providers(id INTEGER PRIMARY KEY,name TEXT NOT NULL,base_url TEXT NOT NULL,key_enc TEXT NOT NULL DEFAULT '',key_tail TEXT NOT NULL DEFAULT '',timeout INTEGER NOT NULL DEFAULT 120,concurrency INTEGER NOT NULL DEFAULT 3,created_at INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS ess_steps(step TEXT NOT NULL,slot TEXT NOT NULL,provider_id INTEGER REFERENCES ess_providers(id),model TEXT NOT NULL DEFAULT '',temperature REAL,max_tokens INTEGER,extra TEXT NOT NULL DEFAULT '',price_in REAL NOT NULL DEFAULT 0,price_cached REAL NOT NULL DEFAULT 0,price_out REAL NOT NULL DEFAULT 0,peak_factor REAL NOT NULL DEFAULT 1,peak_hours TEXT NOT NULL DEFAULT '',PRIMARY KEY(step,slot));
+CREATE TABLE IF NOT EXISTS ess_meta(key TEXT PRIMARY KEY,value TEXT NOT NULL);
 """
 
 

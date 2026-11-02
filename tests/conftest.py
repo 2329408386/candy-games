@@ -15,8 +15,9 @@ import wsgi
 from sites import SITES
 
 PASSWORD = "test-password-123"
-KEYS = {"chinese": "CHINESEKEYAAAAAA", "math": "MATHKEYAAAAAAAAA", "english": "ENGLISHKEYAAAAAA"}
-PREFIX = {"chinese": "", "math": "/math", "english": "/english"}
+KEYS = {"chinese": "CHINESEKEYAAAAAA", "math": "MATHKEYAAAAAAAAA", "english": "ENGLISHKEYAAAAAA", "teacher": "TEACHERKEYAAAAAA"}
+TEACHER2_KEY = "TEACHERKEYBBBBBB"
+PREFIX = {"chinese": "", "math": "/math", "english": "/english", "teacher": "/teacher"}
 FLASK = {"chinese": wsgi.chinese, "math": wsgi.math, "english": wsgi.english}
 
 
@@ -50,6 +51,15 @@ def _seed():
             (key, digest(key + "ARCHIVED"), json.dumps([next(iter(site.games))])),
         )
         d.execute("INSERT INTO license_keys VALUES(?,3,?)", (key, key.upper() + "ARCHIVED"))
+    # 语文老师工作台: its license group is created by create_app (seed_workbench); two teachers.
+    d.execute("INSERT INTO admin VALUES('teacher',?,0,1)", (generate_password_hash(PASSWORD),))
+    for lid, code in ((1, KEYS["teacher"]), (2, TEACHER2_KEY)):
+        d.execute(
+            "INSERT INTO licenses(site,id,key_hash,games,buyer,created_at,device_limit) VALUES('teacher',?,?,'[]','老师',1,100)",
+            (lid, digest(code)),
+        )
+        d.execute("INSERT INTO license_keys VALUES('teacher',?,?)", (lid, code))
+        d.execute("INSERT INTO license_groups VALUES('teacher',?,'g1-t1-a')", (lid,))
     d.commit()
     d.close()
 

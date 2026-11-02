@@ -1,0 +1,15 @@
+{% set q = essay_quota(row.id) %}
+<section class="panel">
+  <h2>学生名额和批改篇数</h2>
+  <p class="muted">已有学生 {{essay_students_used(row.id)}} / {{q.students}} 人 · 本月已批改 {{essay_monthly_used(row.id)}} / {{q.monthly}} 篇</p>
+  {% if not row.archived_at %}
+    <form method="post" action="{{url_for('essay_quota_save', lid=row.id)}}">
+      <input type="hidden" name="csrf" value="{{csrf()}}">
+      <div class="fields-row">
+        <div class="form-field"><label for="students">学生名额</label><input id="students" name="students" type="number" min="1" max="2000" required value="{{q.students}}"><small>这位老师所有班级的学生总数上限。</small></div>
+        <div class="form-field"><label for="monthly">每月批改篇数</label><input id="monthly" name="monthly" type="number" min="0" max="100000" required value="{{q.monthly}}"><small>按自然月计算，每次提交（含重交）算一篇。</small></div>
+      </div>
+      <button>保存名额</button>
+    </form>
+  {% endif %}
+</section>

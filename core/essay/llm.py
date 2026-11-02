@@ -1,0 +1,228 @@
+"""Model calls for the essay workbench: any OpenAI-compatible chat endpoint, configured in the admin.
+
+Configuration lives in the database, not in secret.env, so the admin can switch providers without a deploy:
+  ess_providers  one row per service: base_url (…/v1), the API key (Fernet-encrypted with a key derived from the
+                 site secret; only the last 4 characters are kept in clear for display), timeout and how many
+                 requests may run at once.
+  ess_steps      (step, slot): which provider and model each step uses. step is ocr / grade / check, slot is
+                 main or backup (used when the main one fails, times out or is rate limited). Each row also holds
+                 temperature, max_tokens, extra (a JSON object merged into the request body, e.g.
+                 {"enable_thinking": false}; a key set to null removes it from the request) and prices in yuan per
+                 million tokens (input, cached input, output) with an optional peak window and multiplier.
+
+Every call, successful or not, is written to ess_usage with its tokens and the cost those prices give.
+"""
+
+import base64, hashlib, json, re, threading, time, urllib.error, urllib.request
+from cryptography.fernet import Fernet, InvalidToken
+
+STEPS = {"ocr": "照片识别（OCR）", "grade": "作文批改", "check": "批改复核"}
+SLOTS = {"main": "主模型", "backup": "备用模型"}
+BEIJING = 8 * 3600
+
+
+class LLMError(Exception):
+    """A call that failed; retry says whether trying again later (or with the backup model) may help."""
+
+    def __init__(self, message, retry=True):
+        super().__init__(message)
+        self.retry = retry
+
+
+class NotConfigured(LLMError):
+    def __init__(self, step):
+        super().__init__(f"{STEPS.get(step, step)}还没有配置模型", retry=False)
+
+
+# ---- API keys ----
+def _fernet():
+    from sites import TEACHER
+    from core.app import site_secret
+
+    secret = site_secret(TEACHER)
+    if not secret:
+        raise RuntimeError("TEACHER_SECRET is not set")
+    return Fernet(base64.urlsafe_b64encode(hashlib.sha256(("ess-provider-key:" + secret).encode()).digest()))
+
+
+def encrypt_key(plain):
+    return _fernet().encrypt(plain.encode()).decode() if plain else ""
+
+
+def decrypt_key(token):
+    if not token:
+        return ""
+    try:
+        return _fernet().decrypt(token.encode()).decode()
+    except InvalidToken:
+        raise LLMError("API Key 无法解密（站点密钥变了？请在模型设置里重新填写）", retry=False) from None
+
+
+def key_tail(plain):
+    return plain[-4:] if len(plain) >= 8 else ""
+
+
+# ---- configuration ----
+def step_rows(d, step):
+    """The configured (main, then backup) slots of a step that have a provider and a model."""
+    rows = d.execute(
+        "SELECT s.*,p.name provider_name,p.base_url,p.key_enc,p.timeout,p.concurrency FROM ess_steps s"
+        " JOIN ess_providers p ON p.id=s.provider_id WHERE s.step=? AND s.model!='' ORDER BY s.slot='backup'",
+        (step,),
+    ).fetchall()
+    return [dict(r) for r in rows]
+
+
+def configured(d, step):
+    return bool(step_rows(d, step))
+
+
+def in_peak(spec, now=None):
+    """spec like "9-12,14-18": Beijing-time hours on weekdays (Mon–Fri) when peak prices apply."""
+    if not spec:
+        return False
+    local = int(now if now is not None else time.time()) + BEIJING
+    if (local // 86400 + 3) % 7 >= 5:  # 1970-01-01 was a Thursday: 0 = Monday … 5, 6 = weekend
+        return False
+    hour = local % 86400 / 3600
+    for part in spec.split(","):
+        m = re.fullmatch(r"\s*(\d{1,2})\s*-\s*(\d{1,2})\s*", part)
+        if m and int(m[1]) <= hour < int(m[2]):
+            return True
+    return False
+
+
+def valid_peak_hours(spec):
+    return not spec or all(
+        (m := re.fullmatch(r"\s*(\d{1,2})\s*-\s*(\d{1,2})\s*", part)) and 0 <= int(m[1]) < int(m[2]) <= 24
+        for part in spec.split(",")
+    )
+
+
+def cost(row, tokens_in, tokens_cached, tokens_out, now=None):
+    cached = min(tokens_cached, tokens_in)
+    yuan = ((tokens_in - cached) * row["price_in"] + cached * row["price_cached"] + tokens_out * row["price_out"]) / 1e6
+    return yuan * (row["peak_factor"] if in_peak(row["peak_hours"], now) else 1)
+
+
+# ---- calls ----
+_limits = {}
+_limits_lock = threading.Lock()
+
+
+def _semaphore(row):
+    with _limits_lock:
+        limit = max(1, int(row["concurrency"] or 1))
+        held = _limits.get(row["provider_id"])
+        if not held or held[0] != limit:
+            held = _limits[row["provider_id"]] = (limit, threading.BoundedSemaphore(limit))
+        return held[1]
+
+
+def request_body(row, messages, json_mode):
+    body = {"model": row["model"], "messages": messages}
+    if row["temperature"] is not None:
+        body["temperature"] = row["temperature"]
+    if row["max_tokens"]:
+        body["max_tokens"] = row["max_tokens"]
+    if json_mode:
+        body["response_format"] = {"type": "json_object"}
+    if row["extra"]:
+        for k, v in json.loads(row["extra"]).items():
+            if v is None:
+                body.pop(k, None)
+            else:
+                body[k] = v
+    return body
+
+
+def post(row, body):
+    """One HTTP call. Returns (content, tokens_in, tokens_cached, tokens_out)."""
+    url = row["base_url"].rstrip("/") + "/chat/completions"
+    req = urllib.request.Request(
+        url,
+        data=json.dumps(body, ensure_ascii=False).encode(),
+        headers={"Content-Type": "application/json", "Authorization": "Bearer " + decrypt_key(row["key_enc"])},
+    )
+    try:
+        with _semaphore(row), urllib.request.urlopen(req, timeout=row["timeout"] or 120) as r:
+            data = json.load(r)
+    except urllib.error.HTTPError as e:
+        detail = e.read()[:300].decode(errors="replace")
+        # 400/401/403/404 are configuration problems; the backup may still work, but retrying this one won't.
+        raise LLMError(f"HTTP {e.code}: {detail}", retry=e.code in (408, 409, 429) or e.code >= 500) from None
+    except (urllib.error.URLError, TimeoutError, OSError) as e:
+        raise LLMError(f"连接失败：{e}") from None
+    except ValueError:
+        raise LLMError("返回的不是 JSON") from None
+    try:
+        content = data["choices"][0]["message"]["content"] or ""
+    except (KeyError, IndexError, TypeError):
+        raise LLMError("返回格式不对：" + json.dumps(data, ensure_ascii=False)[:300]) from None
+    usage = data.get("usage") or {}
+    cached = usage.get("prompt_cache_hit_tokens") or (usage.get("prompt_tokens_details") or {}).get("cached_tokens") or 0
+    return content, int(usage.get("prompt_tokens") or 0), int(cached), int(usage.get("completion_tokens") or 0)
+
+
+def log_usage(d, row, license_id, submission_id, step, tokens, ok):
+    d.execute(
+        "INSERT INTO ess_usage(license_id,submission_id,step,model,tokens_in,tokens_cached,tokens_out,cost,ok,created_at)"
+        " VALUES(?,?,?,?,?,?,?,?,?,?)",
+        (
+            license_id,
+            submission_id,
+            step,
+            row["provider_name"] + " / " + row["model"],
+            *tokens,
+            cost(row, *tokens),
+            int(ok),
+            int(time.time()),
+        ),
+    )
+    d.commit()
+
+
+def chat(d, step, messages, *, json_mode=False, license_id=0, submission_id=None, parse=None):
+    """Runs a step on its main model, falling back to the backup. parse(content) may raise ValueError to reject an
+    answer (e.g. JSON that does not fit the schema): that counts as a failure of that model.
+    Returns (parsed or content, model label)."""
+    rows = step_rows(d, step)
+    if not rows:
+        raise NotConfigured(step)
+    errors, retry = [], False
+    for row in rows:
+        try:
+            content, *tokens = post(row, request_body(row, messages, json_mode))
+        except LLMError as e:
+            log_usage(d, row, license_id, submission_id, step, (0, 0, 0), False)
+            errors.append(f"{SLOTS[row['slot']]}：{e}")
+            retry = retry or e.retry
+            continue
+        try:
+            result = parse(content) if parse else content
+        except ValueError as e:
+            log_usage(d, row, license_id, submission_id, step, tokens, False)
+            errors.append(f"{SLOTS[row['slot']]}：{e}")
+            retry = True
+            continue
+        log_usage(d, row, license_id, submission_id, step, tokens, True)
+        return result, row["provider_name"] + " / " + row["model"]
+    raise LLMError("；".join(errors), retry=retry)
+
+
+def parse_json(content):
+    """The JSON object in a model answer (tolerates ```json fences and text around it)."""
+    text = content.strip()
+    m = re.search(r"```(?:json)?\s*(.*?)```", text, re.S)
+    if m:
+        text = m[1]
+    start, end = text.find("{"), text.rfind("}")
+    if start < 0 or end <= start:
+        raise ValueError("回答里没有 JSON")
+    try:
+        value = json.loads(text[start : end + 1])
+    except ValueError:
+        raise ValueError("回答里的 JSON 格式不对") from None
+    if not isinstance(value, dict):
+        raise ValueError("回答里的 JSON 不是对象")
+    return value

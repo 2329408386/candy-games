@@ -45,6 +45,7 @@
           </form>
         </section>
       {% endif %}
+      {% if site.kind == 'workbench' %}{% include 'essay_quota.html' %}{% endif %}
       <section class="panel">
         <h2>设备名额</h2>
         <p class="muted">已绑定 {{devices|length}} / {{row.device_limit}} 个浏览器</p>

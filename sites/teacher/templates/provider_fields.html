@@ -1,0 +1,9 @@
+<div class="fields-row">
+  <div class="form-field"><label>名称</label><input name="name" maxlength="30" required value="{{p.name if p else ''}}" placeholder="例如 阿里云百炼"></div>
+  <div class="form-field"><label>服务地址（base_url）</label><input name="base_url" maxlength="300" required value="{{p.base_url if p else ''}}" placeholder="https://…/v1"></div>
+</div>
+<div class="fields-row">
+  <div class="form-field"><label>API Key</label><input name="api_key" type="password" autocomplete="new-password" maxlength="500" {{'' if p else 'required'}} placeholder="{{'留空表示不修改' if p else 'sk-…'}}"></div>
+  <div class="form-field"><label>超时（秒）</label><input name="timeout" type="number" min="5" max="600" required value="{{p.timeout if p else 120}}"></div>
+  <div class="form-field"><label>最多同时请求</label><input name="concurrency" type="number" min="1" max="20" required value="{{p.concurrency if p else 3}}"></div>
+</div>

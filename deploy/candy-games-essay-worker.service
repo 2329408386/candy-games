@@ -1,0 +1,26 @@
+[Unit]
+Description=Candy Games 语文老师工作台：作文批改进程（调用模型，见 core/essay/worker.py）
+After=network.target candy-games.service
+StartLimitIntervalSec=0
+
+[Service]
+User=candy-games
+Group=candy-games
+WorkingDirectory=/opt/candy-games/current
+EnvironmentFile=/var/lib/candy-games/secret.env
+Environment=GAME_DATA=/var/lib/candy-games
+ExecStart=/opt/candy-games/venv/bin/python -m core.essay.worker
+Restart=always
+RestartSec=5
+# A model call may be in flight; the job is claimed again after a restart (stale after 15 minutes at most).
+TimeoutStopSec=10
+MemoryMax=300M
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/candy-games
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block title %}{{assignment.title}} · 语文老师工作台{% endblock %}
+{% block header_actions %}<a class="header-link" href="{{url_for('home')}}">我的作文</a>{% endblock %}
+{% block content %}
+  <div class="wb-heading">
+    <div>
+      <h1>{{assignment.title}}</h1>
+      <p class="muted">{{assignment.genre}}{% if assignment.min_chars %} · 不少于 {{assignment.min_chars}} 字{% endif %}{% if assignment.due_at %} · {{assignment.due_at|date}} 截止{% endif %}</p>
+      {% if assignment.requirement %}<p class="requirement">{{assignment.requirement}}</p>{% endif %}
+    </div>
+  </div>
+  {% if attempts %}
+    <div class="attempts">
+      {% for s in attempts %}
+        <div class="attempt">
+          第 {{s.attempt}} 次 · {{s.created_at|moment}} ·
+          {% if s.status == 'published' %}<a href="{{url_for('result_page', sid=s.id)}}">看批改</a>
+          {% elif s.status in ('queued', 'grading') %}<span data-poll="{{url_for('submission_state', sid=s.id)}}"><span data-label>{{STATUS[s.status]}}{% if s.hold %}：{{HOLDS.get(s.hold, '')}}{% endif %}</span></span>
+          {% elif s.status == 'review' %}AI 已经批好，老师正在看，看完就能看到批改
+          {% else %}批改出了问题，可以重新提交{% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+  {% if can_submit %}
+    <section class="wb-card">
+      <form id="write-form" class="wb-form">
+        {% if last %}<p class="hint">这是第 {{attempts|length + 1}} 次提交（最多 {{max_attempts}} 次）。下面是你上次交的作文，按老师的建议改好再交。</p>{% endif %}
+        <label>标题<input name="title" maxlength="40" value="{{draft_title or assignment.title}}"></label>
+        <label>正文<textarea name="text" rows="16" required placeholder="在这里写作文，每段之间空一行。">{{draft_text}}</textarea></label>
+        <p class="hint"><span id="count">0</span> 字{% if assignment.min_chars %}（要求不少于 {{assignment.min_chars}} 字）{% endif %} · 拍照交作文的功能马上就来</p>
+        <p class="wb-error" role="alert"></p>
+        <button>交给老师</button>
+      </form>
+    </section>
+  {% elif assignment.closed_at and not attempts %}
+    <p class="notice">这次作业已经停止提交了。</p>
+  {% elif attempts|length >= max_attempts and last.status in ('published', 'failed') %}
+    <p class="notice">这次作业已经交满 {{max_attempts}} 次了。</p>
+  {% endif %}
+{% endblock %}
+{% block scripts %}
+  <script>
+    const text = document.querySelector('#write-form [name=text]');
+    if (text) {
+      const key = 'essay-draft-{{me.id}}-{{assignment.id}}';
+      const count = () => (document.getElementById('count').textContent = text.value.replace(/\s/g, '').length);
+      try {
+        const saved = localStorage.getItem(key);
+        if (saved && saved.length > text.value.length) text.value = saved;
+      } catch (e) {}
+      text.addEventListener('input', () => {
+        count();
+        try { localStorage.setItem(key, text.value); } catch (e) {}
+      });
+      count();
+      WB.form('#write-form', {{url_for('student_submit', aid=assignment.id)|tojson}}, () => {
+        try { localStorage.removeItem(key); } catch (e) {}
+        location.reload();
+      });
+    }
+  </script>
+{% endblock %}

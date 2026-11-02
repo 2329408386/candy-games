@@ -1,4 +1,4 @@
-import csv, functools, hashlib, io, json, os, secrets, sqlite3, time
+import csv, functools, hashlib, hmac, io, json, os, secrets, sqlite3, time
 from pathlib import Path
 from flask import (
     Flask,
@@ -20,7 +20,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.exceptions import HTTPException
 from itsdangerous import URLSafeSerializer, BadSignature
 from . import schema
-from sites import SITES
+from sites import ALL_SITES, SITES
 
 ROOT = Path(__file__).resolve().parent.parent
 SHARED_STATIC = ROOT / "shared-static"
@@ -131,6 +131,8 @@ def all_license_group_ids():
 
 def group_labels(ids):
     catalog = group_map()
+    if site().kind == "workbench":  # the workbench has no grades: its one group is just a name
+        return [catalog[gid]["name"] for gid in ids if gid in catalog]
     return [GRADES[catalog[gid]["grade"]] + "／" + catalog[gid]["name"] for gid in ids if gid in catalog]
 
 
@@ -401,16 +403,34 @@ def shared_script(name):
 GUARD = """<script>(function(){async function check(){const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),5000);try{let r=await fetch('SESSION_URL',{cache:'no-store',signal:controller.signal});if(!r.ok)location.replace('HOME_URL');}catch(e){location.replace('HOME_URL');}finally{clearTimeout(timeout);}}setInterval(check,30000);addEventListener('pageshow',check);document.addEventListener('visibilitychange',()=>{if(!document.hidden)check();});})();</script>"""
 
 
+def site_secret(site_config):
+    secret = os.environ.get(site_config.secret_env, "")
+    if not secret and site_config.kind == "workbench" and os.environ.get("CHINESE_SECRET"):
+        # Servers set up before the workbench existed have no TEACHER_SECRET: derive a separate one.
+        secret = hmac.new(os.environ["CHINESE_SECRET"].encode(), b"teacher-workbench", hashlib.sha256).hexdigest()
+    return secret
+
+
+def seed_workbench(path):
+    """The workbench's single license group, holding its only "game" (essay); licenses are generated for it."""
+    with sqlite3.connect(path, timeout=30) as d:
+        d.execute(
+            "INSERT OR IGNORE INTO game_groups(site,id,grade,name,position) VALUES('teacher','g1-t1-a','g1-t1','作文批改',0)"
+        )
+        d.execute("INSERT OR IGNORE INTO game_memberships(site,game,group_id) VALUES('teacher','essay','g1-t1-a')")
+
+
 def create_app(site_config):
     app = Flask(__name__, static_folder=str(site_config.static_root), static_url_path="/static", template_folder=None)
     app.site = site_config
-    secret = os.environ.get(site_config.secret_env, "")
+    secret = site_secret(site_config)
     if not secret:
         raise RuntimeError(site_config.secret_env + " is not set")
     app.config.update(
         SECRET_KEY=secret,
         DATABASE=str(data_dir() / schema.DB_NAME),
-        MAX_CONTENT_LENGTH=8192,
+        # Game requests are tiny; the workbench posts essays and review edits (nginx allows 128k under /teacher/).
+        MAX_CONTENT_LENGTH=128 * 1024 if site_config.kind == "workbench" else 8192,
         SESSION_COOKIE_NAME=site_config.cookie_name,
         SESSION_COOKIE_HTTPONLY=True,
         SESSION_COOKIE_SAMESITE="Lax",
@@ -419,6 +439,8 @@ def create_app(site_config):
     )
     # Creates tables added by newer releases (CREATE TABLE IF NOT EXISTS), so a deploy needs no migration step.
     schema.initialize(app.config["DATABASE"])
+    if site_config.kind == "workbench":
+        seed_workbench(app.config["DATABASE"])
     app.jinja_loader = ChoiceLoader(
         [FileSystemLoader(str(site_config.template_root)), FileSystemLoader(str(ROOT / "core" / "templates"))]
     )
@@ -426,7 +448,7 @@ def create_app(site_config):
     app.jinja_env.globals.update(
         csrf=csrf,
         site=site_config,
-        all_sites=SITES,
+        all_sites=ALL_SITES,
         games=site_config.games,
         grades=GRADES,
         grade_names=GRADE_NAMES,
@@ -496,9 +518,14 @@ def create_app(site_config):
         r.headers["Referrer-Policy"] = "same-origin"
         return r
 
-    register_public(app)
     register_api(app)
     register_admin(app)
+    if site_config.kind == "workbench":
+        from .essay import register_essay  # 语文老师工作台: its own home, teacher and student pages
+
+        register_essay(app)
+        return app
+    register_public(app)
     from .social import register_social  # these import this module, so they are loaded once create_app runs
     from .rooms import register_rooms
 
