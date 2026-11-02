@@ -20,7 +20,7 @@
       {% for s in students %}
         <div class="slip">
           <strong>{{s.name}}</strong><br>
-          网址：{{request.host_url.rstrip('/')}}{{url_for('home')}}<br>
+          网址：{{request.host_url.rstrip('/')}}{{url_for('student_home')}}<br>
           班级码：<code>{{klass.code}}</code><br>
           口令：<code>{{s.pin}}</code>
         </div>

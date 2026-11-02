@@ -7,7 +7,9 @@ DB_NAME = "games.sqlite3"
 # Permissions and grades come from license_groups -> game_groups. licenses.grade_scopes and
 # generation_batches.grade_scopes are deprecated mirrors: still written so older releases can be rolled back to,
 # never read.
-# ess_*: 语文老师工作台 (site 'teacher' only, so no site column), see core/essay/__init__.py.
+# ess_*: 语文老师工作台 (site 'teacher' only, so no site column), see core/essay/__init__.py. ess_images: photos of
+# handwritten essays (files in <data>/essay-images/<id>.jpg). ws_entitlements: which workbench features a teacher
+# license has and until when (core/essay/features.py); the clock starts when the teacher activates the code.
 # migrations: one-off data changes already applied (see initialize).
 # trials records the one free round each browser (session device token) may play per game.
 # profiles/classes/scores/rounds: see core/social.py (one license = one user, in at most one class); pk_rooms/pk_seats: core/rooms.py (rooms/room_players are the unused, license-keyed predecessors).
@@ -61,6 +63,9 @@ CREATE INDEX IF NOT EXISTS ess_usage_license ON ess_usage(license_id,created_at)
 CREATE TABLE IF NOT EXISTS ess_providers(id INTEGER PRIMARY KEY,name TEXT NOT NULL,base_url TEXT NOT NULL,key_enc TEXT NOT NULL DEFAULT '',key_tail TEXT NOT NULL DEFAULT '',timeout INTEGER NOT NULL DEFAULT 120,concurrency INTEGER NOT NULL DEFAULT 3,created_at INTEGER NOT NULL);
 CREATE TABLE IF NOT EXISTS ess_steps(step TEXT NOT NULL,slot TEXT NOT NULL,provider_id INTEGER REFERENCES ess_providers(id),model TEXT NOT NULL DEFAULT '',temperature REAL,max_tokens INTEGER,extra TEXT NOT NULL DEFAULT '',price_in REAL NOT NULL DEFAULT 0,price_cached REAL NOT NULL DEFAULT 0,price_out REAL NOT NULL DEFAULT 0,peak_factor REAL NOT NULL DEFAULT 1,peak_hours TEXT NOT NULL DEFAULT '',PRIMARY KEY(step,slot));
 CREATE TABLE IF NOT EXISTS ess_meta(key TEXT PRIMARY KEY,value TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS ess_images(id INTEGER PRIMARY KEY,submission_id INTEGER NOT NULL REFERENCES ess_submissions(id),page INTEGER NOT NULL,w INTEGER NOT NULL,h INTEGER NOT NULL,lines TEXT NOT NULL DEFAULT '',created_at INTEGER NOT NULL);
+CREATE INDEX IF NOT EXISTS ess_images_submission ON ess_images(submission_id,page);
+CREATE TABLE IF NOT EXISTS ws_entitlements(license_id INTEGER NOT NULL,feature TEXT NOT NULL,days INTEGER NOT NULL,starts_at INTEGER,expires_at INTEGER,PRIMARY KEY(license_id,feature));
 """
 
 
@@ -135,3 +140,65 @@ def migrate(d):
         d.execute("UPDATE OR IGNORE game_memberships SET game='read' WHERE site='english' AND game='listen-judge'")
         d.execute("DELETE FROM game_memberships WHERE site='english' AND game='listen-judge'")
         d.execute("INSERT INTO migrations VALUES('english_read_replaces_listen_judge',?)", (int(time.time()),))
+    if "workbench_entitlements" not in done:
+        # Workbench licenses became per feature with an expiry: every existing teacher code gets 作文批改 for a year,
+        # counted from today if it is already in use, otherwise from its activation.
+        now = int(time.time())
+        expires = end_of_day(now + 365 * 86400)
+        for (lid,) in d.execute("SELECT id FROM licenses WHERE site='teacher' AND archived_at IS NULL").fetchall():
+            used = d.execute("SELECT 1 FROM devices WHERE site='teacher' AND license_id=?", (lid,)).fetchone()
+            d.execute(
+                "INSERT OR IGNORE INTO ws_entitlements(license_id,feature,days,starts_at,expires_at) VALUES(?,'essay',365,?,?)",
+                (lid, now if used else None, expires if used else None),
+            )
+        d.execute("INSERT INTO migrations VALUES('workbench_entitlements',?)", (now,))
+    if "essay_25" not in done:
+        # Essays are scored out of 25 instead of 100: stored reviews are rescaled dimension by dimension.
+        rescale_reviews(d)
+        d.execute("INSERT INTO migrations VALUES('essay_25',?)", (int(time.time()),))
+
+
+BEIJING = 8 * 3600
+
+
+def end_of_day(ts):
+    """23:59:59 Beijing time on the day of ts."""
+    local = int(ts) + BEIJING
+    return local - local % 86400 + 86399 - BEIJING
+
+
+def rescale_reviews(d):
+    import json
+
+    bands = json.loads((Path(__file__).resolve().parent.parent / "sites" / "teacher" / "prompts" / "bands.json").read_text(encoding="utf-8"))
+
+    def level(total):
+        return "优" if total >= 23 else "良" if total >= 19 else "及格" if total >= 15 else "待提高"
+
+    def convert(review, top):
+        if not review or not isinstance(review.get("dims"), dict):
+            return review
+        for key, dim in review["dims"].items():
+            if key in top and dim.get("max") and dim["max"] != top[key]:
+                dim["score"] = max(0, min(top[key], round(dim["score"] * top[key] / dim["max"])))
+                dim["max"] = top[key]
+        review["total"] = sum(dim["score"] for dim in review["dims"].values())
+        review["level"] = level(review["total"])
+        if review.get("check_level") == "中":
+            review["check_level"] = "及格"
+        return review
+
+    rows = d.execute(
+        "SELECT r.submission_id,r.ai,r.final,c.grade FROM ess_reviews r JOIN ess_submissions s ON s.id=r.submission_id"
+        " JOIN ess_assignments a ON a.id=s.assignment_id JOIN ess_classes c ON c.id=a.class_id"
+    ).fetchall()
+    for sid, ai, final, grade in rows:
+        top = next(b["max"] for b in bands.values() if grade in b["grades"])
+        d.execute(
+            "UPDATE ess_reviews SET ai=?,final=? WHERE submission_id=?",
+            (
+                json.dumps(convert(json.loads(ai), top), ensure_ascii=False),
+                json.dumps(convert(json.loads(final), top), ensure_ascii=False) if final else None,
+                sid,
+            ),
+        )

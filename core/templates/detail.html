@@ -35,7 +35,7 @@
           <p>买家 / 订单备注：{{row.buyer or '未分配'}}</p>
         {% endif %}
       </section>
-      {% if not row.archived_at %}
+      {% if not row.archived_at and site.kind != 'workbench' %}
         <section class="panel">
           <h2>授权学期／组</h2>
           <form method="post" action="{{url_for('edit',lid=row.id,action='groups')}}">
@@ -45,7 +45,7 @@
           </form>
         </section>
       {% endif %}
-      {% if site.kind == 'workbench' %}{% include 'essay_quota.html' %}{% endif %}
+      {% if site.kind == 'workbench' %}{% include 'entitlements.html' %}{% include 'essay_quota.html' %}{% endif %}
       <section class="panel">
         <h2>设备名额</h2>
         <p class="muted">已绑定 {{devices|length}} / {{row.device_limit}} 个浏览器</p>
@@ -120,7 +120,7 @@
       <h2>最近操作记录</h2>
       {% for event in events %}
         <div class="audit-item">
-          <time>{{event.created_at|datetime}}</time>{{ {"assign":"分配 / 更新买家备注","disable":"停用授权","enable":"启用授权","unbind":"解绑设备","limit":"调整设备上限","grades":"调整授权年级范围","archive":"归档停用","grade_migrate":"年级权限迁移","reset_nickname":"重置昵称","reset_avatar":"删除头像","leave_class":"移出班级 / 解散班级"}.get(event.action,event.action) }}{% if event.action=='groups' %}
+          <time>{{event.created_at|datetime}}</time>{{ {"assign":"分配 / 更新买家备注","disable":"停用授权","enable":"启用授权","unbind":"解绑设备","limit":"调整设备上限","grades":"调整授权年级范围","archive":"归档停用","grade_migrate":"年级权限迁移","reset_nickname":"重置昵称","reset_avatar":"删除头像","leave_class":"移出班级 / 解散班级","feature_extend":"功能续期","feature_expiry":"设置功能到期日"}.get(event.action,event.action) }}{% if event.action=='groups' %}
           <p class="hint">{{event.details}}</p>
         {% elif event.action=='grades' %}
           {% set change=decode(event.details) %}

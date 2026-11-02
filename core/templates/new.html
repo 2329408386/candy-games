@@ -15,7 +15,20 @@
       {% endif %}
       <form method="post" id="generate-form">
         <input type="hidden" name="csrf" value="{{csrf()}}"><input type="hidden" name="nonce" value="{{nonce}}">
+        {% if site.kind == 'workbench' %}
+          <div class="form-field"><label>功能和有效期</label>
+            {% for key, f in workbench_feature_list.items() %}
+              <div class="feature-choice">
+                <label class="game-choice"><input type="checkbox" name="feature_{{key}}" value="1" {{'checked' if request.method != 'POST' or request.form.get('feature_' + key)}}><span>{{f.name}}</span></label>
+                <span class="years">有效 <input name="days_{{key}}" type="number" min="1" max="7300" value="{{request.form.get('days_' + key, '365')}}" aria-label="{{f.name}}的有效天数"> 天
+                  {% for y in (1, 2, 3) %}<button type="button" class="secondary small" onclick="this.parentNode.querySelector('input').value={{365 * y}}">{{y}} 年</button>{% endfor %}</span>
+              </div>
+            {% endfor %}
+            <small>有效期从老师第一次激活授权码那天开始计算。以后可以在授权详情里续期。</small>
+          </div>
+        {% else %}
         <div class="form-field"><label>选择授权学期／组</label>{% include 'grade_checkboxes.html' %}<small>至少选择一个游戏组，可跨学期多选；只开放所选组的游戏。</small></div>
+        {% endif %}
         <div class="fields-row">
           <div class="form-field">
             <label for="quantity">生成数量</label><input id="quantity" name="quantity" type="number" min="1" max="1000" step="1" required value="{{request.form.get('quantity','100')}}"><small>每次可生成1至1000个授权码。</small>
@@ -36,10 +49,10 @@
         <br>
         准备合适的授权。
       </h2>
-      <p>系统自动生成16位随机授权码，永久有效，默认启用、尚未分配。</p>
+      <p>系统自动生成16位随机授权码，{{'按所选功能的有效期使用' if site.kind == 'workbench' else '永久有效'}}，默认启用、尚未分配。</p>
       <p>生成后可以导出这一批授权码，也可以在详情中填写买家备注、调整设备上限。</p>
       <p>请只把对应的单个授权码发送给用户，妥善保管完整码表。</p>
     </aside>
   </div>
-  <script>document.getElementById('generate-form').addEventListener('submit',function(e){if(!this.querySelector('input[name=groups]:checked')){e.preventDefault();alert('请至少选择一个游戏组');return;}const b=document.getElementById('generate-button');b.disabled=true;b.textContent='正在生成…';});addEventListener('pageshow',()=>{const b=document.getElementById('generate-button');b.disabled=false;b.textContent='生成授权码 ↗';});</script>
+  <script>document.getElementById('generate-form').addEventListener('submit',function(e){if(!this.querySelector('input[name=groups]:checked,input[name^=feature_]:checked')){e.preventDefault();alert('{{'请至少勾选一个功能' if site.kind == 'workbench' else '请至少选择一个游戏组'}}');return;}const b=document.getElementById('generate-button');b.disabled=true;b.textContent='正在生成…';});addEventListener('pageshow',()=>{const b=document.getElementById('generate-button');b.disabled=false;b.textContent='生成授权码 ↗';});</script>
 {% endblock %}

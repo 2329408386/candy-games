@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block title %}免费试用作文批改 · 语文老师工作台{% endblock %}
+{% block header_actions %}<a class="header-link" href="{{url_for('teacher_home')}}">老师登录</a>{% endblock %}
+{% block content %}
+  <div class="wb-heading">
+    <div>
+      <h1>免费试用：作文批改</h1>
+      <p class="muted">拍一篇学生作文，看看 AI 怎样用红笔批改。每台设备可以试用 1 次。</p>
+    </div>
+  </div>
+  {% if final %}
+    <div class="redpen" id="redpen"></div>
+    <section class="wb-card trial-next">
+      <h2>觉得好用？</h2>
+      <p class="muted">买了授权码以后，可以建班级、给学生布置作文；学生自己拍照交作文，批改结果直接发到学生手上，老师也可以先审核再发。</p>
+      <a class="button" href="{{url_for('teacher_home')}}">输入授权码</a>
+    </section>
+  {% elif sub %}
+    <div class="wb-card waiting" data-poll="{{url_for('submission_state', sid=sub.id)}}">
+      <div class="spinner" aria-hidden="true"></div>
+      <p data-label>{{STATUS[sub.status]}}{% if sub.hold %}：{{HOLDS.get(sub.hold, '')}}{% endif %}</p>
+      <p class="hint">一般需要半分钟到一分钟，批好以后页面会自动刷新。</p>
+    </div>
+    {% if sub.status == 'failed' %}<p class="notice error">这次没有批改成功（可能是照片没拍清楚）。请联系管理员，或者输入授权码后再试。</p>{% endif %}
+  {% elif used %}
+    <p class="notice">这台设备已经试用过了。输入授权码就能继续使用。</p>
+  {% else %}
+    <section class="wb-card">
+      <form id="trial-form" class="wb-form">
+        <div class="wb-row">
+          <label>年级<select name="grade">{% for n in range(1, 7) %}<option value="{{n}}"{{' selected' if n == 3}}>{{n}}年级</option>{% endfor %}</select></label>
+          <label>文体<select name="genre">{% for g in GENRES %}<option>{{g}}</option>{% endfor %}</select></label>
+          <label>题目（可不填）<input name="title" maxlength="40" placeholder="例如 我的植物朋友"></label>
+        </div>
+        <div class="tabs" role="tablist">
+          <button type="button" role="tab" class="tab active" data-tab="photo" aria-selected="true"><svg><use href="#i-camera"/></svg>拍照</button>
+          <button type="button" role="tab" class="tab" data-tab="typed" aria-selected="false"><svg><use href="#i-pen"/></svg>粘贴文字</button>
+        </div>
+        <div data-pane="photo">{% set photo_limit = max_photos %}{% include 'photo_picker.html' %}</div>
+        <div data-pane="typed" hidden><label>作文正文<textarea name="text" rows="12" placeholder="把作文粘贴到这里"></textarea></label></div>
+        <p class="wb-error" role="alert"></p>
+        <button>开始批改</button>
+      </form>
+    </section>
+  {% endif %}
+{% endblock %}
+{% block page_data %}{% if redpen %}<script>window.REDPEN={{redpen|tojson}};</script>{% endif %}{% endblock %}
+{% block scripts %}
+  <script src="{{asset('redpen.js')}}"></script>
+  <script>
+    if (window.REDPEN) RedPen.render(document.getElementById('redpen'), window.REDPEN);
+    const form = document.getElementById('trial-form');
+    if (form) {
+      const picker = WB.photoPicker(form.querySelector('.photo-picker'));
+      WB.tabs(form);
+      WB.submitEssay(form, {{url_for('trial_submit')|tojson}}, picker, () => location.reload());
+    }
+  </script>
+{% endblock %}

@@ -1,48 +1,16 @@
 {% extends 'base.html' %}
 {% block title %}{{sub.title or sub.assignment_title}} 的批改 · 语文老师工作台{% endblock %}
 {% block body_class %}{{' projection' if project}}{% endblock %}
-{% block header_actions %}{% if project %}<button type="button" class="header-link" onclick="document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen()">全屏</button>{% elif as_teacher %}<a class="header-link" href="{{url_for('review_page', sid=sub.id)}}">返回审核</a>{% else %}<a class="header-link" href="{{url_for('home')}}">我的作文</a>{% endif %}{% endblock %}
+{% block header_actions %}{% if project %}<button type="button" class="header-link" onclick="document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen()">全屏</button>{% elif as_teacher %}<a class="header-link" href="{{url_for('review_page', sid=sub.id)}}">返回审核</a>{% else %}<a class="header-link" href="{{url_for('student_home')}}">我的作业</a>{% endif %}{% endblock %}
 {% block content %}
-  {% set marks = final.marks %}
   <div class="result-head">
     <div>
       <h1>《{{sub.title or sub.assignment_title}}》</h1>
-      <p class="muted">{% if not hide_name %}{{sub.student_name}} · {% endif %}{{sub.assignment_title}} · 第 {{sub.attempt}} 次提交</p>
-    </div>
-    <div class="level-badge level-{{final.level}}">
-      <strong>{{final.level}}</strong>{% if as_teacher %}<small>{{final.total}} 分</small>{% endif %}
-      {% if previous %}<small>上次：{{previous.level}}</small>{% endif %}
+      <p class="muted">{% if not hide_name %}{{sub.student_name}} · {% endif %}第 {{sub.attempt}} 次提交{% if previous %} · 上次 {{previous.total}} 分（{{previous.level}}）{% endif %}</p>
     </div>
   </div>
-  <div class="result-layout">
-    <section class="wb-card essay-pane">
-      <div class="essay-text annotated">{{ annotate(sub.text, marks) }}</div>
-      <p class="legend"><span class="mk mk-good">好词好句</span><span class="mk mk-typo">错别字</span><span class="mk mk-sentence">病句、用词</span><span class="mk mk-punct">标点</span><span class="mk mk-tip">可以写得更好</span></p>
-    </section>
-    <section class="result-pane">
-      {% if final.summary %}<div class="wb-card"><h2>老师的话</h2><p class="summary">{{final.summary}}</p></div>{% endif %}
-      {% if final.praise %}<div class="wb-card praise"><h2>👍 写得好的地方</h2><ul>{% for p in final.praise %}<li>{{p}}</li>{% endfor %}</ul></div>{% endif %}
-      {% if final.advice %}<div class="wb-card advice"><h2>✏️ 还可以这样改</h2><ul>{% for p in final.advice %}<li>{{p}}</li>{% endfor %}</ul></div>{% endif %}
-      {% if final.example %}
-        <div class="wb-card example"><h2>修改示范</h2><p class="before">{{final.example.quote}}</p><p class="after">{{final.example.revised}}</p>{% if final.example.why %}<p class="hint">{{final.example.why}}</p>{% endif %}</div>
-      {% endif %}
-      <div class="wb-card dims-view">
-        <h2>各方面表现</h2>
-        {% for key, name in DIMS.items() %}
-          {% set d = final.dims[key] %}{% set ratio = d.score / d.max %}
-          <div class="dim-bar"><span>{{name}}</span><div class="bar"><i style="width:{{(ratio * 100)|round|int}}%"></i></div><em>{{'优' if ratio >= 0.9 else '良' if ratio >= 0.75 else '中' if ratio >= 0.6 else '加油'}}{% if as_teacher %} {{d.score}}/{{d.max}}{% endif %}</em></div>
-        {% endfor %}
-      </div>
-    </section>
-  </div>
-  {% if marks %}
-    <section class="wb-card marks-view">
-      <h2>批注</h2>
-      <ol>
-        {% for m in marks %}
-          <li id="m{{loop.index0}}"><span class="chip mk-{{m.type|mark_class}}">{{m.type}}</span> <q>{{m.quote}}</q>{% if m.fix %} → <strong>{{m.fix}}</strong>{% endif %}{% if m.note %}<br><small>{{m.note}}</small>{% endif %}</li>
-        {% endfor %}
-      </ol>
-    </section>
-  {% endif %}
+  <div class="redpen" id="redpen"></div>
+  {% if not project and not as_teacher %}<p class="hint center">点一点红笔批注，可以看到老师写的详细说明。</p>{% endif %}
 {% endblock %}
+{% block page_data %}<script>window.REDPEN={{redpen|tojson}};</script>{% endblock %}
+{% block scripts %}<script src="{{asset('redpen.js')}}"></script><script>RedPen.render(document.getElementById('redpen'), window.REDPEN);</script>{% endblock %}

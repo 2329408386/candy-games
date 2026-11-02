@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+  <section class="wb-hero">
+    <h1>语文老师工作台</h1>
+    <p>给小学语文老师的好帮手。第一个功能是作文批改，更多功能陆续上线。</p>
+  </section>
+  <div class="wb-entry">
+    <a class="wb-card entry-card" href="{{url_for('teacher_home')}}">
+      <span class="entry-icon"><svg><use href="#i-pen"/></svg></span>
+      <h2>我是老师</h2>
+      <p class="muted">{{'已登录，进入工作台' if signed_teacher else '用授权码登录，或免费试用'}}</p>
+      <span class="button">进入老师端</span>
+    </a>
+    <a class="wb-card entry-card" href="{{url_for('student_home')}}">
+      <span class="entry-icon student"><svg><use href="#i-book"/></svg></span>
+      <h2>我是学生</h2>
+      <p class="muted">{{'已登录，看看我的作业' if signed_student else '用老师发的登录条登录'}}</p>
+      <span class="button">进入学生端</span>
+    </a>
+  </div>
+{% endblock %}

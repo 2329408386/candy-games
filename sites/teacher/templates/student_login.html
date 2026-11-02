@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}学生登录 · 语文老师工作台{% endblock %}
+{% block content %}
+  <section class="wb-hero">
+    <h1>学生端</h1>
+    <p>用老师发的登录条登录。登录一次以后，这台设备会一直记住你。</p>
+  </section>
+  <div class="wb-entry single">
+    <section class="wb-card">
+      <form id="student-login" class="wb-form">
+        <label>班级码<input name="code" autocomplete="off" autocapitalize="characters" maxlength="10" required placeholder="6 位字母和数字"></label>
+        <label>姓名<input name="name" maxlength="12" required placeholder="和老师名单上一样"></label>
+        <label>口令<input name="pin" inputmode="numeric" maxlength="4" required placeholder="4 位数字"></label>
+        <p class="wb-error" role="alert"></p>
+        <button>登录</button>
+      </form>
+    </section>
+  </div>
+  <p class="hint center"><a href="{{url_for('teacher_home')}}">我是老师，去老师端 →</a></p>
+{% endblock %}
+{% block scripts %}<script>WB.form('#student-login', {{url_for('student_login')|tojson}}, () => location.reload());</script>{% endblock %}

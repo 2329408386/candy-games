@@ -1,0 +1,9 @@
+<details class="wb-card wb-fold correct-text">
+  <summary>照片里的字认错了？改正后重新批改</summary>
+  <form id="correct-form" class="wb-form">
+    <label>识别出的正文（照原样改，学生写错的字不要改）<textarea name="text" rows="12">{{sub.text}}</textarea></label>
+    <p class="wb-error" role="alert"></p>
+    <button>保存并重新批改</button>
+  </form>
+</details>
+<script>document.addEventListener('DOMContentLoaded', () => WB.form('#correct-form', {{url_for('correct_text', sid=sub.id)|tojson}}, () => location.reload()));</script>

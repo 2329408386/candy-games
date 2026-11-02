@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}个人设置 · 语文老师工作台{% endblock %}
+{% block header_actions %}<a class="header-link" href="{{url_for('teacher_home')}}">返回工作台</a>{% endblock %}
+{% block content %}
+  <div class="wb-heading"><div><h1>个人设置</h1><p class="muted">名字和头像只有你自己能看到，显示在右上角。</p></div></div>
+  <div class="wb-entry">
+    <section class="wb-card">
+      <h2>名字</h2>
+      <form id="name-form" class="wb-form">
+        <label>怎么称呼你<input name="name" maxlength="{{name_max}}" required value="{{me_teacher.nickname}}" placeholder="例如 王老师"></label>
+        <p class="wb-error" role="alert"></p>
+        <button>保存名字</button>
+      </form>
+    </section>
+    <section class="wb-card">
+      <h2>头像</h2>
+      <div class="avatar-edit">
+        {% if me_teacher.avatar %}<img class="me-avatar big" src="{{me_teacher.avatar}}" alt="当前头像" width="96" height="96">{% else %}<span class="me-avatar letter big">{{me_teacher.initial}}</span>{% endif %}
+        <label class="button secondary">选一张照片<input id="avatar-file" type="file" accept="image/*" hidden></label>
+      </div>
+      <p class="wb-error" id="avatar-error" role="alert"></p>
+      <p class="hint">会自动裁成正方形的小图。</p>
+    </section>
+  </div>
+{% endblock %}
+{% block scripts %}
+  <script>
+    WB.form('#name-form', {{url_for('teacher_name')|tojson}}, () => location.reload());
+    document.getElementById('avatar-file').addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      const box = document.getElementById('avatar-error');
+      box.textContent = '';
+      if (!file) return;
+      try {
+        const blob = await WB.shrink(file, 256, 0.85, true);
+        await WB.upload({{url_for('teacher_avatar')|tojson}}, blob);
+        location.reload();
+      } catch (err) {
+        box.textContent = err.message;
+      }
+    });
+  </script>
+{% endblock %}

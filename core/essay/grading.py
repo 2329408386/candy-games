@@ -1,6 +1,9 @@
 """Grading an essay: prompt building, the model's JSON, and the checks that keep made-up feedback out.
 
 Pipeline (run by the worker, core/essay/worker.py):
+  0. ocr    — photos only: the ocr step's vision model copies each page line by line, with each line's box on the
+              photo (prompts/ocr.md); assemble() joins the lines into the essay text and keeps where every line is,
+              so the result page can draw the marks on the photo in red pen.
   1. grade  — the grade step's model returns dims / marks / praise / advice / example / summary (prompts/grade.md).
   2. clean  — the server keeps only what fits the schema: scores are clamped to each dimension's maximum, the total
               and level are computed here (never taken from the model), and every quote must occur in the essay
@@ -21,7 +24,8 @@ PROMPTS = Path(__file__).resolve().parent.parent.parent / "sites" / "teacher" / 
 DIMS = {"content": "内容", "structure": "结构", "language": "语言", "norms": "规范"}
 ERROR_TYPES = ("错别字", "用词不当", "病句", "标点")
 MARK_TYPES = ERROR_TYPES + ("好词好句", "修改建议")
-LEVELS = ("待提高", "中", "良", "优")
+LEVELS = ("待提高", "及格", "良", "优")
+TOTAL = 25  # every band's maxima add up to this (prompts/bands.json)
 FLAGS = {
     "off_topic": "可能偏题",
     "too_short": "可能没写完或字数不够",
@@ -32,6 +36,9 @@ FLAGS = {
 }
 MAX_TEXT = 3000
 MAX_MARKS = 24
+# Marks kept per kind: the review is written on the student's page in red pen, so it stays short.
+MARK_LIMITS = {"error": 8, "好词好句": 3, "修改建议": 2}
+NOTE_MAX = 24
 
 
 def _read(name):
@@ -42,6 +49,7 @@ BANDS = json.loads(_read("bands.json"))
 GENRES = json.loads(_read("genres.json"))
 GRADE_PROMPT = _read("grade.md")
 CHECK_PROMPT = _read("check.md")
+OCR_PROMPT = _read("ocr.md")
 
 
 def _anchor_files():
@@ -58,7 +66,8 @@ def band_of(grade):
 
 
 def level_of(total):
-    return "优" if total >= 90 else "良" if total >= 75 else "中" if total >= 60 else "待提高"
+    """优 23–25, 良 19–22, 及格 15–18, below that 待提高 (90 / 75 / 60 % of 25)."""
+    return "优" if total >= 23 else "良" if total >= 19 else "及格" if total >= 15 else "待提高"
 
 
 def clean_text(text):
@@ -164,9 +173,12 @@ def clean_review(raw, essay):
         top = band["max"][key]
         dims[key] = {"score": max(0, min(top, round(item["score"]))), "max": top, "reason": _str(item.get("reason"), 120)}
     total = sum(d["score"] for d in dims.values())
-    marks, taken = [], set()
+    marks, taken, kinds = [], set(), {}
     for m in raw.get("marks") if isinstance(raw.get("marks"), list) else []:
         if not isinstance(m, dict) or m.get("type") not in MARK_TYPES:
+            continue
+        kind = "error" if m["type"] in ERROR_TYPES else m["type"]
+        if kinds.get(kind, 0) >= MARK_LIMITS[kind]:
             continue
         quote = m.get("quote") if isinstance(m.get("quote"), str) else ""
         span = locate(text, quote.strip(), taken) if len(quote.strip()) <= 80 else None
@@ -176,14 +188,15 @@ def clean_review(raw, essay):
         if m["type"] in ERROR_TYPES and (not fix or fix == text[span[0] : span[1]]):
             continue  # an error with no correction (or the same text) is not actionable
         taken.add(span)
+        kinds[kind] = kinds.get(kind, 0) + 1
         marks.append(
-            {"type": m["type"], "start": span[0], "end": span[1], "quote": text[span[0] : span[1]], "fix": fix, "note": _str(m.get("note"), 120)}
+            {"type": m["type"], "start": span[0], "end": span[1], "quote": text[span[0] : span[1]], "fix": fix, "note": _str(m.get("note"), NOTE_MAX)}
         )
     marks.sort(key=lambda m: m["start"])
     example = raw.get("example") if isinstance(raw.get("example"), dict) else {}
     example_span = locate(text, (example.get("quote") or "").strip()) if isinstance(example.get("quote"), str) else None
     lists = {
-        key: [_str(v, 200) for v in raw.get(key) if isinstance(v, str) and v.strip()][:3]
+        key: [_str(v, 40) for v in raw.get(key) if isinstance(v, str) and v.strip()][:2]
         for key in ("praise", "advice")
         if isinstance(raw.get(key), list)
     }
@@ -199,7 +212,7 @@ def clean_review(raw, essay):
             if example_span and _str(example.get("revised"), 600)
             else None
         ),
-        "summary": _str(raw.get("summary"), 400),
+        "summary": _str(raw.get("summary"), 100),
         "teacher_note": _str(raw.get("teacher_note"), 200),
         "flags": [f for f in dict.fromkeys(raw.get("flags") or []) if f in FLAGS and f not in ("unchecked", "disagree")]
         if isinstance(raw.get("flags"), list)
@@ -262,7 +275,7 @@ def clean_final(edit, review, text, band_max):
         if not (isinstance(start, int) and isinstance(end, int) and 0 <= start < end <= len(text)):
             raise ValueError("标注位置不正确")
         marks.append(
-            {"type": m["type"], "start": start, "end": end, "quote": text[start:end], "fix": _str(m.get("fix"), 120), "note": _str(m.get("note"), 120)}
+            {"type": m["type"], "start": start, "end": end, "quote": text[start:end], "fix": _str(m.get("fix"), 120), "note": _str(m.get("note"), 60)}
         )
     marks.sort(key=lambda m: m["start"])
     total = sum(d["score"] for d in dims.values())
@@ -280,5 +293,80 @@ def clean_final(edit, review, text, band_max):
         "praise": lists["praise"],
         "advice": lists["advice"],
         "example": example,
-        "summary": _str(edit.get("summary"), 600),
+        "summary": _str(edit.get("summary"), 300),
     }
+
+
+# ---- photos ----
+def ocr_messages(image_bytes, page, pages):
+    import base64
+
+    url = "data:image/jpeg;base64," + base64.b64encode(image_bytes).decode()
+    note = f"这是作文的第 {page} 页，共 {pages} 页。" + ("" if page == 1 else "这一页通常没有题目，title 留空。")
+    return [
+        {"role": "system", "content": OCR_PROMPT},
+        {"role": "user", "content": [{"type": "text", "text": note + "请誊抄这张照片。"}, {"type": "image_url", "image_url": {"url": url}}]},
+    ]
+
+
+def _box(value):
+    if not (isinstance(value, list) and len(value) == 4 and all(isinstance(v, (int, float)) for v in value)):
+        return None
+    x1, y1, x2, y2 = (max(0, min(1000, round(v))) for v in value)
+    return [x1, y1, x2, y2] if x1 < x2 and y1 < y2 and y2 - y1 <= 250 else None
+
+
+def parse_ocr(raw):
+    """One page of the ocr step's JSON → {"title", "lines": [{"text", "box" or None, "para"}]}. Raises ValueError."""
+    lines = raw.get("lines")
+    if not isinstance(lines, list):
+        raise ValueError("识别结果缺少 lines")
+    out = []
+    for line in lines:
+        if not isinstance(line, dict) or not isinstance(line.get("text"), str):
+            continue
+        text = "".join(c for c in line["text"] if c.isprintable()).strip()
+        if text:
+            out.append({"text": text, "box": _box(line.get("box")), "para": line.get("para") is True})
+    if out and sum(1 for line in out if line["box"]) < 0.7 * len(out):
+        for line in out:  # too few usable boxes: show the page without drawing on it
+            line["box"] = None
+    return {"title": _str(raw.get("title"), 40), "lines": out}
+
+
+def assemble(pages):
+    """Pages from parse_ocr → (title, text, [[{"s", "e", "b"}…] per page]): the essay text (a newline between
+    paragraphs) and, for every line with a box, where its characters are in the text."""
+    title = next((p["title"] for p in pages if p["title"]), "")
+    text, placed = "", []
+    for page in pages:
+        spots = []
+        for line in page["lines"]:
+            if text and line["para"]:
+                text += "\n"
+            start = len(text)
+            text += line["text"]
+            if line["box"]:
+                spots.append({"s": start, "e": len(text), "b": line["box"]})
+        placed.append(spots)
+    return title, text, placed
+
+
+def remap(old, new, spots):
+    """Line positions after a teacher corrected the recognised text: offsets follow the edit."""
+    import difflib
+
+    table = [None] * (len(old) + 1)
+    for tag, a1, a2, b1, b2 in difflib.SequenceMatcher(None, old, new, autojunk=False).get_opcodes():
+        for k in range(a1, a2 + 1):
+            table[k] = b1 + (k - a1 if tag == "equal" else (b2 - b1) * (k - a1) // max(1, a2 - a1))
+    table[len(old)] = len(new)
+    out = []
+    for page in spots:
+        lines = []
+        for spot in page:
+            s, e = table[spot["s"]], table[spot["e"]]
+            if s is not None and e is not None and e > s:
+                lines.append({**spot, "s": s, "e": e})
+        out.append(lines)
+    return out

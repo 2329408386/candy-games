@@ -14,7 +14,10 @@
 .workbench .link-button:hover{background:none;color:var(--green-dark);text-decoration:underline}
 .workbench .danger,.workbench button.danger{background:#fff;color:var(--red);border-color:#ecd3cf}
 .workbench .danger-text{color:var(--red)}
-.workbench .header-link{cursor:pointer}
+.workbench .header-link{cursor:pointer;color:var(--ink);min-height:0;display:inline-flex;align-items:center}
+.workbench .header-link:hover{background:#f1f5ee;color:var(--green-dark)}
+.workbench .header-actions{display:flex;gap:12px;align-items:center}
+.workbench .hint.center{text-align:center}
 .workbench .notice{padding:12px 16px;border-radius:12px;background:#eef3ea;margin:0 0 16px}
 .workbench .notice.error{background:#fbeceb;color:var(--red)}
 .workbench .tag{display:inline-block;font-size:12px;padding:1px 8px;border-radius:999px;background:#eef3ea;color:var(--green-dark)}
@@ -134,7 +137,7 @@ mark.mk{background:none}
 .level-badge strong{font-size:38px;line-height:1.1}
 .level-badge small{font-size:13px}
 .level-badge.level-良{background:#e6eef7;color:var(--blue)}
-.level-badge.level-中{background:#fdf1dc;color:#8a5a12}
+.level-badge.level-及格{background:#fdf1dc;color:#8a5a12}
 .level-badge.level-待提高{background:#f3ece4;color:#8a5a3c}
 .level-badge.level-待提高 strong{font-size:26px}
 .summary{font-size:17px;line-height:1.9;margin:0}
@@ -179,3 +182,105 @@ mark.mk{background:none}
 }
 @media print{.site-header,.site-footer,.legend{display:none}.wb-card{box-shadow:none}}
 .wb-table td{font-size:15px;color:var(--ink)}
+
+/* header: the signed-in teacher or student */
+.me-menu{position:relative}
+.me-menu>summary{list-style:none;display:flex;align-items:center;gap:9px;cursor:pointer;border:1px solid var(--line);background:var(--white);border-radius:999px;padding:4px 14px 4px 4px;color:var(--ink);font-size:14px;font-weight:600}
+.me-menu>summary::-webkit-details-marker{display:none}
+.me-menu>summary:hover{border-color:#c9d6c3}
+.me-avatar{width:34px;height:34px;border-radius:50%;object-fit:cover;flex:none;display:inline-grid;place-items:center;background:var(--green);color:#fff;font-weight:700;font-size:15px}
+.me-avatar.big{width:96px;height:96px;font-size:40px}
+.me-name{max-width:12em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.me-menu>summary .me-name:only-child{padding-left:10px}
+.me-pop{position:absolute;right:0;top:calc(100% + 8px);z-index:20;background:var(--white);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:6px;min-width:180px;display:flex;flex-direction:column}
+.me-pop a,.me-pop button{display:block;width:100%;text-align:left;background:none;border:0;color:var(--ink);font-size:14px;font-weight:500;padding:10px 12px;border-radius:9px;min-height:0}
+.me-pop a:hover,.me-pop button:hover{background:#f1f5ee;color:var(--green-dark)}
+.avatar-edit{display:flex;align-items:center;gap:18px}
+.avatar-edit .button{cursor:pointer;margin:0}
+
+/* entry, sign-in and home */
+.wb-entry.single{grid-template-columns:minmax(0,440px);justify-content:center}
+.entry-card{display:flex !important;flex-direction:column;align-items:flex-start;gap:10px}
+.entry-card h2{margin:4px 0 0;font-size:24px}
+.entry-card .button{margin-top:8px}
+.entry-icon{width:48px;height:48px;border-radius:15px;display:grid;place-items:center;background:#edf1e3;color:#6f8a5f;flex:none}
+.entry-icon.student{background:#e8eff5;color:#5d819b}
+.trial-card .button{margin-top:6px}
+.feature-card{display:flex;flex-direction:column;gap:10px}
+.feature-top{display:flex;gap:14px;align-items:center}
+.feature-top h3{margin:0;font-size:20px}
+.feature-state{margin:2px 0 0;font-size:14px;color:var(--green-dark)}
+.feature-state strong{font-size:18px}
+.feature-card.state-soon .feature-state{color:var(--amber)}
+.feature-card.state-expired .feature-state{color:var(--red)}
+.feature-card.state-none .feature-state{color:var(--muted)}
+.feature-card.state-expired,.feature-card.state-none{background:#fbfaf6}
+.feature-meta{margin:0;font-size:14px}
+.feature-card .button{align-self:flex-start}
+.class-card h3{font-size:21px;margin:0 0 6px}
+
+/* tabs and photo picker */
+.tabs{display:flex;gap:6px;background:var(--soft);padding:4px;border-radius:12px;align-self:flex-start;flex-wrap:wrap}
+.tabs .tab{background:none;color:var(--muted);border:0;min-height:38px;padding:6px 14px;font-size:14px;border-radius:9px;flex:none}
+.tabs .tab svg{width:18px;height:18px}
+.tabs .tab.active{background:var(--white);color:var(--green-dark);box-shadow:0 1px 4px #0001}
+.tabs .tab:hover{background:#fff8}
+.photo-picker{display:flex;flex-wrap:wrap;gap:12px}
+.photo-list{display:contents}
+.photo-item{position:relative;margin:0;width:132px}
+.photo-item img{width:132px;height:176px;object-fit:cover;border-radius:12px;border:1px solid var(--line);display:block}
+.photo-item figcaption{font-size:13px;color:var(--muted);text-align:center;margin-top:4px}
+.photo-remove{position:absolute;top:6px;right:6px;width:30px;height:30px;min-height:0;padding:0;border-radius:50%;background:#000a;color:#fff;font-size:18px;line-height:1}
+.photo-add{display:flex !important;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;width:min(100%,320px);min-height:176px;border:2px dashed #c9d6c3;border-radius:14px;padding:16px;cursor:pointer;color:var(--green-dark) !important;background:#f7faf3}
+.photo-add svg{width:40px;height:40px}
+.photo-add span{font-size:17px;font-weight:700}
+.photo-add small{font-size:13px;color:var(--muted);font-weight:400}
+.photo-add.busy{opacity:.6;pointer-events:none}
+.photo-add[hidden]{display:none !important}
+.typed-alt>summary{cursor:pointer;color:var(--green);font-size:14px;margin:4px 0}
+.photo-plain{display:block;max-width:100%;border-radius:12px;border:1px solid var(--line);margin:0 auto 14px}
+
+/* red pen (static/redpen.js?v=f093ee12) */
+@font-face{font-family:RedPen;src:url(redpen-font.0924cd57.woff2) format('woff2');font-display:swap}
+.redpen{position:relative;max-width:860px;margin:0 auto}
+.rp-page{position:relative;width:100%;margin:0 0 16px;border-radius:6px;overflow:hidden;box-shadow:0 6px 24px #344b3818;background:#fff}
+.rp-page>img{position:absolute;inset:0;width:100%;height:100%;display:block}
+.rp-page>svg{position:absolute;inset:0;width:100%;height:100%}
+.rp-page.paper{background:#fffef8}
+.rp-page .grid rect{fill:none;stroke:#b9d3b4;stroke-width:1.2}
+.rp-page .grid path{fill:none;stroke:#cfe1cb;stroke-width:1}
+.rp-page .typed text{fill:#2b2b2b;font-family:'Kaiti SC',STKaiti,KaiTi,serif}
+.redpen .ink{fill:none;stroke:#d2342a;stroke-linecap:round;stroke-linejoin:round;opacity:.92}
+.redpen .pen{fill:#d2342a;font-family:RedPen,'Kaiti SC',STKaiti,KaiTi,serif;paint-order:stroke;stroke:#fffdf7;stroke-width:.22em;stroke-linejoin:round}
+.redpen .mark{cursor:pointer;outline:none}
+.redpen .mark .hit{fill:transparent;stroke:none}
+.redpen .mark:hover .ink,.redpen .mark:focus .ink{stroke:#a3170f}
+.redpen .mark:focus .hit{fill:#d2342a14}
+.redpen .score .pen{stroke-width:.16em}
+.rp-comment{background:#fffef8;border:1px solid #efe6d8;border-radius:6px;box-shadow:0 6px 24px #344b3812;padding:18px 24px;margin:0 0 12px;color:#d2342a;font-family:RedPen,'Kaiti SC',STKaiti,KaiTi,serif;font-size:21px;line-height:1.75;background-image:repeating-linear-gradient(transparent 0 35px,#e9e2d3 35px 36px);background-position:0 12px}
+.rp-comment p{margin:0 0 2px}
+.rp-tag{display:inline-block;border:1.5px solid currentColor;border-radius:6px;font-size:.8em;padding:0 6px;margin-right:8px;line-height:1.4}
+.rp-sign{text-align:right;font-size:1.15em}
+.rp-legend{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;font-size:13px;color:var(--muted);margin:4px 0 0}
+.rp-legend span{white-space:nowrap}
+.rp-pop{position:absolute;z-index:10;max-width:min(320px,calc(100% - 16px));background:var(--white);border:1px solid #efd6d2;border-radius:12px;box-shadow:0 12px 32px #0002;padding:12px 14px;font-size:15px;line-height:1.7}
+.rp-pop strong{display:inline-block;color:#d2342a;margin-right:8px}
+.rp-pop p{margin:4px 0 0}
+.rp-pop b{color:#d2342a}
+.redpen.compact{max-width:none}
+.redpen.compact .rp-comment{font-size:18px}
+.projection .redpen{max-width:min(1200px,100%)}
+.projection .rp-comment{font-size:30px}
+.correct-text{margin-top:16px}
+.trial-next{margin-top:20px;max-width:860px;margin-left:auto;margin-right:auto}
+.essay-pane .tabs{margin-bottom:12px}
+
+
+@media(max-width:600px){
+  .me-name{max-width:6em}
+  .me-menu>summary{padding-right:10px}
+  .rp-comment{font-size:18px;padding:14px 16px}
+  .photo-item{width:30%}
+  .photo-item img{width:100%;height:auto;aspect-ratio:3/4}
+}
+.nowrap{white-space:nowrap}

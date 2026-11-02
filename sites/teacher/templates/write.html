@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block title %}{{assignment.title}} · 语文老师工作台{% endblock %}
-{% block header_actions %}<a class="header-link" href="{{url_for('home')}}">我的作文</a>{% endblock %}
+{% block header_actions %}<a class="header-link" href="{{url_for('student_home')}}">我的作业</a>{% endblock %}
 {% block content %}
   <div class="wb-heading">
     <div>
@@ -14,10 +14,10 @@
       {% for s in attempts %}
         <div class="attempt">
           第 {{s.attempt}} 次 · {{s.created_at|moment}} ·
-          {% if s.status == 'published' %}<a href="{{url_for('result_page', sid=s.id)}}">看批改</a>
-          {% elif s.status in ('queued', 'grading') %}<span data-poll="{{url_for('submission_state', sid=s.id)}}"><span data-label>{{STATUS[s.status]}}{% if s.hold %}：{{HOLDS.get(s.hold, '')}}{% endif %}</span></span>
-          {% elif s.status == 'review' %}AI 已经批好，老师正在看，看完就能看到批改
-          {% else %}批改出了问题，可以重新提交{% endif %}
+          {% if s.status == 'published' %}<a href="{{url_for('result_page', sid=s.id)}}">看老师的批改</a>
+          {% elif s.status in BUSY %}<span data-poll="{{url_for('submission_state', sid=s.id)}}"><span data-label>{{STATUS[s.status]}}{% if s.hold %}：{{HOLDS.get(s.hold, '')}}{% endif %}</span></span>
+          {% elif s.status == 'review' %}已经批好，老师正在看，看完就能看到批改
+          {% else %}批改出了问题，可以重新交一次{% endif %}
         </div>
       {% endfor %}
     </div>
@@ -25,14 +25,25 @@
   {% if can_submit %}
     <section class="wb-card">
       <form id="write-form" class="wb-form">
-        {% if last %}<p class="hint">这是第 {{attempts|length + 1}} 次提交（最多 {{max_attempts}} 次）。下面是你上次交的作文，按老师的建议改好再交。</p>{% endif %}
-        <label>标题<input name="title" maxlength="40" value="{{draft_title or assignment.title}}"></label>
-        <label>正文<textarea name="text" rows="16" required placeholder="在这里写作文，每段之间空一行。">{{draft_text}}</textarea></label>
-        <p class="hint"><span id="count">0</span> 字{% if assignment.min_chars %}（要求不少于 {{assignment.min_chars}} 字）{% endif %} · 拍照交作文的功能马上就来</p>
+        {% if last %}<p class="hint">这是第 {{attempts|length + 1}} 次提交（最多 {{max_attempts}} 次）。按老师的批改改好再交。</p>{% endif %}
+        <div class="tabs" role="tablist">
+          <button type="button" role="tab" class="tab active" data-tab="photo" aria-selected="true"><svg><use href="#i-camera"/></svg>拍照交作文</button>
+          <button type="button" role="tab" class="tab" data-tab="typed" aria-selected="false"><svg><use href="#i-pen"/></svg>打字</button>
+        </div>
+        <div data-pane="photo">
+          {% set photo_limit = max_photos %}{% include 'photo_picker.html' %}
+        </div>
+        <div data-pane="typed" hidden>
+          <label>标题<input name="title" maxlength="40" value="{{draft_title or assignment.title}}"></label>
+          <label>正文<textarea name="text" rows="16" placeholder="在这里写作文，每段之间空一行。">{{draft_text}}</textarea></label>
+          <p class="hint"><span id="count">0</span> 字{% if assignment.min_chars %}（要求不少于 {{assignment.min_chars}} 字）{% endif %}</p>
+        </div>
         <p class="wb-error" role="alert"></p>
         <button>交给老师</button>
       </form>
     </section>
+  {% elif not essay_open %}
+    <p class="notice">老师的作文批改暂时不能用了，先不用交。</p>
   {% elif assignment.closed_at and not attempts %}
     <p class="notice">这次作业已经停止提交了。</p>
   {% elif attempts|length >= max_attempts and last.status in ('published', 'failed') %}
@@ -41,8 +52,9 @@
 {% endblock %}
 {% block scripts %}
   <script>
-    const text = document.querySelector('#write-form [name=text]');
-    if (text) {
+    const form = document.getElementById('write-form');
+    if (form) {
+      const text = form.querySelector('[name=text]');
       const key = 'essay-draft-{{me.id}}-{{assignment.id}}';
       const count = () => (document.getElementById('count').textContent = text.value.replace(/\s/g, '').length);
       try {
@@ -54,7 +66,9 @@
         try { localStorage.setItem(key, text.value); } catch (e) {}
       });
       count();
-      WB.form('#write-form', {{url_for('student_submit', aid=assignment.id)|tojson}}, () => {
+      const picker = WB.photoPicker(form.querySelector('.photo-picker'));
+      WB.tabs(form);
+      WB.submitEssay(form, {{url_for('student_submit', aid=assignment.id)|tojson}}, picker, () => {
         try { localStorage.removeItem(key); } catch (e) {}
         location.reload();
       });

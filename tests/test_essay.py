@@ -16,9 +16,9 @@ ESSAY = (
 def grade_answer(**over):
     answer = {
         "dims": {
-            "content": {"score": 30, "reason": "内容完整"},
-            "structure": {"score": 18, "reason": "顺序清楚"},
-            "language": {"score": 26, "reason": "有比喻"},
+            "content": {"score": 8, "reason": "内容完整"},
+            "structure": {"score": 4, "reason": "顺序清楚"},
+            "language": {"score": 6, "reason": "有比喻"},
             "norms": {"score": 99, "reason": "超出满分，应被截断"},
         },
         "marks": [
@@ -39,6 +39,18 @@ def grade_answer(**over):
     return answer
 
 
+# What the ocr step answers for a photo of ESSAY's first two paragraphs (one line has no usable box).
+OCR_PAGE = {
+    "title": "快乐的星期天",
+    "lines": [
+        {"text": "今天是星期天，我和妈妈去公园玩。", "box": [80, 100, 920, 150], "para": True},
+        {"text": "公园里的花开得真美，红的像火，粉的像霞。", "box": [60, 170, 940, 220], "para": False},
+        {"text": "我们在湖边看见一群小鸭子在水里游来游去，", "box": [80, 240, 930, 290], "para": True},
+        {"text": "我高心极了。", "box": [60, 310, 400, 360], "para": False},
+    ],
+}
+
+
 class FakeModels:
     """Stands in for llm.post: answers grade and check requests, records every call."""
 
@@ -48,13 +60,14 @@ class FakeModels:
         # Error marks are numbered in text order: 1 = 我和妈妈去公园玩 (病句), 2 = 高心 (错别字).
         self.check = {"items": [{"id": 1, "ok": False, "reason": "原句没有错"}, {"id": 2, "ok": True}], "level": "良"}
         self.fail = set()  # models that raise
+        self.ocr = OCR_PAGE
 
     def __call__(self, row, body):
         self.calls.append((row["model"], body))
         if row["model"] in self.fail:
             raise llm.LLMError("HTTP 429: rate limited")
         system = body["messages"][0]["content"]
-        answer = self.check if "复核" in system[:60] else self.grade
+        answer = self.ocr if "誊抄" in system[:80] else self.check if "复核" in system[:60] else self.grade
         return json.dumps(answer, ensure_ascii=False), 3000, 2500, 800
 
 
@@ -67,7 +80,7 @@ def models(monkeypatch, db):
     db.execute("INSERT INTO ess_providers(id,name,base_url,key_enc,key_tail,timeout,concurrency,created_at) VALUES(1,'测试','https://x/v1',?,'',30,2,1)", (llm.encrypt_key("sk-test-123456"),))
     db.executemany(
         "INSERT INTO ess_steps(step,slot,provider_id,model,price_in,price_cached,price_out) VALUES(?,?,1,?,?,?,?)",
-        [("grade", "main", "big", 4.0, 0.2, 12.0), ("check", "main", "small", 1.0, 0.0, 2.0)],
+        [("grade", "main", "big", 4.0, 0.2, 12.0), ("check", "main", "small", 1.0, 0.0, 2.0), ("ocr", "main", "eyes", 1.0, 0.0, 2.0)],
     )
     db.execute("DELETE FROM ess_meta WHERE key='daily_budget'")
     db.execute("INSERT OR REPLACE INTO ess_meta VALUES('models_checked',?)", (str(int(time.time())),))
@@ -87,8 +100,10 @@ def jpost(c, path, data=None):
 
 
 @pytest.fixture
-def klass():
-    """A teacher with a fresh class of three students and one assignment."""
+def klass(db):
+    """A teacher with a fresh class of three students and one assignment (earlier tests' classes archived)."""
+    db.execute("UPDATE ess_classes SET archived_at=1 WHERE license_id=1 AND archived_at IS NULL")
+    db.commit()
     t = teacher_client()
     r = jpost(t, "/api/classes", {"name": "三年级二班", "grade": 3})
     assert r.status_code == 200, r.get_json()
@@ -110,6 +125,10 @@ def student_client(db, cid, name="王小明"):
     return s, st
 
 
+def redpen_of(html):
+    return json.loads(re.search(r"window.REDPEN=(.*?);</script>", html).group(1))
+
+
 def run_worker():
     worker.work(worker.connect(), once=True)
 
@@ -124,7 +143,7 @@ def test_landing_and_health(client_factory=None):
 def test_full_flow(models, klass, db):
     t, cid, aid = klass
     s, st = student_client(db, cid)
-    assert "快乐的一天" in s.get("/").get_data(as_text=True)
+    assert "快乐的一天" in s.get("/student/").get_data(as_text=True)
     r = jpost(s, f"/api/write/{aid}", {"title": "快乐的星期天", "text": ESSAY})
     assert r.status_code == 200, r.get_json()
     sid = r.get_json()["id"]
@@ -136,8 +155,8 @@ def test_full_flow(models, klass, db):
     row = db.execute("SELECT * FROM ess_submissions WHERE id=?", (sid,)).fetchone()
     assert row["status"] == "review"
     review = json.loads(db.execute("SELECT ai FROM ess_reviews WHERE submission_id=?", (sid,)).fetchone()[0])
-    # Scores clamped to the band maximum (中年级 norms = 15); total and level computed by the server.
-    assert review["dims"]["norms"]["score"] == 15 and review["total"] == 30 + 18 + 26 + 15 and review["level"] == "良"
+    # Scores clamped to the band maximum (中年级 norms = 4, out of 25); total and level computed by the server.
+    assert review["dims"]["norms"]["score"] == 4 and review["total"] == 8 + 4 + 6 + 4 and review["level"] == "良"
     quotes = [m["quote"] for m in review["marks"]]
     assert "原文里没有这句话" not in quotes  # made-up quote dropped
     assert "游来游去" in quotes  # found despite the whitespace difference
@@ -155,8 +174,8 @@ def test_full_flow(models, klass, db):
     assert usage["ok"] == 1 and usage["cost"] == pytest.approx((500 * 4 + 2500 * 0.2 + 800 * 12) / 1e6)
 
     # Students cannot see it before the teacher publishes.
-    assert s.get(f"/results/{sid}").status_code == 404
-    page = t.get(f"/submissions/{sid}").get_data(as_text=True)
+    assert s.get(f"/student/essay/results/{sid}").status_code == 404
+    page = t.get(f"/teacher/essay/submissions/{sid}").get_data(as_text=True)
     assert "window.REVIEW=" in page and "高心" in page
     data = json.loads(re.search(r"window.REVIEW=(.*?);</script>", page).group(1))
     edit = {
@@ -167,16 +186,18 @@ def test_full_flow(models, klass, db):
         "advice": [],
         "keep_example": True,
     }
-    edit["dims"]["content"]["score"] = 20
+    edit["dims"]["content"]["score"] = 7
     start = ESSAY.index("这真是")
     edit["marks"].append({"type": "修改建议", "start": start, "end": start + 7, "fix": "", "note": "结尾可以再写写感受"})
-    assert jpost(t, f"/api/submissions/{sid}/review", {"review": dict(edit, dims=dict(edit["dims"], norms={"score": 16}))}).status_code == 400
+    assert jpost(t, f"/api/submissions/{sid}/review", {"review": dict(edit, dims=dict(edit["dims"], norms={"score": 5}))}).status_code == 400
     r = jpost(t, f"/api/submissions/{sid}/review", {"review": edit, "publish": True})
     assert r.status_code == 200 and r.get_json()["level"] == "良"
-    html = s.get(f"/results/{sid}").get_data(as_text=True)
-    assert "老师改过的评语" in html and "结尾可以再写写感受" in html and 'class="mk mk-typo"' in html
-    assert "分</small>" not in html  # students see the level, not the score
-    assert "分</small>" in t.get(f"/results/{sid}").get_data(as_text=True)
+    html = s.get(f"/student/essay/results/{sid}").get_data(as_text=True)
+    pen = redpen_of(html)
+    assert pen["summary"] == "老师改过的评语" and any(m["note"] == "结尾可以再写写感受" for m in pen["marks"])
+    assert pen["total"] == 21 and pen["max"] == 25 and pen["level"] == "良" and not pen["onPhoto"]
+    assert any(m["type"] == "错别字" and m["fix"] == "高兴" for m in pen["marks"])
+    assert t.get(f"/teacher/essay/results/{sid}").status_code == 200
 
     # After publishing the student may resubmit, up to MAX_ATTEMPTS in all.
     r = jpost(s, f"/api/write/{aid}", {"text": ESSAY + "我还想再去。"})
@@ -192,15 +213,16 @@ def test_full_flow(models, klass, db):
 def test_auto_publish_and_publish_all(models, klass, db):
     t, cid, aid = klass
     aid2 = jpost(t, f"/api/classes/{cid}/assignments", {"title": "自动", "genre": "日记", "auto_publish": True}).get_json()["id"]
+    assert 'name="auto_publish" checked' in t.get(f"/teacher/classes/{cid}").get_data(as_text=True)  # on by default
     s, _ = student_client(db, cid)
     sid = jpost(s, f"/api/write/{aid2}", {"text": ESSAY}).get_json()["id"]
     s2, _ = student_client(db, cid, "李华")
     sid2 = jpost(s2, f"/api/write/{aid}", {"text": ESSAY}).get_json()["id"]
     run_worker()
-    assert s.get(f"/results/{sid}").status_code == 200
+    assert s.get(f"/student/essay/results/{sid}").status_code == 200
     assert db.execute("SELECT status FROM ess_submissions WHERE id=?", (sid2,)).fetchone()[0] == "review"
     assert jpost(t, f"/api/assignments/{aid}/publish_all").get_json()["published"] == 1
-    assert s2.get(f"/results/{sid2}").status_code == 200
+    assert s2.get(f"/student/essay/results/{sid2}").status_code == 200
 
 
 def test_backup_model_and_failure(models, klass, db):
@@ -273,21 +295,21 @@ def test_student_login_lock_and_pin_reset(klass, db):
     assert jpost(s, "/api/student/login", {"code": st["code"], "name": "张三", "pin": st["pin"]}).status_code == 429
     pin = jpost(t, f"/api/students/{st['id']}/pin").get_json()["pin"]  # resetting the 口令 also unlocks
     assert jpost(s, "/api/student/login", {"code": st["code"], "name": "张三", "pin": pin}).status_code == 200
-    assert "我的作文" in s.get("/").get_data(as_text=True)
+    assert "我的作业" in s.get("/student/").get_data(as_text=True)
     jpost(t, f"/api/students/{st['id']}/pin")  # a new reset signs the student out
-    assert "我是学生" in s.get("/").get_data(as_text=True)
+    assert 'id="student-login"' in s.get("/student/").get_data(as_text=True)
 
 
 def test_isolation_between_teachers_and_students(models, klass, db):
     t, cid, aid = klass
     other = teacher_client(TEACHER2_KEY)
-    assert other.get(f"/classes/{cid}").status_code == 404
-    assert other.get(f"/assignments/{aid}").status_code == 404
+    assert other.get(f"/teacher/classes/{cid}").status_code == 404
+    assert other.get(f"/teacher/essay/assignments/{aid}").status_code == 404
     assert jpost(other, f"/api/classes/{cid}/students", {"names": "坏人"}).status_code == 404
     s, _ = student_client(db, cid)
     sid = jpost(s, f"/api/write/{aid}", {"text": ESSAY}).get_json()["id"]
     run_worker()
-    assert other.get(f"/submissions/{sid}").status_code == 404
+    assert other.get(f"/teacher/essay/submissions/{sid}").status_code == 404
     assert jpost(other, f"/api/submissions/{sid}/review", {"review": {}}).status_code == 404
     s2, _ = student_client(db, cid, "李华")
     assert s2.get(f"/api/submissions/{sid}/state").status_code == 404
@@ -388,7 +410,8 @@ def test_grading_helpers():
     text = "第一段。\n\n第二 段有空格。"
     assert grading.locate(text, "第二段有空格") == (text.index("第二"), len(text) - 1)
     assert grading.locate(text, "没有") is None
-    assert grading.level_of(90) == "优" and grading.level_of(89) == "良" and grading.level_of(59) == "待提高"
+    assert [grading.level_of(n) for n in (25, 23, 22, 19, 18, 15, 14, 0)] == ["优", "优", "良", "良", "及格", "及格", "待提高", "待提高"]
+    assert all(sum(b["max"].values()) == grading.TOTAL == 25 for b in grading.BANDS.values())
     assert grading.clean_text("  a  \r\n\r\n\r\n\r\nb　") == "  a\n\nb"
     essay = {"grade": 1, "genre": "看图写话", "requirement": "", "min_chars": 0, "title": "", "text": ESSAY}
     with pytest.raises(ValueError):
@@ -520,3 +543,238 @@ def test_successful_check_clears_old_warnings(models, db):
     db.commit()
     models_sync.sync(db)
     assert db.execute("SELECT auto_note FROM ess_steps WHERE step='grade'").fetchone()[0] == ""
+
+
+# ---- the workbench around the essays ----
+def photo_bytes(color=(250, 250, 245), size=(1200, 1600)):
+    import io
+    from PIL import Image
+
+    buf = io.BytesIO()
+    Image.new("RGB", size, color).save(buf, "JPEG")
+    return buf.getvalue()
+
+
+def upload(c, path, photos, **fields):
+    import io
+
+    data = dict(fields, photos=[(io.BytesIO(b), f"p{i}.jpg") for i, b in enumerate(photos)], csrf=c.token())
+    return c.c.post(c.prefix + path, data=data, headers={"X-CSRF-Token": data["csrf"]}, content_type="multipart/form-data")
+
+
+def test_routes_entry_and_old_addresses():
+    c = SiteClient("teacher")
+    html = c.get("/").get_data(as_text=True)
+    assert "我是老师" in html and "我是学生" in html and "/workspace/chinese/teacher/" in html
+    assert 'id="teacher-activate"' in c.get("/teacher/").get_data(as_text=True)
+    assert 'id="student-login"' in c.get("/student/").get_data(as_text=True)
+    from werkzeug.test import Client
+    import wsgi
+
+    raw = Client(wsgi.app)
+    for old, new in (
+        ("/teacher/", "/workspace/chinese/"),
+        ("/teacher/submissions/3", "/workspace/chinese/"),
+        ("/teacher/admin/models?x=1", "/workspace/chinese/admin/models?x=1"),
+        ("/workspace", "/workspace/chinese/"),
+        ("/workspace/", "/workspace/chinese/"),
+    ):
+        r = raw.get(old)
+        assert r.status_code == 301 and r.headers["Location"].endswith(new), (old, r.headers.get("Location"))
+
+
+def test_sign_ins_last_and_sides_are_separate(klass, db):
+    t, cid, aid = klass
+    st = students_of(db, cid)["王小明"]
+    c = SiteClient("teacher")
+    r = c.activate()
+    assert "Expires=" in r.headers["Set-Cookie"]
+    r = jpost(c, "/api/student/login", {"code": st["code"], "name": "王小明", "pin": st["pin"]})
+    assert r.status_code == 200 and "Expires=" in r.headers["Set-Cookie"]
+    # Both stay signed in on one browser: each side shows its own home.
+    assert "我的功能" in c.get("/teacher/").get_data(as_text=True)
+    student_page = c.get("/student/").get_data(as_text=True)
+    assert "我的作业" in student_page and "王小明" in student_page and "修改名字和头像" not in student_page
+
+
+def test_teacher_profile_name_and_avatar(db):
+    import io
+    from PIL import Image
+
+    t = teacher_client(TEACHER2_KEY)
+    assert "退出登录" in t.get("/teacher/").get_data(as_text=True)
+    assert jpost(t, "/api/me/name", {"name": "李老师"}).status_code == 200
+    assert "李老师" in t.get("/teacher/").get_data(as_text=True)
+    buf = io.BytesIO()
+    Image.new("RGB", (300, 200), (200, 60, 60)).save(buf, "PNG")
+    r = t.c.post(t.prefix + "/api/me/avatar", data=buf.getvalue(), headers={"X-CSRF-Token": t.token()})
+    assert r.status_code == 200, r.get_json()
+    url = r.get_json()["avatar"]
+    assert url in t.get("/teacher/").get_data(as_text=True)
+    img = t.c.get(url)
+    assert img.status_code == 200 and img.mimetype == "image/webp"
+    assert SiteClient("teacher").c.get(url).status_code == 404  # only the teacher sees it
+    db.execute("DELETE FROM profiles WHERE site='teacher'")
+    db.commit()
+
+
+def test_feature_expiry_and_admin_extension(models, klass, db):
+    from core.essay import features
+
+    t, cid, aid = klass
+    row = db.execute("SELECT * FROM ws_entitlements WHERE license_id=1 AND feature='essay'").fetchone()
+    assert row["starts_at"] and row["expires_at"] > time.time() + 360 * 86400  # the clock started on activation
+    assert "剩余 <strong>" in t.get("/teacher/").get_data(as_text=True)
+    s, _ = student_client(db, cid)
+    db.execute("UPDATE ws_entitlements SET expires_at=? WHERE license_id=1", (int(time.time()) - 3 * 86400,))
+    db.commit()
+    assert "已于" in t.get("/teacher/").get_data(as_text=True)
+    assert "到期" in jpost(t, f"/api/classes/{cid}/assignments", {"title": "x", "genre": "记事"}).get_json()["error"]
+    assert "到期" in jpost(s, f"/api/write/{aid}", {"text": ESSAY}).get_json()["error"]
+    assert t.get(f"/teacher/classes/{cid}").status_code == 200  # still readable
+    a = SiteClient("teacher")
+    a.login()
+    page = a.get("/admin/licenses/1").get_data(as_text=True)
+    assert "功能和有效期" in page and "已到期" in page
+    a.post("/admin/licenses/1/feature", {"feature": "essay", "action": "extend", "days": "365"})
+    info = features.describe(db.execute("SELECT * FROM ws_entitlements WHERE license_id=1").fetchone())
+    assert info["state"] == "active" and info["days"] == 364  # counted from today (today itself is day one)
+    a.post("/admin/licenses/1/feature", {"feature": "essay", "action": "expiry", "date": "2030-01-31"})
+    expires = db.execute("SELECT expires_at FROM ws_entitlements WHERE license_id=1").fetchone()[0]
+    assert time.strftime("%Y-%m-%d %H:%M", time.gmtime(expires + 8 * 3600)) == "2030-01-31 23:59"
+    assert jpost(s, f"/api/write/{aid}", {"text": ESSAY}).status_code == 200
+
+
+def test_generated_codes_carry_features_from_activation(db):
+    a = SiteClient("teacher")
+    a.login()
+    page = a.get("/admin/licenses/new").get_data(as_text=True)
+    assert "功能和有效期" in page and 'name="days_essay"' in page
+    nonce = re.search(r'name="nonce" value="([^"]+)"', page).group(1)
+    r = a.post("/admin/licenses/new", {"nonce": nonce, "quantity": "1", "device_limit": "3", "feature_essay": "1", "days_essay": "730"})
+    assert r.status_code == 302, r.get_data(as_text=True)[:500]
+    lid = db.execute("SELECT max(id) FROM licenses WHERE site='teacher'").fetchone()[0]
+    row = db.execute("SELECT * FROM ws_entitlements WHERE license_id=?", (lid,)).fetchone()
+    assert row["days"] == 730 and row["starts_at"] is None
+    code = db.execute("SELECT code FROM license_keys WHERE site='teacher' AND license_id=?", (lid,)).fetchone()[0]
+    teacher_client(code)
+    row = db.execute("SELECT * FROM ws_entitlements WHERE license_id=?", (lid,)).fetchone()
+    from core.essay import features
+
+    assert features.describe(row)["days"] == 730
+    nonce = re.search(r'name="nonce" value="([^"]+)"', a.get("/admin/licenses/new").get_data(as_text=True)).group(1)
+    assert a.post("/admin/licenses/new", {"nonce": nonce, "quantity": "1", "device_limit": "3"}).status_code == 400
+
+
+def test_photo_essay_is_read_graded_and_drawn_on_the_photo(models, klass, db):
+    t, cid, aid = klass
+    s, st = student_client(db, cid)
+    assert upload(s, f"/api/write/{aid}", []).status_code == 400  # neither photos nor text
+    r = upload(s, f"/api/write/{aid}", [photo_bytes(), photo_bytes(size=(900, 1200))])
+    assert r.status_code == 200, r.get_json()
+    sid = r.get_json()["id"]
+    images = db.execute("SELECT * FROM ess_images WHERE submission_id=? ORDER BY page", (sid,)).fetchall()
+    assert [(i["page"], i["w"], i["h"]) for i in images] == [(1, 1200, 1600), (2, 900, 1200)]
+    models.grade = grade_answer(marks=[{"quote": "高心", "type": "错别字", "fix": "高兴", "note": ""}])
+    run_worker()
+    sub = db.execute("SELECT * FROM ess_submissions WHERE id=?", (sid,)).fetchone()
+    assert sub["status"] == "published" or sub["status"] == "review"
+    # Two pages, the same answer each: the text is both pages' lines; the student's own title is kept empty → OCR's.
+    assert sub["text"].startswith("今天是星期天，我和妈妈去公园玩。公园里的花开得真美") and sub["title"] == "快乐的星期天"
+    assert "\n我们在湖边" in sub["text"]
+    lines = json.loads(db.execute("SELECT lines FROM ess_images WHERE id=?", (images[0]["id"],)).fetchone()[0])
+    assert lines[0] == {"s": 0, "e": 16, "b": [80, 100, 920, 150]}
+    assert all(sub["text"][l["s"] : l["e"]] for l in lines)
+    ocr_calls = [b for m, b in models.calls if "誊抄" in b["messages"][0]["content"][:80]]
+    assert len(ocr_calls) == 2 and ocr_calls[0]["messages"][1]["content"][1]["image_url"]["url"].startswith("data:image/jpeg;base64,")
+    db.execute("UPDATE ess_submissions SET status='published',published_at=1 WHERE id=?", (sid,))
+    db.execute("UPDATE ess_reviews SET final=ai WHERE submission_id=?", (sid,))
+    db.commit()
+    pen = redpen_of(s.get(f"/student/essay/results/{sid}").get_data(as_text=True))
+    assert pen["onPhoto"] and len(pen["pages"]) == 2 and pen["pages"][0]["lines"][0]["b"] == [80, 100, 920, 150]
+    # The photo is the student's and their teacher's only.
+    src = pen["pages"][0]["src"]
+    assert s.c.get(src).status_code == 200 and t.c.get(src).status_code == 200
+    s2, _ = student_client(db, cid, "李华")
+    assert s2.c.get(src).status_code == 404 and teacher_client(TEACHER2_KEY).c.get(src).status_code == 404
+
+
+def test_teacher_corrects_recognised_text(models, klass, db):
+    t, cid, aid = klass
+    st = students_of(db, cid)["张三"]
+    r = upload(t, f"/api/assignments/{aid}/submit_for", [photo_bytes()], student_id=str(st["id"]))
+    assert r.status_code == 200, r.get_json()
+    sid = r.get_json()["id"]
+    run_worker()
+    sub = db.execute("SELECT * FROM ess_submissions WHERE id=?", (sid,)).fetchone()
+    assert sub["source"] == "photo" and sub["status"] == "review"
+    assert "照片里的字认错了" in t.get(f"/teacher/essay/submissions/{sid}").get_data(as_text=True)
+    fixed = sub["text"].replace("星期天", "星期日")
+    assert jpost(t, f"/api/submissions/{sid}/text", {"text": fixed}).status_code == 200
+    lines = json.loads(db.execute("SELECT lines FROM ess_images WHERE submission_id=?", (sid,)).fetchone()[0])
+    assert fixed[lines[1]["s"] : lines[1]["e"]] == "公园里的花开得真美，红的像火，粉的像霞。"
+    run_worker()
+    assert db.execute("SELECT text FROM ess_submissions WHERE id=?", (sid,)).fetchone()[0] == fixed
+
+
+def test_unreadable_photo_fails_without_retries(models, klass, db):
+    t, cid, aid = klass
+    s, _ = student_client(db, cid, "李华")
+    models.ocr = {"title": "", "lines": [], "error": "不是作文"}
+    sid = upload(s, f"/api/write/{aid}", [photo_bytes()]).get_json()["id"]
+    run_worker()
+    assert db.execute("SELECT status FROM ess_submissions WHERE id=?", (sid,)).fetchone()[0] == "failed"
+
+
+def test_photo_waits_until_ocr_is_configured(models, klass, db):
+    t, cid, aid = klass
+    s, _ = student_client(db, cid)
+    db.execute("DELETE FROM ess_steps WHERE step='ocr'")
+    db.commit()
+    sid = upload(s, f"/api/write/{aid}", [photo_bytes()]).get_json()["id"]
+    run_worker()
+    assert db.execute("SELECT hold FROM ess_submissions WHERE id=?", (sid,)).fetchone()[0] == "not_configured"
+
+
+def test_trial_once_per_browser(models, db):
+    c = SiteClient("teacher")
+    assert "试用作文批改（1 次）" in c.get("/teacher/").get_data(as_text=True)
+    assert 'id="trial-form"' in c.get("/teacher/trial/essay").get_data(as_text=True)
+    r = jpost(c, "/api/trial/essay", {"grade": 3, "genre": "记事", "title": "试试", "text": ESSAY})
+    assert r.status_code == 200, r.get_json()
+    sid = r.get_json()["id"]
+    assert c.get(f"/api/submissions/{sid}/state").get_json()["status"] == "queued"
+    run_worker()
+    pen = redpen_of(c.get("/teacher/trial/essay").get_data(as_text=True))
+    assert pen["level"] and pen["total"] <= 25
+    assert "已经试用过" in jpost(c, "/api/trial/essay", {"grade": 3, "genre": "记事", "text": ESSAY}).get_json()["error"]
+    # Trials are hidden: no license, no student can sign in to them, nobody else sees them.
+    cls = db.execute("SELECT c.* FROM ess_classes c JOIN ess_assignments a ON a.class_id=c.id JOIN ess_submissions s ON s.assignment_id=a.id WHERE s.id=?", (sid,)).fetchone()
+    assert cls["license_id"] == 0 and cls["archived_at"]
+    assert SiteClient("teacher").get(f"/api/submissions/{sid}/state").status_code == 403
+    # The daily cap across the site.
+    db.execute("INSERT OR REPLACE INTO ess_meta VALUES('trial_daily','1')")
+    db.commit()
+    assert "名额" in jpost(SiteClient("teacher"), "/api/trial/essay", {"grade": 2, "genre": "记事", "text": ESSAY}).get_json()["error"]
+    db.execute("DELETE FROM ess_meta WHERE key='trial_daily'")
+    db.commit()
+
+
+def test_reviews_rescaled_to_25(db):
+    from core import schema
+
+    sid = db.execute("SELECT max(id) FROM ess_submissions").fetchone()[0]
+    old = {"dims": {"content": {"score": 35, "max": 35}, "structure": {"score": 10, "max": 20}, "language": {"score": 21, "max": 30}, "norms": {"score": 15, "max": 15}},
+           "total": 81, "level": "良", "check_level": "中", "marks": []}
+    saved = db.execute("SELECT * FROM ess_reviews WHERE submission_id=?", (sid,)).fetchone()
+    db.execute("INSERT OR REPLACE INTO ess_reviews(submission_id,ai,final,model,prompt_version,created_at) VALUES(?,?,NULL,'m','v',1)", (sid, json.dumps(old)))
+    schema.rescale_reviews(db)
+    grade = db.execute("SELECT c.grade FROM ess_submissions s JOIN ess_assignments a ON a.id=s.assignment_id JOIN ess_classes c ON c.id=a.class_id WHERE s.id=?", (sid,)).fetchone()[0]
+    top = grading.BANDS[grading.band_of(grade)]["max"]
+    new = json.loads(db.execute("SELECT ai FROM ess_reviews WHERE submission_id=?", (sid,)).fetchone()[0])
+    assert new["dims"]["content"] == {"score": top["content"], "max": top["content"]}
+    assert new["total"] == sum(d["score"] for d in new["dims"].values()) and new["level"] == grading.level_of(new["total"])
+    assert new["check_level"] == "及格"
+    if saved:
+        db.execute("UPDATE ess_reviews SET ai=?,final=? WHERE submission_id=?", (saved["ai"], saved["final"], sid))
+    db.commit()

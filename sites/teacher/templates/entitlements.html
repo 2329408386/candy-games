@@ -1,0 +1,36 @@
+{% set feats = workbench_features(row.id) %}
+<section class="panel">
+  <h2>功能和有效期</h2>
+  <p class="muted">有效期从老师第一次激活授权码那天开始计算，到期那天的 23:59（北京时间）为止。</p>
+  <table class="feature-table">
+    <thead><tr><th>功能</th><th>状态</th><th>到期日</th><th>剩余</th></tr></thead>
+    <tbody>
+      {% for f in feats %}
+        <tr>
+          <td>{{f.name}}</td>
+          <td>{{ {'active':'使用中','soon':'快到期','expired':'已到期','pending':'未激活','none':'未开通'}[f.state] }}</td>
+          <td>{{f.expires|date if f.expires else '—'}}</td>
+          <td>{% if f.state == 'pending' %}激活后 {{f.days}} 天{% elif f.state in ('active','soon') %}{{f.days}} 天{% else %}—{% endif %}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% if not row.archived_at %}
+    <form method="post" action="{{url_for('feature_save', lid=row.id)}}" class="feature-form">
+      <input type="hidden" name="csrf" value="{{csrf()}}"><input type="hidden" name="action" value="extend">
+      <div class="fields-row">
+        <div class="form-field"><label for="ext-feature">功能</label><select id="ext-feature" name="feature">{% for f in feats %}<option value="{{f.key}}">{{f.name}}</option>{% endfor %}</select></div>
+        <div class="form-field"><label for="ext-days">增加天数</label><input id="ext-days" name="days" type="number" min="1" max="7300" required value="365"><small>365 = 1 年。没开通的功能会新开通；已到期的从今天重新算。</small></div>
+      </div>
+      <button>续期 / 开通</button>
+    </form>
+    <form method="post" action="{{url_for('feature_save', lid=row.id)}}" class="feature-form">
+      <input type="hidden" name="csrf" value="{{csrf()}}"><input type="hidden" name="action" value="expiry">
+      <div class="fields-row">
+        <div class="form-field"><label for="exp-feature">功能</label><select id="exp-feature" name="feature">{% for f in feats %}<option value="{{f.key}}">{{f.name}}</option>{% endfor %}</select></div>
+        <div class="form-field"><label for="exp-date">直接设到期日</label><input id="exp-date" name="date" type="date" required><small>用于改正或提前结束；到期日当天仍可使用。</small></div>
+      </div>
+      <button class="secondary">设置到期日</button>
+    </form>
+  {% endif %}
+</section>

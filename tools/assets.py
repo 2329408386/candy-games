@@ -3,14 +3,14 @@
   python tools/assets.py --check   exit 1 if any reference is stale (run by tests and before deploy)
   python tools/assets.py --fix     rename media to name.<sha8>.ext and rewrite every reference
 
-Media (mp3/images) get the content hash in the file name; js/css references get ?v=<sha8>.
+Media (mp3/images/fonts) get the content hash in the file name; js/css references get ?v=<sha8>.
 """
 
 import argparse, hashlib, re, sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-MEDIA = {".mp3", ".webp", ".jpg", ".jpeg", ".png", ".svg", ".gif"}
+MEDIA = {".mp3", ".webp", ".jpg", ".jpeg", ".png", ".svg", ".gif", ".woff2"}
 TEXT = {".html", ".css", ".js", ".json"}
 HASHED = re.compile(r"^(?P<stem>.+)\.(?P<hash>[0-9a-f]{8})(?P<ext>\.[^.]+)$")
 SCRIPT_REF = re.compile(r'static/(?P<rel>[\w./-]+?\.(?:js|css))(?:\?v=[\w.-]+)?(?=["\')\s])')

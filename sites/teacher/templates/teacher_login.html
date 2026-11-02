@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}老师登录 · 语文老师工作台{% endblock %}
+{% block content %}
+  <section class="wb-hero">
+    <h1>老师端</h1>
+    <p>输入授权码就能开始使用。登录一次以后，这台设备会一直记住你。</p>
+  </section>
+  <div class="wb-entry">
+    <section class="wb-card">
+      <h2>输入授权码</h2>
+      <form id="teacher-activate" class="wb-form">
+        <label>授权码<input name="key" autocomplete="off" autocapitalize="characters" maxlength="24" required placeholder="16 位授权码"></label>
+        <p class="wb-error" role="alert"></p>
+        <button>登录</button>
+      </form>
+      <p class="hint">还没有授权码？请联系管理员购买，可以按年购买。</p>
+    </section>
+    <section class="wb-card trial-card">
+      <h2>免费试用</h2>
+      <p class="muted">没有授权码也可以先试一次：拍一篇学生作文，马上看到 AI 用红笔批改的效果。</p>
+      {% if trial_used %}
+        <p class="hint">这台设备已经试用过了。<a href="{{url_for('trial_page')}}">再看看试用结果</a></p>
+      {% else %}
+        <a class="button" href="{{url_for('trial_page')}}">试用作文批改（1 次）</a>
+      {% endif %}
+    </section>
+  </div>
+  <p class="hint center"><a href="{{url_for('student_home')}}">我是学生，去学生端 →</a></p>
+{% endblock %}
+{% block scripts %}<script>WB.form('#teacher-activate', {{url_for('activate')|tojson}}, () => location.reload());</script>{% endblock %}

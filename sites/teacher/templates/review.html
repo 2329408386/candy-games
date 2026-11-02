@@ -5,35 +5,46 @@
   <div class="wb-heading">
     <div>
       <h1>{{sub.student_name}} ·《{{sub.title or sub.assignment_title}}》</h1>
-      <p class="muted">{{sub.class_name}} · {{sub.assignment_title}} · {{sub.genre}} · 第 {{sub.attempt}} 次提交 · {{sub.created_at|moment}}{% if sub.source == 'teacher' %} · 老师代交{% endif %}
+      <p class="muted">{{sub.class_name}} · {{sub.assignment_title}} · {{sub.genre}} · 第 {{sub.attempt}} 次提交 · {{sub.created_at|moment}}{% if sub.source == 'teacher' %} · 老师代交{% elif sub.source == 'photo' %} · 拍照提交{% endif %}
         {% if others|length > 1 %} · 其他几次：{% for o in others if o.id != sub.id %}<a href="{{url_for('review_page', sid=o.id)}}">第 {{o.attempt}} 次</a> {% endfor %}{% endif %}</p>
     </div>
     <div class="heading-actions">
-      {% if sub.status == 'published' %}<a class="button secondary" href="{{url_for('result_page', sid=sub.id)}}">学生看到的</a><a class="button secondary" href="{{url_for('result_page', sid=sub.id, project=1, anon=1)}}" target="_blank">投屏讲评（隐藏姓名）</a>{% endif %}
+      {% if sub.status == 'published' %}<a class="button secondary" href="{{url_for('teacher_result', sid=sub.id)}}">学生看到的</a><a class="button secondary" href="{{url_for('teacher_result', sid=sub.id, project=1, anon=1)}}" target="_blank">投屏讲评（隐藏姓名）</a>{% endif %}
       {% if sub.status in ('review', 'failed') %}<button type="button" class="secondary" data-post="{{url_for('regrade', sid=sub.id)}}" data-confirm="让 AI 重新批改这篇作文？老师在这一篇上做的修改会丢掉。">重新批改</button>{% endif %}
     </div>
   </div>
 
-  {% if sub.status in ('queued', 'grading') %}
+  {% if sub.status in BUSY %}
     <div class="wb-card waiting" data-poll="{{url_for('submission_state', sid=sub.id)}}">
       <div class="spinner" aria-hidden="true"></div>
       <p data-label>{{STATUS[sub.status]}}{% if sub.hold %}：{{HOLDS.get(sub.hold, '')}}{% endif %}</p>
-      <p class="hint">一般需要半分钟到一分钟，批好以后页面会自动刷新。</p>
+      <p class="hint">一般需要半分钟到一分钟{{'（拍照的作文要先识别文字）' if photos and not sub.text}}，批好以后页面会自动刷新。</p>
     </div>
-    <section class="wb-card"><div class="essay-text plain">{{sub.text}}</div></section>
+    {% if sub.text %}<section class="wb-card"><div class="essay-text plain">{{sub.text}}</div></section>{% endif %}
+    {% for ph in photos %}<img class="photo-plain" src="{{url_for('essay_image', iid=ph.id)}}" alt="第 {{ph.page}} 页">{% endfor %}
   {% elif sub.status == 'failed' %}
-    <p class="notice error">AI 批改失败了。可以点「重新批改」再试一次；一直失败的话，请管理员检查模型设置。</p>
-    <section class="wb-card"><div class="essay-text plain">{{sub.text}}</div></section>
+    <p class="notice error">AI 批改失败了。可以点「重新批改」再试一次；一直失败的话，请管理员检查模型设置。{% if photos and not sub.text %}拍照的作文也可能是照片不清楚，可以在下面把正文打进来再批改。{% endif %}</p>
+    {% if sub.text %}<section class="wb-card"><div class="essay-text plain">{{sub.text}}</div></section>{% endif %}
+    {% for ph in photos %}<img class="photo-plain" src="{{url_for('essay_image', iid=ph.id)}}" alt="第 {{ph.page}} 页">{% endfor %}
+    {% if photos %}{% include 'correct_text.html' %}{% endif %}
   {% elif review %}
     {% set r = review.final or review.ai %}
     <div id="review-editor" class="review-layout">
       <section class="wb-card essay-pane">
-        <div class="pane-head">
-          <h2>作文原文</h2>
-          <button type="button" class="small add-mark" disabled title="先在作文里选中文字">＋ 给选中的文字加标注</button>
+        <div class="tabs" role="tablist">
+          <button type="button" role="tab" class="tab active" data-tab="preview" aria-selected="true">学生看到的红笔批改</button>
+          <button type="button" role="tab" class="tab" data-tab="marks" aria-selected="false">文字和标注</button>
         </div>
-        <div class="essay-text"></div>
-        <p class="legend"><span class="mk mk-typo">错别字</span><span class="mk mk-word">用词不当</span><span class="mk mk-sentence">病句</span><span class="mk mk-punct">标点</span><span class="mk mk-good">好词好句</span><span class="mk mk-tip">修改建议</span></p>
+        <div data-pane="preview"><div class="redpen compact" id="redpen-preview"></div><p class="hint">在右边改分数、评语和标注，这里会跟着变。</p></div>
+        <div data-pane="marks" hidden>
+          <div class="pane-head">
+            <h2>作文原文</h2>
+            <button type="button" class="small add-mark" disabled title="先在作文里选中文字">＋ 给选中的文字加标注</button>
+          </div>
+          <div class="essay-text"></div>
+          <p class="legend"><span class="mk mk-typo">错别字</span><span class="mk mk-word">用词不当</span><span class="mk mk-sentence">病句</span><span class="mk mk-punct">标点</span><span class="mk mk-good">好词好句</span><span class="mk mk-tip">修改建议</span></p>
+          {% if photos and sub.status == 'review' %}{% include 'correct_text.html' %}{% endif %}
+        </div>
       </section>
       <section class="review-pane">
         <div class="wb-card score-card">
@@ -45,9 +56,10 @@
         </div>
         <div class="wb-card">
           <h3>给学生的评语</h3>
-          <label>总评<textarea name="summary" rows="5" maxlength="600"></textarea></label>
-          <label>亮点（一行一条）<textarea name="praise" rows="3"></textarea></label>
-          <label>修改建议（一行一条）<textarea name="advice" rows="3"></textarea></label>
+          <p class="hint">会用红笔写在作文后面。学生没精力看长段落，尽量简短。</p>
+          <label>总评<textarea name="summary" rows="3" maxlength="300"></textarea></label>
+          <label>写得好（一行一条）<textarea name="praise" rows="2"></textarea></label>
+          <label>改一改（一行一条）<textarea name="advice" rows="2"></textarea></label>
           {% if r.example %}
             <div class="example">
               <p><strong>修改示范</strong>　原句：{{r.example.quote}}</p>
@@ -76,3 +88,4 @@
   {% endif %}
 {% endblock %}
 {% block page_data %}<script>window.REVIEW={{dict(page_data, dimNames=DIMS, dimOrder=DIMS|list)|tojson}};</script>{% endblock %}
+{% block scripts %}<script src="{{asset('redpen.js')}}"></script>{% endblock %}

@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block title %}{{klass.name}} · 语文老师工作台{% endblock %}
-{% block header_actions %}<a class="header-link" href="{{url_for('home')}}">我的班级</a>{% endblock %}
+{% block header_actions %}<a class="header-link" href="{{url_for('teacher_home')}}">工作台</a>{% endblock %}
 {% block content %}
   <div class="wb-heading">
     <div>
@@ -23,6 +23,8 @@
     <div class="wb-section-head">
       <h2>作文作业</h2>
     </div>
+    {% if essay.state == 'expired' %}<p class="notice error">作文批改已经到期，不能再布置新作文，学生也不能再交。请联系管理员续期。</p>
+    {% elif essay.state == 'none' %}<p class="notice">还没有开通作文批改。可以先<a href="{{url_for('trial_page')}}">免费试用一次</a>，或联系管理员开通。</p>{% endif %}
     {% if assignments %}
       <table class="wb-table">
         <thead><tr><th>题目</th><th>文体</th><th>截止</th><th>已交</th><th>等审核</th><th></th></tr></thead>
@@ -42,10 +44,12 @@
     {% else %}
       <p class="hint">还没有布置作文。</p>
     {% endif %}
+    {% if essay.state in ('active', 'soon') %}
     <details class="wb-card wb-fold"{{' open' if not assignments}}>
       <summary>＋ 布置新作文</summary>
       {% set a = None %}{% include 'assignment_form.html' %}
     </details>
+    {% endif %}
   </section>
 
   <section class="wb-section">

@@ -101,11 +101,12 @@
   {% endfor %}
 
   <section class="panel" id="budget">
-    <h2>每日花费上限</h2>
+    <h2>每日花费上限和试用</h2>
     <form method="post" class="fields-row">
       <input type="hidden" name="csrf" value="{{csrf()}}"><input type="hidden" name="action" value="budget"><input type="hidden" name="anchor" value="#budget">
       <div class="form-field"><label>元 / 天（北京时间）</label><input name="daily_budget" value="{{budget or ''}}" placeholder="0 或不填表示不限"><small>今天的花费达到上限后，新的作文先排队，第二天自动继续批改。花费按上面填写的价格折算。</small></div>
       <div class="form-field"><label>美元汇率</label><input name="usd_cny" value="{{usd_cny}}"><small>自动更新单价时，把服务商的美元价格换算成人民币。</small></div>
+      <div class="form-field"><label>全站每天免费试用次数</label><input name="trial_daily" value="{{trial_daily}}"><small>没有授权码的老师每台设备可以试用 1 次作文批改；这里限制全站每天最多试用几次，0 表示暂停试用。</small></div>
       <div class="form-actions"><button>保存</button></div>
     </form>
   </section>

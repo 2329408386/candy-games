@@ -429,8 +429,8 @@ def create_app(site_config):
     app.config.update(
         SECRET_KEY=secret,
         DATABASE=str(data_dir() / schema.DB_NAME),
-        # Game requests are tiny; the workbench posts essays and review edits (nginx allows 128k under /teacher/).
-        MAX_CONTENT_LENGTH=128 * 1024 if site_config.kind == "workbench" else 8192,
+        # Game requests are tiny; the workbench posts essays, review edits and photos (nginx allows 30m there).
+        MAX_CONTENT_LENGTH=30 * 1024 * 1024 if site_config.kind == "workbench" else 8192,
         SESSION_COOKIE_NAME=site_config.cookie_name,
         SESSION_COOKIE_HTTPONLY=True,
         SESSION_COOKIE_SAMESITE="Lax",
@@ -511,7 +511,7 @@ def create_app(site_config):
     @app.after_request
     def headers(r):
         # Static files are fingerprinted, so only dynamic responses must bypass caches.
-        if request.endpoint not in ("static", "shared_static", "shared_audio", "avatar"):
+        if request.endpoint not in ("static", "shared_static", "shared_audio", "avatar", "essay_image"):
             r.headers["Cache-Control"] = "no-store"
         r.headers["X-Content-Type-Options"] = "nosniff"
         r.headers["X-Frame-Options"] = "SAMEORIGIN"
@@ -692,6 +692,10 @@ def register_api(app):
                 "UPDATE devices SET last_seen=? WHERE site=? AND license_id=? AND token_hash=?",
                 (now, s, row["id"], digest(token)),
             )
+        if site().kind == "workbench":
+            from .essay import features  # the workbench's features start counting their days now
+
+            features.activate(d, row["id"], now)
         d.commit()
         session.update(license=row["id"], device=token)
         session.permanent = True
@@ -840,9 +844,16 @@ def register_admin(app):
         signer = URLSafeSerializer(current_app.secret_key, salt="group-license-generation-v1")
         nonce = request.form.get("nonce", "") if request.method == "POST" else signer.dumps(secrets.token_hex(16))
         selected = request.form.getlist("groups") if request.method == "POST" else []
+        workbench = site().kind == "workbench"
         error = ""
         if request.method == "POST":
             try:
+                if workbench:
+                    from .essay import features
+
+                    # The workbench has one license group (access at all); what it may use is per feature.
+                    chosen_features = features.parse_generation(request.form)
+                    selected = list(group_map())
                 batch_id = signer.loads(nonce)
                 if not isinstance(batch_id, str) or len(batch_id) != 32:
                     raise ValueError("表单已失效，请重新打开新增页面")
@@ -894,10 +905,16 @@ def register_admin(app):
                             "INSERT INTO license_groups(site,license_id,group_id) VALUES(?,?,?)",
                             [(s, lid, gid) for gid in chosen],
                         )
+                        if workbench:
+                            d.executemany(
+                                "INSERT INTO ws_entitlements(license_id,feature,days) VALUES(?,?,?)",
+                                [(lid, key, days) for key, days in chosen_features.items()],
+                            )
                     audit(
                         "generate",
                         details=json.dumps(
-                            {"batch": batch_id, "quantity": quantity, "group_scopes": chosen, "device_limit": limit},
+                            {"batch": batch_id, "quantity": quantity, "group_scopes": chosen, "device_limit": limit}
+                            | ({"features": chosen_features} if workbench else {}),
                             ensure_ascii=False,
                         ),
                     )

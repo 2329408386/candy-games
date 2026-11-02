@@ -1,24 +1,23 @@
 {% extends 'base.html' %}
-{% block title %}我的作文 · 语文老师工作台{% endblock %}
-{% block header_actions %}<span class="header-note">{{me.class_name}} · {{me.name}}</span><button type="button" class="header-link" data-post="{{url_for('student_logout')}}">退出</button>{% endblock %}
+{% block title %}我的作业 · 语文老师工作台{% endblock %}
 {% block content %}
-  <div class="wb-heading"><div><h1>我的作文</h1><p class="muted">{{me.class_name}}</p></div></div>
+  <div class="wb-heading"><div><h1>{{me.name}}，你好</h1><p class="muted">{{me.class_name}} · 我的作业</p></div></div>
   <div class="wb-list">
     {% for a in assignments %}
       <a class="wb-card assignment-card" href="{{url_for('result_page', sid=a.my_result) if a.my_status == 'published' else url_for('write_page', aid=a.id)}}">
         <div>
-          <h2>{{a.title}}</h2>
+          <h2><span class="tag">作文</span> {{a.title}}</h2>
           <p class="muted">{{a.genre}}{% if a.min_chars %} · 不少于 {{a.min_chars}} 字{% endif %}{% if a.due_at %} · {{a.due_at|date}} 截止{% endif %}</p>
         </div>
         {% if a.my_status == 'published' %}<span class="status status-published">看批改</span>
-        {% elif a.my_status in ('queued', 'grading') %}<span class="status status-queued">正在批改</span>
+        {% elif a.my_status in BUSY %}<span class="status status-queued">正在批改</span>
         {% elif a.my_status == 'review' %}<span class="status status-review">老师正在看</span>
         {% elif a.my_status == 'failed' %}<span class="status status-failed">请重新提交</span>
         {% elif a.closed_at %}<span class="status">已停止提交</span>
-        {% else %}<span class="status status-todo">去写作文</span>{% endif %}
+        {% else %}<span class="status status-todo">去交作文</span>{% endif %}
       </a>
     {% else %}
-      <p class="hint">老师还没有布置作文。</p>
+      <p class="hint">老师还没有布置作业。</p>
     {% endfor %}
   </div>
 {% endblock %}

@@ -148,11 +148,12 @@ def register(app):
                 elif action == "budget":
                     budget = _float("daily_budget", 0, 100000, "每日花费上限", 0)
                     rate = _float("usd_cny", 1, 20, "美元汇率", models_sync.USD_CNY)
-                    for key, value in (("daily_budget", budget), ("usd_cny", rate)):
+                    trials = int(_float("trial_daily", 0, 10000, "每天试用次数", 50))
+                    for key, value in (("daily_budget", budget), ("usd_cny", rate), ("trial_daily", trials)):
                         d.execute(
                             "INSERT INTO ess_meta VALUES(?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value", (key, str(value))
                         )
-                    details = {"daily_budget": budget, "usd_cny": rate}
+                    details = {"daily_budget": budget, "usd_cny": rate, "trial_daily": trials}
                 elif action == "models_check":
                     # The worker runs the check within half a minute (model calls do not belong in a web request).
                     d.execute("INSERT INTO ess_meta VALUES('models_checked','0') ON CONFLICT(key) DO UPDATE SET value='0'")
@@ -181,6 +182,8 @@ def register(app):
         steps = {(r["step"], r["slot"]): r for r in d.execute("SELECT * FROM ess_steps")}
         budget = d.execute("SELECT value FROM ess_meta WHERE key='daily_budget'").fetchone()
         rate = d.execute("SELECT value FROM ess_meta WHERE key='usd_cny'").fetchone()
+        from . import trial_daily
+
         checked = d.execute("SELECT value FROM ess_meta WHERE key='models_checked'").fetchone()
         seen = d.execute("SELECT value FROM ess_meta WHERE key='worker_seen'").fetchone()
         month = month_start()
@@ -213,6 +216,7 @@ def register(app):
             steps=steps,
             budget=float(budget[0]) if budget else 0,
             usd_cny=float(rate[0]) if rate else models_sync.USD_CNY,
+            trial_daily=trial_daily(),
             models_checked=int(checked[0]) if checked else 0,
             AUTO_MODES=AUTO_MODES,
             worker_seen=int(seen[0]) if seen else None,
@@ -273,4 +277,46 @@ def register(app):
         audit("essay_quota", lid, f"学生 {students} 人，每月 {monthly} 篇")
         d.commit()
         flash("已保存名额", "success")
+        return redirect(url_for("detail", lid=lid))
+
+    @app.post("/admin/licenses/<int:lid>/feature")
+    @admin_only
+    def feature_save(lid):
+        import calendar
+
+        from . import features
+
+        row = license_row(lid)
+        if not row or row["archived_at"] is not None:
+            abort(404)
+        feature = request.form.get("feature", "")
+        if feature not in features.FEATURES:
+            abort(400)
+        d = db()
+        d.execute("BEGIN IMMEDIATE")
+        started = bool(d.execute("SELECT 1 FROM devices WHERE site='teacher' AND license_id=?", (lid,)).fetchone())
+        name = features.FEATURES[feature]["name"]
+        if request.form.get("action") == "expiry":
+            raw = request.form.get("date", "")
+            try:
+                day = calendar.timegm(time.strptime(raw, "%Y-%m-%d"))
+            except ValueError:
+                d.rollback()
+                flash("到期日格式不正确", "error")
+                return redirect(url_for("detail", lid=lid))
+            from core.schema import BEIJING
+
+            features.set_expiry(d, lid, feature, day - BEIJING + 86399)
+            audit("feature_expiry", lid, f"{name} 到期日设为 {raw}")
+        else:
+            try:
+                days = integer_field("days", 1, features.MAX_DAYS)
+            except ValueError:
+                d.rollback()
+                flash(f"天数要在 1—{features.MAX_DAYS} 之间", "error")
+                return redirect(url_for("detail", lid=lid))
+            features.grant(d, lid, feature, days, started)
+            audit("feature_extend", lid, f"{name} 增加 {days} 天")
+        d.commit()
+        flash("已保存有效期", "success")
         return redirect(url_for("detail", lid=lid))

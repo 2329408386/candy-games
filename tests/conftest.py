@@ -17,7 +17,7 @@ from sites import SITES
 PASSWORD = "test-password-123"
 KEYS = {"chinese": "CHINESEKEYAAAAAA", "math": "MATHKEYAAAAAAAAA", "english": "ENGLISHKEYAAAAAA", "teacher": "TEACHERKEYAAAAAA"}
 TEACHER2_KEY = "TEACHERKEYBBBBBB"
-PREFIX = {"chinese": "", "math": "/math", "english": "/english", "teacher": "/teacher"}
+PREFIX = {"chinese": "", "math": "/math", "english": "/english", "teacher": "/workspace/chinese"}
 FLASK = {"chinese": wsgi.chinese, "math": wsgi.math, "english": wsgi.english}
 
 
@@ -60,6 +60,7 @@ def _seed():
         )
         d.execute("INSERT INTO license_keys VALUES('teacher',?,?)", (lid, code))
         d.execute("INSERT INTO license_groups VALUES('teacher',?,'g1-t1-a')", (lid,))
+        d.execute("INSERT INTO ws_entitlements(license_id,feature,days) VALUES(?,'essay',365)", (lid,))
     d.commit()
     d.close()
 

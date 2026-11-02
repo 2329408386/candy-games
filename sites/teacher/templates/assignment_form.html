@@ -6,7 +6,7 @@
     <label>截止日期<input name="due" type="date" value="{{a.due_at|date if a else ''}}"></label>
   </div>
   <label>习作要求（AI 会按这个批改）<textarea name="requirement" rows="4" maxlength="600" placeholder="例如：选一种植物，按一定顺序写出它的样子和特点，写出你对它的喜爱。可以写观察日记里的发现。">{{a.requirement if a else ''}}</textarea></label>
-  <label class="check"><input type="checkbox" name="auto_publish"{{' checked' if a and a.auto_publish}}> AI 批改完直接发给学生（不勾选：老师审核后再发布）</label>
+  <label class="check"><input type="checkbox" name="auto_publish"{{' checked' if not a or a.auto_publish}}> AI 批改完直接发给学生（不勾选：老师审核后再发布）</label>
   <p class="wb-error" role="alert"></p>
   <button>{{'保存' if a else '布置'}}</button>
 </form>

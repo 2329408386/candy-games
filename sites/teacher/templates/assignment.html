@@ -3,7 +3,7 @@
 {% block header_actions %}<a class="header-link" href="{{url_for('class_page', cid=assignment.class_id)}}">{{assignment.class_name}}</a>{% endblock %}
 {% block content %}
   {% set pending = latest.values()|selectattr('status', 'equalto', 'review')|list %}
-  {% set busy = latest.values()|selectattr('status', 'in', ['queued', 'grading'])|list %}
+  {% set busy = latest.values()|selectattr('status', 'in', BUSY)|list %}
   <div class="wb-heading">
     <div>
       <h1>{{assignment.title}}</h1>
@@ -11,6 +11,7 @@
       {% if assignment.requirement %}<p class="requirement">{{assignment.requirement}}</p>{% endif %}
     </div>
     <div class="heading-actions">
+      {% if not essay_open %}<span class="tag off">作文批改已到期或未开通</span>{% endif %}
       {% if pending %}<a class="button" href="{{url_for('review_page', sid=pending[0].id)}}">开始审核（{{pending|length}} 篇）</a>
         <button type="button" class="secondary" data-post="{{url_for('publish_all', aid=assignment.id)}}" data-confirm="把 {{pending|length}} 篇等审核的作文按 AI 的批改直接发布给学生？">全部发布</button>{% endif %}
       <details class="wb-menu">
@@ -40,13 +41,13 @@
             <td>{{r.total if r else ''}}</td>
             <td class="row-actions">
               {% if sub.status == 'review' %}<a class="button small" href="{{url_for('review_page', sid=sub.id)}}">审核</a>
-              {% elif sub.status == 'published' %}<a class="button secondary small" href="{{url_for('review_page', sid=sub.id)}}">修改</a> <a class="link-button" href="{{url_for('result_page', sid=sub.id)}}">学生看到的</a>
+              {% elif sub.status == 'published' %}<a class="button secondary small" href="{{url_for('review_page', sid=sub.id)}}">修改</a> <a class="link-button" href="{{url_for('teacher_result', sid=sub.id)}}">学生看到的</a>
               {% elif sub.status == 'failed' %}<button type="button" class="small" data-post="{{url_for('regrade', sid=sub.id)}}">重新批改</button>
               {% else %}<a class="link-button" href="{{url_for('review_page', sid=sub.id)}}">查看原文</a>{% endif %}
             </td>
           {% else %}
             <td class="muted">未交</td><td></td><td></td><td></td>
-            <td class="row-actions"><button type="button" class="link-button" data-submit-for="{{s.id}}" data-name="{{s.name}}">代交</button></td>
+            <td class="row-actions">{% if essay_open and not assignment.closed_at %}<button type="button" class="link-button" data-submit-for="{{s.id}}" data-name="{{s.name}}">代交</button>{% endif %}</td>
           {% endif %}
         </tr>
       {% else %}
@@ -58,10 +59,13 @@
   <dialog id="submit-for" class="wb-dialog">
     <form id="submit-for-form" class="wb-form" method="dialog">
       <h2>替 <span data-name></span> 交作文</h2>
-      <p class="hint">适合学生交的是纸质作文：老师把正文录进来（拍照识别下一期上线）。</p>
+      <p class="hint">学生交的是纸质作文时，老师拍照上传（最多 3 张），也可以把正文打进来。</p>
       <input type="hidden" name="student_id">
       <label>标题<input name="title" maxlength="40" value="{{assignment.title}}"></label>
-      <label>正文<textarea name="text" rows="12" required></textarea></label>
+      {% set photo_limit = 3 %}{% include 'photo_picker.html' %}
+      <details class="typed-alt"><summary>没有照片？把正文打进来</summary>
+        <label>正文<textarea name="text" rows="10"></textarea></label>
+      </details>
       <p class="wb-error" role="alert"></p>
       <div class="form-actions"><button>提交批改</button><button type="button" class="secondary" data-close>取消</button></div>
     </form>
@@ -79,7 +83,8 @@
       })
     );
     dialog.querySelector('[data-close]').addEventListener('click', () => dialog.close());
-    WB.form('#submit-for-form', {{url_for('submit_for', aid=assignment.id)|tojson}}, () => location.reload());
+    const picker = WB.photoPicker(dialog.querySelector('.photo-picker'));
+    WB.submitEssay('#submit-for-form', {{url_for('submit_for', aid=assignment.id)|tojson}}, picker, () => location.reload());
     if (document.querySelector('[data-autoreload]')) setTimeout(() => location.reload(), 8000);
   </script>
 {% endblock %}

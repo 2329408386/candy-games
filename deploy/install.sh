@@ -22,7 +22,7 @@ health() { # waits until every site answers with the expected revision on every 
     for _ in $(seq 1 30); do
         local ok=1
         for _ in 1 2 3 4 5 6; do
-            for path in /health /math/health /english/health /teacher/health; do
+            for path in /health /math/health /english/health /workspace/chinese/health; do
                 curl -fsS -m 3 "http://127.0.0.1:18082$path" 2>/dev/null | grep -q "\"revision\":\"$want\"" || ok=0
             done
         done

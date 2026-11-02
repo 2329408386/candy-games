@@ -3,6 +3,8 @@
     python -m core.essay.worker          run forever (THREADS threads, each polling ess_jobs)
     python -m core.essay.worker --once   process the queue until empty, then exit (tests, debugging)
 
+An essay sent as photos has no text yet: the job first runs the ocr step on each photo (read_photos), stores the
+text and where each line is on its photo, then grades as usual; a retry does not read the photos again.
 Web requests only insert a row into ess_jobs and set the submission to 'queued'; pages poll the submission's status.
 A job is claimed under a write lock, so several threads (or a second process during a deploy) never run it twice.
 Failures that may pass (timeouts, rate limits, malformed answers) are retried after RETRY_DELAYS; when those run
@@ -81,9 +83,43 @@ def hold(d, job, submission_id, reason):
     d.commit()
 
 
-def grade(d, essay):
-    """Runs grade + check for one submission. Returns (review dict, model label)."""
+def read_photos(d, essay):
+    """OCR of every photo of a submission → essay dict with the text (and title when the student gave none).
+    Raises llm.LLMError."""
+    from . import image_path
+
     meta = dict(license_id=essay["license_id"], submission_id=essay["id"])
+    images = d.execute("SELECT * FROM ess_images WHERE submission_id=? ORDER BY page", (essay["id"],)).fetchall()
+    pages = []
+    for img in images:
+        page, _ = llm.chat(
+            d,
+            "ocr",
+            grading.ocr_messages(image_path(img["id"]).read_bytes(), img["page"], len(images)),
+            json_mode=True,
+            parse=lambda content: grading.parse_ocr(llm.parse_json(content)),
+            **meta,
+        )
+        pages.append(page)
+    title, text, spots = grading.assemble(pages)
+    if grading.char_count(text) < 10:
+        raise llm.LLMError("照片里没有认出作文，请拍清楚整页作文再交", retry=False)
+    text = text[: grading.MAX_TEXT]
+    d.execute(
+        "UPDATE ess_submissions SET text=?,title=CASE WHEN title='' THEN ? ELSE title END WHERE id=?",
+        (text, title, essay["id"]),
+    )
+    for img, lines in zip(images, spots):
+        d.execute("UPDATE ess_images SET lines=? WHERE id=?", (json.dumps([l for l in lines if l["e"] <= len(text)]), img["id"]))
+    d.commit()
+    return {**essay, "text": text, "title": essay["title"] or title}
+
+
+def grade(d, essay):
+    """Runs (ocr +) grade + check for one submission. Returns (review dict, model label)."""
+    meta = dict(license_id=essay["license_id"], submission_id=essay["id"])
+    if essay["source"] == "photo" and not essay["text"]:
+        essay = read_photos(d, essay)
     review, model = llm.chat(
         d,
         "grade",
@@ -115,7 +151,7 @@ def run_job(d, job):
         d.execute("UPDATE ess_jobs SET status='done' WHERE id=?", (job["id"],))
         d.commit()
         return
-    if not llm.configured(d, "grade"):
+    if not llm.configured(d, "grade") or essay["source"] == "photo" and not essay["text"] and not llm.configured(d, "ocr"):
         return hold(d, job, essay["id"], "not_configured")
     budget = daily_budget(d)
     if budget and spent_today(d) >= budget:

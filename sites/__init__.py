@@ -131,7 +131,7 @@ ENGLISH = Site(
 TEACHER = Site(
     key="teacher",
     title="语文老师工作台",
-    url="/teacher/",
+    url="/workspace/chinese/",
     emoji="📝",
     cookie_name="teacher_session",
     secret_env="TEACHER_SECRET",
@@ -139,7 +139,7 @@ TEACHER = Site(
     games={"essay": "作文批改"},
     files={},
     game_grades={"essay": "g1-t1"},
-    admin_hint="生成老师授权码，在授权详情里设置学生名额和每月批改篇数。",
+    admin_hint="生成老师授权码：勾选功能和年限（从老师激活那天起算），在授权详情里续期、设置学生名额和每月批改篇数。",
     admin_scope_header="授权内容",
 )
 SITES = {"chinese": CHINESE, "math": MATH, "english": ENGLISH}

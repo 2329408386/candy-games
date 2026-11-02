@@ -1,4 +1,5 @@
-/* 语文老师工作台: small helpers shared by every page, and the teacher's review editor (review.html). */
+/* 语文老师工作台: small helpers shared by every page (forms, photo uploads, tabs, the account menu), and the
+ * teacher's review editor (review.html), whose red-pen preview is drawn by redpen.js. */
 (function () {
   'use strict';
   const WB = (window.WB = {});
@@ -32,10 +33,161 @@
     return body;
   };
 
+  /* Posts a FormData or a Blob (uploads) with the CSRF token; same answers and errors as WB.post. */
+  WB.upload = async function (url, body) {
+    const send = async () => fetch(url, { method: 'POST', headers: { 'X-CSRF-Token': await WB.csrf() }, body });
+    let r = await send();
+    if (r.status === 400) {
+      const answer = await r.clone().json().catch(() => ({}));
+      if (answer.code === 'csrf_expired') {
+        token = null;
+        r = await send();
+      }
+    }
+    if (r.status === 413) throw new Error('照片太大了，请少传几张或重新拍');
+    const answer = await r.json().catch(() => ({}));
+    if (!r.ok || answer.error) throw new Error(answer.error || '上传失败，请检查网络后重试');
+    return answer;
+  };
+
+  /* A photo, upright and at most `side` px, as a JPEG blob; `square` crops the middle (avatars). */
+  WB.shrink = async function (file, side, quality, square) {
+    let source;
+    try {
+      source = await createImageBitmap(file, { imageOrientation: 'from-image' });
+    } catch (e) {
+      source = await new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = () => reject(new Error('这张照片打不开，请换一张'));
+        img.src = URL.createObjectURL(file);
+      });
+    }
+    const w = source.width, h = source.height;
+    const crop = square ? Math.min(w, h) : 0;
+    const sw = square ? crop : w, sh = square ? crop : h;
+    const scale = Math.min(1, side / Math.max(sw, sh));
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.round(sw * scale);
+    canvas.height = Math.round(sh * scale);
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(source, square ? (w - crop) / 2 : 0, square ? (h - crop) / 2 : 0, sw, sh, 0, 0, canvas.width, canvas.height);
+    return new Promise((resolve, reject) => canvas.toBlob((b) => (b ? resolve(b) : reject(new Error('照片处理失败，请换一张'))), 'image/jpeg', quality));
+  };
+
+  /* <div class="photo-picker" data-max="3">: pages of an essay, in order, shrunk in the browser before uploading. */
+  WB.photoPicker = function (root) {
+    if (!root) return { files: () => [] };
+    const max = Number(root.dataset.max || 3);
+    const list = root.querySelector('.photo-list');
+    const input = root.querySelector('input[type=file]');
+    const add = root.querySelector('.photo-add');
+    const items = [];
+    const draw = () => {
+      list.innerHTML = items
+        .map((it, i) => '<figure class="photo-item"><img src="' + it.url + '" alt="第 ' + (i + 1) + ' 页"><figcaption>第 ' + (i + 1) + ' 页</figcaption><button type="button" class="photo-remove" data-remove="' + i + '" aria-label="删掉第 ' + (i + 1) + ' 页">×</button></figure>')
+        .join('');
+      add.hidden = items.length >= max;
+    };
+    input.addEventListener('change', async () => {
+      const files = [...input.files].slice(0, max - items.length);
+      input.value = '';
+      add.classList.add('busy');
+      for (const f of files) {
+        try {
+          const blob = await WB.shrink(f, 2000, 0.85);
+          items.push({ blob, url: URL.createObjectURL(blob) });
+        } catch (err) {
+          alert(err.message);
+        }
+      }
+      add.classList.remove('busy');
+      draw();
+    });
+    list.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-remove]');
+      if (!b) return;
+      URL.revokeObjectURL(items[Number(b.dataset.remove)].url);
+      items.splice(Number(b.dataset.remove), 1);
+      draw();
+    });
+    draw();
+    return { files: () => items.map((it) => it.blob) };
+  };
+
+  /* .tabs buttons [data-tab] show the matching [data-pane] inside the same parent. */
+  WB.tabs = function (root) {
+    const tabs = root.querySelectorAll(':scope > .tabs .tab');
+    tabs.forEach((t) =>
+      t.addEventListener('click', () => {
+        tabs.forEach((x) => {
+          x.classList.toggle('active', x === t);
+          x.setAttribute('aria-selected', x === t);
+        });
+        root.querySelectorAll(':scope > [data-pane]').forEach((p) => (p.hidden = p.dataset.pane !== t.dataset.tab));
+        root.dispatchEvent(new CustomEvent('tab', { detail: t.dataset.tab }));
+      })
+    );
+  };
+  document.querySelectorAll('.tabs').forEach((t) => WB.tabs(t.parentElement));
+
+  /* An essay form: photos when there are any (and the photo tab is showing), otherwise the typed text. */
+  WB.submitEssay = function (selector, url, picker, done) {
+    const form = typeof selector === 'string' ? document.querySelector(selector) : selector;
+    if (!form) return;
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const button = form.querySelector('button:not([type=button])');
+      const error = form.querySelector('.wb-error');
+      const pane = form.querySelector('[data-pane=photo]');
+      const photos = picker.files();
+      const usePhotos = pane ? !pane.hidden : photos.length > 0;
+      error.textContent = '';
+      const fields = formData(form);
+      if (usePhotos && !photos.length) {
+        error.textContent = '请先拍照：作文有几页就拍几张';
+        return;
+      }
+      if (!usePhotos && !(fields.text || '').trim()) {
+        error.textContent = '请先写好作文';
+        return;
+      }
+      const label = button.textContent;
+      button.disabled = true;
+      button.textContent = usePhotos ? '正在上传照片…' : '正在提交…';
+      try {
+        let answer;
+        if (usePhotos) {
+          const body = new FormData();
+          for (const [k, v] of Object.entries(fields)) if (k !== 'text') body.append(k, v);
+          photos.forEach((b, i) => body.append('photos', b, 'page' + (i + 1) + '.jpg'));
+          answer = await WB.upload(url, body);
+        } else {
+          answer = await WB.post(url, fields);
+        }
+        done(answer);
+      } catch (err) {
+        error.textContent = err.message;
+      } finally {
+        button.disabled = false;
+        button.textContent = label;
+      }
+    });
+  };
+
+  /* The account menu in the header closes when tapping elsewhere. */
+  document.addEventListener('click', (e) => {
+    document.querySelectorAll('details.me-menu[open]').forEach((d) => {
+      if (!d.contains(e.target)) d.open = false;
+    });
+  });
+
   function formData(form) {
     const data = {};
     for (const el of form.elements) {
-      if (!el.name) continue;
+      if (!el.name || el.type === 'file') continue;
       if (el.type === 'checkbox') data[el.name] = el.checked;
       else data[el.name] = el.value;
     }
@@ -161,10 +313,12 @@
     return Number(el.dataset.o) + offset;
   };
 
-  if (window.REVIEW) reviewEditor(window.REVIEW);
+  // redpen.js loads after this file: the editor starts once the page is parsed.
+  if (window.REVIEW) document.addEventListener('DOMContentLoaded', () => reviewEditor(window.REVIEW));
 
   function levelOf(total) {
-    return total >= 90 ? '优' : total >= 75 ? '良' : total >= 60 ? '中' : '待提高';
+    // Out of 25: 优 23–25, 良 19–22, 及格 15–18 (grading.level_of).
+    return total >= 23 ? '优' : total >= 19 ? '良' : total >= 15 ? '及格' : '待提高';
   }
 
   function reviewEditor(page) {
@@ -178,9 +332,27 @@
     const dims = root.querySelector('.dims-edit');
     const status = root.querySelector('.save-status');
 
+    const preview = document.getElementById('redpen-preview');
+    let previewTimer = null;
+    function drawPreview() {
+      if (!preview || !page.redpen || !window.RedPen) return;
+      const total = Object.values(state.dims).reduce((a, d) => a + d.score, 0);
+      RedPen.render(preview, {
+        ...page.redpen,
+        marks: state.marks.map((m) => ({ type: m.type, start: m.start, end: m.end, fix: m.fix || '', note: m.note || '' })),
+        total,
+        level: levelOf(total),
+        summary: summary.value.trim(),
+        praise: lines(praise),
+        advice: lines(advice),
+      });
+    }
+
     function setDirty() {
       dirty = true;
       status.textContent = '有修改，还没保存';
+      clearTimeout(previewTimer);
+      previewTimer = setTimeout(drawPreview, 400);
     }
 
     function drawEssay() {
@@ -376,5 +548,6 @@
 
     drawDims();
     drawAll();
+    drawPreview();
   }
 })();
