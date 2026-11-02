@@ -93,7 +93,7 @@
               </div>
               <h3>{{name}}</h3>
               <p>
-                {{ {'listen-word':'听录音，选出听到的单词或图片，全册单词一网打尽。','scene':'看图看情景，选出最合适的应答，单元卷、口语必考。','letters':'在英语四线格上动手写字母，大写小写都要写规范。','sentence':'打乱的单词排一排，拼出每个单元的核心句型。','read':'看着课本里的句子大声读，智能评分，读准每一个单词。'}[id] }}
+                {{ {'listen-word':'听录音，选出听到的单词或图片，全册单词一网打尽。','scene':'看图看情景，选出最合适的应答，单元卷、口语必考。','letters':'看大写写小写、看小写写大写，在四线格上把字母写规范。','sentence':'打乱的单词排一排，拼出每个单元的核心句型。','read':'看着课本里的句子大声读，智能评分，读准每一个单词。'}[id] }}
               </p>
               <div class="card-bottom">
                 {% if license and id in unlocked %}<a class="game-link" href="{{url_for('game_page',game=id)}}"{% if id == 'read' %} data-secure{% endif %}>开始游戏<svg aria-hidden="true"><use href="#i-arrow"/></svg></a>{% elif id not in trials_used %}<a class="game-link trial-link" href="{{url_for('game_page',game=id)}}"{% if id == 'read' %} data-secure{% endif %}>免费试玩一局<svg aria-hidden="true"><use href="#i-arrow"/></svg></a>{% else %}<span class="locked"><svg aria-hidden="true"><use href="#i-lock"/></svg>试玩已结束</span><button type="button" class="text-button inline-link" data-contact>获取授权码</button>{% endif %}

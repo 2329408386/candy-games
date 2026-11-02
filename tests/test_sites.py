@@ -314,6 +314,9 @@ def test_english_pages_audio_and_units():
         bank = client.get(f"/games/{game}/bank.json").get_json()
         if game != "letters":  # 字母奇妙屋 covers all 26 letters, not units
             assert bank["ui"]["units"] == ["U1", "U2", "U3", "U4", "U5", "U6"], game
+        else:  # only upper <-> lower case, and nothing is read aloud
+            assert {q["kind"] for q in bank["questions"]} == {"upper-to-lower", "lower-to-upper"}
+            assert not any("audio" in q for q in bank["questions"])
         audio = next((q["audio"] for q in bank["questions"] if "audio" in q), None)
         # Listening games have no same-screen 双人PK (both players would hear each other's recording).
         assert ('"noPk": true' in page) == (game in ("listen-word", "read")), game

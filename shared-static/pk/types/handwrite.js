@@ -1,6 +1,8 @@
 // 字母奇妙屋 (English): write letters by hand on English four-line paper. One box per letter: as wide as a 田字格
 // box, as tall as the four lines of an English exercise book (the third line, the baseline, is red).
-// q = {kind, prompt, answer ("Bb" = write B in the first box and b in the second, or a single letter), shown, audio}.
+// q = {kind ("upper-to-lower" | "lower-to-upper"), prompt, answer (the letter to write), shown (the letter given)}.
+// Nothing is read aloud. Writing with a finger or stylus reads far better than with a mouse, so the page says so:
+// always under the boxes on devices without a touch screen, once per visit when a mouse is used on one that has.
 //
 // Recognition runs in the browser. Every letter has template strokes in four-line coordinates: x in line gaps,
 // y = 0 on the top line, 1 on the second, 2 on the red baseline and 3 on the bottom line. A drawing is compared with
@@ -234,10 +236,12 @@
     canvas.addEventListener('pointerdown', e => {
       if (ctx.locked) return;
       e.preventDefault();
+      const mouse = e.pointerType === 'mouse' && !mouseTold && touch();
       canvas.setPointerCapture?.(e.pointerId);
       current = [point(e)];
       strokes.push(current);
-      ctx.notice('');
+      if (mouse) mouseTold = true;
+      ctx.notice(mouse ? TIP : '');
       paint(canvas, strokes);
     });
     canvas.addEventListener('pointermove', e => {
@@ -253,6 +257,9 @@
   }
 
   const LABEL = { 1: ['写在这里'], 2: ['大写', '小写'] };
+  let mouseTold = false;
+  const TIP = '💡 用手机或平板、手指写效果更好；鼠标写字不好控制，容易判错。';
+  const touch = () => !!window.matchMedia?.('(any-pointer: coarse)').matches;
   PK.register('handwrite', {
     history: false,
     init(q, ctx) {
@@ -261,11 +268,6 @@
     },
     render(q, a, ctx) {
       const wrap = el('div', 'q-write');
-      if (q.audio) {
-        const say = button('🔊 再听一遍', () => PK.say(q.audio), 'pk-say');
-        say.setAttribute('aria-label', '播放录音');
-        wrap.append(say);
-      }
       wrap.append(el('p', 'prompt', q.prompt));
       if (q.shown) {
         const shown = el('p', 'write-shown', q.shown);
@@ -292,18 +294,20 @@
         ctx.view.canvases.push(canvas);
       });
       wrap.append(row);
+      if (!ctx.result && !touch()) wrap.append(el('p', 'write-tip', TIP));
       return wrap;
     },
     afterRender(q, a, ctx) {
       const value = ctx.result?.value || '';
       ctx.view.canvases.forEach((canvas, i) => {
         const opts = ctx.result ? { model: T[q.answer[i]], color: value[i] === q.answer[i] ? '#3c8a52' : '#c2473a' } : {};
-        paint(canvas, ctx.view.boxes[i], opts);
+        const draw = () => paint(canvas, ctx.view.boxes[i], opts);
+        draw();
+        // The question may be built before it is on screen (0 px wide, so nothing gets drawn) and boxes change size
+        // with 投屏 or a turned phone: repaint the lines whenever the box gets its real size.
+        if (window.ResizeObserver) new ResizeObserver(draw).observe(canvas);
+        else window.requestAnimationFrame?.(draw);
       });
-      if (q.audio && !ctx.view.spoken && !ctx.result) {
-        ctx.view.spoken = true;
-        if (ctx.players === 1) PK.say(q.audio);
-      }
     },
     value(q, a, ctx) {
       const boxes = ctx.view.boxes;

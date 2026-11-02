@@ -354,7 +354,7 @@ def check_read(q, bank, game):
     return errors
 
 
-HANDWRITE_KINDS = {"listen": 2, "upper-to-lower": 1, "lower-to-upper": 1, "next": 2}
+HANDWRITE_KINDS = {"upper-to-lower": 1, "lower-to-upper": 1}
 
 
 def check_handwrite(q, bank, game):
@@ -367,14 +367,12 @@ def check_handwrite(q, bank, game):
         errors.append(f"answer 应为 {HANDWRITE_KINDS[q['kind']]} 个字母：{answer}")
     elif len(answer) == 2 and (answer[0] != answer[0].upper() or answer[1] != answer[0].lower()):
         errors.append(f"两格题应先大写后小写：{answer}")
-    if q["kind"] == "listen" and not q.get("audio"):
-        errors.append("听音题缺少录音")
     if q["kind"] == "upper-to-lower" and q.get("shown") != answer.upper():
         errors.append("shown 应为对应大写")
     if q["kind"] == "lower-to-upper" and q.get("shown") != answer.lower():
         errors.append("shown 应为对应小写")
-    if q["kind"] == "next" and (len(q.get("shown", "")) != 2 or ord(q["shown"][0]) + 1 != ord(answer[0])):
-        errors.append("next 题 shown 的下一个字母应为 answer")
+    if q.get("audio"):
+        errors.append("字母奇妙屋不播放读音，不应有 audio")
     return errors
 
 

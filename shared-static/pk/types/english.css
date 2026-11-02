@@ -50,6 +50,7 @@
 .write-cell.wrong .write-box { border-color: var(--wrong-line); background: var(--wrong); }
 .write-clear, .read-skip { border: 0; background: none; padding: 0.25rem 0.5rem; color: var(--muted); font-size: 0.9375rem; text-decoration: underline; cursor: pointer; }
 .write-clear:disabled { visibility: hidden; }
+.write-tip { margin: 0.5rem 0 0; color: var(--muted); font-size: 0.875rem; text-align: center; }
 
 /* 读句子 (types/read.js) */
 .q-read { text-align: center; }
