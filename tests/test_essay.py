@@ -495,3 +495,20 @@ def test_missing_model_switches_and_retries(models, klass, db, monkeypatch):
     assert db.execute("SELECT status FROM ess_submissions WHERE id=?", (sid,)).fetchone()[0] == "review"
     assert db.execute("SELECT model FROM ess_steps WHERE step='grade' AND slot='main'").fetchone()[0] == "big-v2"
     assert llm.MODEL_MISSING.search("Model not found: x") and not llm.MODEL_MISSING.search("rate limit exceeded")
+
+
+def test_fetch_models_retries_without_key(monkeypatch):
+    import io, urllib.error, urllib.request
+
+    seen = []
+
+    def urlopen(req, timeout):
+        seen.append(req.get_header("Authorization"))
+        if req.get_header("Authorization"):
+            raise urllib.error.HTTPError(req.full_url, 401, "no", {}, io.BytesIO(b""))
+        return io.BytesIO(b'{"data": [{"id": "glm-5.3-flash"}]}')
+
+    monkeypatch.setattr(urllib.request, "urlopen", urlopen)
+    provider = {"base_url": "https://opencode.ai/inference/v1/", "key_enc": llm.encrypt_key("sk-abc-123456")}
+    assert models_sync.fetch_models(provider) == [{"id": "glm-5.3-flash"}]
+    assert seen == ["Bearer sk-abc-123456", None]

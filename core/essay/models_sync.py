@@ -35,17 +35,28 @@ def version(model_id):
     return tuple(int(n) for token in VERSION.findall(model_id) for n in re.findall(r"\d+", token))
 
 
+def _get_json(url, key):
+    headers = {"Accept": "application/json", "User-Agent": llm.USER_AGENT}
+    if key:
+        headers["Authorization"] = "Bearer " + key
+    with urllib.request.urlopen(urllib.request.Request(url, headers=headers), timeout=10) as r:
+        return json.load(r)
+
+
 def fetch_models(provider):
-    """The provider's model list: [{"id": …, …}]. Raises llm.LLMError."""
-    req = urllib.request.Request(
-        provider["base_url"].rstrip("/") + "/models",
-        headers={"Accept": "application/json", "User-Agent": llm.USER_AGENT, "Authorization": "Bearer " + llm.decrypt_key(provider["key_enc"])},
-    )
+    """The provider's model list: [{"id": …, …}]. Raises llm.LLMError.
+    Asked with the API key first; on 401/403/404 asked again without it (some public lists, such as OpenCode's
+    /inference/v1/models, refuse keys they do not issue themselves)."""
+    url = provider["base_url"].rstrip("/") + "/models"
     try:
-        with urllib.request.urlopen(req, timeout=10) as r:
-            data = json.load(r)
+        try:
+            data = _get_json(url, llm.decrypt_key(provider["key_enc"]))
+        except urllib.error.HTTPError as e:
+            if e.code not in (401, 403, 404):
+                raise
+            data = _get_json(url, "")
     except urllib.error.HTTPError as e:
-        raise llm.LLMError(f"模型列表 HTTP {e.code}") from None
+        raise llm.LLMError(f"模型列表 HTTP {e.code}（{url}）") from None
     except (urllib.error.URLError, TimeoutError, OSError, ValueError) as e:
         raise llm.LLMError(f"模型列表读取失败：{e}") from None
     items = data.get("data") if isinstance(data, dict) else data

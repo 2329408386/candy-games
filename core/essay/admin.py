@@ -120,6 +120,10 @@ def register(app):
                             "INSERT INTO ess_providers(name,base_url,key_enc,key_tail,timeout,concurrency,created_at) VALUES(?,?,?,?,?,?,?)",
                             (name, base_url, llm.encrypt_key(key), llm.key_tail(key), timeout, concurrency, int(time.time())),
                         )
+                    if existing:
+                        # Old version-check messages were about the old address or key: clear them and check again soon.
+                        d.execute("UPDATE ess_steps SET auto_note='',auto_alert=0 WHERE provider_id=? AND auto_note LIKE '检查新版本失败%'", (existing["id"],))
+                    d.execute("INSERT INTO ess_meta VALUES('models_checked','0') ON CONFLICT(key) DO UPDATE SET value='0'")
                     details = {"name": name, "base_url": base_url, "key_changed": bool(key), "timeout": timeout, "concurrency": concurrency}
                 elif action == "provider_delete":
                     pid = request.form.get("id")
