@@ -676,7 +676,8 @@ def register_api(app):
             d.rollback()
             return (
                 jsonify(
-                    error=f"此授权码已绑定{row['device_limit']}台设备，请联系管理员解绑",
+                    error=f"此授权码已绑定{row['device_limit']}台设备，请联系管理员解绑"
+                    + ("；也可以在已登录的设备上，点右上角头像 →「我的设备」移除不用的设备" if site().kind == "workbench" else ""),
                     device_count=count,
                     device_limit=row["device_limit"],
                 ),

@@ -10,7 +10,7 @@
           <p class="muted">{{a.genre}}{% if a.min_chars %} · 不少于 {{a.min_chars}} 字{% endif %}{% if a.due_at %} · {{a.due_at|date}} 截止{% endif %}</p>
         </div>
         {% if a.my_status == 'published' %}<span class="status status-published">看批改</span>
-        {% elif a.my_status in BUSY %}<span class="status status-queued">正在批改</span>
+        {% elif a.my_status in BUSY %}<span class="status status-queued">老师批改中</span>
         {% elif a.my_status == 'review' %}<span class="status status-review">老师正在看</span>
         {% elif a.my_status == 'failed' %}<span class="status status-failed">请重新提交</span>
         {% elif a.closed_at %}<span class="status">已停止提交</span>

@@ -18,6 +18,15 @@ FEATURES = {
         "name": "作文批改",
         "desc": "学生拍照交作文，AI 用红笔批在原稿上，老师看过再发给学生。",
         "icon": "i-pen",
+        "endpoint": "essay_home",
+        "trial": "trial_page",
+    },
+    "lesson": {
+        "name": "教案生成",
+        "desc": "输入课题，生成一份拿来就能用的教案，可以修改、下载 Word、打印。",
+        "icon": "i-book",
+        "endpoint": "lesson_home",
+        "trial": "lesson_trial_page",
     },
 }
 DEFAULT_DAYS = 365

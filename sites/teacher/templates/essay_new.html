@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}布置作文 · 语文老师工作台{% endblock %}
+{% block header_actions %}<a class="header-link" href="{{url_for('essay_home')}}">作文批改</a>{% endblock %}
+{% block content %}
+  <div class="wb-heading"><div><h1>布置作文</h1><p class="muted">学生用老师发的登录条登录后，就能看到这篇作文。</p></div></div>
+  {% if feature.state not in ('active', 'soon') %}
+    <p class="notice error">{% if feature.state == 'expired' %}作文批改已经到期，请联系管理员续期。{% else %}还没有开通作文批改，请联系管理员。{% endif %}</p>
+  {% elif not classes %}
+    <p class="notice">还没有班级。<a href="{{url_for('classes_page')}}">先建一个班 →</a></p>
+  {% else %}
+    <section class="wb-card narrow-card">
+      <div class="wb-form">
+        <label>布置给哪个班<select id="class-pick">{% for c in classes %}<option value="{{c.id}}" data-url="{{url_for('assignment_create', cid=c.id)}}"{{' selected' if c.id == chosen}}>{{c.name}}（{{c.grade}}年级 · {{c.students}} 人）</option>{% endfor %}</select></label>
+      </div>
+      {% set a = None %}{% include 'assignment_form.html' %}
+    </section>
+  {% endif %}
+{% endblock %}
+{% block scripts %}
+  <script>
+    const pick = document.getElementById('class-pick');
+    if (pick) WB.form('#assignment-form', () => pick.selectedOptions[0].dataset.url, (r) => (location.href = r.url));
+  </script>
+{% endblock %}

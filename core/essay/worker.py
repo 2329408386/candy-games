@@ -11,10 +11,11 @@ Failures that may pass (timeouts, rate limits, malformed answers) are retried af
 out, or the failure cannot pass (bad key, wrong model name), the submission becomes 'failed' and the teacher can
 press 重新批改. Jobs wait without being counted as attempts while the step is not configured or today's spending
 has reached the daily budget (ess_meta 'daily_budget', yuan); the submission's `hold` column says why.
+When no essay is waiting, a thread writes a queued lesson plan (ws_lessons, see lesson.py) under the same rules.
 """
 
 import argparse, json, logging, sqlite3, threading, time
-from . import grading, llm, models_sync
+from . import grading, lesson, llm, models_sync
 
 THREADS = 3
 RETRY_DELAYS = (30, 120, 600)
@@ -204,6 +205,17 @@ def work(d, stop=None, once=False):
                     d.rollback()
         job = claim(d)
         if not job:
+            plan = lesson.claim(d)
+            if plan:
+                try:
+                    budget = daily_budget(d)
+                    lesson.run(d, plan, bool(budget) and spent_today(d) >= budget)
+                except Exception:
+                    log.exception("lesson %s crashed", plan["id"])
+                    d.rollback()
+                    d.execute("UPDATE ws_lessons SET status='failed',error='内部错误' WHERE id=?", (plan["id"],))
+                    d.commit()
+                continue
             if once:
                 return
             time.sleep(IDLE_SECONDS)

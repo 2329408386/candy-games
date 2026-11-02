@@ -10,6 +10,7 @@ DB_NAME = "games.sqlite3"
 # ess_*: 语文老师工作台 (site 'teacher' only, so no site column), see core/essay/__init__.py. ess_images: photos of
 # handwritten essays (files in <data>/essay-images/<id>.jpg). ws_entitlements: which workbench features a teacher
 # license has and until when (core/essay/features.py); the clock starts when the teacher activates the code.
+# ws_lessons: 教案生成 (core/essay/lesson.py), queued and written by the essay worker like an essay; license 0 = trials.
 # migrations: one-off data changes already applied (see initialize).
 # trials records the one free round each browser (session device token) may play per game.
 # profiles/classes/scores/rounds: see core/social.py (one license = one user, in at most one class); pk_rooms/pk_seats: core/rooms.py (rooms/room_players are the unused, license-keyed predecessors).
@@ -66,6 +67,9 @@ CREATE TABLE IF NOT EXISTS ess_meta(key TEXT PRIMARY KEY,value TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS ess_images(id INTEGER PRIMARY KEY,submission_id INTEGER NOT NULL REFERENCES ess_submissions(id),page INTEGER NOT NULL,w INTEGER NOT NULL,h INTEGER NOT NULL,lines TEXT NOT NULL DEFAULT '',created_at INTEGER NOT NULL);
 CREATE INDEX IF NOT EXISTS ess_images_submission ON ess_images(submission_id,page);
 CREATE TABLE IF NOT EXISTS ws_entitlements(license_id INTEGER NOT NULL,feature TEXT NOT NULL,days INTEGER NOT NULL,starts_at INTEGER,expires_at INTEGER,PRIMARY KEY(license_id,feature));
+CREATE TABLE IF NOT EXISTS ws_lessons(id INTEGER PRIMARY KEY,license_id INTEGER NOT NULL,grade INTEGER NOT NULL,term TEXT NOT NULL,kind TEXT NOT NULL,topic TEXT NOT NULL,periods INTEGER NOT NULL,notes TEXT NOT NULL DEFAULT '',source_text TEXT NOT NULL DEFAULT '',status TEXT NOT NULL,hold TEXT NOT NULL DEFAULT '',plan TEXT,edited TEXT,model TEXT NOT NULL DEFAULT '',error TEXT NOT NULL DEFAULT '',attempts INTEGER NOT NULL DEFAULT 0,run_after INTEGER NOT NULL,locked_at INTEGER,created_at INTEGER NOT NULL,done_at INTEGER,deleted_at INTEGER);
+CREATE INDEX IF NOT EXISTS ws_lessons_license ON ws_lessons(license_id,created_at);
+CREATE INDEX IF NOT EXISTS ws_lessons_queue ON ws_lessons(status,run_after);
 """
 
 

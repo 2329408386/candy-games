@@ -51,6 +51,26 @@ OCR_PAGE = {
 }
 
 
+LESSON_PLAN = {
+    "title": "《荷叶圆圆》第一课时",
+    "analysis": "这是一篇充满童趣的散文诗。",
+    "learners": "一年级学生喜欢朗读和表演。",
+    "goals": ["会认 12 个生字", "能正确、流利地朗读课文", "感受夏天的美好"],
+    "key": "识字、朗读",
+    "difficult": "读好长句子",
+    "prep": "生字卡片、课件",
+    "periods": [
+        {"name": "第一课时", "steps": [
+            {"name": "一、猜谜导入", "minutes": 5, "teacher": "出示谜语：……", "student": "猜谜", "intent": "激发兴趣"},
+            {"name": "二、初读识字", "minutes": 20, "teacher": "范读课文", "student": "自由读", "intent": "读准字音"},
+            {"name": "三、写字指导", "minutes": 10, "teacher": "示范写「圆」", "student": "描红", "intent": "写好字"},
+        ]},
+    ],
+    "board": "荷叶圆圆\n小水珠 摇篮\n小蜻蜓 停机坪",
+    "homework": {"basic": "读课文三遍", "extend": "画一画荷叶"},
+}
+
+
 class FakeModels:
     """Stands in for llm.post: answers grade and check requests, records every call."""
 
@@ -61,13 +81,17 @@ class FakeModels:
         self.check = {"items": [{"id": 1, "ok": False, "reason": "原句没有错"}, {"id": 2, "ok": True}], "level": "良"}
         self.fail = set()  # models that raise
         self.ocr = OCR_PAGE
+        self.lesson = LESSON_PLAN
 
     def __call__(self, row, body):
         self.calls.append((row["model"], body))
         if row["model"] in self.fail:
             raise llm.LLMError("HTTP 429: rate limited")
         system = body["messages"][0]["content"]
-        answer = self.ocr if "誊抄" in system[:80] else self.check if "复核" in system[:60] else self.grade
+        answer = (
+            self.ocr if "誊抄" in system[:80] else self.check if "复核" in system[:60]
+            else self.lesson if "特级教师" in system[:40] else self.grade
+        )
         return json.dumps(answer, ensure_ascii=False), 3000, 2500, 800
 
 
@@ -80,7 +104,7 @@ def models(monkeypatch, db):
     db.execute("INSERT INTO ess_providers(id,name,base_url,key_enc,key_tail,timeout,concurrency,created_at) VALUES(1,'测试','https://x/v1',?,'',30,2,1)", (llm.encrypt_key("sk-test-123456"),))
     db.executemany(
         "INSERT INTO ess_steps(step,slot,provider_id,model,price_in,price_cached,price_out) VALUES(?,?,1,?,?,?,?)",
-        [("grade", "main", "big", 4.0, 0.2, 12.0), ("check", "main", "small", 1.0, 0.0, 2.0), ("ocr", "main", "eyes", 1.0, 0.0, 2.0)],
+        [("grade", "main", "big", 4.0, 0.2, 12.0), ("check", "main", "small", 1.0, 0.0, 2.0), ("ocr", "main", "eyes", 1.0, 0.0, 2.0), ("lesson", "main", "big", 1.0, 0.0, 2.0)],
     )
     db.execute("DELETE FROM ess_meta WHERE key='daily_budget'")
     db.execute("INSERT OR REPLACE INTO ess_meta VALUES('models_checked',?)", (str(int(time.time())),))
@@ -213,7 +237,7 @@ def test_full_flow(models, klass, db):
 def test_auto_publish_and_publish_all(models, klass, db):
     t, cid, aid = klass
     aid2 = jpost(t, f"/api/classes/{cid}/assignments", {"title": "自动", "genre": "日记", "auto_publish": True}).get_json()["id"]
-    assert 'name="auto_publish" checked' in t.get(f"/teacher/classes/{cid}").get_data(as_text=True)  # on by default
+    assert 'name="auto_publish" checked' in t.get(f"/teacher/essay/new?class={cid}").get_data(as_text=True)  # on by default
     s, _ = student_client(db, cid)
     sid = jpost(s, f"/api/write/{aid2}", {"text": ESSAY}).get_json()["id"]
     s2, _ = student_client(db, cid, "李华")
@@ -270,15 +294,17 @@ def test_holds_when_not_configured_or_over_budget(models, klass, db):
     s, _ = student_client(db, cid)
     sid = jpost(s, f"/api/write/{aid}", {"text": ESSAY}).get_json()["id"]
     run_worker()
-    state = s.get(f"/api/submissions/{sid}/state").get_json()
+    state = t.get(f"/api/submissions/{sid}/state").get_json()
     assert state["status"] == "queued" and "暂未开通" in state["hold"]
+    # The student only reads that the teacher is marking it.
+    assert s.get(f"/api/submissions/{sid}/state").get_json() == {"status": "queued", "label": "老师批改中", "hold": ""}
     db.execute("INSERT INTO ess_steps(step,slot,provider_id,model) VALUES('grade','main',1,'big')")
     db.execute("INSERT INTO ess_meta VALUES('daily_budget','0.0000001')")
     db.execute("INSERT INTO ess_usage(license_id,step,model,tokens_in,tokens_cached,tokens_out,cost,ok,created_at) VALUES(1,'grade','x',0,0,0,1,1,?)", (int(time.time()),))
     db.execute("UPDATE ess_jobs SET run_after=0")
     db.commit()
     run_worker()
-    assert "额度" in s.get(f"/api/submissions/{sid}/state").get_json()["hold"]
+    assert "额度" in t.get(f"/api/submissions/{sid}/state").get_json()["hold"]
     db.execute("DELETE FROM ess_meta WHERE key='daily_budget'")
     db.execute("UPDATE ess_jobs SET run_after=0")
     db.commit()
@@ -738,7 +764,7 @@ def test_photo_waits_until_ocr_is_configured(models, klass, db):
 
 def test_trial_once_per_browser(models, db):
     c = SiteClient("teacher")
-    assert "试用作文批改（1 次）" in c.get("/teacher/").get_data(as_text=True)
+    assert "/teacher/trial/essay" in c.get("/teacher/").get_data(as_text=True)
     assert 'id="trial-form"' in c.get("/teacher/trial/essay").get_data(as_text=True)
     r = jpost(c, "/api/trial/essay", {"grade": 3, "genre": "记事", "title": "试试", "text": ESSAY})
     assert r.status_code == 200, r.get_json()
@@ -778,3 +804,209 @@ def test_reviews_rescaled_to_25(db):
     if saved:
         db.execute("UPDATE ess_reviews SET ai=?,final=? WHERE submission_id=?", (saved["ai"], saved["final"], sid))
     db.commit()
+
+
+# ---- devices, feature pages, classes overview, 教案生成, student wording ----
+def test_device_name():
+    from core.essay import device_name
+
+    assert device_name("Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit Mobile MicroMessenger/8.0") == "iPhone · 微信"
+    assert device_name("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit Chrome/120 Safari/537") == "Windows 电脑 · Chrome"
+    assert device_name("Mozilla/5.0 (Linux; Android 14; ALN) AppleWebKit Mobile HuaweiBrowser/15 Chrome Safari") == "安卓手机 · 华为浏览器"
+    assert device_name("") == "未知设备"
+
+
+def test_teacher_sees_and_removes_own_devices(db):
+    db.execute("DELETE FROM limits")  # activations are rate limited per address
+    db.commit()
+    db.execute("DELETE FROM devices WHERE site='teacher' AND license_id=2")
+    db.execute("DELETE FROM audit WHERE site='teacher' AND action='device_self_remove'")
+    db.commit()
+    phones = [teacher_client(TEACHER2_KEY) for _ in range(5)]
+    me = phones[0]
+    page = me.get("/teacher/profile").get_data(as_text=True)
+    assert 'id="devices"' in page and "本机" in page and "<strong>5</strong> 台设备" in page
+    assert "我的设备（5/100）" in page  # in the header menu
+    rows = db.execute("SELECT created_at FROM devices WHERE site='teacher' AND license_id=2 ORDER BY created_at,token_hash").fetchall()
+    links = re.findall(r'devices/(\d+)/remove" data-body=\'\{"created_at": (\d+)\}\'', page)
+    assert len(links) == 4  # every device but this one
+    mine = next(n for n in range(1, 6) if str(n) not in [x[0] for x in links])
+    r = jpost(me, f"/api/me/devices/{mine}/remove", {"created_at": rows[mine - 1]["created_at"]})
+    assert r.status_code == 400 and "正在用" in r.get_json()["error"]
+    # Remove three others; the removed browsers are signed out at once.
+    for _ in range(3):
+        page = me.get("/teacher/profile").get_data(as_text=True)
+        n, created = re.findall(r'devices/(\d+)/remove" data-body=\'\{"created_at": (\d+)\}\'', page)[0]
+        assert jpost(me, f"/api/me/devices/{n}/remove", {"created_at": int(created)}).status_code == 200
+    assert db.execute("SELECT count(*) FROM devices WHERE site='teacher' AND license_id=2").fetchone()[0] == 2
+    signed_out = [p for p in phones[1:] if "teacher-activate" in p.get("/teacher/").get_data(as_text=True)]
+    assert len(signed_out) == 3
+    # The fourth removal within 30 days needs the admin.
+    page = me.get("/teacher/profile").get_data(as_text=True)
+    assert "移除的次数已经用完" in page
+    left = db.execute("SELECT created_at FROM devices WHERE site='teacher' AND license_id=2 ORDER BY created_at,token_hash").fetchall()
+    errors = [jpost(me, f"/api/me/devices/{n}/remove", {"created_at": left[n - 1][0]}).get_json()["error"] for n in (1, 2)]
+    assert any("管理员" in e for e in errors) and any("正在用" in e for e in errors)
+    assert db.execute("SELECT count(*) FROM audit WHERE site='teacher' AND action='device_self_remove' AND license_id=2").fetchone()[0] == 3
+    # A stale list does not remove the wrong device.
+    assert jpost(me, "/api/me/devices/1/remove", {"created_at": 1}).status_code == 400
+
+
+def test_home_lists_features_and_header_leads_to_classes(models, klass, db):
+    t, cid, aid = klass
+    home = t.get("/teacher/").get_data(as_text=True)
+    assert "我的功能" in home and "我的班级" in home  # the menu entry
+    assert "新建班级" not in home and "class-create" not in home  # classes moved behind the header button
+    assert '/workspace/chinese/teacher/essay/' in home and "/teacher/trial/lesson" in home  # lesson not bought: trial
+    assert 'class="header-chip" href="/workspace/chinese/teacher/classes/"' in home
+    # Classes overview: statistics per class.
+    db.execute("UPDATE ess_assignments SET auto_publish=1 WHERE id=?", (aid,))
+    db.commit()
+    s, _ = student_client(db, cid)
+    sid = jpost(s, f"/api/write/{aid}", {"text": ESSAY}).get_json()["id"]
+    run_worker()
+    page = t.get("/teacher/classes/").get_data(as_text=True)
+    assert "三年级二班" in page and "class-create" in page and "交齐率" in page and "33%" in page
+    assert 'class="level-bar"' in page
+    # The essay feature page: pending reviews, assignments, and 布置作文 for any class.
+    essay = t.get("/teacher/essay/").get_data(as_text=True)
+    assert "快乐的一天" in essay and "布置作文" in essay and "进行中的作业" in essay
+    new = t.get(f"/teacher/essay/new?class={cid}").get_data(as_text=True)
+    assert f'data-url="/workspace/chinese/api/classes/{cid}/assignments" selected' in new
+    # The class page sends the teacher to the feature page to assign.
+    assert f"/teacher/essay/new?class={cid}" in t.get(f"/teacher/classes/{cid}").get_data(as_text=True)
+
+
+def test_essay_page_lists_reviews_waiting(models, klass, db):
+    t, cid, aid = klass
+    db.execute("UPDATE ess_assignments SET auto_publish=0 WHERE id=?", (aid,))
+    db.commit()
+    s, _ = student_client(db, cid, "李华")
+    sid = jpost(s, f"/api/write/{aid}", {"text": ESSAY}).get_json()["id"]
+    run_worker()
+    page = t.get("/teacher/essay/").get_data(as_text=True)
+    assert f"/teacher/essay/submissions/{sid}" in page and "李华" in page
+    assert "1</span> 篇作文等审核" in t.get("/teacher/").get_data(as_text=True)
+
+
+def test_students_never_read_ai(models, klass, db):
+    t, cid, aid = klass
+    s, _ = student_client(db, cid, "张三")
+    words = ("AI", "模型", "智能", "识别")
+    pages = [s.get("/student/").get_data(as_text=True), s.get(f"/student/essay/{aid}").get_data(as_text=True)]
+    r = upload(s, f"/api/write/{aid}", [photo_bytes()])
+    sid = r.get_json()["id"]
+    pages.append(s.get(f"/student/essay/{aid}").get_data(as_text=True))
+    pages.append(s.get(f"/api/submissions/{sid}/state").get_data(as_text=True))
+    run_worker()
+    pages += [s.get("/student/").get_data(as_text=True), s.get(f"/student/essay/results/{sid}").get_data(as_text=True)]
+    for html in pages:
+        for w in words:
+            assert w not in html, (w, html[:300])
+    assert "腹有诗书气自华" in pages[0]
+
+
+def grant_lesson(db, lid=1, days=365):
+    db.execute("DELETE FROM ws_entitlements WHERE license_id=? AND feature='lesson'", (lid,))
+    if days is not None:
+        now = int(time.time())
+        db.execute(
+            "INSERT INTO ws_entitlements(license_id,feature,days,starts_at,expires_at) VALUES(?,'lesson',?,?,?)",
+            (lid, days, now - 86400, now + days * 86400),
+        )
+    db.commit()
+
+
+LESSON_FORM = {"grade": 1, "term": "下册", "kind": "阅读课", "topic": "荷叶圆圆", "periods": 1, "notes": "", "source_text": ""}
+
+
+def test_lesson_plan_generated_edited_and_downloaded(models, db):
+    db.execute("DELETE FROM limits")  # activations are rate limited per address
+    db.commit()
+    db.execute("DELETE FROM ws_lessons")
+    grant_lesson(db, 1, None)
+    t = teacher_client()
+    r = jpost(t, "/api/lessons", LESSON_FORM)
+    assert r.status_code == 400 and "还没有开通「教案生成」" in r.get_json()["error"]
+    grant_lesson(db, 1)
+    assert "写一份新教案" in t.get("/teacher/lesson/").get_data(as_text=True)
+    r = jpost(t, "/api/lessons", {**LESSON_FORM, "kind": "不存在"})
+    assert r.status_code == 400 and "课型" in r.get_json()["error"]
+    r = jpost(t, "/api/lessons", LESSON_FORM)
+    assert r.status_code == 200, r.get_json()
+    lid = r.get_json()["id"]
+    assert t.get(f"/api/lessons/{lid}").get_json()["status"] == "queued"
+    assert "data-poll" in t.get(f"/teacher/lesson/{lid}").get_data(as_text=True)
+    models.lesson = {**LESSON_PLAN, "periods": [{"name": "第一课时", "steps": [dict(s) for s in LESSON_PLAN["periods"][0]["steps"]]}]}
+    run_worker()
+    row = db.execute("SELECT * FROM ws_lessons WHERE id=?", (lid,)).fetchone()
+    assert row["status"] == "done"
+    plan = json.loads(row["plan"])
+    assert sum(s["minutes"] for s in plan["periods"][0]["steps"]) == 40  # 35 → the longest step got 5 more
+    page = t.get(f"/teacher/lesson/{lid}").get_data(as_text=True)
+    assert "荷叶圆圆" in page and "设计意图" in page and "下载 Word" in page
+    assert any(c[0] == "big" and "荷叶圆圆" in c[1]["messages"][1]["content"] for c in models.calls)
+    usage = db.execute("SELECT step,license_id FROM ess_usage WHERE step='lesson' ORDER BY id DESC").fetchone()
+    assert tuple(usage) == ("lesson", 1)
+    doc = t.get(f"/teacher/lesson/{lid}.doc")
+    assert doc.status_code == 200 and doc.mimetype == "application/msword"
+    assert "教学过程" in doc.get_data(as_text=True) and "filename*=UTF-8''" in doc.headers["Content-Disposition"]
+    # The teacher edits it; their version is shown and downloaded.
+    edited = {**plan, "title": "荷叶圆圆（改）"}
+    assert jpost(t, f"/api/lessons/{lid}/save", {"plan": edited}).status_code == 200
+    assert "荷叶圆圆（改）" in t.get(f"/teacher/lesson/{lid}").get_data(as_text=True)
+    assert jpost(t, f"/api/lessons/{lid}/save", {"plan": {"title": ""}}).status_code == 400
+    # Other teachers cannot see it.
+    other = teacher_client(TEACHER2_KEY)
+    assert other.get(f"/teacher/lesson/{lid}").status_code == 404
+    assert other.get(f"/teacher/lesson/{lid}.doc").status_code == 404
+    # Regenerating makes a new plan from the same inputs; the monthly limit counts both.
+    db.execute("INSERT OR REPLACE INTO ess_meta VALUES('lesson_monthly','2')")
+    db.commit()
+    r = jpost(t, f"/api/lessons/{lid}/regenerate")
+    assert r.status_code == 200 and r.get_json()["id"] != lid
+    r = jpost(t, "/api/lessons", LESSON_FORM)
+    assert r.status_code == 400 and "本月已经生成 2 份" in r.get_json()["error"]
+    db.execute("DELETE FROM ess_meta WHERE key='lesson_monthly'")
+    db.commit()
+    # Delete; expired features keep old plans readable but generate no more.
+    assert jpost(t, f"/api/lessons/{lid}/delete").status_code == 200
+    assert t.get(f"/teacher/lesson/{lid}").status_code == 404
+    db.execute("UPDATE ws_entitlements SET expires_at=? WHERE license_id=1 AND feature='lesson'", (int(time.time()) - 10,))
+    db.commit()
+    assert "到期" in jpost(t, "/api/lessons", LESSON_FORM).get_json()["error"]
+    assert "已于" in t.get("/teacher/lesson/").get_data(as_text=True)
+    grant_lesson(db, 1, None)
+
+
+def test_lesson_plan_retries_bad_answers_and_holds(models, db):
+    db.execute("DELETE FROM limits")  # activations are rate limited per address
+    db.commit()
+    db.execute("DELETE FROM ws_lessons")
+    grant_lesson(db, 1)
+    t = teacher_client()
+    lid = jpost(t, "/api/lessons", {**LESSON_FORM, "periods": 2}).get_json()["id"]
+    run_worker()  # one period where two were asked for: rejected, retried later
+    row = db.execute("SELECT * FROM ws_lessons WHERE id=?", (lid,)).fetchone()
+    assert row["status"] == "queued" and row["attempts"] == 1 and "2 个课时" in row["error"]
+    db.execute("DELETE FROM ess_steps WHERE step='lesson'")
+    db.execute("UPDATE ws_lessons SET run_after=0")
+    db.commit()
+    run_worker()
+    assert t.get(f"/api/lessons/{lid}").get_json()["hold"].startswith("教案生成服务暂未开通")
+    grant_lesson(db, 1, None)
+
+
+def test_lesson_trial_once_per_browser(models, db):
+    c = SiteClient("teacher")
+    assert "lesson-form" in c.get("/teacher/trial/lesson").get_data(as_text=True)
+    r = jpost(c, "/api/trial/lesson", LESSON_FORM)
+    assert r.status_code == 200, r.get_json()
+    lid = r.get_json()["id"]
+    run_worker()
+    page = c.get("/teacher/trial/lesson").get_data(as_text=True)
+    assert "荷叶圆圆" in page and "输入授权码" in page
+    assert c.get(f"/teacher/lesson/{lid}.doc").status_code == 200
+    assert "已经试用过" in jpost(c, "/api/trial/lesson", LESSON_FORM).get_json()["error"]
+    assert SiteClient("teacher").get(f"/teacher/lesson/{lid}.doc").status_code == 404
+    assert db.execute("SELECT license_id FROM ws_lessons WHERE id=?", (lid,)).fetchone()[0] == 0

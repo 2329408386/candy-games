@@ -17,12 +17,17 @@
     </section>
     <section class="wb-card trial-card">
       <h2>免费试用</h2>
-      <p class="muted">没有授权码也可以先试一次：拍一篇学生作文，马上看到 AI 用红笔批改的效果。</p>
-      {% if trial_used %}
-        <p class="hint">这台设备已经试用过了。<a href="{{url_for('trial_page')}}">再看看试用结果</a></p>
-      {% else %}
-        <a class="button" href="{{url_for('trial_page')}}">试用作文批改（1 次）</a>
-      {% endif %}
+      <p class="muted">没有授权码也可以先试：每个功能都能免费用 1 次。</p>
+      <ul class="trial-list">
+        {% for key, f in workbench_feature_list.items() %}
+          <li>
+            <span class="entry-icon small"><svg><use href="#{{f.icon}}"/></svg></span>
+            <div><strong>{{f.name}}</strong><small>{{f.desc}}</small></div>
+            {% if trials[key] %}<a class="button secondary small" href="{{url_for(f.trial)}}">看试用结果</a>
+            {% else %}<a class="button small" href="{{url_for(f.trial)}}">试用</a>{% endif %}
+          </li>
+        {% endfor %}
+      </ul>
     </section>
   </div>
   <p class="hint center"><a href="{{url_for('student_home')}}">我是学生，去学生端 →</a></p>

@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block title %}{{assignment.title}} · 语文老师工作台{% endblock %}
-{% block header_actions %}<a class="header-link" href="{{url_for('class_page', cid=assignment.class_id)}}">{{assignment.class_name}}</a>{% endblock %}
+{% block header_actions %}<a class="header-link" href="{{url_for('essay_home')}}">作文批改</a>{% endblock %}
 {% block content %}
   {% set pending = latest.values()|selectattr('status', 'equalto', 'review')|list %}
   {% set busy = latest.values()|selectattr('status', 'in', BUSY)|list %}

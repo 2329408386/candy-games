@@ -4,7 +4,7 @@ each teacher license's quota (student seats and essays a month). Both need the s
 import json, re, time
 from flask import abort, flash, jsonify, redirect, render_template, request, url_for
 from core.app import admin_only, audit, db, integer_field, license_row
-from . import llm, models_sync, month_start
+from . import lesson, llm, models_sync, month_start
 
 AUTO_MODES = {"latest": "自动跟随最新版本", "replace": "只在下线时自动替换", "fixed": "固定，不自动改"}
 from .worker import spent_today, today_start
@@ -149,11 +149,12 @@ def register(app):
                     budget = _float("daily_budget", 0, 100000, "每日花费上限", 0)
                     rate = _float("usd_cny", 1, 20, "美元汇率", models_sync.USD_CNY)
                     trials = int(_float("trial_daily", 0, 10000, "每天试用次数", 50))
-                    for key, value in (("daily_budget", budget), ("usd_cny", rate), ("trial_daily", trials)):
+                    lessons = int(_float("lesson_monthly", 0, 10000, "每月教案份数", lesson.LESSON_MONTHLY))
+                    for key, value in (("daily_budget", budget), ("usd_cny", rate), ("trial_daily", trials), ("lesson_monthly", lessons)):
                         d.execute(
                             "INSERT INTO ess_meta VALUES(?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value", (key, str(value))
                         )
-                    details = {"daily_budget": budget, "usd_cny": rate, "trial_daily": trials}
+                    details = {"daily_budget": budget, "usd_cny": rate, "trial_daily": trials, "lesson_monthly": lessons}
                 elif action == "models_check":
                     # The worker runs the check within half a minute (model calls do not belong in a web request).
                     d.execute("INSERT INTO ess_meta VALUES('models_checked','0') ON CONFLICT(key) DO UPDATE SET value='0'")
@@ -208,7 +209,9 @@ def register(app):
                 "SELECT j.*,s.status FROM ess_jobs j JOIN ess_submissions s ON s.id=j.submission_id"
                 " WHERE j.error!='' ORDER BY j.id DESC LIMIT 10"
             ).fetchall(),
-            "queued": d.execute("SELECT count(*) FROM ess_jobs WHERE status IN ('queued','running')").fetchone()[0],
+            "queued": d.execute("SELECT count(*) FROM ess_jobs WHERE status IN ('queued','running')").fetchone()[0]
+            + d.execute("SELECT count(*) FROM ws_lessons WHERE status IN ('queued','running') AND deleted_at IS NULL").fetchone()[0],
+            "lessons_month": d.execute("SELECT count(*) FROM ws_lessons WHERE status='done' AND created_at>=?", (month,)).fetchone()[0],
         }
         return render_template(
             "models.html",
@@ -217,6 +220,7 @@ def register(app):
             budget=float(budget[0]) if budget else 0,
             usd_cny=float(rate[0]) if rate else models_sync.USD_CNY,
             trial_daily=trial_daily(),
+            lesson_monthly=lesson.monthly_limit(d),
             models_checked=int(checked[0]) if checked else 0,
             AUTO_MODES=AUTO_MODES,
             worker_seen=int(seen[0]) if seen else None,

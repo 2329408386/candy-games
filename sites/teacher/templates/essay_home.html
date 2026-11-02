@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% block title %}作文批改 · 语文老师工作台{% endblock %}
+{% block header_actions %}<a class="header-link" href="{{url_for('teacher_home')}}">我的功能</a>{% endblock %}
+{% set open = feature.state in ('active', 'soon') %}
+{% block content %}
+  <div class="wb-heading">
+    <div>
+      <h1>作文批改</h1>
+      <p class="muted feature-line state-{{feature.state}}">
+        {% if open %}剩余 {{feature.days}} 天 · {{feature.expires|date}} 到期 · {% elif feature.state == 'expired' %}已于 {{feature.expires|date}} 到期，请联系管理员续期 · {% elif feature.state == 'none' %}还没有开通 · {% endif %}学生 {{students_used}} / {{quota.students}} 人 · 本月已交 {{monthly_used}} / {{quota.monthly}} 篇
+      </p>
+    </div>
+    <div class="heading-actions">
+      {% if open and classes %}<a class="button" href="{{url_for('essay_new')}}">＋ 布置作文</a>
+      {% elif open %}<a class="button" href="{{url_for('classes_page')}}">先建一个班</a>
+      {% elif feature.state == 'none' %}<a class="button secondary" href="{{url_for('trial_page')}}">免费试用</a>{% endif %}
+    </div>
+  </div>
+  {% if feature.state == 'expired' %}<p class="notice error">作文批改已经到期：不能布置新作文，学生也不能再交。以前的作文和批改都还能看。</p>{% endif %}
+  {% if not classes %}<p class="notice">还没有班级。点右上角「班级」新建一个班，再添加学生。</p>{% endif %}
+
+  <section class="wb-section">
+    <div class="wb-section-head"><h2>等你审核{% if pending %} <span class="badge">{{pending|length}}</span>{% endif %}</h2></div>
+    {% if pending %}
+      <table class="wb-table">
+        <thead><tr><th>学生</th><th>班级</th><th>作文</th><th>交来时间</th><th></th></tr></thead>
+        <tbody>
+          {% for p in pending %}
+            <tr>
+              <td>{{p.student_name}}</td>
+              <td>{{p.class_name}}</td>
+              <td>{{p.title or p.assignment_title}}{% if p.attempt > 1 %} <span class="tag">第 {{p.attempt}} 次</span>{% endif %}</td>
+              <td>{{p.created_at|moment}}</td>
+              <td><a class="button small" href="{{url_for('review_page', sid=p.id)}}">审核</a></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p class="hint">没有等审核的作文。勾选了「批改完直接发给学生」的作业不需要审核。</p>
+    {% endif %}
+  </section>
+
+  {% for group, items in (('进行中的作业', ongoing), ('已结束的作业', ended)) %}
+    {% if items or loop.first %}
+    <section class="wb-section">
+      <div class="wb-section-head">
+        <h2>{{group}}</h2>
+        {% if loop.first and classes|length > 1 %}
+          <label class="inline-filter">班级 <select id="class-filter"><option value="">全部</option>{% for c in classes %}<option value="{{c.id}}">{{c.name}}</option>{% endfor %}</select></label>
+        {% endif %}
+      </div>
+      {% if items %}
+        <table class="wb-table assignments-table">
+          <thead><tr><th>题目</th><th>班级</th><th>截止</th><th>已交</th><th>等审核</th><th></th></tr></thead>
+          <tbody>
+            {% for a in items %}
+              <tr data-class="{{a.class_id}}">
+                <td><a href="{{url_for('assignment_page', aid=a.id)}}">{{a.title}}</a> <span class="tag">{{a.genre}}</span>{% if a.closed_at %} <span class="tag off">已停止提交</span>{% endif %}</td>
+                <td>{{a.class_name}}</td>
+                <td>{{a.due_at|date or '—'}}</td>
+                <td>{{a.submitted}} / {{a.students}}</td>
+                <td>{% if a.pending %}<span class="badge">{{a.pending}}</span>{% else %}0{% endif %}</td>
+                <td><a class="button small secondary" href="{{url_for('assignment_page', aid=a.id)}}">查看</a></td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p class="hint">还没有布置作文。{% if open and classes %}<a href="{{url_for('essay_new')}}">现在布置一篇 →</a>{% endif %}</p>
+      {% endif %}
+    </section>
+    {% endif %}
+  {% endfor %}
+{% endblock %}
+{% block scripts %}
+  <script>
+    const filter = document.getElementById('class-filter');
+    if (filter) filter.addEventListener('change', () => {
+      document.querySelectorAll('.assignments-table tr[data-class]').forEach((tr) => { tr.hidden = filter.value && tr.dataset.class !== filter.value; });
+    });
+  </script>
+{% endblock %}

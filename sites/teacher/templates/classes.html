@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}我的班级 · 语文老师工作台{% endblock %}
+{% block header_actions %}<a class="header-link" href="{{url_for('teacher_home')}}">我的功能</a>{% endblock %}
+{% block content %}
+  <div class="wb-heading">
+    <div>
+      <h1>我的班级</h1>
+      <p class="muted">学生 {{students_used}} / {{quota.students}} 人 · 各班的作文情况一目了然。布置作文请到「我的功能 → 作文批改」。</p>
+    </div>
+  </div>
+  <div class="wb-grid">
+    {% for s in stats %}
+      <a class="wb-card class-card stat-card" href="{{url_for('class_page', cid=s.c.id)}}">
+        <div class="class-card-head">
+          <h3>{{s.c.name}}</h3>
+          {% if s.pending %}<span class="badge" title="等审核">{{s.pending}}</span>{% endif %}
+        </div>
+        <p class="muted">{{s.c.grade}}年级 · {{s.c.students}} 名学生 · 班级码 <code>{{s.c.code}}</code></p>
+        <dl class="class-stats">
+          <div><dt>作文作业</dt><dd>{{s.assignments}}</dd></div>
+          <div><dt>交齐率</dt><dd>{{'%d%%'|format(s.rate) if s.rate is not none else '—'}}</dd></div>
+          <div><dt>已批改</dt><dd>{{s.graded}}</dd></div>
+          <div><dt>平均分</dt><dd>{{s.avg if s.avg is not none else '—'}}{% if s.avg is not none %}<small>/{{TOTAL}}</small>{% endif %}</dd></div>
+        </dl>
+        {% if s.graded %}
+          <div class="level-bar" role="img" aria-label="{% for name, n in s.levels.items() %}{{name}} {{n}} 篇 {% endfor %}">
+            {% for name, n in s.levels.items() %}{% if n %}<span class="lv-{{loop.index}}" style="flex:{{n}}">{{name}} {{n}}</span>{% endif %}{% endfor %}
+          </div>
+        {% else %}
+          <p class="hint">还没有批改过的作文。</p>
+        {% endif %}
+      </a>
+    {% endfor %}
+    {% if stats|length < max_classes %}
+      <section class="wb-card">
+        <h3>新建班级</h3>
+        <form id="class-create" class="wb-form">
+          <label>班级名称<input name="name" maxlength="20" required placeholder="例如 三年级二班"></label>
+          <label>年级<select name="grade" required>{% for n in range(1, 7) %}<option value="{{n}}"{{' selected' if n == 3}}>{{n}}年级</option>{% endfor %}</select></label>
+          <p class="wb-error" role="alert"></p>
+          <button>建班</button>
+        </form>
+      </section>
+    {% endif %}
+  </div>
+{% endblock %}
+{% block scripts %}<script>if (document.getElementById('class-create')) WB.form('#class-create', {{url_for('class_create')|tojson}}, (r) => (location.href = r.url));</script>{% endblock %}

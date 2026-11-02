@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}{{plan.title if plan else lesson.topic}} · 教案 · 语文老师工作台{% endblock %}
+{% block header_actions %}<a class="header-link" href="{{url_for('lesson_home')}}">教案生成</a>{% endblock %}
+{% block content %}
+  {% if plan %}
+    <div class="lesson-toolbar no-print">
+      <button type="button" id="lesson-edit">修改</button>
+      <a class="button secondary" href="{{url_for('lesson_doc', lesson_id=lesson.id)}}">下载 Word</a>
+      <button type="button" class="secondary" id="lesson-copy">复制全文</button>
+      <button type="button" class="secondary" onclick="window.print()">打印</button>
+      <button type="button" class="secondary" data-post="{{url_for('lesson_regenerate', lesson_id=lesson.id)}}" data-confirm="按同样的要求再写一份新的（算 1 份本月用量），这一份会保留。继续？">重新生成</button>
+      <button type="button" class="link-button danger-text" data-post="{{url_for('lesson_delete', lesson_id=lesson.id)}}" data-confirm="删除这份教案？删除后找不回来。">删除</button>
+    </div>
+    {% if lesson.edited %}<p class="hint no-print">这是你修改过的版本。</p>{% endif %}
+    {% include 'lesson_plan.html' %}
+    <div id="lesson-editor" hidden></div>
+  {% else %}
+    <div class="wb-heading"><div><h1>{{lesson.topic}}</h1><p class="muted">{{meta}}</p></div></div>
+    {% include 'lesson_status.html' %}
+  {% endif %}
+{% endblock %}
+{% block page_data %}<script>window.LESSON={{page_data|tojson}};</script>{% endblock %}
+{% block scripts %}<script>WB.lesson && WB.lesson(window.LESSON);</script>{% endblock %}

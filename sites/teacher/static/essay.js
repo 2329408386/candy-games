@@ -205,7 +205,7 @@
       if (error) error.textContent = '';
       if (button) button.disabled = true;
       try {
-        done(await WB.post(url || form.dataset.url, formData(form)), form);
+        done(await WB.post((typeof url === 'function' ? url() : url) || form.dataset.url, formData(form)), form);
       } catch (err) {
         if (error) error.textContent = err.message;
         else alert(err.message);
@@ -242,7 +242,7 @@
         const r = await fetch(url, { cache: 'no-store' });
         const s = await r.json();
         onState && onState(s);
-        if (s.status !== 'queued' && s.status !== 'grading') {
+        if (s.status !== 'queued' && s.status !== 'grading' && s.status !== 'running') {
           done(s);
           return;
         }
@@ -550,4 +550,76 @@
     drawAll();
     drawPreview();
   }
+
+  /* 教案: copy the whole text; 修改 turns the plan into a form of text boxes (saved as the teacher's version). */
+  WB.lesson = function (page) {
+    if (!page || !page.plan) return;
+    const copy = document.getElementById('lesson-copy');
+    if (copy)
+      copy.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(page.text);
+        } catch (e) {
+          const area = document.createElement('textarea');
+          area.value = page.text;
+          document.body.appendChild(area);
+          area.select();
+          document.execCommand('copy');
+          area.remove();
+        }
+        copy.textContent = '已复制';
+        setTimeout(() => (copy.textContent = '复制全文'), 2000);
+      });
+    const editButton = document.getElementById('lesson-edit');
+    const box = document.getElementById('lesson-editor');
+    if (!editButton || !box) return;
+    const p = page.plan;
+    const esc = WB.esc;
+    const field = (label, path, value, rows) =>
+      '<label>' + label + (rows ? '<textarea data-path="' + path + '" rows="' + rows + '">' + esc(value || '') + '</textarea>' : '<input data-path="' + path + '" value="' + esc(value || '') + '">') + '</label>';
+    editButton.addEventListener('click', () => {
+      let html = '<form class="wb-form lesson-edit"><h2>修改教案</h2>' +
+        field('课题', 'title', p.title) + field('教材分析', 'analysis', p.analysis, 4) + field('学情分析', 'learners', p.learners, 3) +
+        field('教学目标（一行一条）', 'goals', p.goals.join('\n'), 4) + field('教学重点', 'key', p.key) + field('教学难点', 'difficult', p.difficult) + field('教学准备', 'prep', p.prep);
+      p.periods.forEach((period, i) => {
+        html += '<fieldset><legend>' + esc(period.name) + '</legend>';
+        period.steps.forEach((s, j) => {
+          const at = 'periods.' + i + '.steps.' + j + '.';
+          html += '<div class="edit-step"><div class="wb-row two">' + field('环节', at + 'name', s.name) +
+            '<label>分钟<input type="number" min="1" max="40" data-path="' + at + 'minutes" value="' + s.minutes + '"></label></div>' +
+            field('教师活动', at + 'teacher', s.teacher, 5) + field('学生活动', at + 'student', s.student, 3) + field('设计意图', at + 'intent', s.intent, 2) + '</div>';
+        });
+        html += '</fieldset>';
+      });
+      html += field('板书设计', 'board', p.board, 4) + field('基础作业', 'homework.basic', p.homework.basic, 2) + field('拓展作业', 'homework.extend', p.homework.extend, 2) +
+        '<p class="wb-error" role="alert"></p><div class="lesson-toolbar"><button>保存修改</button><button type="button" class="secondary" data-cancel>取消</button></div></form>';
+      box.innerHTML = html;
+      box.hidden = false;
+      document.getElementById('lesson-doc').hidden = true;
+      document.querySelector('.lesson-toolbar').hidden = true;
+      const form = box.querySelector('form');
+      form.querySelector('[data-cancel]').addEventListener('click', () => location.reload());
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const plan = JSON.parse(JSON.stringify(p));
+        form.querySelectorAll('[data-path]').forEach((el) => {
+          const keys = el.dataset.path.split('.');
+          let at = plan;
+          keys.slice(0, -1).forEach((k) => (at = at[k]));
+          const last = keys[keys.length - 1];
+          at[last] = last === 'minutes' ? Number(el.value) || 1 : el.value;
+        });
+        plan.goals = String(plan.goals).split('\n').map((g) => g.trim()).filter(Boolean);
+        const error = form.querySelector('.wb-error');
+        error.textContent = '';
+        try {
+          await WB.post(page.urls.save, { plan });
+          location.reload();
+        } catch (err) {
+          error.textContent = err.message;
+        }
+      });
+      box.scrollIntoView();
+    });
+  };
 })();

@@ -39,13 +39,17 @@
         <span class="header-actions">
           {% block header_actions %}{% endblock %}
           {% if side == 'teacher' and me_teacher %}
+            <a class="header-chip" href="{{url_for('classes_page')}}" title="我的班级：学生名单和各班统计"><svg><use href="#i-grid"/></svg><span>班级</span>{% if me_teacher.classes %}<small>{{me_teacher.classes}}</small>{% endif %}</a>
             <details class="me-menu">
               <summary aria-label="我的账号">
                 {% if me_teacher.avatar %}<img class="me-avatar" src="{{me_teacher.avatar}}" alt="" width="34" height="34">{% else %}<span class="me-avatar letter">{{me_teacher.initial}}</span>{% endif %}
                 <span class="me-name">{{me_teacher.name}}</span>
               </summary>
               <div class="me-pop">
+                <a href="{{url_for('teacher_home')}}">我的功能</a>
+                <a href="{{url_for('classes_page')}}">我的班级</a>
                 <a href="{{url_for('profile_page')}}">修改名字和头像</a>
+                <a href="{{url_for('profile_page')}}#devices">我的设备（{{me_teacher.devices}}/{{me_teacher.device_limit}}）</a>
                 <button type="button" data-post="{{url_for('logout')}}" data-confirm="退出后，这台设备需要重新输入授权码。确定退出？">退出登录</button>
               </div>
             </details>
@@ -68,7 +72,7 @@
       {% endblock %}
     </main>
     <footer class="site-footer">
-      语文老师工作台 <span>·</span> {{'用心管理，让学习更简单' if is_admin else '每一篇作文，都值得认真读'}}{% if not is_admin %}{% include 'cross_sites.html' %}{% endif %}
+      语文老师工作台 <span>·</span> {{'用心管理，让学习更简单' if is_admin else '腹有诗书气自华 · 让每个孩子爱上语文'}}{% if not is_admin %}{% include 'cross_sites.html' %}{% endif %}
     </footer>
     {% if not is_admin %}<script>window.WB_CSRF={{url_for('csrf_token')|tojson}};</script>{% block page_data %}{% endblock %}<script src="{{asset('essay.js')}}"></script>{% block scripts %}{% endblock %}{% endif %}
   </body>

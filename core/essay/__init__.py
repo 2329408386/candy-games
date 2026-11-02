@@ -1,5 +1,8 @@
-"""语文老师工作台 (/workspace/chinese/): the Chinese teacher's workbench, for primary school. Its first feature is
-作文批改 (essay grading); features and how long each may be used are in features.py.
+"""语文老师工作台 (/workspace/chinese/): the Chinese teacher's workbench, for primary school. Its features are
+作文批改 (essay grading, this module) and 教案生成 (lesson plans, lesson.py); features and how long each may be used are in
+features.py. The teacher's home lists the features (我的功能); each feature has its own page (/teacher/essay/,
+/teacher/lesson/). Classes are shared by the features and live behind the 班级 button in the header (/teacher/classes/,
+statistics per class).
 
 Areas. /teacher/… is the teacher side, /student/… the student side, / the entry page that leads to either, and
 /admin the back office (core/app.py, admin.py). Both sides stay signed in until they sign out (the session cookie
@@ -19,8 +22,15 @@ edits and publishes it → the student sees the review written in red pen on the
 student may submit an assignment up to MAX_ATTEMPTS times (a resubmission waits until the previous one is published
 or failed). Starting work needs the feature to be active (features.require); what is already queued is finished.
 
-Trial. Without a license, each browser may try 作文批改 once (trials, game 'essay'): the essay is filed under a
-hidden archived class of license 0 and published straight away. trial_daily() caps trials across the site per day.
+Devices. A teacher sees the devices their code is activated on (我的设备 on the profile page) and may remove other
+devices themselves, at most SELF_REMOVALS times in 30 days (audit 'device_self_remove'); the admin can always unbind.
+
+Students never read "AI" or "模型": their pages and the status API they poll speak of the teacher marking the work
+(STUDENT_STATUS); why a job waits (HOLDS) is shown to teachers only.
+
+Trial. Without a license, each browser may try each feature once (trials, game = feature key; trial_check). A trial
+essay is filed under a hidden archived class of license 0 and published straight away. trial_daily() caps trials of
+a feature across the site per day.
 
 Module map: llm.py (configurable OpenAI-compatible models), grading.py (prompts and validation), worker.py,
 features.py, admin.py (模型设置, quotas and feature expiry in the back office); pages are in sites/teacher/templates.
@@ -49,6 +59,9 @@ TRIAL_DAILY = 50
 TRIAL_PER_IP = 3
 BUSY = ("queued", "grading")
 STATUS = {"queued": "排队批改中", "grading": "AI 批改中", "review": "等老师审核", "published": "已发布", "failed": "批改失败"}
+STUDENT_STATUS = {"queued": "老师批改中", "grading": "老师批改中", "review": "老师正在看", "published": "老师批好了", "failed": "老师还没批完，可以重新交一次"}
+SELF_REMOVALS = 3
+SELF_REMOVAL_DAYS = 30
 HOLDS = {
     "not_configured": "批改服务暂未开通，作文已保存，开通后会自动批改",
     "budget": "今天的批改额度用完了，稍后会自动继续",
@@ -93,7 +106,119 @@ def trial_daily():
 
 
 def teacher():
-    return current("essay")
+    row = current("essay")
+    if row and "seen_touched" not in g:
+        g.seen_touched = True
+        touch_device(row["id"])
+    return row
+
+
+def touch_device(lid):
+    """Keeps 最近使用 of this device up to date (at most one write an hour)."""
+    from core.app import digest
+
+    d = db()
+    if d.in_transaction:
+        return
+    now = int(time.time())
+    d.execute(
+        "UPDATE devices SET last_seen=? WHERE site='teacher' AND license_id=? AND token_hash=? AND last_seen<?",
+        (now, lid, digest(session["device"]), now - 3600),
+    )
+    d.commit()
+
+
+def device_name(ua):
+    """A short, friendly name for a device from its User-Agent, e.g. 「iPhone · 微信」."""
+    ua = ua or ""
+    if "iPad" in ua or ("Macintosh" in ua and "Mobile" in ua):
+        kind = "iPad"
+    elif "iPhone" in ua:
+        kind = "iPhone"
+    elif "HarmonyOS" in ua or "OpenHarmony" in ua:
+        kind = "鸿蒙设备"
+    elif "Android" in ua:
+        kind = "安卓平板" if "Mobile" not in ua else "安卓手机"
+    elif "Windows" in ua:
+        kind = "Windows 电脑"
+    elif "Macintosh" in ua or "Mac OS X" in ua:
+        kind = "Mac 电脑"
+    elif "CrOS" in ua:
+        kind = "Chromebook"
+    elif "Linux" in ua:
+        kind = "Linux 电脑"
+    else:
+        kind = "未知设备"
+    browsers = (
+        ("MicroMessenger", "微信"), ("wxwork", "企业微信"), ("DingTalk", "钉钉"), ("QQ/", "QQ"), ("MQQBrowser", "QQ 浏览器"),
+        ("UCBrowser", "UC 浏览器"), ("Quark", "夸克"), ("HuaweiBrowser", "华为浏览器"), ("HeyTapBrowser", "OPPO 浏览器"),
+        ("MiuiBrowser", "小米浏览器"), ("VivoBrowser", "vivo 浏览器"), ("baiduboxapp", "百度"), ("Edg", "Edge"),
+        ("SE 2.X", "搜狗浏览器"), ("360", "360 浏览器"), ("Firefox", "Firefox"), ("Chrome", "Chrome"), ("CriOS", "Chrome"),
+        ("Safari", "Safari"),
+    )
+    browser = next((name for key, name in browsers if key in ua), "")
+    return f"{kind} · {browser}" if browser else kind
+
+
+def my_devices(lid):
+    """This license's devices, oldest first: [{n, name, created_at, last_seen, me}]; n is what the page sends back."""
+    from core.app import digest
+
+    mine = digest(session.get("device") or "")
+    rows = db().execute(
+        "SELECT token_hash,label,created_at,last_seen FROM devices WHERE site='teacher' AND license_id=? ORDER BY created_at,token_hash",
+        (lid,),
+    ).fetchall()
+    return [
+        {"n": i, "name": device_name(r["label"]), "created_at": r["created_at"], "last_seen": r["last_seen"],
+         "me": r["token_hash"] == mine, "token_hash": r["token_hash"]}
+        for i, r in enumerate(rows, 1)
+    ]
+
+
+def self_removals(lid):
+    since = int(time.time()) - SELF_REMOVAL_DAYS * 86400
+    return db().execute(
+        "SELECT count(*) FROM audit WHERE site='teacher' AND license_id=? AND action='device_self_remove' AND created_at>=?",
+        (lid, since),
+    ).fetchone()[0]
+
+
+# ---- trials: each browser may try each feature once ----
+def trial_used(game):
+    return bool(db().execute("SELECT 1 FROM trials WHERE site='teacher' AND device_hash=? AND game=?", (device_hash(), game)).fetchone())
+
+
+def trial_check(game, name):
+    """None when this browser may start a trial of the feature now, else the error response."""
+    if trial_used(game):
+        return error(f"这台设备已经试用过{name}了。输入授权码就能继续使用。", 403)
+    today = db().execute("SELECT count(*) FROM trials WHERE site='teacher' AND game=? AND started_at>=?", (game, day_start())).fetchone()[0]
+    if today >= trial_daily():
+        return error("今天的免费试用名额已经用完了，请明天再来", 429)
+    if limited("trial_" + game, TRIAL_PER_IP, 86400):
+        return error("今天这个网络已经试用过好几次了，请明天再来", 429)
+    return None
+
+
+def record_trial(game):
+    db().execute("INSERT INTO trials(site,device_hash,game,started_at) VALUES('teacher',?,?,?)", (device_hash(), game, int(time.time())))
+
+
+def pending_reviews(lid):
+    return db().execute(
+        "SELECT count(*) FROM ess_submissions s JOIN ess_assignments a ON a.id=s.assignment_id JOIN ess_classes c ON c.id=a.class_id"
+        " WHERE c.license_id=? AND c.archived_at IS NULL AND s.status='review'",
+        (lid,),
+    ).fetchone()[0]
+
+
+def class_rows(lid):
+    return db().execute(
+        "SELECT c.*,(SELECT count(*) FROM ess_students s WHERE s.class_id=c.id AND s.removed_at IS NULL) students"
+        " FROM ess_classes c WHERE c.license_id=? AND c.archived_at IS NULL ORDER BY c.id",
+        (lid,),
+    ).fetchall()
 
 
 def student():
@@ -314,7 +439,9 @@ def create_submission(assignment, student_id, title, text, source, photos=None, 
     return sid
 
 
-def state_payload(row):
+def state_payload(row, for_student=False):
+    if for_student:
+        return {"status": row["status"], "label": STUDENT_STATUS.get(row["status"], ""), "hold": ""}
     return {"status": row["status"], "label": STATUS.get(row["status"], row["status"]), "hold": HOLDS.get(row["hold"], "")}
 
 
@@ -346,10 +473,11 @@ MARK_CLASS = {"错别字": "typo", "用词不当": "word", "病句": "sentence",
 
 
 def register_essay(app):
-    from . import admin
+    from . import admin, lesson
 
     app.jinja_env.globals.update(
         STATUS=STATUS,
+        STUDENT_STATUS=STUDENT_STATUS,
         HOLDS=HOLDS,
         BUSY=BUSY,
         DIMS=grading.DIMS,
@@ -361,6 +489,7 @@ def register_essay(app):
         essay_monthly_used=monthly_used,
         workbench_features=lambda lid: features.overview(db(), lid),
         workbench_feature_list=features.FEATURES,
+        device_name=device_name,
     )
     app.jinja_env.filters["mark_class"] = lambda t: MARK_CLASS.get(t, "tip")
     app.jinja_env.filters["date"] = lambda value: time.strftime("%Y-%m-%d", time.gmtime(value + BEIJING)) if value else ""
@@ -372,9 +501,16 @@ def register_essay(app):
         path = request.path
         side = "teacher" if path.startswith("/teacher") else "student" if path.startswith("/student") else None
         row = teacher() if side == "teacher" else None
+        if row:
+            me = teacher_profile(row["id"])
+            me["classes"] = db().execute(
+                "SELECT count(*) FROM ess_classes WHERE license_id=? AND archived_at IS NULL", (row["id"],)
+            ).fetchone()[0]
+            me["devices"] = db().execute("SELECT count(*) FROM devices WHERE site='teacher' AND license_id=?", (row["id"],)).fetchone()[0]
+            me["device_limit"] = row["device_limit"]
         return {
             "side": side,
-            "me_teacher": teacher_profile(row["id"]) if row else None,
+            "me_teacher": me if row else None,
             "me_student": student() if side == "student" else None,
         }
 
@@ -382,6 +518,7 @@ def register_essay(app):
     register_teacher_api(app)
     register_student_api(app)
     register_trial(app)
+    lesson.register(app)
     admin.register(app)
 
 
@@ -417,34 +554,79 @@ def register_pages(app):
         row = teacher()
         if not row:
             csrf()
-            used = db().execute(
-                "SELECT 1 FROM trials WHERE site='teacher' AND device_hash=? AND game='essay'", (device_hash(),)
-            ).fetchone()
-            return render_template("teacher_login.html", trial_used=bool(used))
+            return render_template(
+                "teacher_login.html", trials={key: trial_used(key) for key in features.FEATURES}
+            )
         d = db()
-        classes = d.execute(
-            "SELECT c.*,(SELECT count(*) FROM ess_students s WHERE s.class_id=c.id AND s.removed_at IS NULL) students,"
-            " (SELECT count(*) FROM ess_submissions s JOIN ess_assignments a ON a.id=s.assignment_id"
-            "  WHERE a.class_id=c.id AND s.status='review') pending"
-            " FROM ess_classes c WHERE c.license_id=? AND c.archived_at IS NULL ORDER BY c.id",
-            (row["id"],),
-        ).fetchall()
+        from . import lesson
+
         return render_template(
             "teacher_home.html",
-            classes=classes,
             feats=features.overview(d, row["id"]),
-            quota=quota(row["id"]),
-            students_used=students_used(row["id"]),
-            monthly_used=monthly_used(row["id"]),
-            pending=sum(c["pending"] for c in classes),
-            max_classes=MAX_CLASSES,
+            pending=pending_reviews(row["id"]),
+            lessons_month=lesson.monthly_count(d, row["id"]),
+            has_classes=bool(class_rows(row["id"])),
         )
 
     @app.get("/teacher/profile")
     def profile_page():
-        if not teacher():
+        row = teacher()
+        if not row:
             return redirect(url_for("teacher_home"))
-        return render_template("profile.html", name_max=TEACHER_NAME_MAX)
+        return render_template(
+            "profile.html",
+            name_max=TEACHER_NAME_MAX,
+            devices=my_devices(row["id"]),
+            device_limit=row["device_limit"],
+            removals_left=max(0, SELF_REMOVALS - self_removals(row["id"])),
+            removal_days=SELF_REMOVAL_DAYS,
+        )
+
+    @app.get("/teacher/classes/")
+    def classes_page():
+        row = teacher()
+        if not row:
+            return redirect(url_for("teacher_home"))
+        d = db()
+        stats = []
+        for c in class_rows(row["id"]):
+            a = d.execute(
+                "SELECT count(*) n, coalesce(sum((SELECT count(DISTINCT s.student_id) FROM ess_submissions s WHERE s.assignment_id=a.id)),0) handed"
+                " FROM ess_assignments a WHERE a.class_id=?",
+                (c["id"],),
+            ).fetchone()
+            pending = d.execute(
+                "SELECT count(*) FROM ess_submissions s JOIN ess_assignments a ON a.id=s.assignment_id WHERE a.class_id=? AND s.status='review'",
+                (c["id"],),
+            ).fetchone()[0]
+            totals = [
+                json.loads(r[0])["total"]
+                for r in d.execute(
+                    "SELECT coalesce(r.final,r.ai) FROM ess_reviews r JOIN ess_submissions s ON s.id=r.submission_id"
+                    " JOIN ess_assignments a ON a.id=s.assignment_id WHERE a.class_id=? AND s.status='published'",
+                    (c["id"],),
+                )
+            ]
+            levels = {name: 0 for name in reversed(grading.LEVELS)}
+            for t in totals:
+                levels[grading.level_of(t)] += 1
+            expected = a["n"] * c["students"]
+            stats.append({
+                "c": c,
+                "assignments": a["n"],
+                "rate": round(100 * a["handed"] / expected) if expected else None,
+                "graded": len(totals),
+                "avg": round(sum(totals) / len(totals), 1) if totals else None,
+                "levels": levels,
+                "pending": pending,
+            })
+        return render_template(
+            "classes.html",
+            stats=stats,
+            max_classes=MAX_CLASSES,
+            quota=quota(row["id"]),
+            students_used=students_used(row["id"]),
+        )
 
     @app.get("/teacher/classes/<int:cid>")
     def class_page(cid):
@@ -468,6 +650,58 @@ def register_pages(app):
             essay=features.describe(features.rows(d, row["id"]).get("essay")),
             quota=quota(row["id"]),
             students_used=students_used(row["id"]),
+        )
+
+    @app.get("/teacher/essay/")
+    def essay_home():
+        row = teacher()
+        if not row:
+            return redirect(url_for("teacher_home"))
+        d = db()
+        classes = class_rows(row["id"])
+        pending = d.execute(
+            "SELECT s.id,s.attempt,s.created_at,s.title,a.title assignment_title,c.name class_name,st.name student_name"
+            " FROM ess_submissions s JOIN ess_assignments a ON a.id=s.assignment_id JOIN ess_classes c ON c.id=a.class_id"
+            " JOIN ess_students st ON st.id=s.student_id"
+            " WHERE c.license_id=? AND c.archived_at IS NULL AND s.status='review' ORDER BY s.created_at LIMIT 200",
+            (row["id"],),
+        ).fetchall()
+        assignments = d.execute(
+            "SELECT a.*,c.name class_name,"
+            " (SELECT count(*) FROM ess_students st WHERE st.class_id=c.id AND st.removed_at IS NULL) students,"
+            " (SELECT count(DISTINCT s.student_id) FROM ess_submissions s WHERE s.assignment_id=a.id) submitted,"
+            " (SELECT count(*) FROM ess_submissions s WHERE s.assignment_id=a.id AND s.status='review') pending"
+            " FROM ess_assignments a JOIN ess_classes c ON c.id=a.class_id"
+            " WHERE c.license_id=? AND c.archived_at IS NULL ORDER BY a.id DESC",
+            (row["id"],),
+        ).fetchall()
+        now = int(time.time())
+        ongoing = [a for a in assignments if not a["closed_at"] and not (a["due_at"] and a["due_at"] < now)]
+        ended = [a for a in assignments if a not in ongoing]
+        return render_template(
+            "essay_home.html",
+            feature=features.describe(features.rows(d, row["id"]).get("essay")),
+            classes=classes,
+            pending=pending,
+            ongoing=ongoing,
+            ended=ended,
+            quota=quota(row["id"]),
+            students_used=students_used(row["id"]),
+            monthly_used=monthly_used(row["id"]),
+        )
+
+    @app.get("/teacher/essay/new")
+    def essay_new():
+        row = teacher()
+        if not row:
+            return redirect(url_for("teacher_home"))
+        classes = class_rows(row["id"])
+        chosen = request.args.get("class", type=int)
+        return render_template(
+            "essay_new.html",
+            classes=classes,
+            chosen=chosen if any(c["id"] == chosen for c in classes) else (classes[0]["id"] if classes else None),
+            feature=features.describe(features.rows(db(), row["id"]).get("essay")),
         )
 
     @app.get("/teacher/classes/<int:cid>/slips")
@@ -775,6 +1009,25 @@ def register_teacher_api(app):
         d.commit()
         return jsonify(ok=True, avatar=teacher_profile(row["id"])["avatar"])
 
+    @app.post("/api/me/devices/<int:n>/remove")
+    @teacher_api
+    def device_remove(row, n):
+        from core.app import audit
+
+        created = payload().get("created_at")
+        device = next((x for x in my_devices(row["id"]) if x["n"] == n and x["created_at"] == created), None)
+        if not device:
+            raise ValueError("设备列表变了，请刷新页面再试")
+        if device["me"]:
+            raise ValueError("不能移除正在用的这台设备；要换设备，请在这台设备上退出登录")
+        if self_removals(row["id"]) >= SELF_REMOVALS:
+            raise ValueError(f"{SELF_REMOVAL_DAYS} 天内最多自己移除 {SELF_REMOVALS} 台设备，请联系管理员解绑")
+        db().execute(
+            "DELETE FROM devices WHERE site='teacher' AND license_id=? AND token_hash=?", (row["id"], device["token_hash"])
+        )
+        audit("device_self_remove", row["id"], device["name"])
+        return jsonify(ok=True)
+
     @app.post("/api/classes")
     @teacher_api
     def class_create(row):
@@ -807,7 +1060,7 @@ def register_teacher_api(app):
     def class_archive(row, cid):
         own_class(cid, row["id"])
         db().execute("UPDATE ess_classes SET archived_at=? WHERE id=?", (int(time.time()), cid))
-        return jsonify(ok=True, url=url_for("teacher_home"))
+        return jsonify(ok=True, url=url_for("classes_page"))
 
     @app.post("/api/classes/<int:cid>/students")
     @teacher_api
@@ -986,15 +1239,17 @@ def register_teacher_api(app):
         sub = None
         if row:
             sub = db().execute(SUBMISSION_SQL + " WHERE s.id=? AND c.license_id=?", (sid, row["id"])).fetchone()
+        as_student = False
         if not sub and me:
             sub = db().execute(SUBMISSION_SQL + " WHERE s.id=? AND s.student_id=?", (sid, me["id"])).fetchone()
+            as_student = bool(sub)
         if not sub and session.get("trial_essay") == sid:
             sub = db().execute(SUBMISSION_SQL + " WHERE s.id=?", (sid,)).fetchone()
         if not row and not me and not sub:
             return error("请先登录", 403)
         if not sub:
             abort(404)
-        return jsonify(state_payload(sub))
+        return jsonify(state_payload(sub, for_student=as_student))
 
 
 # ---- student API ----
@@ -1074,11 +1329,11 @@ def register_trial(app):
     @app.get("/teacher/trial/essay")
     def trial_page():
         if teacher() and features.active(db(), teacher()["id"], "essay"):
-            return redirect(url_for("teacher_home"))
+            return redirect(url_for("essay_home"))
         csrf()
         sid = session.get("trial_essay")
         sub = sid and db().execute(SUBMISSION_SQL + " WHERE s.id=?", (sid,)).fetchone()
-        used = db().execute("SELECT 1 FROM trials WHERE site='teacher' AND device_hash=? AND game='essay'", (device_hash(),)).fetchone()
+        used = trial_used("essay")
         final = None
         if sub and sub["status"] == "published":
             review = review_of(sid)
@@ -1105,14 +1360,9 @@ def register_trial(app):
             photos = submission_photos()
         except ValueError as e:
             return error(str(e))
-        device = device_hash()
-        if d.execute("SELECT 1 FROM trials WHERE site='teacher' AND device_hash=? AND game='essay'", (device,)).fetchone():
-            return error("这台设备已经试用过作文批改了。输入授权码就能继续使用。", 403)
-        today = d.execute("SELECT count(*) FROM trials WHERE site='teacher' AND game='essay' AND started_at>=?", (day_start(),)).fetchone()[0]
-        if today >= trial_daily():
-            return error("今天的免费试用名额已经用完了，请明天再来", 429)
-        if limited("trial_essay", TRIAL_PER_IP, 86400):
-            return error("今天这个网络已经试用过好几次了，请明天再来", 429)
+        problem = trial_check("essay", "作文批改")
+        if problem:
+            return problem
         now = int(time.time())
         d.execute("BEGIN IMMEDIATE")
         try:
@@ -1132,7 +1382,7 @@ def register_trial(app):
             ).lastrowid
             assignment = d.execute("SELECT * FROM ess_assignments WHERE id=?", (aid,)).fetchone()
             sid = create_submission(assignment, st, title, data.get("text"), "trial", photos, check_quota=False)
-            d.execute("INSERT INTO trials(site,device_hash,game,started_at) VALUES('teacher',?,'essay',?)", (device, now))
+            record_trial("essay")
         except ValueError as e:
             d.rollback()
             return error(str(e))
