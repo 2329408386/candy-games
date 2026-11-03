@@ -27,8 +27,7 @@
           </div>
           <p class="muted">{{f.desc}}</p>
           {% if f.state != 'none' %}
-            {% if f.key == 'essay' %}<p class="feature-meta">{% if pending %}<span class="badge">{{pending}}</span> 篇作文等审核{% elif not has_classes %}先在右上角「班级」里建班、添加学生{% else %}布置作文、审核批改{% endif %}</p>
-            {% elif f.key == 'lesson' %}<p class="feature-meta">本月已生成 {{lessons_month}} 份</p>{% endif %}
+            {% if f.key == 'essay' %}<p class="feature-meta">{% if pending %}<span class="badge">{{pending}}</span> 篇作文等审核{% elif not has_classes %}先在右上角「班级」里建班、添加学生{% else %}布置作文、审核批改{% endif %}</p>{% endif %}
             <span class="feature-go">进入 →</span>
           {% else %}
             <span class="button secondary small">免费试用</span>

@@ -14,6 +14,9 @@
       {% if not essay_open %}<span class="tag off">作文批改已到期或未开通</span>{% endif %}
       {% if pending %}<a class="button" href="{{url_for('review_page', sid=pending[0].id)}}">开始审核（{{pending|length}} 篇）</a>
         <button type="button" class="secondary" data-post="{{url_for('publish_all', aid=assignment.id)}}" data-confirm="把 {{pending|length}} 篇等审核的作文按 AI 的批改直接发布给学生？">全部发布</button>{% endif %}
+      {% if latest.values()|selectattr('status', 'in', ('review', 'published'))|list %}
+        <button type="button" class="secondary" id="export-all" data-url="{{url_for('assignment_export', aid=assignment.id)}}">批量导出（PDF）</button>
+      {% endif %}
       <details class="wb-menu">
         <summary>作业设置</summary>
         {% set a = assignment %}{% include 'assignment_form.html' %}
@@ -72,7 +75,22 @@
   </dialog>
 {% endblock %}
 {% block scripts %}
+  <script src="{{asset('redpen.js')}}"></script>
   <script>
+    const exportAll = document.getElementById('export-all');
+    if (exportAll)
+      exportAll.addEventListener('click', async () => {
+        try {
+          const r = await fetch(exportAll.dataset.url, { credentials: 'same-origin' });
+          const answer = await r.json();
+          if (!r.ok) throw new Error(answer.error || '导出失败，请稍后再试');
+          if (!answer.essays.length) throw new Error('还没有批改好的作文');
+          await RedPen.exportMany(answer.essays, answer.name, exportAll);
+          alert('已导出 ' + answer.essays.length + ' 篇' + (answer.skipped ? '，' + answer.skipped + ' 人还没有交或还没有批改好' : '') + '。');
+        } catch (e) {
+          alert(e.message || '导出失败，请稍后再试');
+        }
+      });
     WB.form('#assignment-form', {{url_for('assignment_edit', aid=assignment.id)|tojson}}, () => location.reload());
     const dialog = document.getElementById('submit-for');
     document.querySelectorAll('[data-submit-for]').forEach((b) =>

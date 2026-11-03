@@ -30,7 +30,7 @@
         <div class="wb-row">
           <label>年级<select name="grade">{% for n in range(1, 7) %}<option value="{{n}}"{{' selected' if n == 3}}>{{n}}年级</option>{% endfor %}</select></label>
           <label>文体<select name="genre">{% for g in GENRES %}<option>{{g}}</option>{% endfor %}</select></label>
-          <label>题目（可不填）<input name="title" maxlength="40" placeholder="例如 我的植物朋友"></label>
+          <label>作文主题（可不填）<input name="title" maxlength="40" placeholder="例如 我的植物朋友"></label>
         </div>
         <div class="tabs" role="tablist">
           <button type="button" role="tab" class="tab active" data-tab="photo" aria-selected="true"><svg><use href="#i-camera"/></svg>拍照</button>

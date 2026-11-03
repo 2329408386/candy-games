@@ -37,7 +37,7 @@ FLAGS = {
 MAX_TEXT = 3000
 MAX_MARKS = 40
 # Marks kept per kind: the review is careful (every real problem is pointed out); long notes go in the page margins.
-MARK_LIMITS = {"error": 20, "好词好句": 6, "修改建议": 5, "分段": 3}
+MARK_LIMITS = {"error": 12, "好词好句": 3, "修改建议": 3, "分段": 2}
 NOTE_MAX = 40
 SUMMARY_MAX = 200
 
@@ -99,6 +99,12 @@ def anchors_text(band):
     return "\n\n".join(parts)
 
 
+def topic_of(essay):
+    """The assignment's 作文主题 (trial essays have none)."""
+    topic = essay["topic"] if "topic" in essay.keys() else ""
+    return "" if topic == "试用" else topic or ""
+
+
 def grade_messages(essay):
     """essay: dict with grade, genre, requirement, min_chars, title, text. The system prompt only depends on the
     band and genre, so it is the same for a whole assignment and providers can cache it."""
@@ -110,7 +116,8 @@ def grade_messages(essay):
     )
     user = (
         f"年级：{essay['grade']}年级\n文体：{essay['genre']}\n"
-        f"题目和习作要求：{essay['requirement'] or '（老师没有写具体要求）'}\n"
+        f"作文主题：{topic_of(essay) or '（老师没有定主题）'}\n"
+        f"习作要求：{essay['requirement'] or '（老师没有写具体要求）'}\n"
         + (f"字数要求：不少于 {essay['min_chars']} 字（这篇约 {char_count(essay['text'])} 字）\n" if essay["min_chars"] else "")
         + f"作文标题：{essay['title'] or '（无标题）'}\n\n作文正文：\n{essay['text']}"
     )
@@ -123,7 +130,7 @@ def check_messages(essay, marks):
     errors = [m for m in marks if m["type"] in ERROR_TYPES]
     items = [{"id": i, "type": m["type"], "quote": m["quote"], "fix": m["fix"], "note": m["note"]} for i, m in enumerate(errors, 1)]
     user = (
-        f"学段：{BANDS[band]['name']}\n文体：{essay['genre']}\n题目和习作要求：{essay['requirement'] or '无'}\n\n"
+        f"学段：{BANDS[band]['name']}\n文体：{essay['genre']}\n作文主题：{topic_of(essay) or '无'}\n习作要求：{essay['requirement'] or '无'}\n\n"
         f"作文正文：\n{essay['text']}\n\n需要复核的标注：\n{json.dumps(items, ensure_ascii=False, indent=1)}"
     )
     return [{"role": "system", "content": CHECK_PROMPT}, {"role": "user", "content": user}]

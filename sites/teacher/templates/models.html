@@ -13,7 +13,6 @@
     <div class="stat"><span>今天花费</span><strong>¥{{'%.2f'|format(usage.today)}}</strong></div>
     <div class="stat"><span>本月花费</span><strong>¥{{'%.2f'|format(usage.month)}}</strong></div>
     <div class="stat"><span>今天批改</span><strong>{{usage.essays_today}} 篇</strong></div>
-    <div class="stat"><span>本月教案</span><strong>{{usage.lessons_month}} 份</strong></div>
     <div class="stat {{'highlight' if worker_seen and now - worker_seen < 120 else ''}}"><span>批改进程</span><strong>{% if worker_seen and now - worker_seen < 120 %}运行中{% else %}未运行{% endif %}</strong>{% if usage.queued %}<small>排队 {{usage.queued}} 项</small>{% endif %}</div>
   </div>
 
@@ -108,7 +107,6 @@
       <div class="form-field"><label>元 / 天（北京时间）</label><input name="daily_budget" value="{{budget or ''}}" placeholder="0 或不填表示不限"><small>今天的花费达到上限后，新的作文先排队，第二天自动继续批改。花费按上面填写的价格折算。</small></div>
       <div class="form-field"><label>美元汇率</label><input name="usd_cny" value="{{usd_cny}}"><small>自动更新单价时，把服务商的美元价格换算成人民币。</small></div>
       <div class="form-field"><label>全站每天免费试用次数</label><input name="trial_daily" value="{{trial_daily}}"><small>没有授权码的老师每台设备每个功能可以试用 1 次；这里限制每个功能全站每天最多试用几次，0 表示暂停试用。</small></div>
-      <div class="form-field"><label>每位老师每月教案份数</label><input name="lesson_monthly" value="{{lesson_monthly}}"><small>教案生成每月最多生成几份（重新生成也算一份，失败的不算）。</small></div>
       <div class="form-actions"><button>保存</button></div>
     </form>
   </section>

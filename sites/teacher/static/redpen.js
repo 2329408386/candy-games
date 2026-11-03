@@ -4,6 +4,8 @@
  *   text, title, student, marks [{type, start, end, fix, note}], total, max, level, showScore, summary,
  *   pages [{src, w, h, lines: [{s, e, b: [x1, y1, x2, y2] (0–1000)}]}], onPhoto.
  * RedPen.exportPdf(container) — the same drawing on A4 pages, as a PDF to print.
+ * RedPen.exportMany(list, fileName, button, progress) — several essays (a list of such data) in one PDF, each
+ *   starting on a new page (批量导出 on the assignment page).
  *
  * With onPhoto the marks are drawn on the student's own photos: every recognised line knows which characters of
  * the text it holds and where it is, and a character's place within its line is estimated from its position
@@ -17,10 +19,11 @@
  * of an error (quote → fix) is diffed character by character and drawn as 改正号 (loop the wrong characters, the
  * right ones written above), 增补号 (∧ under the gap, the missing characters above), 删除号 (loop with a pig's
  * tail), 对调号 (the line under one part and over the other); a correction too tangled for marks is underlined and
- * written out in the margin. 好词 get circles under each character, 好句 a wavy line, 修改建议 brackets, 分段 the
- * 分段号. Short notes are written on the photo between the lines; notes that do not fit go in the margins on both
- * sides, joined to their place by a hand-drawn line. The score goes in the top right corner, the 总评 under the
- * essay — all in a handwriting font with every character a little crooked, like a real pen.
+ * written out in a note. 好词 get circles under each character, 好句 a wavy line, 修改建议 brackets, 分段 the
+ * 分段号. Short notes are written on the photo between the lines; a longer note gets a small circled number
+ * (①②③, in reading order) at the end of its mark: on the page a tap on the mark shows it, in the PDF the numbered
+ * notes are listed under each page. The score goes in the top right corner, the 总评 under the essay — all in a
+ * neat handwritten 楷书 (霞鹜文楷), each character only slightly uneven.
  */
 (function () {
   'use strict';
@@ -32,7 +35,6 @@
   const INLINE_CHARS = 8; // notes longer than this go in the margin
   const FIX_INLINE = 6; // corrections longer than this are written out in the margin
   const COLS = 20;
-  const MARGIN = 0.26; // each margin, as a share of the photo's width
   const NO_LINE_START = '，。、；：？！”’）》…—';
 
   function el(name, attrs, parent) {
@@ -146,11 +148,11 @@
       });
     }
     const r = rng(item.seed * 7 + 13);
-    const slope = r() * 0.05;
-    const advance = chars.map((c) => weight(c) * item.size * (0.97 + r() * 0.12));
+    const slope = r() * 0.015;
+    const advance = chars.map((c) => weight(c) * item.size * (0.99 + r() * 0.05));
     let x = item.x - (item.anchor === 'middle' ? advance.reduce((a, b) => a + b, 0) / 2 : 0);
     return chars.map((c, k) => {
-      const g = { c, x: x + r() * item.size * 0.05, y: item.y + r() * item.size * 0.09 + slope * (x - item.x), rot: r() * 7 };
+      const g = { c, x: x + r() * item.size * 0.02, y: item.y + r() * item.size * 0.04 + slope * (x - item.x), rot: r() * 2.5 };
       x += advance[k];
       return g;
     });
@@ -254,12 +256,15 @@
     return stroke([[x - h * 1.6, seg.y1 - h * 0.18], [x, seg.y1 - h * 0.18], [x, seg.y2 + h * 0.18], [x + h * 0.9, seg.y2 + h * 0.18]], rand, h * 0.05);
   }
 
-  /* Draws every mark on one surface (a photo or a sheet of squared paper), in content coordinates; notes that do
-   * not fit on the surface are returned for the margins. */
-  function drawMarks(data, lines, sheet) {
-    const items = [], margin = [];
+  /* Draws every mark on one surface (a photo or a sheet of squared paper), in content coordinates; notes too long
+   * to write beside the mark get the next number (counter.n) and are returned for the list under the page. */
+  function drawMarks(data, lines, sheet, counter) {
+    const items = [], numbered = [];
     const taken = [], obstacles = lines.map((L) => ({ x1: L.x1, y1: L.y1, x2: L.x2, y2: L.y2 }));
-    data.marks.forEach((m, i) => {
+    // In reading order, so the numbers ①②③ follow the text.
+    const order = data.marks.map((m, i) => i).sort((a, b) => data.marks[a].start - data.marks[b].start || a - b);
+    order.forEach((i) => {
+      const m = data.marks[i];
       const segs = segments(lines, m);
       if (!segs.length) return;
       const kind = KIND[m.type] || 'tip';
@@ -330,18 +335,26 @@
         }
         if (kind === 'typo' && !long) note = ''; // the right word above says it all; the full note is a tap away
       }
-      if (long) note = note && !long.startsWith(note) ? note + '　' + long : long;
+      if (long) note = note && !long.startsWith(note) ? note + (/[。！？!?…]$/.test(note) ? '' : '。') + long : long;
       if (!note) return;
       const size = Math.max(sheet.minFont * 1.1, h * 0.62);
       const box = [...note].length <= INLINE_CHARS && !long ? place(note, size, last, sheet, taken, obstacles) : null;
       if (box) write(note, box.x1, box.y2 - size * 0.18, size);
       else {
-        // The leader starts from whichever part of the mark is nearest that margin.
-        const L = segs.reduce((a, b) => (b.x1 < a.x1 ? b : a)), R = segs.reduce((a, b) => (b.x2 > a.x2 ? b : a));
-        margin.push({ i, text: note, left: [L.x1 - h * 0.25, (L.y1 + L.y2) / 2], right: [R.x2 + h * 0.25, (R.y1 + R.y2) / 2], h });
+        const n = ++counter.n;
+        numbered.push({ i, n, text: note });
+        g.n = n;
+        // The number, small and raised, just after the end of the mark.
+        const r = Math.max(sheet.minFont * 0.42, h * 0.3);
+        const cx = Math.min(sheet.x2 - r, last.x2 + r * 1.6), cy = Math.max(sheet.y1 + r, last.y1 - r * 0.15);
+        taken.push({ x1: cx - r, y1: cy - r, x2: cx + r, y2: cy + r });
+        g.items.push(path(`M${f1(cx + r)} ${f1(cy)} A${f1(r)} ${f1(r)} 0 1 1 ${f1(cx + r - 0.01)} ${f1(cy - r * 0.05)}`, Math.max(1.2, r * 0.12)));
+        const digits = String(n), size = r * (digits.length > 1 ? 1.15 : 1.45);
+        g.items.push(pen(digits, cx, cy + size * 0.36, size, null, { anchor: 'middle' }));
+        g.items.push({ t: 'hit', x: cx - r * 1.3, y: cy - r * 1.3, w: r * 2.6, h: r * 2.6 });
       }
     });
-    return { items, margin };
+    return { items, numbered };
   }
 
   function drawScore(data, sheet, line) {
@@ -372,82 +385,44 @@
     return out;
   }
 
-  /* A page: the surface in the middle, margins on both sides when some notes need them. */
-  function framePage(content, cw, ch, notes, noteSize) {
-    if (!notes.length) return { w: cw, h: ch, items: content };
-    const M = Math.round(cw * MARGIN), pad = M * 0.09;
-    const per = Math.max(3, Math.floor((M - pad * 2) / noteSize));
-    const lineH = noteSize * 1.3;
-    const sides = { left: [], right: [] };
-    for (const n of notes) sides[n.left[0] < cw - n.right[0] ? 'left' : 'right'].push(n); // the nearer margin
-    // Too many notes on one side: hand the extra ones to the other side.
-    const need = (list) => list.reduce((s, n) => s + wrap(n.text, per).length * lineH + noteSize * 0.6, 0);
-    for (const [a, b] of [['left', 'right'], ['right', 'left']])
-      while (need(sides[a]) > ch * 0.95 && need(sides[b]) < need(sides[a]) - lineH * 2) {
-        const mid = sides[a].reduce((best, n) => (!best || Math.abs(n.left[0] - cw / 2) < Math.abs(best.left[0] - cw / 2) ? n : best), null);
-        sides[a].splice(sides[a].indexOf(mid), 1);
-        sides[b].push(mid);
-      }
-    const over = [];
-    let bottom = ch;
-    for (const side of ['left', 'right']) {
-      const list = sides[side].sort((p, q) => p[side][1] - q[side][1]);
-      const placed = [];
-      let y = noteSize * 0.4;
-      for (const n of list) {
-        const rows = wrap(n.text, per);
-        const height = rows.length * lineH;
-        const top = Math.max(y, n[side][1] - lineH * 0.6);
-        placed.push({ n, rows, top, height });
-        y = top + height + noteSize * 0.5;
-      }
-      // Pull the stack up when it runs past the bottom of the page.
-      let excess = y - ch;
-      for (let k = placed.length - 1; k >= 0 && excess > 0; k--) {
-        const room = k ? placed[k].top - (placed[k - 1].top + placed[k - 1].height + noteSize * 0.5) : placed[k].top - noteSize * 0.4;
-        const lift = Math.min(excess, Math.max(0, room));
-        for (let j = k; j < placed.length; j++) placed[j].top -= lift;
-        excess -= lift;
-      }
-      for (const p of placed) {
-        const g = { t: 'group', mark: p.n.i, items: [] };
-        const width = Math.max(...p.rows.map((r) => textWidth(r, noteSize)));
-        const x = side === 'left' ? M - pad - width : M + cw + pad;
-        p.rows.forEach((r, k) => g.items.push(pen(r, x, p.top + noteSize * 0.95 + k * lineH, noteSize, p.n.i * 17 + k)));
-        g.items.push({ t: 'hit', x: x - pad * 0.5, y: p.top - 4, w: width + pad, h: p.height + 8 });
-        // The leader: a loose curve from the note to the mark, the way a teacher swings the pen across.
-        const rand = rng(p.n.i * 131 + 7);
-        const [ax0, ay] = p.n[side];
-        const ax = ax0 + M;
-        const ex = side === 'left' ? M - pad * 0.45 : M + cw + pad * 0.45, ey = p.top + noteSize * 0.55;
-        const dx = ax - ex;
-        const sw = Math.max(1.2, p.n.h * 0.05);
-        g.items.push(path(`M${f1(ex)} ${f1(ey)} C${f1(ex + dx * 0.35)} ${f1(ey + rand() * noteSize * 1.6)} ${f1(ax - dx * 0.3)} ${f1(ay + rand() * noteSize * 1.6 - noteSize * 0.4)} ${f1(ax)} ${f1(ay)}`, sw));
-        g.items.push(path(`M${f1(ax)} ${f1(ay)} l${f1((side === 'left' ? -1 : 1) * p.n.h * 0.12)} ${f1(-p.n.h * 0.16)}`, sw));
-        over.push(g);
-        bottom = Math.max(bottom, p.top + p.height + noteSize * 0.5);
-      }
+  const CIRCLED = '①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳';
+
+  /* The numbered notes of one surface, listed neatly under it (PDF only): ① …, wrapped under the text. */
+  function notesScene(notes) {
+    const W = 1400, size = 34, lineH = size * 1.55, left = 60, indent = size * 1.6;
+    const per = Math.floor((W - left * 2 - indent) / size);
+    const items = [{ t: 'fill', x: 0, y: 0, w: W, h: 10, color: '#fffef8' }];
+    let y = size * 1.4;
+    for (const note of notes) {
+      const label = CIRCLED[note.n - 1] || '(' + note.n + ')';
+      items.push(pen(label, left, y, size, note.n * 3 + 1));
+      wrap(note.text, per).forEach((row, k) => {
+        items.push(pen(row, left + indent, y, size, note.n * 17 + k));
+        y += lineH;
+      });
+      y += size * 0.25;
     }
-    const items = [
-      { t: 'fill', x: 0, y: 0, w: cw + M * 2, h: bottom, color: '#fffdf6' },
-      { t: 'group', tx: M, items: content },
-      ...over,
-    ];
-    return { w: cw + M * 2, h: bottom, items };
+    items[0].h = y;
+    return { w: W, h: y, items, exportOnly: true };
+  }
+
+  /* A surface and, for the PDF, its numbered notes. */
+  function withNotes(scene, numbered) {
+    return numbered.length ? [scene, notesScene(numbered)] : [scene];
   }
 
   /* ---- surfaces ---- */
-  function photoScene(page, data, isFirst) {
+  function photoScene(page, data, isFirst, counter) {
     const sx = page.w / 1000, sy = page.h / 1000;
     const lines = page.lines.map((l) => ({
       s: l.s, e: l.e, text: data.text.slice(l.s, l.e),
       x1: l.b[0] * sx, y1: l.b[1] * sy, x2: l.b[2] * sx, y2: l.b[3] * sy,
     }));
     const sheet = { x1: page.w * 0.01, y1: page.h * 0.005, x2: page.w * 0.99, y2: page.h * 0.995, minFont: page.w * 0.034 };
-    const { items, margin } = drawMarks(data, lines, sheet);
+    const { items, numbered } = drawMarks(data, lines, sheet, counter);
     const content = [{ t: 'img', src: page.src, x: 0, y: 0, w: page.w, h: page.h }, ...items];
     if (isFirst && lines[0]) content.push(drawScore(data, sheet, lines[0]));
-    return framePage(content, page.w, page.h, margin, page.w * 0.038);
+    return withNotes({ w: page.w, h: page.h, items: content }, numbered);
   }
 
   function plainPhotoScene(page) {
@@ -455,7 +430,7 @@
   }
 
   /* Squared composition paper: COLS cells a row, paragraphs indented two cells, a gap under each row for notes. */
-  function paperScene(data) {
+  function paperScene(data, counter) {
     const cell = 40, gap = 40, row = cell + gap, margin = 34;
     const width = COLS * cell + margin * 2;
     const lines = [];
@@ -496,9 +471,9 @@
       x1: margin + L.c0 * cell, x2: margin + (L.c0 + (L.e - L.s)) * cell, y1: top(L.row), y2: top(L.row) + cell,
     }));
     const sheet = { x1: 4, y1: 4, x2: width - 4, y2: height - 4, minFont: 22 };
-    const { items, margin: notes } = drawMarks(data, placed, sheet);
+    const { items, numbered } = drawMarks(data, placed, sheet, counter);
     content.push(...items, drawScore(data, sheet, { y1: top(0) + cell }));
-    return framePage(content, width, height, notes, 26);
+    return withNotes({ w: width, h: height, items: content }, numbered);
   }
 
   /* The 总评: one paragraph in the teacher's hand under the essay, the score signed at the end. */
@@ -526,11 +501,11 @@
   }
 
   function scenes(data) {
-    const out = [];
-    if (data.onPhoto) data.pages.forEach((p, k) => out.push(photoScene(p, data, k === 0)));
+    const out = [], counter = { n: 0 };
+    if (data.onPhoto) data.pages.forEach((p, k) => out.push(...photoScene(p, data, k === 0, counter)));
     else {
       for (const p of data.pages) out.push(plainPhotoScene(p));
-      out.push(paperScene(data));
+      out.push(...paperScene(data, counter));
     }
     out.push(summaryScene(data));
     return out;
@@ -546,6 +521,7 @@
         if (item.mark !== undefined) {
           const m = data.marks[item.mark];
           Object.assign(attrs, { class: 'mark', 'data-i': item.mark, tabindex: 0, role: 'button', 'aria-label': m.type + '：' + (m.note || m.fix || '') });
+          if (item.n) attrs['data-n'] = item.n;
         }
         const g = el('g', attrs, parent);
         for (const it of item.items) add(it, g);
@@ -666,92 +642,127 @@
     return new Blob(parts, { type: 'application/pdf' });
   }
 
-  async function exportPdf(container, button) {
-    const data = container.rpData, list = container.rpScenes;
-    if (!data || !list) return;
-    const label = button && button.textContent;
-    if (button) (button.disabled = true), (button.textContent = '正在生成…');
+  const PAGE_W = 1654, PAGE_H = 2339, PAGE_PAD = 110; // A4 at 200 dpi
+
+  async function loadImages(list) {
+    const images = {}, srcs = new Set();
+    list.forEach((s) => sources(s, srcs));
+    await Promise.all(
+      [...srcs].map(async (src) => {
+        const img = new Image();
+        img.src = src;
+        try {
+          await img.decode();
+          images[src] = img;
+        } catch (e) {}
+      })
+    );
+    return images;
+  }
+
+  const toJpeg = (c) =>
+    new Promise((done) => c.toBlob(async (b) => done({ w: PAGE_W, h: PAGE_H, jpeg: new Uint8Array(await b.arrayBuffer()) }), 'image/jpeg', 0.86));
+
+  /* One essay on fresh A4 pages: the title, the student and the score on top, then each scene (scaled to the
+   * page width, moved to a new page when it would have to shrink a lot). Returns the pages as JPEGs. */
+  async function essayPages(data, list) {
+    const images = await loadImages(list);
+    const W = PAGE_W, H = PAGE_H, pad = PAGE_PAD;
+    const canvases = [];
+    let canvas, ctx, y;
+    const fresh = () => {
+      canvas = document.createElement('canvas');
+      canvas.width = W;
+      canvas.height = H;
+      ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(0, 0, W, H);
+      y = pad;
+      canvases.push(canvas);
+    };
+    fresh();
+    ctx.fillStyle = '#222';
+    ctx.textAlign = 'center';
+    ctx.font = `bold 52px ${TYPED_FONT}`;
+    ctx.fillText('《' + (data.title || '作文') + '》', W / 2, y + 44);
+    ctx.font = `30px ${TYPED_FONT}`;
+    ctx.fillStyle = '#666';
+    const who = [data.student, (data.showScore ? data.total + ' / ' + data.max + ' 分　' : '') + data.level].filter(Boolean).join('　·　');
+    ctx.fillText(who, W / 2, y + 96);
+    ctx.textAlign = 'left';
+    y += 140;
+    for (const s of list) {
+      let k = Math.min(1.25, (W - pad * 2) / s.w);
+      // Shrinking to 70 % keeps it on this page; any smaller and it gets a page of its own.
+      if (s.h * k * 0.7 > H - pad - y && y > pad + 160) fresh();
+      k = Math.min(k, (H - pad - y) / s.h);
+      const x = (W - s.w * k) / 2;
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.scale(k, k);
+      drawCanvas(ctx, s, images);
+      ctx.restore();
+      y += s.h * k + 30;
+    }
+    const out = [];
+    for (const c of canvases) {
+      out.push(await toJpeg(c));
+      c.width = c.height = 0; // free the memory at once (a whole class can be many pages)
+    }
+    return out;
+  }
+
+  function download(blob, name) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = name.replace(/[\\/:*?"<>|]/g, '');
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+  }
+
+  async function busy(button, label, work) {
+    const old = button && button.textContent;
+    if (button) (button.disabled = true), (button.textContent = label);
     try {
       try {
         await document.fonts.load('40px RedPen', '老师批改');
       } catch (e) {}
-      const images = {};
-      const srcs = new Set();
-      list.forEach((s) => sources(s, srcs));
-      await Promise.all(
-        [...srcs].map(async (src) => {
-          const img = new Image();
-          img.src = src;
-          try {
-            await img.decode();
-            images[src] = img;
-          } catch (e) {}
-        })
-      );
-      const W = 1654, H = 2339, pad = 110; // A4 at 200 dpi
-      const pages = [];
-      let canvas, ctx, y;
-      const fresh = () => {
-        canvas = document.createElement('canvas');
-        canvas.width = W;
-        canvas.height = H;
-        ctx = canvas.getContext('2d');
-        ctx.fillStyle = '#fff';
-        ctx.fillRect(0, 0, W, H);
-        y = pad;
-        pages.push(canvas);
-      };
-      fresh();
-      // Header: the title, the student, the score.
-      ctx.fillStyle = '#222';
-      ctx.textAlign = 'center';
-      ctx.font = `bold 52px ${TYPED_FONT}`;
-      ctx.fillText('《' + (data.title || '作文') + '》', W / 2, y + 44);
-      ctx.font = `30px ${TYPED_FONT}`;
-      ctx.fillStyle = '#666';
-      const who = [data.student, (data.showScore ? data.total + ' / ' + data.max + ' 分　' : '') + data.level].filter(Boolean).join('　·　');
-      ctx.fillText(who, W / 2, y + 96);
-      ctx.textAlign = 'left';
-      y += 140;
-      for (const s of list) {
-        let k = (W - pad * 2) / s.w;
-        // Shrinking to 70 % keeps it on this page; any smaller and it gets a page of its own.
-        if (s.h * k * 0.7 > H - pad - y && y > pad + 160) fresh();
-        k = Math.min(k, (H - pad - y) / s.h);
-        const x = (W - s.w * k) / 2;
-        ctx.save();
-        ctx.translate(x, y);
-        ctx.scale(k, k);
-        drawCanvas(ctx, s, images);
-        ctx.restore();
-        y += s.h * k + 36;
-      }
-      const jpegs = await Promise.all(
-        pages.map(
-          (c) =>
-            new Promise((done) =>
-              c.toBlob(async (b) => done({ w: W, h: H, jpeg: new Uint8Array(await b.arrayBuffer()) }), 'image/jpeg', 0.88)
-            )
-        )
-      );
-      const blob = makePdf(jpegs);
-      const name = ['《' + (data.title || '作文') + '》', data.student, '批改'].filter(Boolean).join('-').replace(/[\\/:*?"<>|]/g, '') + '.pdf';
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = name;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      setTimeout(() => URL.revokeObjectURL(url), 60000);
-      container.rpLastPdf = blob; // for tests
+      return await work();
     } finally {
-      if (button) (button.disabled = false), (button.textContent = label);
+      if (button) (button.disabled = false), (button.textContent = old);
     }
   }
 
+  async function exportPdf(container, button) {
+    const data = container.rpData, list = container.rpScenes;
+    if (!data || !list) return;
+    await busy(button, '正在生成…', async () => {
+      const blob = makePdf(await essayPages(data, list));
+      download(blob, ['《' + (data.title || '作文') + '》', data.student, '批改'].filter(Boolean).join('-') + '.pdf');
+      container.rpLastPdf = blob; // for tests
+    });
+  }
+
+  /* 批量导出: every essay of a list in one PDF, each starting on a new page. */
+  async function exportMany(list, fileName, button) {
+    if (!list || !list.length) return null;
+    return busy(button, '正在生成…', async () => {
+      const pages = [];
+      for (let k = 0; k < list.length; k++) {
+        if (button) button.textContent = `正在生成 ${k + 1}/${list.length}…`;
+        pages.push(...(await essayPages(list[k], scenes(list[k]))));
+      }
+      const blob = makePdf(pages);
+      download(blob, fileName);
+      return blob;
+    });
+  }
+
   /* ---- legend: each symbol drawn on two make-believe characters ---- */
-  function legend() {
+  function legend(numbered) {
     const box = document.createElement('p');
     box.className = 'rp-legend';
     const h = 20, fake = [{ s: 0, e: 3, text: '国国国', x1: 6, y1: 8, x2: 66, y2: 8 + h }];
@@ -765,6 +776,9 @@
       可以更好: (r) => bracket(segments(fake, { start: 0, end: 3 })[0], true, true, r),
       分段: (r) => paraMark(segments(fake, { start: 2, end: 3 })[0], r),
     };
+    const tip = document.createElement('span');
+    tip.className = 'rp-tip';
+    tip.textContent = '① 带编号的地方，点一下看老师的意见';
     for (const name in sym) {
       const span = document.createElement('span');
       const svg = el('svg', { viewBox: '0 -4 74 44', width: 54, height: 32, 'aria-hidden': 'true' }, span);
@@ -772,6 +786,7 @@
       span.appendChild(document.createTextNode(name));
       box.appendChild(span);
     }
+    if (numbered) box.appendChild(tip);
     return box;
   }
 
@@ -786,8 +801,9 @@
       const data = container.rpData, pop = container.querySelector('.rp-pop');
       const m = data.marks[Number(g.dataset.i)];
       const quote = data.text.slice(m.start, m.end);
+      const n = Number(g.dataset.n || 0);
       pop.innerHTML =
-        '<strong>' + esc(m.type) + '</strong><q>' + esc(quote) + '</q>' +
+        '<strong>' + (n ? esc(CIRCLED[n - 1] || n) + ' ' : '') + esc(m.type) + '</strong><q>' + esc(quote) + '</q>' +
         (m.fix && m.type !== '好词好句' ? '<p>' + (m.type === '修改建议' ? '可以写成' : '改成') + '：<b>' + esc(m.fix) + '</b></p>' : '') +
         (m.note ? '<p>' + esc(m.note) + '</p>' : '');
       pop.hidden = false;
@@ -817,14 +833,15 @@
     const list = scenes(data);
     container.rpScenes = list;
     for (const s of list) {
+      if (s.exportOnly) continue; // the numbered notes: a tap on the mark shows each one
       const wrap = document.createElement('div');
       wrap.className = 'rp-page' + (s.summary ? ' rp-summary' : '');
       wrap.appendChild(toSvg(s, data));
       container.appendChild(wrap);
     }
-    container.appendChild(legend());
+    container.appendChild(legend(list.some((s) => s.exportOnly)));
     popup(container);
   }
 
-  window.RedPen = { render, exportPdf, segments, editOps };
+  window.RedPen = { render, exportPdf, exportMany, scenes, segments, editOps };
 })();

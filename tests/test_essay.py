@@ -51,26 +51,6 @@ OCR_PAGE = {
 }
 
 
-LESSON_PLAN = {
-    "title": "《荷叶圆圆》第一课时",
-    "analysis": "这是一篇充满童趣的散文诗。",
-    "learners": "一年级学生喜欢朗读和表演。",
-    "goals": ["会认 12 个生字", "能正确、流利地朗读课文", "感受夏天的美好"],
-    "key": "识字、朗读",
-    "difficult": "读好长句子",
-    "prep": "生字卡片、课件",
-    "periods": [
-        {"name": "第一课时", "steps": [
-            {"name": "一、猜谜导入", "minutes": 5, "teacher": "出示谜语：……", "student": "猜谜", "intent": "激发兴趣"},
-            {"name": "二、初读识字", "minutes": 20, "teacher": "范读课文", "student": "自由读", "intent": "读准字音"},
-            {"name": "三、写字指导", "minutes": 10, "teacher": "示范写「圆」", "student": "描红", "intent": "写好字"},
-        ]},
-    ],
-    "board": "荷叶圆圆\n小水珠 摇篮\n小蜻蜓 停机坪",
-    "homework": {"basic": "读课文三遍", "extend": "画一画荷叶"},
-}
-
-
 class FakeModels:
     """Stands in for llm.post: answers grade and check requests, records every call."""
 
@@ -81,17 +61,13 @@ class FakeModels:
         self.check = {"items": [{"id": 1, "ok": False, "reason": "原句没有错"}, {"id": 2, "ok": True}], "level": "良"}
         self.fail = set()  # models that raise
         self.ocr = OCR_PAGE
-        self.lesson = LESSON_PLAN
 
     def __call__(self, row, body):
         self.calls.append((row["model"], body))
         if row["model"] in self.fail:
             raise llm.LLMError("HTTP 429: rate limited")
         system = body["messages"][0]["content"]
-        answer = (
-            self.ocr if "誊抄" in system[:80] else self.check if "复核" in system[:60]
-            else self.lesson if "特级教师" in system[:40] else self.grade
-        )
+        answer = self.ocr if "誊抄" in system[:80] else self.check if "复核" in system[:60] else self.grade
         return json.dumps(answer, ensure_ascii=False), 3000, 2500, 800
 
 
@@ -104,7 +80,7 @@ def models(monkeypatch, db):
     db.execute("INSERT INTO ess_providers(id,name,base_url,key_enc,key_tail,timeout,concurrency,created_at) VALUES(1,'测试','https://x/v1',?,'',30,2,1)", (llm.encrypt_key("sk-test-123456"),))
     db.executemany(
         "INSERT INTO ess_steps(step,slot,provider_id,model,price_in,price_cached,price_out) VALUES(?,?,1,?,?,?,?)",
-        [("grade", "main", "big", 4.0, 0.2, 12.0), ("check", "main", "small", 1.0, 0.0, 2.0), ("ocr", "main", "eyes", 1.0, 0.0, 2.0), ("lesson", "main", "big", 1.0, 0.0, 2.0)],
+        [("grade", "main", "big", 4.0, 0.2, 12.0), ("check", "main", "small", 1.0, 0.0, 2.0), ("ocr", "main", "eyes", 1.0, 0.0, 2.0)],
     )
     db.execute("DELETE FROM ess_meta WHERE key='daily_budget'")
     db.execute("INSERT OR REPLACE INTO ess_meta VALUES('models_checked',?)", (str(int(time.time())),))
@@ -450,7 +426,7 @@ def test_grading_helpers():
         {"dims": dims, "marks": many + [{"quote": ESSAY[60:64], "type": "分段", "fix": "", "note": "这里另起一段"}], "summary": long_summary},
         essay,
     )
-    assert sum(m["type"] == "标点" for m in cleaned["marks"]) == 20
+    assert sum(m["type"] == "标点" for m in cleaned["marks"]) == grading.MARK_LIMITS["error"] == 12
     assert [m["type"] for m in cleaned["marks"] if m["type"] == "分段"] == ["分段"]
     assert cleaned["summary"] == long_summary and cleaned["praise"] == [] and cleaned["advice"] == []
     msgs = grading.grade_messages(essay)
@@ -818,7 +794,7 @@ def test_reviews_rescaled_to_25(db):
     db.commit()
 
 
-# ---- devices, feature pages, classes overview, 教案生成, student wording ----
+# ---- devices, feature pages, classes overview, student wording ----
 def test_device_name():
     from core.essay import device_name
 
@@ -869,7 +845,7 @@ def test_home_lists_features_and_header_leads_to_classes(models, klass, db):
     home = t.get("/teacher/").get_data(as_text=True)
     assert "我的功能" in home and "我的班级" in home  # the menu entry
     assert "新建班级" not in home and "class-create" not in home  # classes moved behind the header button
-    assert '/workspace/chinese/teacher/essay/' in home and "/teacher/trial/lesson" in home  # lesson not bought: trial
+    assert '/workspace/chinese/teacher/essay/' in home and "lesson" not in home and "教案" not in home
     assert 'class="header-chip" href="/workspace/chinese/teacher/classes/"' in home
     # Classes overview: statistics per class.
     db.execute("UPDATE ess_assignments SET auto_publish=1 WHERE id=?", (aid,))
@@ -878,13 +854,17 @@ def test_home_lists_features_and_header_leads_to_classes(models, klass, db):
     sid = jpost(s, f"/api/write/{aid}", {"text": ESSAY}).get_json()["id"]
     run_worker()
     page = t.get("/teacher/classes/").get_data(as_text=True)
-    assert "三年级二班" in page and "class-create" in page and "交齐率" in page and "33%" in page
+    assert "三年级二班" in page and 'id="class-create"' not in page and "只能建一个班级" in page and "交齐率" in page and "33%" in page
+    r = jpost(t, "/api/classes", {"name": "三年级三班", "grade": 3})
+    assert r.status_code == 400 and "只能建一个班级" in r.get_json()["error"]
     assert 'class="level-bar"' in page
     # The essay feature page: pending reviews, assignments, and 布置作文 for any class.
     essay = t.get("/teacher/essay/").get_data(as_text=True)
     assert "快乐的一天" in essay and "布置作文" in essay and "进行中的作业" in essay
     new = t.get(f"/teacher/essay/new?class={cid}").get_data(as_text=True)
     assert f'data-url="/workspace/chinese/api/classes/{cid}/assignments" selected' in new
+    assert "布置给：<strong>三年级二班</strong>" in new and "作文主题" in new and "data-units" in new
+    assert '"requirement"' in new  # the textbook units
     # The class page sends the teacher to the feature page to assign.
     assert f"/teacher/essay/new?class={cid}" in t.get(f"/teacher/classes/{cid}").get_data(as_text=True)
 
@@ -918,107 +898,67 @@ def test_students_never_read_ai(models, klass, db):
     assert "腹有诗书气自华" in pages[0]
 
 
-def grant_lesson(db, lid=1, days=365):
-    db.execute("DELETE FROM ws_entitlements WHERE license_id=? AND feature='lesson'", (lid,))
-    if days is not None:
-        now = int(time.time())
-        db.execute(
-            "INSERT INTO ws_entitlements(license_id,feature,days,starts_at,expires_at) VALUES(?,'lesson',?,?,?)",
-            (lid, days, now - 86400, now + days * 86400),
-        )
-    db.commit()
+def test_lesson_plans_are_gone(db):
+    """教案生成 was removed: no pages, no table, no feature."""
+    from core.essay import features
 
-
-LESSON_FORM = {"grade": 1, "term": "下册", "kind": "阅读课", "topic": "荷叶圆圆", "periods": 1, "notes": "", "source_text": ""}
-
-
-def test_lesson_plan_generated_edited_and_downloaded(models, db):
-    db.execute("DELETE FROM limits")  # activations are rate limited per address
-    db.commit()
-    db.execute("DELETE FROM ws_lessons")
-    grant_lesson(db, 1, None)
-    t = teacher_client()
-    r = jpost(t, "/api/lessons", LESSON_FORM)
-    assert r.status_code == 400 and "还没有开通「教案生成」" in r.get_json()["error"]
-    grant_lesson(db, 1)
-    assert "写一份新教案" in t.get("/teacher/lesson/").get_data(as_text=True)
-    r = jpost(t, "/api/lessons", {**LESSON_FORM, "kind": "不存在"})
-    assert r.status_code == 400 and "课型" in r.get_json()["error"]
-    r = jpost(t, "/api/lessons", LESSON_FORM)
-    assert r.status_code == 200, r.get_json()
-    lid = r.get_json()["id"]
-    assert t.get(f"/api/lessons/{lid}").get_json()["status"] == "queued"
-    assert "data-poll" in t.get(f"/teacher/lesson/{lid}").get_data(as_text=True)
-    models.lesson = {**LESSON_PLAN, "periods": [{"name": "第一课时", "steps": [dict(s) for s in LESSON_PLAN["periods"][0]["steps"]]}]}
-    run_worker()
-    row = db.execute("SELECT * FROM ws_lessons WHERE id=?", (lid,)).fetchone()
-    assert row["status"] == "done"
-    plan = json.loads(row["plan"])
-    assert sum(s["minutes"] for s in plan["periods"][0]["steps"]) == 40  # 35 → the longest step got 5 more
-    page = t.get(f"/teacher/lesson/{lid}").get_data(as_text=True)
-    assert "荷叶圆圆" in page and "设计意图" in page and "下载 Word" in page
-    assert any(c[0] == "big" and "荷叶圆圆" in c[1]["messages"][1]["content"] for c in models.calls)
-    usage = db.execute("SELECT step,license_id FROM ess_usage WHERE step='lesson' ORDER BY id DESC").fetchone()
-    assert tuple(usage) == ("lesson", 1)
-    doc = t.get(f"/teacher/lesson/{lid}.doc")
-    assert doc.status_code == 200 and doc.mimetype == "application/msword"
-    assert "教学过程" in doc.get_data(as_text=True) and "filename*=UTF-8''" in doc.headers["Content-Disposition"]
-    # The teacher edits it; their version is shown and downloaded.
-    edited = {**plan, "title": "荷叶圆圆（改）"}
-    assert jpost(t, f"/api/lessons/{lid}/save", {"plan": edited}).status_code == 200
-    assert "荷叶圆圆（改）" in t.get(f"/teacher/lesson/{lid}").get_data(as_text=True)
-    assert jpost(t, f"/api/lessons/{lid}/save", {"plan": {"title": ""}}).status_code == 400
-    # Other teachers cannot see it.
-    other = teacher_client(TEACHER2_KEY)
-    assert other.get(f"/teacher/lesson/{lid}").status_code == 404
-    assert other.get(f"/teacher/lesson/{lid}.doc").status_code == 404
-    # Regenerating makes a new plan from the same inputs; the monthly limit counts both.
-    db.execute("INSERT OR REPLACE INTO ess_meta VALUES('lesson_monthly','2')")
-    db.commit()
-    r = jpost(t, f"/api/lessons/{lid}/regenerate")
-    assert r.status_code == 200 and r.get_json()["id"] != lid
-    r = jpost(t, "/api/lessons", LESSON_FORM)
-    assert r.status_code == 400 and "本月已经生成 2 份" in r.get_json()["error"]
-    db.execute("DELETE FROM ess_meta WHERE key='lesson_monthly'")
-    db.commit()
-    # Delete; expired features keep old plans readable but generate no more.
-    assert jpost(t, f"/api/lessons/{lid}/delete").status_code == 200
-    assert t.get(f"/teacher/lesson/{lid}").status_code == 404
-    db.execute("UPDATE ws_entitlements SET expires_at=? WHERE license_id=1 AND feature='lesson'", (int(time.time()) - 10,))
-    db.commit()
-    assert "到期" in jpost(t, "/api/lessons", LESSON_FORM).get_json()["error"]
-    assert "已于" in t.get("/teacher/lesson/").get_data(as_text=True)
-    grant_lesson(db, 1, None)
-
-
-def test_lesson_plan_retries_bad_answers_and_holds(models, db):
-    db.execute("DELETE FROM limits")  # activations are rate limited per address
-    db.commit()
-    db.execute("DELETE FROM ws_lessons")
-    grant_lesson(db, 1)
-    t = teacher_client()
-    lid = jpost(t, "/api/lessons", {**LESSON_FORM, "periods": 2}).get_json()["id"]
-    run_worker()  # one period where two were asked for: rejected, retried later
-    row = db.execute("SELECT * FROM ws_lessons WHERE id=?", (lid,)).fetchone()
-    assert row["status"] == "queued" and row["attempts"] == 1 and "2 个课时" in row["error"]
-    db.execute("DELETE FROM ess_steps WHERE step='lesson'")
-    db.execute("UPDATE ws_lessons SET run_after=0")
-    db.commit()
-    run_worker()
-    assert t.get(f"/api/lessons/{lid}").get_json()["hold"].startswith("教案生成服务暂未开通")
-    grant_lesson(db, 1, None)
-
-
-def test_lesson_trial_once_per_browser(models, db):
+    assert "lesson" not in features.FEATURES
+    assert not db.execute("SELECT 1 FROM sqlite_master WHERE name='ws_lessons'").fetchone()
     c = SiteClient("teacher")
-    assert "lesson-form" in c.get("/teacher/trial/lesson").get_data(as_text=True)
-    r = jpost(c, "/api/trial/lesson", LESSON_FORM)
-    assert r.status_code == 200, r.get_json()
-    lid = r.get_json()["id"]
+    assert c.get("/teacher/lesson/").status_code == 404
+    assert c.get("/teacher/trial/lesson").status_code == 404
+    assert "教案" not in c.get("/teacher/").get_data(as_text=True)
+
+
+def test_migration_drops_lesson_data(tmp_path):
+    import sqlite3
+    from core import schema
+
+    path = tmp_path / "old.sqlite3"
+    schema.initialize(path)
+    with sqlite3.connect(path) as d:
+        d.execute("DELETE FROM migrations WHERE name='drop_lessons'")
+        d.execute("CREATE TABLE ws_lessons(id INTEGER PRIMARY KEY)")
+        d.execute("INSERT INTO ws_entitlements VALUES(5,'lesson',365,1,2),(5,'essay',365,1,2)")
+        d.execute("INSERT INTO ess_meta VALUES('lesson_monthly','60')")
+        d.execute("INSERT INTO trials VALUES('teacher','x','lesson',1)")
+    schema.initialize(path)
+    with sqlite3.connect(path) as d:
+        assert not d.execute("SELECT 1 FROM sqlite_master WHERE name='ws_lessons'").fetchone()
+        assert [r[0] for r in d.execute("SELECT feature FROM ws_entitlements WHERE license_id=5")] == ["essay"]
+        assert not d.execute("SELECT 1 FROM ess_meta WHERE key='lesson_monthly'").fetchone()
+        assert not d.execute("SELECT 1 FROM trials WHERE game='lesson'").fetchone()
+
+
+def test_textbook_units_are_built_and_valid():
+    import subprocess, sys
+    from core.essay import UNITS
+
+    r = subprocess.run([sys.executable, "tools/units.py", "--check"], capture_output=True, text=True)
+    assert r.returncode == 0, r.stderr
+    assert UNITS["1"] == {"上册": [], "下册": []}
+    assert all(len(UNITS[str(g)][t]) >= 3 for g in range(2, 7) for t in ("上册", "下册"))
+    for terms in UNITS.values():
+        for rows in terms.values():
+            for u in rows:
+                assert u["genre"] in grading.GENRES and u["topic"] and 0 < len(u["requirement"]) <= 600 and u["unit"].startswith("第")
+    assert UNITS["3"]["上册"][1]["genre"] == "日记" and "西红柿" in UNITS["3"]["上册"][3]["requirement"]
+
+
+def test_assignment_export_lists_graded_essays(models, klass, db):
+    t, cid, aid = klass
+    db.execute("UPDATE ess_assignments SET auto_publish=1 WHERE id=?", (aid,))
+    db.commit()
+    s, _ = student_client(db, cid, "李华")
+    jpost(s, f"/api/write/{aid}", {"text": ESSAY})
     run_worker()
-    page = c.get("/teacher/trial/lesson").get_data(as_text=True)
-    assert "荷叶圆圆" in page and "输入授权码" in page
-    assert c.get(f"/teacher/lesson/{lid}.doc").status_code == 200
-    assert "已经试用过" in jpost(c, "/api/trial/lesson", LESSON_FORM).get_json()["error"]
-    assert SiteClient("teacher").get(f"/teacher/lesson/{lid}.doc").status_code == 404
-    assert db.execute("SELECT license_id FROM ws_lessons WHERE id=?", (lid,)).fetchone()[0] == 0
+    s2, _ = student_client(db, cid, "张三")
+    jpost(s2, f"/api/write/{aid}", {"text": ESSAY})  # still queued: skipped
+    page = t.get(f"/teacher/essay/assignments/{aid}").get_data(as_text=True)
+    assert 'id="export-all"' in page and "redpen" in page
+    r = t.get(f"/teacher/essay/assignments/{aid}/export.json")
+    data = r.get_json()
+    assert r.status_code == 200 and len(data["essays"]) == 1 and data["skipped"] == 2
+    assert data["essays"][0]["student"] == "李华" and data["essays"][0]["marks"] and "快乐的一天" in data["name"]
+    assert teacher_client(TEACHER2_KEY).get(f"/teacher/essay/assignments/{aid}/export.json").status_code == 404
+    assert SiteClient("teacher").get(f"/teacher/essay/assignments/{aid}/export.json").status_code == 403

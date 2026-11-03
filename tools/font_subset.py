@@ -1,14 +1,13 @@
 """Builds the red-pen font of 语文老师工作台 (sites/teacher/static/redpen-font.woff2).
 
-The font is 龙藏体 (Long Cang, SIL Open Font License 1.1, https://github.com/googlefonts/longcang), a casual
-hard-pen handwriting that reads like a teacher's red pen rather than print; it covers all of GB2312. It is
+The font is 霞鹜文楷 GB Medium (LXGW WenKai GB, SIL Open Font License 1.1, https://github.com/lxgw/LxgwWenkaiGB),
 cut down to the 6763 characters of GB2312 plus ASCII and Chinese punctuation, so a teacher's comments, corrections
-and scores render in handwriting on every phone without a 5 MB download. Characters outside the subset fall back
+and scores render in handwriting on every phone without a 26 MB download. Characters outside the subset fall back
 to the system's 楷体 (see .redpen in essay.css).
 
 Run once when changing the character set (needs fonttools and brotli, which the server does not), then let
 tools/assets.py fingerprint the new file (delete the old redpen-font.<hash>.woff2 first):
-    python tools/font_subset.py path/to/LongCang-Regular.ttf && python tools/assets.py --fix
+    python tools/font_subset.py path/to/LXGWWenKaiGB-Medium.ttf && python tools/assets.py --fix
 The font's license is sites/teacher/static/redpen-font-OFL.txt.
 """
 

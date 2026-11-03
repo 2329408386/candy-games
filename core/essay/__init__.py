@@ -1,7 +1,6 @@
-"""语文老师工作台 (/workspace/chinese/): the Chinese teacher's workbench, for primary school. Its features are
-作文批改 (essay grading, this module) and 教案生成 (lesson plans, lesson.py); features and how long each may be used are in
-features.py. The teacher's home lists the features (我的功能); each feature has its own page (/teacher/essay/,
-/teacher/lesson/). Classes are shared by the features and live behind the 班级 button in the header (/teacher/classes/,
+"""语文老师工作台 (/workspace/chinese/): the Chinese teacher's workbench, for primary school. Its feature is
+作文批改 (essay grading, this module); features and how long each may be used are in features.py. The teacher's
+home lists the features (我的功能); each feature has its own page (/teacher/essay/). Classes are shared by the features and live behind the 班级 button in the header (/teacher/classes/,
 statistics per class).
 
 Areas. /teacher/… is the teacher side, /student/… the student side, / the entry page that leads to either, and
@@ -43,7 +42,7 @@ from . import features, grading
 
 DEFAULT_STUDENTS = 60
 DEFAULT_MONTHLY = 300
-MAX_CLASSES = 10
+MAX_CLASSES = 1  # one class per teacher
 MAX_ATTEMPTS = 3
 MAX_REGRADES = 3
 NAME_MAX = 12
@@ -62,6 +61,8 @@ STATUS = {"queued": "排队批改中", "grading": "AI 批改中", "review": "等
 STUDENT_STATUS = {"queued": "老师批改中", "grading": "老师批改中", "review": "老师正在看", "published": "老师批好了", "failed": "老师还没批完，可以重新交一次"}
 SELF_REMOVALS = 3
 SELF_REMOVAL_DAYS = 30
+# 统编版 习作 / 写话 per grade and term (tools/units.py builds it): 布置作文 fills in 主题, 文体 and 要求 from it.
+UNITS = json.loads((grading.PROMPTS.parent / "data" / "units.json").read_text(encoding="utf-8"))
 HOLDS = {
     "not_configured": "批改服务暂未开通，作文已保存，开通后会自动批改",
     "budget": "今天的批改额度用完了，稍后会自动继续",
@@ -472,7 +473,7 @@ MARK_CLASS = {"错别字": "typo", "用词不当": "word", "病句": "sentence",
 
 
 def register_essay(app):
-    from . import admin, lesson
+    from . import admin
 
     app.jinja_env.globals.update(
         STATUS=STATUS,
@@ -517,7 +518,6 @@ def register_essay(app):
     register_teacher_api(app)
     register_student_api(app)
     register_trial(app)
-    lesson.register(app)
     admin.register(app)
 
 
@@ -557,13 +557,10 @@ def register_pages(app):
                 "teacher_login.html", trials={key: trial_used(key) for key in features.FEATURES}
             )
         d = db()
-        from . import lesson
-
         return render_template(
             "teacher_home.html",
             feats=features.overview(d, row["id"]),
             pending=pending_reviews(row["id"]),
-            lessons_month=lesson.monthly_count(d, row["id"]),
             has_classes=bool(class_rows(row["id"])),
         )
 
@@ -696,9 +693,12 @@ def register_pages(app):
             return redirect(url_for("teacher_home"))
         classes = class_rows(row["id"])
         chosen = request.args.get("class", type=int)
+        month = time.gmtime(time.time() + BEIJING).tm_mon
         return render_template(
             "essay_new.html",
             classes=classes,
+            units=UNITS,
+            term="下册" if 2 <= month <= 7 else "上册",
             chosen=chosen if any(c["id"] == chosen for c in classes) else (classes[0]["id"] if classes else None),
             feature=features.describe(features.rows(db(), row["id"]).get("essay")),
         )
@@ -736,6 +736,34 @@ def register_pages(app):
             scores=scores,
             max_attempts=MAX_ATTEMPTS,
             essay_open=features.active(db(), row["id"], "essay"),
+        )
+
+    @app.get("/teacher/essay/assignments/<int:aid>/export.json")
+    def assignment_export(aid):
+        """批量导出: each student's newest graded essay (published, or waiting for review as it stands now), in the
+        order of the class list, for RedPen.exportMany; skipped = students with nothing graded yet."""
+        row = teacher()
+        if not row:
+            return error("请先激活老师授权码", 403)
+        assignment = own_assignment(aid, row["id"])
+        d = db()
+        students = d.execute(
+            "SELECT * FROM ess_students WHERE class_id=? AND removed_at IS NULL ORDER BY id", (assignment["class_id"],)
+        ).fetchall()
+        essays = []
+        for st in students:
+            sub = d.execute(
+                SUBMISSION_SQL + " WHERE s.assignment_id=? AND s.student_id=? AND s.status IN ('review','published')"
+                " ORDER BY s.attempt DESC LIMIT 1",
+                (aid, st["id"]),
+            ).fetchone()
+            review = sub and review_of(sub["id"])
+            if review:
+                essays.append(redpen_data(sub, review["final"] or review["ai"]))
+        return jsonify(
+            essays=essays,
+            skipped=len(students) - len(essays),
+            name=f"《{assignment['title']}》-{assignment['class_name']}-全部批改.pdf",
         )
 
     @app.get("/teacher/essay/submissions/<int:sid>")
@@ -967,7 +995,7 @@ def assignment_fields(data):
     if not isinstance(requirement, str) or len(requirement) > 600:
         raise ValueError("习作要求最多 600 个字")
     return {
-        "title": text_field(data, "title", 40, True, "作文题目"),
+        "title": text_field(data, "title", 40, True, "作文主题"),
         "requirement": grading.clean_text(requirement),
         "genre": genre,
         "min_chars": int_field(data, "min_chars", 0, 2000, "字数要求") if data.get("min_chars") not in (None, "") else 0,
@@ -1034,7 +1062,7 @@ def register_teacher_api(app):
         d = db()
         count = d.execute("SELECT count(*) FROM ess_classes WHERE license_id=? AND archived_at IS NULL", (row["id"],)).fetchone()[0]
         if count >= MAX_CLASSES:
-            raise ValueError(f"最多建 {MAX_CLASSES} 个班")
+            raise ValueError("每位老师只能建一个班级")
         name = text_field(data, "name", CLASS_NAME_MAX, True, "班级名称")
         grade = int_field(data, "grade", 1, 6, "年级")
         cid = d.execute(
@@ -1355,7 +1383,7 @@ def register_trial(app):
             genre = data.get("genre")
             if genre not in grading.GENRES:
                 raise ValueError("请选择文体")
-            title = text_field(data, "title", 40, label="题目")
+            title = text_field(data, "title", 40, label="作文主题")
             photos = submission_photos()
         except ValueError as e:
             return error(str(e))

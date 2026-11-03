@@ -10,7 +10,8 @@
   {% else %}
     <section class="wb-card narrow-card">
       <div class="wb-form">
-        <label>布置给哪个班<select id="class-pick">{% for c in classes %}<option value="{{c.id}}" data-url="{{url_for('assignment_create', cid=c.id)}}"{{' selected' if c.id == chosen}}>{{c.name}}（{{c.grade}}年级 · {{c.students}} 人）</option>{% endfor %}</select></label>
+        {% if classes|length == 1 %}<p class="muted">布置给：<strong>{{classes[0].name}}</strong>（{{classes[0].grade}}年级 · {{classes[0].students}} 人）</p>{% endif %}
+        <label{{' hidden' if classes|length == 1}}>布置给哪个班<select id="class-pick">{% for c in classes %}<option value="{{c.id}}" data-grade="{{c.grade}}" data-url="{{url_for('assignment_create', cid=c.id)}}"{{' selected' if c.id == chosen}}>{{c.name}}（{{c.grade}}年级 · {{c.students}} 人）</option>{% endfor %}</select></label>
       </div>
       {% set a = None %}{% include 'assignment_form.html' %}
     </section>
@@ -19,6 +20,9 @@
 {% block scripts %}
   <script>
     const pick = document.getElementById('class-pick');
-    if (pick) WB.form('#assignment-form', () => pick.selectedOptions[0].dataset.url, (r) => (location.href = r.url));
+    if (pick) {
+      WB.form('#assignment-form', () => pick.selectedOptions[0].dataset.url, (r) => (location.href = r.url));
+      WB.unitPicker(document.getElementById('assignment-form'), pick);
+    }
   </script>
 {% endblock %}

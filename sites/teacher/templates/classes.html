@@ -41,6 +41,8 @@
           <button>建班</button>
         </form>
       </section>
+    {% else %}
+      <p class="hint">每位老师只能建一个班级。</p>
     {% endif %}
   </div>
 {% endblock %}
