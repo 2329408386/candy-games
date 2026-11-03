@@ -420,13 +420,13 @@ def test_grading_helpers():
         grading.clean_review({"dims": {}}, essay)
     # A careful review keeps many marks (up to 20 errors), the 分段 type, and a summary of a whole paragraph.
     dims = {k: {"score": 3} for k in grading.DIMS}
-    many = [{"quote": ESSAY[i : i + 2], "type": "标点", "fix": "X", "note": "标点要改"} for i in range(0, 50, 2)]
+    many = [{"quote": ESSAY[i : i + 2], "type": "标点", "fix": "X", "note": "标点要改"} for i in range(0, 70, 2)]
     long_summary = "你" * 150
     cleaned = grading.clean_review(
         {"dims": dims, "marks": many + [{"quote": ESSAY[60:64], "type": "分段", "fix": "", "note": "这里另起一段"}], "summary": long_summary},
         essay,
     )
-    assert sum(m["type"] == "标点" for m in cleaned["marks"]) == grading.MARK_LIMITS["error"] == 12
+    assert sum(m["type"] == "标点" for m in cleaned["marks"]) == grading.MARK_LIMITS["error"] == 25
     assert [m["type"] for m in cleaned["marks"] if m["type"] == "分段"] == ["分段"]
     assert cleaned["summary"] == long_summary and cleaned["praise"] == [] and cleaned["advice"] == []
     msgs = grading.grade_messages(essay)

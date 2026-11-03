@@ -21,8 +21,8 @@
  * tail), 对调号 (the line under one part and over the other); a correction too tangled for marks is underlined and
  * written out in a note. 好词 get circles under each character, 好句 a wavy line, 修改建议 brackets, 分段 the
  * 分段号. Short notes are written on the photo between the lines; a longer note gets a small circled number
- * (①②③, in reading order) at the end of its mark: on the page a tap on the mark shows it, in the PDF the numbered
- * notes are listed under each page. The score goes in the top right corner, the 总评 under the essay — all in a
+ * (①②③, in reading order) at the end of its mark: on the page a tap on the mark shows it; in the PDF each sheet
+ * gets an A4 page with the numbered notes written in the margins on both sides (framed()), the 总评 under the last. The score goes in the top right corner, the 总评 under the essay — all in a
  * neat handwritten 楷书 (霞鹜文楷), each character only slightly uneven.
  */
 (function () {
@@ -342,7 +342,8 @@
       if (box) write(note, box.x1, box.y2 - size * 0.18, size);
       else {
         const n = ++counter.n;
-        numbered.push({ i, n, text: note });
+        const L = segs.reduce((a, b) => (b.x1 < a.x1 ? b : a)), R = segs.reduce((a, b) => (b.x2 > a.x2 ? b : a));
+        numbered.push({ i, n, text: note, y: (first.y1 + first.y2) / 2, left: L.x1, right: R.x2 });
         g.n = n;
         // The number, small and raised, just after the end of the mark.
         const r = Math.max(sheet.minFont * 0.42, h * 0.3);
@@ -387,29 +388,71 @@
 
   const CIRCLED = '①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳';
 
-  /* The numbered notes of one surface, listed neatly under it (PDF only): ① …, wrapped under the text. */
-  function notesScene(notes) {
-    const W = 1400, size = 34, lineH = size * 1.55, left = 60, indent = size * 1.6;
-    const per = Math.floor((W - left * 2 - indent) / size);
-    const items = [{ t: 'fill', x: 0, y: 0, w: W, h: 10, color: '#fffef8' }];
-    let y = size * 1.4;
-    for (const note of notes) {
-      const label = CIRCLED[note.n - 1] || '(' + note.n + ')';
-      items.push(pen(label, left, y, size, note.n * 3 + 1));
-      wrap(note.text, per).forEach((row, k) => {
-        items.push(pen(row, left + indent, y, size, note.n * 17 + k));
-        y += lineH;
-      });
-      y += size * 0.25;
+  /* For the PDF: a surface with its numbered notes written in the margins on both sides — each note in the margin
+   * nearer its mark, level with it where there is room, stacked downwards without overlapping, no leader lines.
+   * When the notes do not fit the height of the surface the writing gets smaller rather than the page longer. */
+  function framed(scene) {
+    const notes = scene.notes || [];
+    if (!notes.length) return scene;
+    const cw = scene.w, ch = scene.h, M = Math.round(cw * 0.3), pad = M * 0.07;
+    const sides = { left: [], right: [] };
+    for (const n of notes) sides[n.left < cw - n.right ? 'left' : 'right'].push(n);
+    let size = scene.noteSize, layout;
+    for (let attempt = 0; attempt < 8; attempt++, size *= 0.88) {
+      const lineH = size * 1.32, label = size * 1.15;
+      const per = Math.max(3, Math.floor((M - pad * 2 - label) / size));
+      const rowsOf = (n) => wrap(n.text, per);
+      const need = (list) => list.reduce((t, n) => t + rowsOf(n).length * lineH + size * 0.45, 0);
+      const sideOf = { left: [...sides.left], right: [...sides.right] };
+      // Too many on one side: hand the notes nearest the middle to the other side.
+      for (const [a, b] of [['left', 'right'], ['right', 'left']])
+        while (need(sideOf[a]) > ch && need(sideOf[b]) + lineH * 2 < need(sideOf[a])) {
+          const mid = sideOf[a].reduce((best, n) => (!best || Math.abs((n.left + n.right) / 2 - cw / 2) < Math.abs((best.left + best.right) / 2 - cw / 2) ? n : best), null);
+          sideOf[a].splice(sideOf[a].indexOf(mid), 1);
+          sideOf[b].push(mid);
+        }
+      layout = [];
+      let fits = true;
+      for (const side of ['left', 'right']) {
+        const placed = [];
+        let y = size * 0.3;
+        for (const n of sideOf[side].sort((p, q) => p.y - q.y || p.n - q.n)) {
+          const rows = rowsOf(n);
+          const top = Math.max(y, n.y - lineH * 0.55);
+          placed.push({ n, rows, top, height: rows.length * lineH });
+          y = top + rows.length * lineH + size * 0.45;
+        }
+        // Pull the stack up when it runs past the bottom.
+        let excess = y - ch;
+        for (let k = placed.length - 1; k >= 0 && excess > 0; k--) {
+          const room = k ? placed[k].top - (placed[k - 1].top + placed[k - 1].height + size * 0.45) : placed[k].top - size * 0.3;
+          const lift = Math.min(excess, Math.max(0, room));
+          for (let j = k; j < placed.length; j++) placed[j].top -= lift;
+          excess -= lift;
+        }
+        if (excess > 0) fits = false;
+        for (const p of placed) layout.push({ ...p, side, size, lineH, label });
+      }
+      if (fits) break;
     }
-    items[0].h = y;
-    return { w: W, h: y, items, exportOnly: true };
+    const over = [];
+    let bottom = ch;
+    for (const p of layout) {
+      const x = p.side === 'left' ? pad : M + cw + pad;
+      const g = { t: 'group', items: [] };
+      g.items.push(pen(CIRCLED[p.n.n - 1] || '(' + p.n.n + ')', x, p.top + p.size * 0.95, p.size, p.n.n * 3 + 1));
+      p.rows.forEach((r, k) => g.items.push(pen(r, x + p.label, p.top + p.size * 0.95 + k * p.lineH, p.size, p.n.n * 17 + k)));
+      over.push(g);
+      bottom = Math.max(bottom, p.top + p.height);
+    }
+    return {
+      w: cw + M * 2,
+      h: bottom,
+      items: [{ t: 'fill', x: 0, y: 0, w: cw + M * 2, h: bottom, color: '#fffdf6' }, { t: 'group', tx: M, items: scene.items }, ...over],
+    };
   }
 
-  /* A surface and, for the PDF, its numbered notes. */
-  function withNotes(scene, numbered) {
-    return numbered.length ? [scene, notesScene(numbered)] : [scene];
-  }
+  const surface = (w, h, items, numbered, noteSize) => ({ w, h, items, notes: numbered, noteSize });
 
   /* ---- surfaces ---- */
   function photoScene(page, data, isFirst, counter) {
@@ -422,7 +465,7 @@
     const { items, numbered } = drawMarks(data, lines, sheet, counter);
     const content = [{ t: 'img', src: page.src, x: 0, y: 0, w: page.w, h: page.h }, ...items];
     if (isFirst && lines[0]) content.push(drawScore(data, sheet, lines[0]));
-    return withNotes({ w: page.w, h: page.h, items: content }, numbered);
+    return surface(page.w, page.h, content, numbered, page.w * 0.032);
   }
 
   function plainPhotoScene(page) {
@@ -473,7 +516,7 @@
     const sheet = { x1: 4, y1: 4, x2: width - 4, y2: height - 4, minFont: 22 };
     const { items, numbered } = drawMarks(data, placed, sheet, counter);
     content.push(...items, drawScore(data, sheet, { y1: top(0) + cell }));
-    return withNotes({ w: width, h: height, items: content }, numbered);
+    return surface(width, height, content, numbered, 26);
   }
 
   /* The 总评: one paragraph in the teacher's hand under the essay, the score signed at the end. */
@@ -502,10 +545,10 @@
 
   function scenes(data) {
     const out = [], counter = { n: 0 };
-    if (data.onPhoto) data.pages.forEach((p, k) => out.push(...photoScene(p, data, k === 0, counter)));
+    if (data.onPhoto) data.pages.forEach((p, k) => out.push(photoScene(p, data, k === 0, counter)));
     else {
       for (const p of data.pages) out.push(plainPhotoScene(p));
-      out.push(...paperScene(data, counter));
+      out.push(paperScene(data, counter));
     }
     out.push(summaryScene(data));
     return out;
@@ -691,19 +734,37 @@
     ctx.fillText(who, W / 2, y + 96);
     ctx.textAlign = 'left';
     y += 140;
-    for (const s of list) {
-      let k = Math.min(1.25, (W - pad * 2) / s.w);
-      // Shrinking to 70 % keeps it on this page; any smaller and it gets a page of its own.
-      if (s.h * k * 0.7 > H - pad - y && y > pad + 160) fresh();
-      k = Math.min(k, (H - pad - y) / s.h);
-      const x = (W - s.w * k) / 2;
+    const put = (s, k) => {
       ctx.save();
-      ctx.translate(x, y);
+      ctx.translate((W - s.w * k) / 2, y);
       ctx.scale(k, k);
       drawCanvas(ctx, s, images);
       ctx.restore();
       y += s.h * k + 30;
-    }
+    };
+    // One sheet of the essay per A4 page, its notes in the margins; the 总评 goes under the last sheet, on the
+    // same page when everything still reads well at 60 % or more (so a one-page essay prints on one page).
+    const sheets = list.filter((s) => !s.summary).map(framed), summary = list.find((s) => s.summary);
+    sheets.forEach((s, n) => {
+      if (n) fresh();
+      const wide = Math.min(1.25, (W - pad * 2) / s.w);
+      const room = H - pad - y;
+      if (n === sheets.length - 1 && summary) {
+        const ks = Math.min(1.1, (W - pad * 2) / summary.w) / wide; // the 总评 relative to the sheet
+        const fit = Math.min(1, room / ((s.h + summary.h * ks) * wide + 30));
+        if (fit >= 0.6) {
+          put(s, wide * fit);
+          put(summary, wide * ks * fit);
+          return;
+        }
+        put(s, Math.min(wide, room / s.h));
+        fresh();
+        put(summary, Math.min(1.1, (W - pad * 2) / summary.w));
+        return;
+      }
+      put(s, Math.min(wide, room / s.h));
+    });
+    if (!sheets.length && summary) put(summary, Math.min(1.1, (W - pad * 2) / summary.w));
     const out = [];
     for (const c of canvases) {
       out.push(await toJpeg(c));
@@ -833,13 +894,12 @@
     const list = scenes(data);
     container.rpScenes = list;
     for (const s of list) {
-      if (s.exportOnly) continue; // the numbered notes: a tap on the mark shows each one
       const wrap = document.createElement('div');
       wrap.className = 'rp-page' + (s.summary ? ' rp-summary' : '');
       wrap.appendChild(toSvg(s, data));
       container.appendChild(wrap);
     }
-    container.appendChild(legend(list.some((s) => s.exportOnly)));
+    container.appendChild(legend(list.some((s) => s.notes && s.notes.length))); // numbered notes show on a tap
     popup(container);
   }
 

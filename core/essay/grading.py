@@ -37,7 +37,7 @@ FLAGS = {
 MAX_TEXT = 3000
 MAX_MARKS = 40
 # Marks kept per kind: the review is careful (every real problem is pointed out); long notes go in the page margins.
-MARK_LIMITS = {"error": 12, "好词好句": 3, "修改建议": 3, "分段": 2}
+MARK_LIMITS = {"error": 25, "好词好句": 6, "修改建议": 5, "分段": 3}
 NOTE_MAX = 40
 SUMMARY_MAX = 200
 
