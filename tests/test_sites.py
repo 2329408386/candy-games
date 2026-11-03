@@ -333,6 +333,9 @@ def test_footer_links_other_subjects_not_admin(client, site):
     # on http the footer also offers https (needed by the microphone in 读句子)
     assert re.search(r'href="[^"]*" data-secure', cross)
     assert "data-secure" not in client.get("/", base_url="https://localhost").get_data(as_text=True).split("footer-cross")[1]
+    # the https link keeps the site's mount prefix (/math, /english, …) and the query string
+    page = client.get("/?from=x").get_data(as_text=True)
+    assert f'href="https://localhost{client.prefix}/?from=x" data-secure' in page
 
 
 def test_sign_ins_do_not_expire(admin, site, monkeypatch):
