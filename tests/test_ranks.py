@@ -22,7 +22,7 @@ def test_tiers_and_star_prices():
     assert ranks.collect(8, 25, 5) == (9, 0), "the last bronze star costs 30"
     assert ranks.collect(8, 0, 135) == (11, 15), "then silver stars cost 45 each"
     assert ranks.replay(144) == (4, 24)
-    assert ranks.replay(14295) == (100, 0), "王者 after 14295 points"
+    assert ranks.replay(56835) == (100, 0), "王者 after 56835 points"
 
 
 def test_migrations_divide_points_once_and_recount_tiers():
@@ -51,7 +51,7 @@ def test_migrations_divide_points_once_and_recount_tiers():
 
 
 def test_pk_only_adds_points_towards_stars(alice, bob, site, db):
-    db.execute("INSERT INTO profiles(site,license_id,rank_stars,rank_progress) VALUES(?,1,20,70),(?,2,20,0)", (site, site))
+    db.execute("INSERT INTO profiles(site,license_id,rank_stars,rank_progress) VALUES(?,1,20,145),(?,2,20,0)", (site, site))
     db.commit()
     code = started(alice, bob, site, db, n=2)
     for client, marks in ((alice, [True, True]), (bob, [True, False])):
@@ -59,7 +59,7 @@ def test_pk_only_adds_points_towards_stars(alice, bob, site, db):
             answer(client, code, i, ok, db, site)
     st = alice.get(f"/api/rooms/{code}").get_json()
     assert [(p["id"], p["points"]) for p in st["players"]] == [(1, 13), (2, 1)]
-    # alice: 70 + 13 points buy one 75-point 黄金 star; bob: 1 point, and losing takes nothing.
+    # alice: 145 + 13 points buy one 150-point 黄金 star; bob: 1 point, and losing takes nothing.
     rows = db.execute("SELECT license_id,rank_stars,rank_progress FROM profiles WHERE site=? ORDER BY license_id", (site,))
     assert [tuple(r) for r in rows] == [(1, 21, 8), (2, 20, 1)]
     assert st["players"][0]["tier"]["name"] == "黄金 IV"

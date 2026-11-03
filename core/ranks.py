@@ -12,11 +12,11 @@ This module does not import the app, so the database migration in schema.py can 
 TIERS = [
     ("bronze", "青铜", 3, 3, 30),
     ("silver", "白银", 3, 3, 45),
-    ("gold", "黄金", 4, 4, 75),
-    ("platinum", "铂金", 4, 4, 120),
-    ("diamond", "钻石", 5, 5, 180),
-    ("star", "星耀", 5, 5, 240),
-    ("king", "王者", 0, 0, 300),
+    ("gold", "黄金", 4, 4, 150),
+    ("platinum", "铂金", 4, 4, 360),
+    ("diamond", "钻石", 5, 5, 720),
+    ("star", "星耀", 5, 5, 1200),
+    ("king", "王者", 0, 0, 1800),
 ]
 GLORY_AT = 50  # 王者 stars that make 荣耀王者
 ROMAN = ["", "I", "II", "III", "IV", "V"]
