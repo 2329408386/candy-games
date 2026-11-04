@@ -834,6 +834,40 @@ def test_trial_runs_one_whole_assignment(models, db):
     db.commit()
 
 
+def test_admin_converts_a_trial_and_keeps_its_data(models, db):
+    c = SiteClient("teacher")
+    assert jpost(c, "/api/trial/essay/start").status_code == 200
+    lid = db.execute("SELECT max(license_id) FROM ess_trials").fetchone()[0]
+    assert f"试用编号 {lid}" in c.get("/teacher/").get_data(as_text=True)
+    cid = jpost(c, "/api/classes", {"name": "试用班", "grade": 3}).get_json()["id"]
+    jpost(c, f"/api/classes/{cid}/students", {"names": "小红"})
+    jpost(c, f"/api/classes/{cid}/assignments", {"title": "快乐的一天"})
+    a = SiteClient("teacher")
+    a.login()
+    assert "转为正式" in a.get(f"/admin/licenses/{lid}").get_data(as_text=True)
+    assert "转为正式" not in a.get("/admin/licenses/2").get_data(as_text=True)
+    assert a.post("/admin/licenses/2/trial_convert", {"buyer": "x", "days": "365", "students": "60", "monthly": "300", "device_limit": "2"}).status_code == 404
+    form = {"buyer": "王老师 订单 123", "days": "365", "students": "50", "monthly": "200", "device_limit": "3"}
+    a.post(f"/admin/licenses/{lid}/trial_convert", dict(form, buyer=" "))
+    assert db.execute("SELECT 1 FROM ess_trials WHERE license_id=?", (lid,)).fetchone()
+    a.post(f"/admin/licenses/{lid}/trial_convert", form)
+    assert not db.execute("SELECT 1 FROM ess_trials WHERE license_id=?", (lid,)).fetchone()
+    lic = db.execute("SELECT * FROM licenses WHERE site='teacher' AND id=?", (lid,)).fetchone()
+    assert lic["buyer"] == "王老师 订单 123" and lic["device_limit"] == 3
+    assert tuple(db.execute("SELECT students,monthly FROM ess_quota WHERE license_id=?", (lid,)).fetchone()) == (50, 200)
+    expires = db.execute("SELECT expires_at FROM ws_entitlements WHERE license_id=? AND feature='essay'", (lid,)).fetchone()[0]
+    assert 364 * 86400 < expires - time.time() < 366 * 86400
+    assert db.execute("SELECT 1 FROM audit WHERE action='trial_convert' AND license_id=?", (lid,)).fetchone()
+    # The teacher carries on in the same browser: no banner, the class is still there, more assignments are allowed.
+    home = c.get("/teacher/").get_data(as_text=True)
+    assert "trial-banner" not in home
+    assert [r[0] for r in db.execute("SELECT name FROM ess_students WHERE class_id=?", (cid,))] == ["小红"]
+    assert jpost(c, f"/api/classes/{cid}/assignments", {"title": "第二次"}).get_json().get("id")
+    # This browser still cannot open another trial.
+    jpost(c, "/api/logout")
+    assert "已经试用过" in jpost(c, "/api/trial/essay/start").get_json()["error"]
+
+
 def test_corrections_that_cannot_be_right_are_dropped():
     essay = {"grade": 3, "genre": "", "requirement": "", "min_chars": 0, "title": "", "text": ESSAY + "我看见□只鸟。"}
     dims = {k: {"score": 3} for k in grading.DIMS}

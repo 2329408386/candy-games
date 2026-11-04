@@ -32,7 +32,9 @@ license bound to this browser (ess_trials; buyer 免费试用) with 作文批改
 and TRIAL_ESSAYS essays in all (not per month); it may set one assignment (TRIAL_ASSIGNMENTS). Everything else — the
 class, students signing in, grading, export — is the normal flow. Pressing 开始试用 again on the same browser signs
 back in to its trial. trial_check() (trials table, game "essay-class") limits one per browser, a few per network a
-day and trial_daily() across the site. Earlier trials graded one essay under a hidden class of license 0; their
+day and trial_daily() across the site. When the teacher buys, the admin converts the trial in place (后台授权详情
+「转为正式」, admin.trial_convert): the ess_trials row goes, quota, expiry and buyer are set, and the class, students and
+essays stay; the browser still counts as having had its trial. Earlier trials graded one essay under a hidden class of license 0; their
 results can still be viewed (session["trial_essay"]).
 
 Module map: llm.py (configurable OpenAI-compatible models), grading.py (prompts and validation), worker.py,
@@ -519,6 +521,9 @@ def register_essay(app):
         essay_quota=quota,
         essay_students_used=students_used,
         essay_monthly_used=monthly_used,
+        essay_is_trial=is_trial,
+        essay_default_students=DEFAULT_STUDENTS,
+        essay_default_monthly=DEFAULT_MONTHLY,
         workbench_features=lambda lid: features.overview(db(), lid),
         workbench_feature_list=features.FEATURES,
         device_name=device_name,
@@ -540,7 +545,7 @@ def register_essay(app):
             ).fetchone()[0]
             me["devices"] = db().execute("SELECT count(*) FROM devices WHERE site='teacher' AND license_id=?", (row["id"],)).fetchone()[0]
             me["device_limit"] = row["device_limit"]
-            me["trial"] = trial_info(row["id"]) if is_trial(row["id"]) else None
+            me["trial"] = dict(trial_info(row["id"]), id=row["id"]) if is_trial(row["id"]) else None
         return {
             "side": side,
             "me_teacher": me if row else None,

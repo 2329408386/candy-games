@@ -67,8 +67,8 @@
     <main class="{{'admin-main' if is_admin else 'student-main'}}">
       {% if side == 'teacher' and me_teacher and me_teacher.trial %}{% set tr = me_teacher.trial %}
       <div class="trial-banner" role="status">
-        <span>免费试用{% if tr.days is none %}已结束，已批改的作文还可以查看{% else %} · {{'今天到期' if tr.days == 0 else '还剩 %d 天'|format(tr.days)}} · 可以布置 1 次作文 · 已批改 {{tr.used}}/{{tr.limit}} 篇{% endif %}</span>
-        <button type="button" class="link-button" data-post="{{url_for('logout')}}" data-confirm="去输入授权码？试用账号会先退出，之后可以在「免费试用」页面回来。">输入授权码 →</button>
+        <span>免费试用{% if tr.days is none %}已结束，已批改的作文还可以查看{% else %} · {{'今天到期' if tr.days == 0 else '还剩 %d 天'|format(tr.days)}} · 可以布置 1 次作文 · 已批改 {{tr.used}}/{{tr.limit}} 篇{% endif %} · 试用编号 {{tr.id}}</span>
+        <button type="button" class="link-button" data-post="{{url_for('logout')}}" data-confirm="已经购买的话，把试用编号 {{tr.id}} 告诉管理员，试用账号可以直接转为正式，班级和作文都保留。输入新的授权码会进入一个新的空账号，试用账号先退出，之后可以在「免费试用」页面回来。继续去输入授权码？">输入授权码 →</button>
       </div>
       {% endif %}
       {% with messages=get_flashed_messages(with_categories=true) %}{% for category,message in messages %}

@@ -283,6 +283,48 @@ def register(app):
         flash("已保存名额", "success")
         return redirect(url_for("detail", lid=lid))
 
+    @app.post("/admin/licenses/<int:lid>/trial_convert")
+    @admin_only
+    def trial_convert(lid):
+        """Turns a free-trial account into a paid one in place: its class, students and essays stay."""
+        from core.schema import end_of_day
+
+        from . import features, is_trial
+
+        row = license_row(lid)
+        if not row or row["archived_at"] is not None or not is_trial(lid):
+            abort(404)
+        buyer = request.form.get("buyer", "").strip()[:500]
+        try:
+            days = integer_field("days", 1, features.MAX_DAYS)
+            students = integer_field("students", 1, 2000)
+            monthly = integer_field("monthly", 0, 100000)
+            limit = integer_field("device_limit", 1, 100)
+        except ValueError:
+            flash(f"天数 1—{features.MAX_DAYS}，学生名额 1—2000，每月篇数 0—100000，设备上限 1—100", "error")
+            return redirect(url_for("detail", lid=lid))
+        if not buyer:
+            flash("请填写买家或订单备注", "error")
+            return redirect(url_for("detail", lid=lid))
+        d = db()
+        d.execute("BEGIN IMMEDIATE")
+        now = int(time.time())
+        d.execute("DELETE FROM ess_trials WHERE license_id=?", (lid,))
+        d.execute(
+            "UPDATE licenses SET buyer=?,assigned_at=?,device_limit=max(?,(SELECT count(*) FROM devices WHERE site='teacher' AND license_id=?))"
+            " WHERE site='teacher' AND id=?",
+            (buyer, now, limit, lid, lid),
+        )
+        d.execute(
+            "INSERT INTO ess_quota VALUES(?,?,?) ON CONFLICT(license_id) DO UPDATE SET students=excluded.students,monthly=excluded.monthly",
+            (lid, students, monthly),
+        )
+        features.set_expiry(d, lid, "essay", end_of_day(now + days * features.DAY), now=now)
+        audit("trial_convert", lid, f"试用转为正式：{buyer}；作文批改 {days} 天，学生 {students} 人，每月 {monthly} 篇，设备 {limit} 台")
+        d.commit()
+        flash("已转为正式授权，试用里的班级和作文都保留", "success")
+        return redirect(url_for("detail", lid=lid))
+
     @app.post("/admin/licenses/<int:lid>/feature")
     @admin_only
     def feature_save(lid):

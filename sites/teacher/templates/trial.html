@@ -14,7 +14,7 @@
       <li>建 1 个班，最多 <strong>{{students}}</strong> 名学生（学生用登录条登录、拍照交作文）</li>
       <li>布置 <strong>1</strong> 次作文，最多批改 <strong>{{essays}}</strong> 篇（含学生重交）</li>
       <li>从今天起 <strong>{{days}}</strong> 天内有效，到期后还能查看已批改的作文</li>
-      <li>试用账号只在这台设备上使用；之后输入授权码，就能布置更多作文（试用里的班级不会带过去）</li>
+      <li>试用账号只在这台设备上使用；购买后把试用编号（试用期间页面顶部可以看到）告诉管理员，试用账号可以直接转为正式，班级、学生和作文都保留</li>
     </ul>
     {% if mine %}
       <button type="button" data-post="{{url_for('trial_start_essay')}}">回到我的试用</button>

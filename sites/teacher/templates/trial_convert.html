@@ -1,0 +1,17 @@
+{% if not row.archived_at and essay_is_trial(row.id) %}
+<section class="panel">
+  <h2>免费试用账号 · 转为正式</h2>
+  <p class="muted">老师购买后在这里转为正式授权：老师在原设备上继续使用，试用里的班级、学生口令和作文全部保留。上方的授权码可以发给老师，用来在其他设备登录。</p>
+  <form method="post" action="{{url_for('trial_convert', lid=row.id)}}" onsubmit="return confirm('把这个试用账号转为正式授权？')">
+    <input type="hidden" name="csrf" value="{{csrf()}}">
+    <div class="form-field"><label for="tc-buyer">买家或订单备注</label><input id="tc-buyer" name="buyer" required maxlength="500"></div>
+    <div class="fields-row">
+      <div class="form-field"><label for="tc-days">作文批改天数</label><input id="tc-days" name="days" type="number" min="1" max="7300" required value="365"><small>从今天起算，365 = 1 年。</small></div>
+      <div class="form-field"><label for="tc-students">学生名额</label><input id="tc-students" name="students" type="number" min="1" max="2000" required value="{{essay_default_students}}"></div>
+      <div class="form-field"><label for="tc-monthly">每月批改篇数</label><input id="tc-monthly" name="monthly" type="number" min="0" max="100000" required value="{{essay_default_monthly}}"></div>
+      <div class="form-field"><label for="tc-limit">设备上限</label><input id="tc-limit" name="device_limit" type="number" min="1" max="100" required value="{{row.device_limit}}"></div>
+    </div>
+    <button>转为正式</button>
+  </form>
+</section>
+{% endif %}
