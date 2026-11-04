@@ -237,6 +237,8 @@ def clean_review(raw, essay):
             continue  # an error with no correction (or the same text) is not actionable
         if not plausible_fix(m["type"], text[span[0] : span[1]], fix):
             continue
+        if m["type"] == "分段" and para_start(text, span[0]):
+            continue  # the child already began a new paragraph here
         taken.add(span)
         kinds[kind] = kinds.get(kind, 0) + 1
         marks.append(
@@ -271,6 +273,11 @@ def clean_review(raw, essay):
 
 
 PUNCT = set("，。、；：？！“”‘’「」『』（）《》〈〉【】…—～·,.;:?!\"'()<>[]-~ ")
+
+
+def para_start(text, start):
+    """Whether start is where a paragraph of the text already begins (after a line break and any indent)."""
+    return text[:start].rstrip(" \t\u3000").endswith("\n") or not text[:start].strip()
 
 
 def plausible_fix(kind, quote, fix):

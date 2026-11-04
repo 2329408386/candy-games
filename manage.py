@@ -122,6 +122,31 @@ def essay_reread(sid):
     print(f"作文 {sid} 已重新排队（原来是 {row['status']}），会从识别照片开始重新批改")
 
 
+def essay_drop_para():
+    """Removes 分段 marks that sit where the child already began a paragraph, from the AI review and the published
+    one (grading now drops them as they come in). Nothing else changes. Safe to run again."""
+    from core.essay import grading
+
+    d = db()
+    rows = d.execute("SELECT r.submission_id,r.ai,r.final,s.text FROM ess_reviews r JOIN ess_submissions s ON s.id=r.submission_id").fetchall()
+    for row in rows:
+        changed, dropped = {}, 0
+        for col in ("ai", "final"):
+            if not row[col]:
+                continue
+            review = json.loads(row[col])
+            keep = [m for m in review["marks"] if not (m["type"] == "分段" and grading.para_start(row["text"], m["start"]))]
+            if len(keep) < len(review["marks"]):
+                dropped = max(dropped, len(review["marks"]) - len(keep))
+                changed[col] = json.dumps({**review, "marks": keep}, ensure_ascii=False)
+        for col, value in changed.items():
+            d.execute(f"UPDATE ess_reviews SET {col}=? WHERE submission_id=?", (value, row["submission_id"]))
+        if changed:
+            print(f"作文 {row['submission_id']}：去掉 {dropped} 条段首的分段批注")
+    d.commit()
+    print("完成")
+
+
 def summary(site):
     d = db()
     s = site.key
@@ -155,13 +180,17 @@ def summary(site):
 
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
-    p.add_argument("command", choices=["seed", "export", "backup", "reset-password", "summary", "essay-reread"])
+    p.add_argument("command", choices=["seed", "export", "backup", "reset-password", "summary", "essay-reread", "essay-drop-para"])
     p.add_argument("--site", choices=sorted(SITES))
     p.add_argument("--id", type=int, help="essay-reread: 作文提交编号")
     args = p.parse_args()
     schema.initialize(data_dir() / schema.DB_NAME)
     if args.command == "backup":
         backup()
+        raise SystemExit
+    if args.command == "essay-drop-para":
+        with create_app(SITES["teacher"]).app_context():
+            essay_drop_para()
         raise SystemExit
     if args.command == "essay-reread":
         if not args.id:

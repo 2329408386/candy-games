@@ -505,6 +505,11 @@ def test_grading_helpers():
     )
     assert sum(m["type"] == "病句" for m in cleaned["marks"]) == grading.MARK_LIMITS["error"] == 25
     assert [m["type"] for m in cleaned["marks"] if m["type"] == "分段"] == ["分段"]
+    # A 分段 mark where the child already began a paragraph (after a line break, indent or not) is dropped.
+    paras = [{"quote": q, "type": "分段", "fix": "", "note": "这里另起一段"} for q in ("我们在湖边", "这真是快乐", "妈妈说要爱护")]
+    para_only = grading.clean_review({"dims": dims, "marks": paras}, {**essay, "text": ESSAY.replace("\n\n这真", "\n\u3000\u3000这真")})
+    assert [m["quote"] for m in para_only["marks"]] == ["妈妈说要爱护"]
+    assert grading.para_start("  开头", 2) and not grading.para_start("一句。二句", 3)
     assert cleaned["summary"] == long_summary and cleaned["praise"] == [] and cleaned["advice"] == []
     msgs = grading.grade_messages(essay)
     assert "最短" in msgs[0]["content"] and "总评" in msgs[0]["content"]
