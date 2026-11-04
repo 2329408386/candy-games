@@ -67,6 +67,9 @@ def _step_form():
         if not isinstance(parsed, dict) or {"model", "messages"} & set(parsed):
             raise ValueError("额外参数要是 JSON 对象，而且不能包含 model 和 messages")
         extra = json.dumps(parsed, ensure_ascii=False)
+    use_hours = request.form.get("use_hours", "").strip()
+    if not llm.valid_use_hours(use_hours):
+        raise ValueError("首选时段的格式是 18-8 或 0-8,18-24（北京时间，每天）")
     peak_hours = request.form.get("peak_hours", "").strip()
     if not llm.valid_peak_hours(peak_hours):
         raise ValueError("高峰时段的格式是 9-12,14-18（北京时间，周一到周五）")
@@ -82,6 +85,7 @@ def _step_form():
         "price_out": _float("price_out", 0, 1000, "输出价格", 0),
         "peak_factor": _float("peak_factor", 1, 10, "高峰倍数", 1),
         "peak_hours": peak_hours,
+        "use_hours": use_hours,
         "auto_mode": request.form.get("auto_mode") if request.form.get("auto_mode") in AUTO_MODES else "latest",
         "auto_price": int(bool(request.form.get("auto_price"))),
         "series": models_sync.series(model),
@@ -218,6 +222,7 @@ def register(app):
             "models.html",
             providers=providers,
             steps=steps,
+            first_model={step: (llm.step_rows(d, step) or [{}])[0].get("model", "") for step in llm.STEPS},
             budget=float(budget[0]) if budget else 0,
             usd_cny=float(rate[0]) if rate else models_sync.USD_CNY,
             trial_daily=trial_daily(),
@@ -248,7 +253,7 @@ def register(app):
             row = {
                 **dict(provider), "provider_id": provider["id"], "provider_name": provider["name"], "model": model,
                 "temperature": None, "max_tokens": None, "extra": "", "price_in": 0, "price_cached": 0, "price_out": 0,
-                "peak_factor": 1, "peak_hours": "", "auto_mode": "fixed",
+                "peak_factor": 1, "peak_hours": "", "use_hours": "", "auto_mode": "fixed",
             }
         row = {**row, "timeout": min(row["timeout"] or 20, 20)}  # stays under the web worker's 30 s limit
         body = llm.request_body(row, [{"role": "user", "content": "请只回复两个字：你好"}], False)

@@ -419,6 +419,39 @@ def test_admin_model_settings(db):
     db.commit()
 
 
+def test_use_hours_pick_the_model_by_time_of_day(models, db):
+    beijing = lambda hour: 86400 * 10 + (hour - 8) * 3600  # a timestamp at that Beijing hour
+    assert llm.in_hours("18-8", beijing(20)) and llm.in_hours("18-8", beijing(3)) and not llm.in_hours("18-8", beijing(12))
+    assert llm.in_hours("0-8,18-24", beijing(19)) and not llm.in_hours("0-8,18-24", beijing(9)) and not llm.in_hours("", beijing(9))
+    assert llm.valid_use_hours("18-8") and llm.valid_use_hours("0-8, 18-24") and llm.valid_use_hours("")
+    assert not llm.valid_use_hours("8-8") and not llm.valid_use_hours("25-3") and not llm.valid_use_hours("晚上")
+    # grade: main "big" all day, backup "spare" first from 18:00 to 08:00.
+    db.execute("INSERT INTO ess_steps(step,slot,provider_id,model,use_hours) VALUES('grade','backup',1,'spare','18-8')")
+    db.commit()
+    order = lambda hour: [r["model"] for r in llm.step_rows(db, "grade", now=beijing(hour))]
+    assert order(20) == ["spare", "big"] and order(7) == ["spare", "big"] and order(12) == ["big", "spare"]
+    a = SiteClient("teacher")
+    a.login()
+    form = {"action": "step", "step": "grade", "slot": "backup", "provider_id": "1", "model": "spare"}
+    a.post("/admin/models", dict(form, use_hours="晚上"))
+    assert db.execute("SELECT use_hours FROM ess_steps WHERE step='grade' AND slot='backup'").fetchone()[0] == "18-8"
+    a.post("/admin/models", dict(form, use_hours="19-7"))
+    assert db.execute("SELECT use_hours FROM ess_steps WHERE step='grade' AND slot='backup'").fetchone()[0] == "19-7"
+    assert "现在先用" in a.get("/admin/models").get_data(as_text=True)
+
+
+def test_student_pages_never_show_ai_status(models, klass, db):
+    t, cid, aid = klass
+    s, _ = student_client(db, cid, "李华")
+    sid = jpost(s, f"/api/write/{aid}", {"text": ESSAY}).get_json()["id"]
+    # One browser signed in as the teacher and as a student (a teacher trying the student pages).
+    assert s.activate(KEYS["teacher"]).status_code == 200
+    page = s.get(f"/student/essay/{aid}").get_data(as_text=True)
+    assert "as=student" in page
+    assert s.get(f"/api/submissions/{sid}/state?as=student").get_json()["label"] == "老师批改中"
+    assert s.get(f"/api/submissions/{sid}/state").get_json()["label"] == "排队批改中"  # the teacher side
+
+
 def test_admin_quota_on_license_detail(db):
     a = SiteClient("teacher")
     a.login()

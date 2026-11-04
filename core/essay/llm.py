@@ -75,14 +75,41 @@ def key_tail(plain):
 
 
 # ---- configuration ----
-def step_rows(d, step):
-    """The configured (main, then backup) slots of a step that have a provider and a model."""
+def step_rows(d, step, now=None):
+    """The configured slots of a step that have a provider and a model, in the order they are tried: main, then
+    backup, except that a slot with 首选时段 (use_hours) goes first inside those hours and last outside them (it is
+    then only a fallback)."""
     rows = d.execute(
         "SELECT s.*,p.name provider_name,p.base_url,p.key_enc,coalesce(s.step_timeout,p.timeout) timeout,p.concurrency FROM ess_steps s"
         " JOIN ess_providers p ON p.id=s.provider_id WHERE s.step=? AND s.model!='' ORDER BY s.slot='backup'",
         (step,),
     ).fetchall()
-    return [dict(r) for r in rows]
+    rank = lambda r: 1 if not r["use_hours"] else 0 if in_hours(r["use_hours"], now) else 2
+    return sorted((dict(r) for r in rows), key=rank)
+
+
+HOURS_PART = re.compile(r"\s*(\d{1,2})\s*-\s*(\d{1,2})\s*")
+
+
+def in_hours(spec, now=None):
+    """spec like "18-8" or "0-8,18-24": Beijing-time hours, every day; a span may run past midnight (18-8)."""
+    if not spec:
+        return False
+    hour = (int(now if now is not None else time.time()) + BEIJING) % 86400 / 3600
+    for part in spec.split(","):
+        m = HOURS_PART.fullmatch(part)
+        if m:
+            a, b = int(m[1]), int(m[2])
+            if (a <= hour < b) if a < b else (hour >= a or hour < b):
+                return True
+    return False
+
+
+def valid_use_hours(spec):
+    return not spec or all(
+        (m := HOURS_PART.fullmatch(part)) and 0 <= int(m[1]) <= 24 and 0 <= int(m[2]) <= 24 and int(m[1]) != int(m[2])
+        for part in spec.split(",")
+    )
 
 
 def configured(d, step):

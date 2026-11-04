@@ -1397,6 +1397,12 @@ def register_teacher_api(app):
     @app.get("/api/submissions/<int:sid>/state")
     def submission_state(sid):
         row, me = teacher(), student()
+        # A student page asks as=student: a browser signed in on both sides (a teacher trying the student pages)
+        # then gets the student's words, never "AI".
+        if request.args.get("as") == "student" and me:
+            sub = db().execute(SUBMISSION_SQL + " WHERE s.id=? AND s.student_id=?", (sid, me["id"])).fetchone()
+            if sub:
+                return jsonify(state_payload(sub, for_student=True))
         sub = None
         if row:
             sub = db().execute(SUBMISSION_SQL + " WHERE s.id=? AND c.license_id=?", (sid, row["id"])).fetchone()
@@ -1484,7 +1490,7 @@ def register_student_api(app):
             d.rollback()
             return error(str(e))
         d.commit()
-        return jsonify(ok=True, id=sid, state=url_for("submission_state", sid=sid))
+        return jsonify(ok=True, id=sid, state=url_for("submission_state", sid=sid, **{"as": "student"}))
 
 
 # ---- trial: a temporary teacher account per browser, for one whole assignment ----

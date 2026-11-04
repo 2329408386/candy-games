@@ -59,6 +59,7 @@
     <section class="panel" id="step-{{step}}">
       <h2>{{step_name}}</h2>
       <p class="hint">{{ {'ocr': '把学生作文的照片识别成文字（拍照提交下一期上线）。需要能看图的模型，例如 qwen-vl-ocr。', 'grade': '给作文打分、写评语和标注，质量最关键，建议用旗舰模型。必须支持 JSON 输出。', 'check': '逐条复核批改里的错别字、病句等标注，去掉误判，并独立给出等级。可以用便宜一些的模型。'}[step] }}主模型出错、超时或被限流时，自动改用备用模型。</p>
+      {% if first_model[step] %}<p class="hint">现在先用：<strong>{{first_model[step]}}</strong></p>{% endif %}
       <div class="step-slots">
         {% for slot, slot_name in SLOTS.items() %}
           {% set s = steps.get((step, slot)) %}
@@ -85,6 +86,7 @@
               <div class="form-field"><label>高峰时段</label><input name="peak_hours" value="{{s.peak_hours if s else ''}}" placeholder="例如 9-12,14-18（北京时间工作日）"></div>
               <div class="form-field"><label>高峰价格倍数</label><input name="peak_factor" value="{{s.peak_factor if s else ''}}" placeholder="例如 2；不填为 1"></div>
             </div>
+            <div class="form-field"><label>首选时段</label><input name="use_hours" value="{{s.use_hours if s else ''}}" placeholder="例如 18-8（北京时间每天，可跨零点）"><small>在这个时段内先用这个模型，时段外它排到最后，只在另一个模型出错时才用。不填：全天按主模型、备用模型的顺序。</small></div>
             <div class="fields-row">
               <div class="form-field"><label>版本策略</label><select name="auto_mode">{% for k, label in AUTO_MODES.items() %}<option value="{{k}}"{{' selected' if (s.auto_mode if s else 'latest') == k}}>{{label}}</option>{% endfor %}</select></div>
               <div class="form-field"><label>&nbsp;</label><label class="check-inline"><input type="checkbox" name="auto_price"{{' checked' if not s or s.auto_price}}> 换模型时按列表价格自动更新单价</label></div>

@@ -227,6 +227,16 @@
     return { d: 'M' + pts.map((p) => f1(p[0]) + ' ' + f1(p[1])).join(' L'), top: [cx + rx * 0.35, cy - ry * 0.94], right: [cx + rx * 0.92, cy - ry * 0.4] };
   }
 
+  /* A small loop round a punctuation mark: on squared paper it sits in the lower left of its square (or squeezed
+   * into the lower right of the character before it, close by), so a loop round the whole square would ring the
+   * character next to it. Same shape of answer as loop(). */
+  function dotLoop(seg, rand) {
+    const h = seg.h, w = Math.max(seg.x2 - seg.x1, h * 0.4);
+    const cx = seg.x1 + w * 0.2, cy = seg.y2 - h * 0.32;
+    return loop({ x1: cx - h * 0.16, x2: cx + h * 0.16, y1: cy - h * 0.22, y2: cy + h * 0.22, h: h * 0.44 }, rand);
+  }
+  const PUNCT = /^[，。、；：？！“”‘’（）《》…—,.;:?!"'()]+$/u;
+
   function wavy(seg, rand) {
     const y = seg.y2 + seg.h * 0.14, amp = seg.h * 0.09, step = seg.h * 0.22;
     let d = 'M' + f1(seg.x1) + ' ' + f1(y), up = true;
@@ -345,9 +355,10 @@
             if (hk.a1 > hk.a0) {
               const S = sub(hk.a0, hk.a1);
               if (!S.length) continue;
-              const lp = loop(S[0], rand);
+              const ring = PUNCT.test([...quote].slice(hk.a0, hk.a1).join("")) ? dotLoop : loop;
+              const lp = ring(S[0], rand);
               draw(lp.d);
-              for (const seg of S.slice(1)) draw(loop(seg, rand).d);
+              for (const seg of S.slice(1)) draw(ring(seg, rand).d);
               if (hk.ins) {
                 if (!above(hk.ins, lp.top, (S[0].x1 + S[0].x2) / 2, S[0])) long = '改为：' + m.fix;
               } else draw(pigtail(lp.right, S[0].h, rand), sw * 0.9); // 删除号

@@ -102,6 +102,9 @@ def initialize(path):
                 d.execute("ALTER TABLE ess_steps ADD COLUMN " + column)
         if "step_timeout" not in {r[1] for r in d.execute("PRAGMA table_info(ess_steps)")}:
             d.execute("ALTER TABLE ess_steps ADD COLUMN step_timeout INTEGER")  # NULL: the provider's timeout
+        if "use_hours" not in {r[1] for r in d.execute("PRAGMA table_info(ess_steps)")}:
+            # 首选时段 (core/essay/llm.py step_rows): Beijing hours every day when this model goes first.
+            d.execute("ALTER TABLE ess_steps ADD COLUMN use_hours TEXT NOT NULL DEFAULT ''")
         columns = {r[1] for r in d.execute("PRAGMA table_info(ess_usage)")}
         if "error" not in columns:  # why a call failed and how long it took, for 模型设置
             d.execute("ALTER TABLE ess_usage ADD COLUMN error TEXT NOT NULL DEFAULT ''")
