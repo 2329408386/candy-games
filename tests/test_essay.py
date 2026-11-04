@@ -61,12 +61,19 @@ class FakeModels:
         self.check = {"items": [{"id": 1, "ok": False, "reason": "原句没有错"}, {"id": 2, "ok": True}], "level": "良"}
         self.fail = set()  # models that raise
         self.ocr = OCR_PAGE
+        self.verify = None  # what the photo check of 错别字 answers (None: every character unreadable, marks kept)
+        self.verified = []
 
     def __call__(self, row, body):
         self.calls.append((row["model"], body))
         if row["model"] in self.fail:
             raise llm.LLMError("HTTP 429: rate limited")
         system = body["messages"][0]["content"]
+        if system.startswith("你在核对"):
+            self.verified.append(body)
+            asked = sum(1 for part in body["messages"][1]["content"] if part["type"] == "text" and part["text"].startswith("第 "))
+            answer = self.verify if self.verify is not None else {"items": [{"id": n, "seen": "□"} for n in range(1, asked + 1)]}
+            return json.dumps(answer, ensure_ascii=False), 300, 0, 50
         if "誊抄" in system[:80]:
             answer = self.ocr.pop(0) if isinstance(self.ocr, list) else self.ocr  # a list: one answer per call
         else:
@@ -1232,3 +1239,76 @@ def test_assignment_export_lists_graded_essays(models, klass, db):
     assert data["essays"][0]["student"] == "李华" and data["essays"][0]["marks"] and "快乐的一天" in data["name"]
     assert teacher_client(TEACHER2_KEY).get(f"/teacher/essay/assignments/{aid}/export.json").status_code == 404
     assert SiteClient("teacher").get(f"/teacher/essay/assignments/{aid}/export.json").status_code == 403
+
+
+def test_typo_verify_helpers():
+    text = "我设有\n去公园，我高心极了。"
+    marks = [
+        {"type": "错别字", "start": 1, "end": 3, "quote": "设有", "fix": "没有", "note": ""},
+        {"type": "错别字", "start": 9, "end": 11, "quote": "高心", "fix": "高兴", "note": ""},
+        {"type": "病句", "start": 0, "end": 3, "quote": "我设有", "fix": "我没有", "note": ""},
+    ]
+    review = {"marks": marks, "rejected": []}
+    pages = [(7, [{"s": 0, "e": 3, "b": [10, 10, 900, 60]}, {"s": 4, "e": 14, "b": [10, 80, 900, 130]}])]
+    targets = grading.typo_targets(review, text, pages)
+    assert [(t["id"], t["mark"], t["wrong"], t["right"], t["nth"], t["iid"]) for t in targets] == [(1, 0, "设", "没", 2, 7), (2, 1, "心", "兴", 7, 7)]
+    assert targets[1]["line"] == "去公园，我高心极了。"
+    # A line without a box is not looked at.
+    assert [t["mark"] for t in grading.typo_targets(review, text, [(7, pages[0][1][:1])])] == [0]
+    msgs = grading.verify_messages(targets, [b"a", b"b"])
+    assert "第 2 个字（识别成了「设」，批改认为应该是「没」）" in msgs[1]["content"][0]["text"]
+    with pytest.raises(ValueError):
+        grading.parse_verify({"items": [{"id": 1, "seen": "没"}]}, 2)
+    seen = grading.parse_verify({"items": [{"id": 1, "seen": "没"}, {"id": 2, "seen": "心"}]}, 2)
+    new, fixed, dropped = grading.apply_verify(review, text, targets, seen)
+    # 没 was written correctly: that mark goes and the text is corrected; 高心 really is wrong and stays.
+    assert fixed == "我没有\n去公园，我高心极了。" and [m["quote"] for m in dropped] == ["设有"]
+    assert [m["quote"] for m in new["marks"]] == ["高心", "我没有"]
+    # Unreadable or another character: nothing changes.
+    for answer in ("□", "设", "汉"):
+        assert grading.apply_verify(review, text, targets, {1: answer, 2: "心"})[2] == []
+    # A mark changing two characters goes only when both are confirmed.
+    two = {"marks": [{"type": "错别字", "start": 9, "end": 11, "quote": "高心", "fix": "开兴", "note": ""}]}
+    t2 = grading.typo_targets(two, text, pages)
+    assert len(t2) == 2
+    assert grading.apply_verify(two, text, t2, {1: "开", 2: "心"})[2] == []
+    assert grading.apply_verify(two, text, t2, {1: "开", 2: "兴"})[1].endswith("我开兴极了。")
+
+
+def test_photo_typo_misread_is_dropped_and_text_corrected(models, klass, db):
+    t, cid, aid = klass
+    st = students_of(db, cid)["王小明"]
+    r = upload(t, f"/api/assignments/{aid}/submit_for", [photo_bytes()], student_id=str(st["id"]))
+    sid = r.get_json()["id"]
+    models.grade = grade_answer(marks=[{"quote": "高心", "type": "错别字", "fix": "高兴", "note": ""}])
+    models.check = {"items": [{"id": 1, "reason": "确实写错", "ok": True}], "level": "良"}
+    models.verify = {"items": [{"id": 1, "seen": "兴"}]}
+    run_worker()
+    assert len(models.verified) == 1
+    sub = db.execute("SELECT * FROM ess_submissions WHERE id=?", (sid,)).fetchone()
+    assert "我高兴极了。" in sub["text"] and "高心" not in sub["text"]
+    ai = json.loads(db.execute("SELECT ai FROM ess_reviews WHERE submission_id=?", (sid,)).fetchone()[0])
+    assert not [m for m in ai["marks"] if m["type"] == "错别字"]
+    assert any(m["quote"] == "高心" and "识别" in m["reason"] for m in ai["rejected"])
+    # The photo really shows the wrong character: the mark stays; a failing check call keeps it too.
+    for verify in ({"items": [{"id": 1, "seen": "心"}]}, {"bad": 1}):
+        r = upload(t, f"/api/assignments/{aid}/submit_for", [photo_bytes()], student_id=str(students_of(db, cid)["李华"]["id"]))
+        sid = r.get_json()["id"]
+        models.verify = verify
+        run_worker()
+        ai = json.loads(db.execute("SELECT ai FROM ess_reviews WHERE submission_id=?", (sid,)).fetchone()[0])
+        assert [m["quote"] for m in ai["marks"] if m["type"] == "错别字"] == ["高心"]
+        db.execute("DELETE FROM ess_submissions WHERE id=?", (sid,))
+        db.commit()
+
+
+def test_typed_essays_are_not_looked_at_on_a_photo(models, klass, db):
+    t, cid, aid = klass
+    s, _ = student_client(db, cid, "张三")
+    models.grade = grade_answer(marks=[{"quote": "高心", "type": "错别字", "fix": "高兴", "note": ""}])
+    models.check = {"items": [{"id": 1, "ok": True}], "level": "良"}
+    assert jpost(s, f"/api/write/{aid}", {"title": "", "text": ESSAY}).status_code == 200
+    run_worker()
+    assert models.verified == []
+    check = [b for m, b in models.calls if "复核" in b["messages"][0]["content"][:60]][-1]
+    assert "照片识别" not in check["messages"][1]["content"]

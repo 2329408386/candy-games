@@ -15,6 +15,9 @@ Pipeline (run by the worker, core/essay/worker.py):
               example sentence, and gives its own level; marks it rejects or skips are dropped, and a level two steps
               away from ours is flagged for the teacher. If the check step is not configured or fails, the marks stay,
               the review is flagged "unchecked" and goes to the teacher instead of being published (worker.py).
+  4. verify — photos only: each character a 错别字 mark changes is cut out of the photo (its line) and the ocr step's
+              model says which character is really written there (prompts/verify.md). Where the photo shows the
+              correct one, the ocr step misread it: the mark is dropped and the text corrected (apply_verify).
 
 Prompts live in sites/teacher/prompts/; PROMPT_VERSION is a hash of those files and is stored with each review.
 Anchor essays (teacher-scored examples that calibrate the scale) go in prompts/anchors/<band>.json.
@@ -55,6 +58,7 @@ CHOICES = [g for g in GENRES if g != "其他"]  # what a teacher may tick (sever
 GRADE_PROMPT = _read("grade.md")
 CHECK_PROMPT = _read("check.md")
 OCR_PROMPT = _read("ocr.md")
+VERIFY_PROMPT = _read("verify.md")
 
 
 def _anchor_files():
@@ -170,8 +174,9 @@ def check_messages(essay, marks):
     errors = checked_marks(marks)
     items = [{"id": i, "type": m["type"], "quote": m["quote"], "fix": m["fix"], "note": m["note"]} for i, m in enumerate(errors, 1)]
     user = (
-        f"学段：{BANDS[band]['name']}\n文体：{'、'.join(genres_of(essay)) or '不指定'}\n作文主题：{topic_of(essay) or '无'}\n习作重点：{essay['requirement'] or '无'}\n\n"
-        f"作文正文：\n{essay['text']}\n\n需要复核的标注：\n{json.dumps(items, ensure_ascii=False, indent=1)}"
+        f"学段：{BANDS[band]['name']}\n文体：{'、'.join(genres_of(essay)) or '不指定'}\n作文主题：{topic_of(essay) or '无'}\n习作重点：{essay['requirement'] or '无'}\n"
+        + ("这篇作文是从学生手写作文的照片识别出来的。\n" if essay.get("source") == "photo" else "")
+        + f"\n作文正文：\n{essay['text']}\n\n需要复核的标注：\n{json.dumps(items, ensure_ascii=False, indent=1)}"
     )
     return [{"role": "system", "content": CHECK_PROMPT}, {"role": "user", "content": user}]
 
@@ -392,6 +397,88 @@ def ocr_messages(image_bytes, page, pages):
         {"role": "system", "content": OCR_PROMPT},
         {"role": "user", "content": [{"type": "text", "text": note + "请誊抄这张照片。"}, {"type": "image_url", "image_url": {"url": url}}]},
     ]
+
+
+def typo_chars(text, mark):
+    """[(position in text, character written there, the fix's character)] for each character a 错别字 mark changes
+    (whitespace inside the quote skipped, as plausible_fix compares them)."""
+    fix = re.sub(r"\s+", "", mark["fix"])
+    if mark["end"] > len(text) or text[mark["start"] : mark["end"]] != mark["quote"]:
+        return []
+    spots = [i for i in range(mark["start"], mark["end"]) if not text[i].isspace()]
+    if len(spots) != len(fix):
+        return []
+    return [(i, text[i], f) for i, f in zip(spots, fix) if text[i] != f]
+
+
+def typo_targets(review, text, pages):
+    """The characters to look at again on the photo: for every 错别字 mark, each changed character whose line has
+    a box. pages: [(image id, [{"s", "e", "b"}…])]. Returns [{"id", "mark", "pos", "wrong", "right", "iid", "box",
+    "line", "nth"}] numbered 1, 2, …; marks with any character that cannot be found on a photo are left out."""
+    out = []
+    for k, m in enumerate(review["marks"]):
+        if m["type"] != "错别字":
+            continue
+        found = []
+        for pos, wrong, right in typo_chars(text, m):
+            spot = next(((iid, s) for iid, spots in pages for s in spots if s["s"] <= pos < s["e"]), None)
+            if not spot:
+                found = []
+                break
+            iid, s = spot
+            line = text[s["s"] : s["e"]]
+            found.append({"mark": k, "pos": pos, "wrong": wrong, "right": right, "iid": iid, "box": s["b"], "line": line, "nth": pos - s["s"] + 1})
+        out += found
+    for n, t in enumerate(out, 1):
+        t["id"] = n
+    return out
+
+
+def verify_messages(targets, crops):
+    """crops: the JPEG bytes of each target's line, in the same order."""
+    import base64
+
+    content = []
+    for t, data in zip(targets, crops):
+        content.append({"type": "text", "text": f"第 {t['id']} 项：这一行识别为「{t['line']}」，请看其中第 {t['nth']} 个字（识别成了「{t['wrong']}」，批改认为应该是「{t['right']}」）。"})
+        content.append({"type": "image_url", "image_url": {"url": "data:image/jpeg;base64," + base64.b64encode(data).decode()}})
+    content.append({"type": "text", "text": "请逐项回答纸上写的是哪个字。"})
+    return [{"role": "system", "content": VERIFY_PROMPT}, {"role": "user", "content": content}]
+
+
+def parse_verify(raw, count):
+    """{id: the character the model sees} for ids 1..count. Raises ValueError when items are missing."""
+    items = raw.get("items")
+    if not isinstance(items, list):
+        raise ValueError("核对结果缺少 items")
+    seen = {}
+    for item in items:
+        if isinstance(item, dict) and isinstance(item.get("id"), int) and isinstance(item.get("seen"), str):
+            seen[item["id"]] = item["seen"].strip()[:1]
+    if any(n not in seen for n in range(1, count + 1)):
+        raise ValueError("核对结果少了几项")
+    return seen
+
+
+def apply_verify(review, text, targets, seen):
+    """Drops the 错别字 marks whose every changed character the photo shows written correctly (the ocr step misread
+    it) and corrects those characters in the text; same length, so no offsets move. Returns (review, text, dropped)."""
+    by_mark = {}
+    for t in targets:
+        by_mark.setdefault(t["mark"], []).append(t)
+    misread = {k for k, ts in by_mark.items() if all(seen.get(t["id"]) == t["right"] for t in ts)}
+    if not misread:
+        return review, text, []
+    chars = list(text)
+    for k in misread:
+        for t in by_mark[k]:
+            chars[t["pos"]] = t["right"]
+    text = "".join(chars)
+    dropped = [m for k, m in enumerate(review["marks"]) if k in misread]
+    marks = [m for k, m in enumerate(review["marks"]) if k not in misread]
+    # Other marks quoting a corrected character follow the new text.
+    marks = [{**m, "quote": text[m["start"] : m["end"]]} for m in marks]
+    return {**review, "marks": marks}, text, dropped
 
 
 def _box(value):

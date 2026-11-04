@@ -451,6 +451,27 @@ def rotate_image(d, row, degrees):
     return d.execute("SELECT * FROM ess_images WHERE id=?", (iid,)).fetchone()
 
 
+def crop_line(iid, box):
+    """One line of a stored photo as JPEG bytes: box is [x1, y1, x2, y2] in 0–1000 of the photo's width and height
+    (the ocr step's line box), widened a little since the model's boxes are rough, and enlarged when small so every
+    character is clear."""
+    from PIL import Image
+
+    with Image.open(image_path(iid)) as img:
+        w, h = img.size
+        x1, y1, x2, y2 = (v / 1000 for v in box)
+        pad_y = (y2 - y1) * 0.4
+        x1, x2 = max(0, x1 - 0.02) * w, min(1, x2 + 0.02) * w
+        y1, y2 = max(0, y1 - pad_y) * h, min(1, y2 + pad_y) * h
+        part = img.convert("RGB").crop((int(x1), int(y1), max(int(x1) + 1, int(x2)), max(int(y1) + 1, int(y2))))
+    if part.height < 160:
+        scale = 160 / part.height
+        part = part.resize((max(1, round(part.width * scale)), 160), Image.Resampling.LANCZOS)
+    buf = io.BytesIO()
+    part.save(buf, "JPEG", quality=90)
+    return buf.getvalue()
+
+
 def images_of(sid):
     return db().execute("SELECT * FROM ess_images WHERE submission_id=? ORDER BY page", (sid,)).fetchall()
 

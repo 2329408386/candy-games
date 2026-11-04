@@ -169,10 +169,48 @@ def grade(d, essay):
             parse=lambda content: grading.parse_check(llm.parse_json(content)),
             **meta,
         )
-        return grading.apply_check(review, verdicts, level), model
+        review = grading.apply_check(review, verdicts, level)
     except llm.LLMError as e:
         log.warning("check failed for submission %s: %s", essay["id"], e)
-    return {**review, "flags": review["flags"] + ["unchecked"], "rejected": [], "check_level": None}, model
+        review = {**review, "flags": review["flags"] + ["unchecked"], "rejected": [], "check_level": None}
+    if essay["source"] == "photo":
+        review = verify_typos(d, essay, review)
+    return review, model
+
+
+def verify_typos(d, essay, review):
+    """Looks at the photo again for every 错别字 mark (grading.typo_targets): a mark the ocr step caused by misreading
+    a correctly written character is dropped (kept in review["rejected"] for the teacher) and the stored text
+    corrected. A failed call leaves the review as it is."""
+    from . import crop_line
+
+    images = d.execute("SELECT id,lines FROM ess_images WHERE submission_id=? ORDER BY page", (essay["id"],)).fetchall()
+    pages = [(img["id"], json.loads(img["lines"]) if img["lines"] else []) for img in images]
+    targets = grading.typo_targets(review, essay["text"], pages)
+    if not targets or not llm.configured(d, "ocr"):
+        return review
+    try:
+        crops = [crop_line(t["iid"], t["box"]) for t in targets]
+        seen, _ = llm.chat(
+            d,
+            "ocr",
+            grading.verify_messages(targets, crops),
+            json_mode=True,
+            parse=lambda content: grading.parse_verify(llm.parse_json(content), len(targets)),
+            license_id=essay["license_id"],
+            submission_id=essay["id"],
+        )
+    except (llm.LLMError, OSError, ValueError) as e:
+        log.warning("typo verify failed for submission %s: %s", essay["id"], e)
+        return review
+    review, text, dropped = grading.apply_verify(review, essay["text"], targets, seen)
+    if dropped:
+        log.info("submission %s: %s 错别字 mark(s) were misread on the photo", essay["id"], len(dropped))
+        d.execute("UPDATE ess_submissions SET text=? WHERE id=?", (text, essay["id"]))
+        d.commit()
+        reason = "照片上其实写对了（是照片识别看错了字）"
+        review = {**review, "rejected": review.get("rejected", []) + [{**m, "reason": reason} for m in dropped]}
+    return review
 
 
 def run_job(d, job):
