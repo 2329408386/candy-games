@@ -786,6 +786,22 @@ def test_sideways_photo_is_turned_upright_and_read_again(models, klass, db):
     assert db.execute("SELECT writing FROM ess_submissions WHERE id=?", (sid,)).fetchone()[0] == "工整"
 
 
+def test_jobs_cut_off_by_a_restart_resume_at_once(models, klass, db):
+    t, cid, aid = klass
+    s, _ = student_client(db, cid, "李华")
+    sid = jpost(s, f"/api/write/{aid}", {"text": ESSAY}).get_json()["id"]
+    # The process was stopped while the job ran (status left 'running' / 'grading', locked just now).
+    db.execute("UPDATE ess_jobs SET status='running',locked_at=? WHERE submission_id=?", (int(time.time()), sid))
+    db.execute("UPDATE ess_submissions SET status='grading' WHERE id=?", (sid,))
+    db.commit()
+    run_worker()
+    assert db.execute("SELECT status FROM ess_submissions WHERE id=?", (sid,)).fetchone()[0] == "grading"
+    worker.resume_interrupted(worker.connect())
+    assert db.execute("SELECT status FROM ess_submissions WHERE id=?", (sid,)).fetchone()[0] == "queued"
+    run_worker()
+    assert db.execute("SELECT status FROM ess_submissions WHERE id=?", (sid,)).fetchone()[0] in ("review", "published")
+
+
 def test_handwriting_and_ocr_extras():
     page = grading.parse_ocr({"title": "", "lines": [{"text": "一行", "box": [1, 1, 9, 9]}], "rotate": 270, "writing": "一般"})
     assert page["rotate"] == 270 and page["writing"] == "一般"

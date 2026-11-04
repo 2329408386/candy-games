@@ -249,6 +249,19 @@ def work(d, stop=None, once=False):
             d.commit()
 
 
+def resume_interrupted(d):
+    """At start-up: this process is the only worker, so a job still 'running' was cut off when the last one stopped
+    (a release restarts it). Queue those again at once instead of waiting stale_seconds for them."""
+    d.execute("BEGIN IMMEDIATE")
+    rows = d.execute("SELECT id,submission_id FROM ess_jobs WHERE status='running'").fetchall()
+    for job in rows:
+        d.execute("UPDATE ess_jobs SET status='queued',run_after=? WHERE id=?", (int(time.time()), job["id"]))
+        d.execute("UPDATE ess_submissions SET status='queued' WHERE id=? AND status='grading'", (job["submission_id"],))
+    d.commit()
+    if rows:
+        log.info("resumed %d interrupted job(s): submissions %s", len(rows), ", ".join(str(r["submission_id"]) for r in rows))
+
+
 def thread_main(stop=None):
     """One worker thread. Its connection must be opened here: sqlite3 connections belong to their thread."""
     work(connect(), stop)
@@ -263,6 +276,7 @@ def main():
     from core.app import data_dir
 
     schema.initialize(data_dir() / schema.DB_NAME)
+    resume_interrupted(connect())
     if args.once:
         work(connect(), once=True)
         return
