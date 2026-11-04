@@ -31,15 +31,24 @@
     </div>
   </div>
   {% if busy %}<p class="notice" data-autoreload>有 {{busy|length}} 篇正在批改，页面会自动刷新。</p>{% endif %}
-  <table class="wb-table">
+  {% if students %}
+  <div class="table-tools">
+    <label>排序<select id="sort-rows">
+      <option value="order">按名单</option>
+      <option value="desc">分数从高到低</option>
+      <option value="asc">分数从低到高</option>
+    </select></label>
+  </div>
+  {% endif %}
+  <table class="wb-table" id="assignment-table">
     <thead><tr><th>学生</th><th>状态</th><th>第几次</th><th>等级</th><th>分数</th><th></th></tr></thead>
     <tbody>
       {% for s in students %}
         {% set sub = latest.get(s.id) %}
-        <tr>
+        {% set r = scores.get(sub.id) if sub else None %}
+        <tr data-order="{{loop.index}}" data-score="{{r.total if r else ''}}">
           <td>{{s.name}}</td>
           {% if sub %}
-            {% set r = scores.get(sub.id) %}
             <td><span class="status status-{{sub.status}}">{{STATUS[sub.status]}}</span>{% if sub.hold %}<br><small class="muted">{{HOLDS.get(sub.hold, '')}}</small>{% endif %}{% if assignment.due_at and sub.created_at > assignment.due_at %} <span class="tag off">迟交</span>{% endif %}</td>
             <td>{{sub.attempt}} / {{max_attempts}}</td>
             <td>{{r.level if r else ''}}</td>
@@ -111,6 +120,27 @@
     dialog.querySelector('[data-close]').addEventListener('click', () => dialog.close());
     const picker = WB.photoPicker(dialog.querySelector('.photo-picker'));
     WB.submitEssay('#submit-for-form', {{url_for('submit_for', aid=assignment.id)|tojson}}, picker, () => location.reload());
+    // 排序: by the class list or by score (students without a graded essay stay at the bottom); remembered.
+    const sortPick = document.getElementById('sort-rows');
+    if (sortPick) {
+      const body = document.querySelector('#assignment-table tbody');
+      const sortRows = () => {
+        const how = sortPick.value;
+        const rows = [...body.rows];
+        const score = (r) => (r.dataset.score === '' ? null : Number(r.dataset.score));
+        rows.sort((a, b) => {
+          const sa = score(a), sb = score(b);
+          if (how !== 'order' && (sa === null) !== (sb === null)) return sa === null ? 1 : -1;
+          if (how !== 'order' && sa !== sb) return how === 'desc' ? sb - sa : sa - sb;
+          return a.dataset.order - b.dataset.order;
+        });
+        rows.forEach((r) => body.appendChild(r));
+        try { localStorage.setItem('wb-sort', how); } catch (e) {}
+      };
+      try { const saved = localStorage.getItem('wb-sort'); if (saved && sortPick.querySelector(`option[value="${saved}"]`)) sortPick.value = saved; } catch (e) {}
+      sortPick.addEventListener('change', sortRows);
+      sortRows();
+    }
     if (document.querySelector('[data-autoreload]')) setTimeout(() => location.reload(), 8000);
   </script>
 {% endblock %}

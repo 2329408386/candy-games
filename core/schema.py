@@ -66,6 +66,8 @@ CREATE TABLE IF NOT EXISTS ess_meta(key TEXT PRIMARY KEY,value TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS ess_images(id INTEGER PRIMARY KEY,submission_id INTEGER NOT NULL REFERENCES ess_submissions(id),page INTEGER NOT NULL,w INTEGER NOT NULL,h INTEGER NOT NULL,lines TEXT NOT NULL DEFAULT '',created_at INTEGER NOT NULL);
 CREATE INDEX IF NOT EXISTS ess_images_submission ON ess_images(submission_id,page);
 CREATE TABLE IF NOT EXISTS ws_entitlements(license_id INTEGER NOT NULL,feature TEXT NOT NULL,days INTEGER NOT NULL,starts_at INTEGER,expires_at INTEGER,PRIMARY KEY(license_id,feature));
+CREATE TABLE IF NOT EXISTS ess_trials(license_id INTEGER PRIMARY KEY,device_hash TEXT NOT NULL,created_at INTEGER NOT NULL);
+CREATE INDEX IF NOT EXISTS ess_trials_device ON ess_trials(device_hash);
 """
 
 
@@ -98,6 +100,12 @@ def initialize(path):
                 "auto_price INTEGER NOT NULL DEFAULT 1",
             ):
                 d.execute("ALTER TABLE ess_steps ADD COLUMN " + column)
+        if "step_timeout" not in {r[1] for r in d.execute("PRAGMA table_info(ess_steps)")}:
+            d.execute("ALTER TABLE ess_steps ADD COLUMN step_timeout INTEGER")  # NULL: the provider's timeout
+        columns = {r[1] for r in d.execute("PRAGMA table_info(ess_usage)")}
+        if "error" not in columns:  # why a call failed and how long it took, for 模型设置
+            d.execute("ALTER TABLE ess_usage ADD COLUMN error TEXT NOT NULL DEFAULT ''")
+            d.execute("ALTER TABLE ess_usage ADD COLUMN ms INTEGER")
         migrate(d)
     path.chmod(0o600)
 

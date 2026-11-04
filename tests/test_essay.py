@@ -253,11 +253,18 @@ def test_backup_model_and_failure(models, klass, db):
 def test_check_failure_keeps_marks_and_flags(models, klass, db):
     t, cid, aid = klass
     models.fail = {"small"}
+    # Even on an assignment that auto-publishes, an unchecked review waits for the teacher.
+    aid2 = jpost(t, f"/api/classes/{cid}/assignments", {"title": "自动", "auto_publish": True}).get_json()["id"]
     s, _ = student_client(db, cid)
-    sid = jpost(s, f"/api/write/{aid}", {"text": ESSAY}).get_json()["id"]
+    sid = jpost(s, f"/api/write/{aid2}", {"text": ESSAY}).get_json()["id"]
     run_worker()
     review = json.loads(db.execute("SELECT ai FROM ess_reviews WHERE submission_id=?", (sid,)).fetchone()[0])
     assert "unchecked" in review["flags"] and any(m["quote"] == "我和妈妈去公园玩" for m in review["marks"])
+    assert db.execute("SELECT status FROM ess_submissions WHERE id=?", (sid,)).fetchone()[0] == "review"
+    assert sum(1 for m, _ in models.calls if m == "small") == 2  # tried twice
+    # Every failed call is logged with its reason, shown in 模型设置.
+    failed = db.execute("SELECT error,ms FROM ess_usage WHERE submission_id=? AND ok=0", (sid,)).fetchall()
+    assert len(failed) == 2 and all("429" in r["error"] and r["ms"] is not None for r in failed)
 
 
 def test_holds_when_not_configured_or_over_budget(models, klass, db):
@@ -431,13 +438,13 @@ def test_grading_helpers():
         grading.clean_review({"dims": {}}, essay)
     # A careful review keeps many marks (up to 20 errors), the 分段 type, and a summary of a whole paragraph.
     dims = {k: {"score": 3} for k in grading.DIMS}
-    many = [{"quote": ESSAY[i : i + 2], "type": "标点", "fix": "X", "note": "标点要改"} for i in range(0, 70, 2)]
+    many = [{"quote": ESSAY[i : i + 2], "type": "病句", "fix": "X", "note": "要改"} for i in range(0, 70, 2)]
     long_summary = "你" * 150
     cleaned = grading.clean_review(
         {"dims": dims, "marks": many + [{"quote": ESSAY[60:64], "type": "分段", "fix": "", "note": "这里另起一段"}], "summary": long_summary},
         essay,
     )
-    assert sum(m["type"] == "标点" for m in cleaned["marks"]) == grading.MARK_LIMITS["error"] == 25
+    assert sum(m["type"] == "病句" for m in cleaned["marks"]) == grading.MARK_LIMITS["error"] == 25
     assert [m["type"] for m in cleaned["marks"] if m["type"] == "分段"] == ["分段"]
     assert cleaned["summary"] == long_summary and cleaned["praise"] == [] and cleaned["advice"] == []
     msgs = grading.grade_messages(essay)
@@ -761,28 +768,85 @@ def test_photo_waits_until_ocr_is_configured(models, klass, db):
     assert db.execute("SELECT hold FROM ess_submissions WHERE id=?", (sid,)).fetchone()[0] == "not_configured"
 
 
-def test_trial_once_per_browser(models, db):
+def test_trial_runs_one_whole_assignment(models, db):
+    from core import essay
+
     c = SiteClient("teacher")
     assert "/teacher/trial/essay" in c.get("/teacher/").get_data(as_text=True)
-    assert 'id="trial-form"' in c.get("/teacher/trial/essay").get_data(as_text=True)
-    r = jpost(c, "/api/trial/essay", {"grade": 3, "genre": "记事", "title": "试试", "text": ESSAY})
+    assert "开始试用" in c.get("/teacher/trial/essay").get_data(as_text=True)
+    r = jpost(c, "/api/trial/essay/start")
     assert r.status_code == 200, r.get_json()
-    sid = r.get_json()["id"]
-    assert c.get(f"/api/submissions/{sid}/state").get_json()["status"] == "queued"
+    lid = db.execute("SELECT max(license_id) FROM ess_trials").fetchone()[0]
+    lic = db.execute("SELECT * FROM licenses WHERE site='teacher' AND id=?", (lid,)).fetchone()
+    assert lic["buyer"].startswith("免费试用") and lic["device_limit"] == 1
+    assert tuple(db.execute("SELECT students,monthly FROM ess_quota WHERE license_id=?", (lid,)).fetchone()) == (essay.TRIAL_STUDENTS, essay.TRIAL_ESSAYS)
+    home = c.get("/teacher/").get_data(as_text=True)
+    assert "trial-banner" in home and "还剩 7 天" in home
+    # The normal flow: a class, students, one assignment; a second one is refused.
+    cid = jpost(c, "/api/classes", {"name": "试用班", "grade": 3}).get_json()["id"]
+    assert jpost(c, f"/api/classes/{cid}/students", {"names": "小红\n小蓝"}).get_json()["added"] == 2
+    aid = jpost(c, f"/api/classes/{cid}/assignments", {"title": "快乐的一天", "auto_publish": True}).get_json()["id"]
+    assert "只能布置 1 次" in jpost(c, f"/api/classes/{cid}/assignments", {"title": "再来"}).get_json()["error"]
+    jpost(c, f"/api/assignments/{aid}/delete")
+    assert "只能布置 1 次" in jpost(c, f"/api/classes/{cid}/assignments", {"title": "删了再来"}).get_json()["error"]
+    db.execute("UPDATE ess_assignments SET deleted_at=NULL WHERE id=?", (aid,))
+    db.commit()
+    s, _ = student_client(db, cid, "小红")
+    sid = jpost(s, f"/api/write/{aid}", {"text": ESSAY}).get_json()["id"]
     run_worker()
-    pen = redpen_of(c.get("/teacher/trial/essay").get_data(as_text=True))
-    assert pen["level"] and pen["total"] <= 25
-    assert "已经试用过" in jpost(c, "/api/trial/essay", {"grade": 3, "genre": "记事", "text": ESSAY}).get_json()["error"]
-    # Trials are hidden: no license, no student can sign in to them, nobody else sees them.
-    cls = db.execute("SELECT c.* FROM ess_classes c JOIN ess_assignments a ON a.class_id=c.id JOIN ess_submissions s ON s.assignment_id=a.id WHERE s.id=?", (sid,)).fetchone()
-    assert cls["license_id"] == 0 and cls["archived_at"]
-    assert SiteClient("teacher").get(f"/api/submissions/{sid}/state").status_code == 403
-    # The daily cap across the site.
+    assert s.get(f"/student/essay/results/{sid}").status_code == 200
+    # The essay limit counts the whole trial, not the month.
+    db.execute("UPDATE ess_quota SET monthly=1 WHERE license_id=?", (lid,))
+    db.execute("UPDATE ess_submissions SET created_at=1 WHERE id=?", (sid,))
+    db.commit()
+    s2, _ = student_client(db, cid, "小蓝")
+    assert "试用的批改篇数已经用完" in jpost(s2, f"/api/write/{aid}", {"text": ESSAY}).get_json()["error"]
+    # Signed out, the same browser gets back into its trial; it cannot open a second one.
+    jpost(c, "/api/logout")
+    assert "回到我的试用" in c.get("/teacher/trial/essay").get_data(as_text=True)
+    assert jpost(c, "/api/trial/essay/start").status_code == 200
+    assert db.execute("SELECT count(*) FROM ess_trials WHERE license_id>=?", (lid,)).fetchone()[0] == 1
+    assert "trial-banner" in c.get("/teacher/").get_data(as_text=True)
+    # Another browser: the daily cap across the site.
     db.execute("INSERT OR REPLACE INTO ess_meta VALUES('trial_daily','1')")
     db.commit()
-    assert "名额" in jpost(SiteClient("teacher"), "/api/trial/essay", {"grade": 2, "genre": "记事", "text": ESSAY}).get_json()["error"]
+    assert "名额" in jpost(SiteClient("teacher"), "/api/trial/essay/start").get_json()["error"]
     db.execute("DELETE FROM ess_meta WHERE key='trial_daily'")
     db.commit()
+
+
+def test_corrections_that_cannot_be_right_are_dropped():
+    essay = {"grade": 3, "genre": "", "requirement": "", "min_chars": 0, "title": "", "text": ESSAY + "我看见□只鸟。"}
+    dims = {k: {"score": 3} for k in grading.DIMS}
+    marks = [
+        {"quote": "高心", "type": "错别字", "fix": "高兴", "note": ""},  # kept
+        {"quote": "公园里的花", "type": "错别字", "fix": "公园中美丽的花", "note": ""},  # length changes: dropped
+        {"quote": "我记住了。", "type": "标点", "fix": "我记得了！", "note": ""},  # words change: dropped
+        {"quote": "这真是快乐的一天！", "type": "标点", "fix": "这真是快乐的一天。", "note": ""},  # kept
+        {"quote": "我看见□只鸟", "type": "病句", "fix": "我看见一只鸟", "note": ""},  # unreadable: dropped
+    ]
+    kept = [m["quote"] for m in grading.clean_review({"dims": dims, "marks": marks}, essay)["marks"]]
+    assert kept == ["高心", "这真是快乐的一天！"]
+
+
+def test_check_covers_tips_and_rejects_skipped(models, klass, db):
+    t, cid, aid = klass
+    models.grade = grade_answer(marks=[
+        {"quote": "高心", "type": "错别字", "fix": "高兴", "note": ""},
+        {"quote": "我记住了", "type": "修改建议", "fix": "我把妈妈的话牢牢记在心里", "note": "写具体"},
+        {"quote": "我和妈妈去公园玩", "type": "病句", "fix": "我和妈妈一起去公园玩", "note": ""},
+    ])
+    # Text order: 1 = 我和妈妈去公园玩, 2 = 高心, 3 = 我记住了 (the tip); the checker says nothing about 3.
+    models.check = {"items": [{"id": 1, "ok": True}, {"id": 2, "ok": True}], "level": "良"}
+    s, _ = student_client(db, cid)
+    sid = jpost(s, f"/api/write/{aid}", {"text": ESSAY}).get_json()["id"]
+    run_worker()
+    check_body = [b for m, b in models.calls if m == "small"][-1]
+    listed = json.loads(check_body["messages"][1]["content"].split("需要复核的标注：\n")[1])
+    assert [i["type"] for i in listed] == ["病句", "错别字", "修改建议"]
+    review = json.loads(db.execute("SELECT ai FROM ess_reviews WHERE submission_id=?", (sid,)).fetchone()[0])
+    assert [m["quote"] for m in review["marks"]] == ["我和妈妈去公园玩", "高心"]
+    assert review["rejected"][0]["quote"] == "我记住了"
 
 
 def test_reviews_rescaled_to_25(db):

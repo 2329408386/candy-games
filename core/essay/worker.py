@@ -9,7 +9,8 @@ Web requests only insert a row into ess_jobs and set the submission to 'queued';
 A job is claimed under a write lock, so several threads (or a second process during a deploy) never run it twice.
 Failures that may pass (timeouts, rate limits, malformed answers) are retried after RETRY_DELAYS; when those run
 out, or the failure cannot pass (bad key, wrong model name), the submission becomes 'failed' and the teacher can
-press 重新批改. Jobs wait without being counted as attempts while the step is not configured or today's spending
+press 重新批改. When the check step fails twice the review goes to the teacher ('review') instead of being
+published. Jobs wait without being counted as attempts while the step is not configured or today's spending
 has reached the daily budget (ess_meta 'daily_budget', yuan); the submission's `hold` column says why.
 """
 
@@ -18,7 +19,7 @@ from . import grading, llm, models_sync
 
 THREADS = 3
 RETRY_DELAYS = (30, 120, 600)
-STALE_SECONDS = 900  # a job 'running' longer than this was interrupted (process killed): run it again
+STALE_SECONDS = 900  # at least this long 'running' means the job was interrupted (process killed): run it again
 IDLE_SECONDS = 2
 HOLD_SECONDS = 60
 BEIJING = 8 * 3600
@@ -54,11 +55,24 @@ def heartbeat(d):
     d.commit()
 
 
+def stale_seconds(d):
+    """How long a job may run before it counts as interrupted: the longest a job can take with the configured
+    timeouts (every photo read by the main and then the backup model, grading, the check tried twice), plus a margin.
+    Shorter would run a slow job a second time while the first is still going."""
+    longest = {
+        step: sum(r["timeout"] or 120 for r in llm.step_rows(d, step)) for step in ("ocr", "grade", "check")
+    }
+    from . import MAX_PHOTOS
+
+    return max(STALE_SECONDS, longest["ocr"] * MAX_PHOTOS + longest["grade"] + longest["check"] * 2 + 300)
+
+
 def claim(d):
     now = int(time.time())
+    stale = stale_seconds(d)
     d.execute("BEGIN IMMEDIATE")
     d.execute(
-        "UPDATE ess_jobs SET status='queued' WHERE status='running' AND locked_at<?", (now - STALE_SECONDS,)
+        "UPDATE ess_jobs SET status='queued' WHERE status='running' AND locked_at<?", (now - stale,)
     )
     row = d.execute(
         "SELECT * FROM ess_jobs WHERE status='queued' AND run_after<=? ORDER BY run_after,id LIMIT 1", (now,)
@@ -128,21 +142,24 @@ def grade(d, essay):
         parse=lambda content: grading.clean_review(llm.parse_json(content), essay),
         **meta,
     )
-    # The checker always runs, even without error marks: it also gives its own level.
-    try:
-        (verdicts, level), _ = llm.chat(
-            d,
-            "check",
-            grading.check_messages(essay, review["marks"]),
-            json_mode=True,
-            parse=lambda content: grading.parse_check(llm.parse_json(content)),
-            **meta,
-        )
-        review = grading.apply_check(review, verdicts, level)
-    except llm.LLMError as e:
-        log.warning("check failed for submission %s: %s", essay["id"], e)
-        review = {**review, "flags": review["flags"] + ["unchecked"], "rejected": [], "check_level": None}
-    return review, model
+    # The checker always runs, even without error marks: it also gives its own level. It is tried twice; a review
+    # that could not be checked is not published by itself (run_job sends it to the teacher first).
+    for attempt in range(2):
+        try:
+            (verdicts, level), _ = llm.chat(
+                d,
+                "check",
+                grading.check_messages(essay, review["marks"]),
+                json_mode=True,
+                parse=lambda content: grading.parse_check(llm.parse_json(content)),
+                **meta,
+            )
+            return grading.apply_check(review, verdicts, level), model
+        except llm.LLMError as e:
+            log.warning("check failed for submission %s (try %d): %s", essay["id"], attempt + 1, e)
+            if isinstance(e, llm.NotConfigured):
+                break
+    return {**review, "flags": review["flags"] + ["unchecked"], "rejected": [], "check_level": None}, model
 
 
 def run_job(d, job):
@@ -175,7 +192,8 @@ def run_job(d, job):
         log.warning("grading submission %s failed: %s", essay["id"], e)
         return
     now = int(time.time())
-    published = bool(essay["auto_publish"])
+    # Unchecked feedback may be wrong: the teacher looks at it first even when the assignment auto-publishes.
+    published = bool(essay["auto_publish"]) and "unchecked" not in review["flags"]
     d.execute(
         "INSERT INTO ess_reviews(submission_id,ai,final,model,prompt_version,created_at) VALUES(?,?,?,?,?,?)"
         " ON CONFLICT(submission_id) DO UPDATE SET ai=excluded.ai,final=excluded.final,model=excluded.model,"

@@ -158,7 +158,7 @@ def sync(d, only=None):
     rate = d.execute("SELECT value FROM ess_meta WHERE key='usd_cny'").fetchone()
     rate = float(rate[0]) if rate else USD_CNY
     sql = (
-        "SELECT s.*,p.name provider_name,p.base_url,p.key_enc,p.timeout,p.concurrency FROM ess_steps s"
+        "SELECT s.*,p.name provider_name,p.base_url,p.key_enc,coalesce(s.step_timeout,p.timeout) timeout,p.concurrency FROM ess_steps s"
         " JOIN ess_providers p ON p.id=s.provider_id WHERE s.model!='' AND s.auto_mode!='fixed'"
     )
     slots = [dict(r) for r in d.execute(sql + (" AND s.step=? AND s.slot=?" if only else ""), only or ())]

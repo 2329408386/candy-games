@@ -27,9 +27,13 @@ devices themselves, at most SELF_REMOVALS times in 30 days (audit 'device_self_r
 Students never read "AI" or "模型": their pages and the status API they poll speak of the teacher marking the work
 (STUDENT_STATUS); why a job waits (HOLDS) is shown to teachers only.
 
-Trial. Without a license, each browser may try each feature once (trials, game = feature key; trial_check). A trial
-essay is filed under a hidden archived class of license 0 and published straight away. trial_daily() caps trials of
-a feature across the site per day.
+Trial. Without a license, each browser may try 作文批改 once, the whole way through: 开始试用 creates a real teacher
+license bound to this browser (ess_trials; buyer 免费试用) with 作文批改 for TRIAL_DAYS days, TRIAL_STUDENTS students
+and TRIAL_ESSAYS essays in all (not per month); it may set one assignment (TRIAL_ASSIGNMENTS). Everything else — the
+class, students signing in, grading, export — is the normal flow. Pressing 开始试用 again on the same browser signs
+back in to its trial. trial_check() (trials table, game "essay-class") limits one per browser, a few per network a
+day and trial_daily() across the site. Earlier trials graded one essay under a hidden class of license 0; their
+results can still be viewed (session["trial_essay"]).
 
 Module map: llm.py (configurable OpenAI-compatible models), grading.py (prompts and validation), worker.py,
 features.py, admin.py (模型设置, quotas and feature expiry in the back office); pages are in sites/teacher/templates.
@@ -58,6 +62,11 @@ PHOTO_BYTES = 8 * 1024 * 1024
 PHOTO_SIDE = 2000
 TRIAL_DAILY = 50
 TRIAL_PER_IP = 3
+TRIAL_GAME = "essay-class"  # trials.game of the full trial (the old one-essay trial used "essay")
+TRIAL_DAYS = 7
+TRIAL_STUDENTS = 60
+TRIAL_ESSAYS = 80
+TRIAL_ASSIGNMENTS = 1
 BUSY = ("queued", "grading")
 STATUS = {"queued": "排队批改中", "grading": "AI 批改中", "review": "等老师审核", "published": "已发布", "failed": "批改失败"}
 STUDENT_STATUS = {"queued": "老师批改中", "grading": "老师批改中", "review": "老师正在看", "published": "老师批好了", "failed": "老师还没批完，可以重新交一次"}
@@ -96,11 +105,29 @@ def students_used(lid):
 
 
 def monthly_used(lid):
+    """Essays handed in this month (a trial: since it started, its quota is for the whole trial)."""
     return db().execute(
         "SELECT count(*) FROM ess_submissions s JOIN ess_assignments a ON a.id=s.assignment_id"
         " JOIN ess_classes c ON c.id=a.class_id WHERE c.license_id=? AND s.created_at>=?",
-        (lid, month_start()),
+        (lid, 0 if is_trial(lid) else month_start()),
     ).fetchone()[0]
+
+
+def is_trial(lid):
+    cache = g.setdefault("trial_lids", {})
+    if lid not in cache:
+        cache[lid] = bool(db().execute("SELECT 1 FROM ess_trials WHERE license_id=?", (lid,)).fetchone())
+    return cache[lid]
+
+
+def trial_info(lid):
+    """For the trial banner: days left (None once over), essays used and the limit."""
+    info = features.describe(features.rows(db(), lid).get("essay"))
+    return {
+        "days": info["days"] if info["state"] in ("active", "soon") else None,
+        "used": monthly_used(lid),
+        "limit": quota(lid)["monthly"],
+    }
 
 
 def trial_daily():
@@ -432,7 +459,7 @@ def create_submission(assignment, student_id, title, text, source, photos=None, 
     if check_quota:
         lid = d.execute("SELECT license_id FROM ess_classes WHERE id=?", (assignment["class_id"],)).fetchone()[0]
         if monthly_used(lid) >= quota(lid)["monthly"]:
-            raise ValueError("本月的批改篇数已经用完，请联系老师")
+            raise ValueError("试用的批改篇数已经用完了" if is_trial(lid) else "本月的批改篇数已经用完，请联系老师")
     now = int(time.time())
     sid = d.execute(
         "INSERT INTO ess_submissions(assignment_id,student_id,attempt,source,title,text,status,created_at) VALUES(?,?,?,?,?,?,'queued',?)",
@@ -513,6 +540,7 @@ def register_essay(app):
             ).fetchone()[0]
             me["devices"] = db().execute("SELECT count(*) FROM devices WHERE site='teacher' AND license_id=?", (row["id"],)).fetchone()[0]
             me["device_limit"] = row["device_limit"]
+            me["trial"] = trial_info(row["id"]) if is_trial(row["id"]) else None
         return {
             "side": side,
             "me_teacher": me if row else None,
@@ -558,9 +586,7 @@ def register_pages(app):
         row = teacher()
         if not row:
             csrf()
-            return render_template(
-                "teacher_login.html", trials={key: trial_used(key) for key in features.FEATURES}
-            )
+            return render_template("teacher_login.html")
         d = db()
         return render_template(
             "teacher_home.html",
@@ -1203,6 +1229,12 @@ def register_teacher_api(app):
     def assignment_create(row, cid):
         own_class(cid, row["id"])
         features.require(db(), row["id"], "essay")
+        if is_trial(row["id"]):
+            made = db().execute(
+                "SELECT count(*) FROM ess_assignments a JOIN ess_classes c ON c.id=a.class_id WHERE c.license_id=?", (row["id"],)
+            ).fetchone()[0]
+            if made >= TRIAL_ASSIGNMENTS:
+                raise ValueError(f"试用只能布置 {TRIAL_ASSIGNMENTS} 次作文，输入授权码后可以继续布置")
         f = assignment_fields(payload())
         aid = db().execute(
             "INSERT INTO ess_assignments(class_id,title,intro,requirement,genre,min_chars,due_at,auto_publish,created_at)"
@@ -1416,66 +1448,88 @@ def register_student_api(app):
         return jsonify(ok=True, id=sid, state=url_for("submission_state", sid=sid))
 
 
-# ---- trial: one essay per browser without a license ----
+# ---- trial: a temporary teacher account per browser, for one whole assignment ----
+def trial_of_this_device():
+    """The license id of this browser's trial when it can still sign in to it, else None."""
+    from core.app import digest
+
+    token = session.get("device")
+    if not token:
+        return None
+    row = db().execute(
+        "SELECT t.license_id FROM ess_trials t JOIN licenses l ON l.site='teacher' AND l.id=t.license_id"
+        " JOIN devices v ON v.site='teacher' AND v.license_id=t.license_id AND v.token_hash=?"
+        " WHERE t.device_hash=? AND l.enabled=1 AND l.archived_at IS NULL ORDER BY t.license_id DESC LIMIT 1",
+        (digest(token), digest(token)),
+    ).fetchone()
+    return row[0] if row else None
+
+
+def create_trial_license(d, now):
+    """A teacher license for this browser's trial (the caller holds the write lock); returns its id."""
+    from core.app import digest, group_map
+
+    token = session["device"]
+    lid = d.execute("SELECT coalesce(max(id),0)+1 FROM licenses WHERE site='teacher'").fetchone()[0]
+    while True:
+        key = "".join(secrets.choice(KEY_ALPHABET) for _ in range(16))
+        if not d.execute("SELECT 1 FROM licenses WHERE site='teacher' AND key_hash=?", (digest(key),)).fetchone():
+            break
+    d.execute(
+        "INSERT INTO licenses(site,id,key_hash,games,buyer,assigned_at,created_at,device_limit) VALUES('teacher',?,?,'[]',?,?,?,1)",
+        (lid, digest(key), "免费试用 " + time.strftime("%Y-%m-%d", time.gmtime(now + BEIJING)), now, now),
+    )
+    d.execute("INSERT INTO license_keys(site,license_id,code) VALUES('teacher',?,?)", (lid, key))
+    d.executemany("INSERT INTO license_groups(site,license_id,group_id) VALUES('teacher',?,?)", [(lid, gid) for gid in group_map()])
+    features.grant(d, lid, "essay", TRIAL_DAYS, started=True, now=now)
+    d.execute("INSERT INTO ess_quota(license_id,students,monthly) VALUES(?,?,?)", (lid, TRIAL_STUDENTS, TRIAL_ESSAYS))
+    d.execute(
+        "INSERT INTO devices(site,license_id,token_hash,label,created_at,last_seen) VALUES('teacher',?,?,?,?,?)",
+        (lid, digest(token), request.user_agent.string[:200], now, now),
+    )
+    d.execute("INSERT INTO ess_trials(license_id,device_hash,created_at) VALUES(?,?,?)", (lid, digest(token), now))
+    return lid
+
+
 def register_trial(app):
     @app.get("/teacher/trial/essay")
     def trial_page():
-        if teacher() and features.active(db(), teacher()["id"], "essay"):
+        row = teacher()
+        if row and features.active(db(), row["id"], "essay"):
             return redirect(url_for("essay_home"))
         csrf()
+        # A result of the earlier one-essay trial stays viewable.
         sid = session.get("trial_essay")
         sub = sid and db().execute(SUBMISSION_SQL + " WHERE s.id=?", (sid,)).fetchone()
-        used = trial_used("essay")
         final = None
         if sub and sub["status"] == "published":
             review = review_of(sid)
             final = review["final"] or review["ai"]
         return render_template(
             "trial.html",
-            sub=sub,
             final=final,
             redpen=redpen_data(sub, final) if final else None,
-            used=bool(used),
-            max_photos=MAX_PHOTOS,
+            mine=bool(trial_of_this_device()),
+            used=trial_used(TRIAL_GAME),
+            days=TRIAL_DAYS,
+            students=TRIAL_STUDENTS,
+            essays=TRIAL_ESSAYS,
         )
 
-    @app.post("/api/trial/essay")
-    def trial_submit():
-        d = db()
-        try:
-            data = payload()
-            grade = int_field(data, "grade", 1, 6, "年级")
-            genre = genre_field(data.get("genre"))
-            title = text_field(data, "title", 40, label="作文主题")
-            photos = submission_photos()
-        except ValueError as e:
-            return error(str(e))
-        problem = trial_check("essay", "作文批改")
-        if problem:
-            return problem
-        now = int(time.time())
-        d.execute("BEGIN IMMEDIATE")
-        try:
-            # A hidden, archived class per grade under license 0 holds the trials; each trial is its own assignment.
-            code = f"TRIAL{grade}"
-            d.execute(
-                "INSERT OR IGNORE INTO ess_classes(license_id,name,grade,code,created_at,archived_at) VALUES(0,'试用',?,?,?,?)",
-                (grade, code, now, now),
-            )
-            cid = d.execute("SELECT id FROM ess_classes WHERE code=?", (code,)).fetchone()[0]
-            aid = d.execute(
-                "INSERT INTO ess_assignments(class_id,title,requirement,genre,min_chars,auto_publish,created_at) VALUES(?,?,'',?,0,1,?)",
-                (cid, title or "试用", genre, now),
-            ).lastrowid
-            st = d.execute(
-                "INSERT INTO ess_students(class_id,name,pin,created_at,removed_at) VALUES(?,?,'',?,?)", (cid, f"试用{aid}", now, now)
-            ).lastrowid
-            assignment = d.execute("SELECT * FROM ess_assignments WHERE id=?", (aid,)).fetchone()
-            sid = create_submission(assignment, st, title, data.get("text"), "trial", photos, check_quota=False)
-            record_trial("essay")
-        except ValueError as e:
-            d.rollback()
-            return error(str(e))
-        d.commit()
-        session["trial_essay"] = sid
-        return jsonify(ok=True, id=sid, url=url_for("trial_page"))
+    @app.post("/api/trial/essay/start")
+    def trial_start_essay():
+        """Signs this browser in to its trial account, creating it the first time."""
+        lid = trial_of_this_device()
+        if not lid:
+            problem = trial_check(TRIAL_GAME, "作文批改")
+            if problem:
+                return problem
+            d = db()
+            d.execute("BEGIN IMMEDIATE")
+            now = int(time.time())
+            lid = create_trial_license(d, now)
+            record_trial(TRIAL_GAME)
+            d.commit()
+        session["license"] = lid
+        session.permanent = True
+        return jsonify(ok=True, url=url_for("teacher_home"))

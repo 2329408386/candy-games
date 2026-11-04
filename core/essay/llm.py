@@ -5,15 +5,17 @@ Configuration lives in the database, not in secret.env, so the admin can switch 
                  site secret; only the last 4 characters are kept in clear for display), timeout and how many
                  requests may run at once.
   ess_steps      (step, slot): which provider and model each step uses. step is ocr / grade / check, slot is
-                 main or backup (used when the main one fails, times out or is rate limited). Each row also holds
+                 main or backup (used when the main one fails, times out or is rate limited). step_timeout, when set,
+                 replaces the provider's timeout for that step (reading photos with a thinking model is slow). Each row also holds
                  temperature, max_tokens, extra (a JSON object merged into the request body, e.g.
                  {"enable_thinking": false}; a key set to null removes it from the request) and prices in yuan per
                  million tokens (input, cached input, output) with an optional peak window and multiplier.
 
-Every call, successful or not, is written to ess_usage with its tokens and the cost those prices give.
+Every call, successful or not, is written to ess_usage with its tokens, the cost those prices give, how long it took
+(ms) and, when it failed, why (error) — also when the backup model then answered, so 模型设置 can show it.
 """
 
-import base64, hashlib, json, re, threading, time, urllib.error, urllib.request
+import base64, hashlib, json, re, socket, threading, time, urllib.error, urllib.request
 from cryptography.fernet import Fernet, InvalidToken
 
 STEPS = {"ocr": "照片识别（OCR）", "grade": "作文批改", "check": "批改复核"}
@@ -73,7 +75,7 @@ def key_tail(plain):
 def step_rows(d, step):
     """The configured (main, then backup) slots of a step that have a provider and a model."""
     rows = d.execute(
-        "SELECT s.*,p.name provider_name,p.base_url,p.key_enc,p.timeout,p.concurrency FROM ess_steps s"
+        "SELECT s.*,p.name provider_name,p.base_url,p.key_enc,coalesce(s.step_timeout,p.timeout) timeout,p.concurrency FROM ess_steps s"
         " JOIN ess_providers p ON p.id=s.provider_id WHERE s.step=? AND s.model!='' ORDER BY s.slot='backup'",
         (step,),
     ).fetchall()
@@ -166,7 +168,13 @@ def post(row, body):
         error = LLMError(f"HTTP {e.code}: {detail}", retry=e.code in (408, 409, 429) or e.code >= 500)
         error.model_missing = e.code in (400, 404) and bool(MODEL_MISSING.search(detail))
         raise error from None
-    except (urllib.error.URLError, TimeoutError, OSError) as e:
+    except (TimeoutError, socket.timeout):
+        raise LLMError(f"超时（{row['timeout'] or 120} 秒没有返回）") from None
+    except urllib.error.URLError as e:
+        if isinstance(e.reason, (TimeoutError, socket.timeout)):
+            raise LLMError(f"超时（{row['timeout'] or 120} 秒没有返回）") from None
+        raise LLMError(f"连接失败：{e}") from None
+    except OSError as e:
         raise LLMError(f"连接失败：{e}") from None
     except ValueError:
         raise LLMError("返回的不是 JSON") from None
@@ -179,10 +187,10 @@ def post(row, body):
     return content, int(usage.get("prompt_tokens") or 0), int(cached), int(usage.get("completion_tokens") or 0)
 
 
-def log_usage(d, row, license_id, submission_id, step, tokens, ok):
+def log_usage(d, row, license_id, submission_id, step, tokens, ok, error="", started=None):
     d.execute(
-        "INSERT INTO ess_usage(license_id,submission_id,step,model,tokens_in,tokens_cached,tokens_out,cost,ok,created_at)"
-        " VALUES(?,?,?,?,?,?,?,?,?,?)",
+        "INSERT INTO ess_usage(license_id,submission_id,step,model,tokens_in,tokens_cached,tokens_out,cost,ok,created_at,error,ms)"
+        " VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",
         (
             license_id,
             submission_id,
@@ -192,6 +200,8 @@ def log_usage(d, row, license_id, submission_id, step, tokens, ok):
             cost(row, *tokens),
             int(ok),
             int(time.time()),
+            str(error)[:500],
+            int((time.time() - started) * 1000) if started else None,
         ),
     )
     d.commit()
@@ -206,6 +216,7 @@ def chat(d, step, messages, *, json_mode=False, license_id=0, submission_id=None
         raise NotConfigured(step)
     errors, retry = [], False
     for row in rows:
+        started = time.time()
         try:
             try:
                 content, *tokens = post(row, request_body(row, messages, json_mode))
@@ -215,24 +226,25 @@ def chat(d, step, messages, *, json_mode=False, license_id=0, submission_id=None
                 # Renamed or retired: switch the slot to the newest model of its series and try that once.
                 from . import models_sync
 
-                log_usage(d, row, license_id, submission_id, step, (0, 0, 0), False)
+                log_usage(d, row, license_id, submission_id, step, (0, 0, 0), False, e, started)
                 if not models_sync.sync(d, only=(row["step"], row["slot"])):
                     raise
                 row = next(r for r in step_rows(d, step) if r["slot"] == row["slot"])
+                started = time.time()
                 content, *tokens = post(row, request_body(row, messages, json_mode))
         except LLMError as e:
-            log_usage(d, row, license_id, submission_id, step, (0, 0, 0), False)
+            log_usage(d, row, license_id, submission_id, step, (0, 0, 0), False, e, started)
             errors.append(f"{SLOTS[row['slot']]}：{e}")
             retry = retry or e.retry
             continue
         try:
             result = parse(content) if parse else content
         except ValueError as e:
-            log_usage(d, row, license_id, submission_id, step, tokens, False)
+            log_usage(d, row, license_id, submission_id, step, tokens, False, f"返回内容不能用：{e}", started)
             errors.append(f"{SLOTS[row['slot']]}：{e}")
             retry = True
             continue
-        log_usage(d, row, license_id, submission_id, step, tokens, True)
+        log_usage(d, row, license_id, submission_id, step, tokens, True, "", started)
         return result, row["provider_name"] + " / " + row["model"]
     raise LLMError("；".join(errors), retry=retry)
 

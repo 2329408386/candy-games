@@ -245,14 +245,14 @@ mark.mk{background:none}
 .typed-alt>summary{cursor:pointer;color:var(--green);font-size:14px;margin:4px 0}
 .photo-plain{display:block;max-width:100%;border-radius:12px;border:1px solid var(--line);margin:0 auto 14px}
 
-/* red pen (static/redpen.js?v=4ae0bc90) */
+/* red pen (static/redpen.js?v=0efd625b) */
 @font-face{font-family:RedPen;src:url(redpen-font.0924cd57.woff2) format('woff2');font-display:swap}
 .redpen{position:relative;max-width:1040px;margin:0 auto}
 .rp-page{position:relative;width:100%;margin:0 0 16px;border-radius:6px;overflow:hidden;box-shadow:0 6px 24px #344b3818;background:#fff}
 .rp-page>svg{display:block;width:100%;height:auto}
 .redpen .typed{fill:#2b2b2b;font-family:'Kaiti SC',STKaiti,KaiTi,serif}
 .redpen .ink{fill:none;stroke:#d2342a;stroke-linecap:round;stroke-linejoin:round;opacity:.92}
-.redpen .pen{fill:#d2342a;font-family:RedPen,'Kaiti SC',STKaiti,KaiTi,serif;paint-order:stroke;stroke:#fffdf7;stroke-width:.2em;stroke-linejoin:round}
+.redpen .pen{fill:#d2342a;font-family:RedPen,'Kaiti SC',STKaiti,KaiTi,serif;paint-order:stroke;stroke:#fffdf7;stroke-width:.08em;stroke-linejoin:round}
 .redpen .mark{cursor:pointer;outline:none}
 .redpen .mark .hit{fill:transparent;stroke:none}
 .redpen .mark:hover .ink,.redpen .mark:focus .ink{stroke:#a3170f}
@@ -270,6 +270,10 @@ mark.mk{background:none}
 .projection .redpen{max-width:min(1400px,100%)}
 .correct-text{margin-top:16px}
 .trial-next{margin-top:20px;max-width:860px;margin-left:auto;margin-right:auto}
+.trial-terms{margin:0 0 16px;padding-left:1.2em;line-height:1.8}
+.trial-old{max-width:860px;margin:28px auto 10px}
+.trial-banner{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px 14px;padding:10px 16px;margin:0 0 16px;border-radius:12px;background:#fdf3dc;color:#7a5512;font-size:15px}
+.trial-banner .link-button{color:#7a5512;font-weight:600}
 .essay-pane .tabs{margin-bottom:12px}
 
 
@@ -333,5 +337,9 @@ a.feature-card{display:flex}
 
 /* 布置作文: pick a unit from the textbook */
 .unit-picker{border:1px dashed var(--line);border-radius:12px;padding:10px 14px 14px;margin:0;background:var(--soft)}
-.unit-picker legend{font-size:14px;color:var(--muted);padding:0 6px}
+.unit-picker legend{float:left;width:100%;font-size:14px;color:var(--muted);padding:0;margin:0 0 8px}
+.unit-picker legend+*{clear:both}
 .rp-legend .rp-tip{flex-basis:100%;justify-content:center;color:#d2342a}
+.table-tools{display:flex;justify-content:flex-end;margin:0 0 8px}
+.table-tools label{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--muted)}
+.table-tools select{width:auto;min-height:34px;padding:4px 10px}

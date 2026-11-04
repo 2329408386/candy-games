@@ -50,7 +50,7 @@
                 <a href="{{url_for('classes_page')}}">我的班级</a>
                 <a href="{{url_for('profile_page')}}">修改名字和头像</a>
                 <a href="{{url_for('profile_page')}}#devices">我的设备（{{me_teacher.devices}}/{{me_teacher.device_limit}}）</a>
-                <button type="button" data-post="{{url_for('logout')}}" data-confirm="退出后，这台设备需要重新输入授权码。确定退出？">退出登录</button>
+                <button type="button" data-post="{{url_for('logout')}}" data-confirm="{{'退出后，可以在「免费试用」页面回到试用账号。确定退出？' if me_teacher.trial else '退出后，这台设备需要重新输入授权码。确定退出？'}}">退出登录</button>
               </div>
             </details>
           {% elif side == 'student' and me_student %}
@@ -65,6 +65,12 @@
       {% endif %}
     </header>
     <main class="{{'admin-main' if is_admin else 'student-main'}}">
+      {% if side == 'teacher' and me_teacher and me_teacher.trial %}{% set tr = me_teacher.trial %}
+      <div class="trial-banner" role="status">
+        <span>免费试用{% if tr.days is none %}已结束，已批改的作文还可以查看{% else %} · {{'今天到期' if tr.days == 0 else '还剩 %d 天'|format(tr.days)}} · 可以布置 1 次作文 · 已批改 {{tr.used}}/{{tr.limit}} 篇{% endif %}</span>
+        <button type="button" class="link-button" data-post="{{url_for('logout')}}" data-confirm="去输入授权码？试用账号会先退出，之后可以在「免费试用」页面回来。">输入授权码 →</button>
+      </div>
+      {% endif %}
       {% with messages=get_flashed_messages(with_categories=true) %}{% for category,message in messages %}
       <div class="notice {{category}}" role="status">{{message}}</div>
       {% endfor %}{% endwith %}

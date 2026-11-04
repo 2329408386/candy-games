@@ -73,6 +73,7 @@
             <div class="fields-row">
               <div class="form-field"><label>温度</label><input name="temperature" value="{{s.temperature if s and s.temperature is not none else ''}}" placeholder="不填用默认，批改建议 0.3"></div>
               <div class="form-field"><label>最大输出 token</label><input name="max_tokens" value="{{s.max_tokens if s and s.max_tokens else ''}}" placeholder="不填用默认"></div>
+              <div class="form-field"><label>超时（秒）</label><input name="step_timeout" value="{{s.step_timeout if s and s.step_timeout else ''}}" placeholder="不填用服务商的"></div>
             </div>
             <div class="form-field"><label>额外参数（JSON，合并进请求）</label><input name="extra" value="{{s.extra if s else ''}}" placeholder='例如 {"enable_thinking": false}；某个键写 null 表示去掉它'></div>
             <div class="fields-row">
@@ -131,6 +132,14 @@
       <table>
         <thead><tr><th>作文</th><th>尝试</th><th>当前状态</th><th>错误</th></tr></thead>
         <tbody>{% for j in usage.failures %}<tr><td>#{{j.submission_id}}</td><td>{{j.attempts}}</td><td>{{j.status}}</td><td><small>{{j.error}}</small></td></tr>{% endfor %}</tbody>
+      </table>
+    {% endif %}
+    {% if usage.failed_calls %}
+      <h3>最近失败的调用</h3>
+      <p class="hint">每一次没成功的模型请求（包括备用模型接住了的），最近 20 条。</p>
+      <table>
+        <thead><tr><th>时间</th><th>步骤</th><th>模型</th><th>作文</th><th>用时</th><th>原因</th></tr></thead>
+        <tbody>{% for u in usage.failed_calls %}<tr><td>{{u.created_at|moment}}</td><td>{{STEPS.get(u.step, u.step)}}</td><td>{{u.model}}</td><td>{{'#%s'|format(u.submission_id) if u.submission_id else ''}}</td><td>{{'%.1f 秒'|format(u.ms / 1000) if u.ms is not none else ''}}</td><td><small>{{u.error or '（没有记录，早于本功能）'}}</small></td></tr>{% endfor %}</tbody>
       </table>
     {% endif %}
   </section>

@@ -75,6 +75,7 @@ def _step_form():
         "model": model,
         "temperature": _float("temperature", 0, 2, "温度") if temperature else None,
         "max_tokens": int(_float("max_tokens", 1, 200000, "最大输出 token")) if max_tokens else None,
+        "step_timeout": int(_float("step_timeout", 5, 900, "超时")) if request.form.get("step_timeout", "").strip() else None,
         "extra": extra,
         "price_in": _float("price_in", 0, 1000, "输入价格", 0),
         "price_cached": _float("price_cached", 0, 1000, "缓存命中价格", 0),
@@ -207,6 +208,9 @@ def register(app):
             "failures": d.execute(
                 "SELECT j.*,s.status FROM ess_jobs j JOIN ess_submissions s ON s.id=j.submission_id"
                 " WHERE j.error!='' ORDER BY j.id DESC LIMIT 10"
+            ).fetchall(),
+            "failed_calls": d.execute(
+                "SELECT created_at,step,model,ms,error,submission_id FROM ess_usage WHERE ok=0 ORDER BY id DESC LIMIT 20"
             ).fetchall(),
             "queued": d.execute("SELECT count(*) FROM ess_jobs WHERE status IN ('queued','running')").fetchone()[0],
         }

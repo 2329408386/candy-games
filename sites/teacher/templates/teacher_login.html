@@ -17,14 +17,13 @@
     </section>
     <section class="wb-card trial-card">
       <h2>免费试用</h2>
-      <p class="muted">没有授权码也可以先试：每个功能都能免费用 1 次。</p>
+      <p class="muted">没有授权码也可以先试：完整布置 1 次作文，学生交作文、批改、审核全流程都能用，7 天有效。</p>
       <ul class="trial-list">
         {% for key, f in workbench_feature_list.items() %}
           <li>
             <span class="entry-icon small"><svg><use href="#{{f.icon}}"/></svg></span>
             <div><strong>{{f.name}}</strong><small>{{f.desc}}</small></div>
-            {% if trials[key] %}<a class="button secondary small" href="{{url_for(f.trial)}}">看试用结果</a>
-            {% else %}<a class="button small" href="{{url_for(f.trial)}}">试用</a>{% endif %}
+            <a class="button small" href="{{url_for(f.trial)}}">免费试用</a>
           </li>
         {% endfor %}
       </ul>

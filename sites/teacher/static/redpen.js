@@ -82,7 +82,7 @@
       for (const c of L.text) cum.push(cum[cum.length - 1] + weight(c));
       const total = cum[cum.length - 1] || 1;
       const at = (k) => L.x1 + ((L.x2 - L.x1) * cum[k - L.s]) / total;
-      out.push({ x1: at(a), x2: at(b), y1: L.y1, y2: L.y2, h: L.y2 - L.y1 });
+      out.push({ x1: at(a), x2: at(b), y1: L.y1, y2: L.y2, h: L.y2 - L.y1, L });
     }
     return out;
   }
@@ -163,29 +163,54 @@
     return w > 0 && h > 0 ? w * h : 0;
   }
 
-  /* The least crowded place near a mark for a short note; null when every place covers the writing. */
-  function place(text, size, near, sheet, taken, obstacles) {
-    const w = textWidth(text, size), h = size * 1.15;
-    const gap = near.h * 0.2;
-    const xs = [near.x1, near.x2 - w, near.x1 - w * 0.3];
-    const ys = [near.y2 + gap + near.h * 0.18, near.y1 - gap - h, near.y2 + gap + h * 1.1];
-    const options = [];
-    for (const y of ys) for (const x of xs) options.push({ x1: x, y1: y, x2: x + w, y2: y + h });
-    options.push({ x1: near.x2 + gap, y1: near.y1, x2: near.x2 + gap + w, y2: near.y1 + h });
-    let best = null, bestCost = Infinity;
+  /* The least crowded box among options (each {x1, y1, w, h}, moved inside the sheet): writing on the student's
+   * words (obstacles) costs, on other notes (taken) costs far more. null when the best one still covers more than
+   * `allowed` of its area with the student's writing — the note then gets a number instead. */
+  function bestBox(options, sheet, taken, obstacles, allowed) {
+    let best = null, bestCost = Infinity, bestInk = 0;
     for (const o of options) {
-      const dx = Math.max(0, sheet.x1 - o.x1) - Math.max(0, o.x2 - sheet.x2);
-      const dy = Math.max(0, sheet.y1 - o.y1) - Math.max(0, o.y2 - sheet.y2);
-      const box = { x1: o.x1 + dx, y1: o.y1 + dy, x2: o.x2 + dx, y2: o.y2 + dy };
-      let cost = 0;
+      const dx = Math.max(0, sheet.x1 - o.x1) - Math.max(0, o.x1 + o.w - sheet.x2);
+      const dy = Math.max(0, sheet.y1 - o.y1) - Math.max(0, o.y1 + o.h - sheet.y2);
+      const box = { x1: o.x1 + dx, y1: o.y1 + dy, x2: o.x1 + o.w + dx, y2: o.y1 + o.h + dy };
+      let ink = 0, cost = 0;
+      for (const t of obstacles) ink += overlap(box, t);
       for (const t of taken) cost += overlap(box, t) * 50;
-      for (const t of obstacles) cost += overlap(box, t);
-      if (cost < bestCost) (best = box), (bestCost = cost);
+      cost += ink;
+      if (cost < bestCost) (best = box), (bestCost = cost), (bestInk = ink);
       if (!cost) break;
     }
-    if (bestCost > w * h * 0.25) return null;
+    if (!best || bestInk > (best.x2 - best.x1) * (best.y2 - best.y1) * allowed || bestCost > (best.x2 - best.x1) * (best.y2 - best.y1) * 2) return null;
     taken.push(best);
     return best;
+  }
+
+  /* A place near a mark for a short note: in the blank between the lines, or after the end of the line. */
+  function place(text, size, near, sheet, taken, obstacles) {
+    const w = textWidth(text, size), h = size * 1.15;
+    const gap = near.h * 0.12;
+    const xs = [near.x1, near.x2 - w, near.x1 - w * 0.3];
+    const ys = [near.y2 + gap, near.y1 - gap - h, near.y2 + gap + h * 0.6];
+    const options = [];
+    for (const y of ys) for (const x of xs) options.push({ x1: x, y1: y, w, h });
+    options.push({ x1: near.x2 + gap, y1: near.y1, w, h });
+    if (near.L) options.push({ x1: near.L.x2 + gap * 2, y1: near.y1, w, h }); // the blank after a short line
+    return bestBox(options, sheet, taken, obstacles, 0.04);
+  }
+
+  /* How much blank there is above and below each line (to the nearest line it shares columns with): the red
+   * writing between the lines is sized to fit there, so it does not cover the student's words. */
+  function roomAround(lines, sheet) {
+    for (const L of lines) {
+      const lh = L.y2 - L.y1;
+      let up = L.y1 - sheet.y1, down = sheet.y2 - L.y2;
+      for (const M of lines) {
+        if (M === L || Math.min(L.x2, M.x2) - Math.max(L.x1, M.x1) <= 0) continue;
+        if (M.y2 <= L.y1 + lh * 0.3) up = Math.min(up, L.y1 - M.y2);
+        else if (M.y1 >= L.y2 - lh * 0.3) down = Math.min(down, M.y1 - L.y2);
+      }
+      L.up = Math.max(0, up);
+      L.down = Math.max(0, down);
+    }
   }
 
   /* ---- the marks ---- */
@@ -261,6 +286,9 @@
   function drawMarks(data, lines, sheet, counter) {
     const items = [], numbered = [];
     const taken = [], obstacles = lines.map((L) => ({ x1: L.x1, y1: L.y1, x2: L.x2, y2: L.y2 }));
+    roomAround(lines, sheet);
+    // Red writing between the lines: as big as the blank allows (never below minFont, never above cap × the line).
+    const between = (L, room, h) => Math.min(h * sheet.cap, Math.max(sheet.minFont, room * 0.82));
     // In reading order, so the numbers ①②③ follow the text.
     const order = data.marks.map((m, i) => i).sort((a, b) => data.marks[a].start - data.marks[b].start || a - b);
     order.forEach((i) => {
@@ -276,18 +304,21 @@
       const write = (s, x, y, size) => g.items.push(pen(s, x, y, size, m.start + x));
       for (const seg of segs) g.items.push({ t: 'hit', x: seg.x1 - h * 0.3, y: seg.y1 - h * 0.4, w: seg.x2 - seg.x1 + h * 0.6, h: seg.h + h * 0.8 });
       const first = segs[0], last = segs[segs.length - 1];
-      const fs = Math.max(sheet.minFont * 1.2, h * 0.85);
-      // A correction written small above the line, joined by a short stroke from the mark.
+      // A correction written small in the blank above the line, joined by a short stroke from the mark. Returns
+      // false (nothing drawn) when there is no blank for it that leaves the student's words uncovered.
       const above = (s, from, cx, line) => {
-        const w = textWidth(s, fs);
-        // Right of the stroke's end, so the stroke never crosses the characters.
-        const box = { x1: Math.max(sheet.x1, Math.min(sheet.x2 - w, from ? from[0] + fs * 0.2 : cx - w / 2)), y2: line.y1 - h * 0.1 };
-        box.x2 = box.x1 + w;
-        box.y1 = box.y2 - fs * 1.05;
-        for (const t of taken) if (overlap(box, t)) (box.y1 -= fs * 0.4), (box.y2 -= fs * 0.4);
-        taken.push(box);
+        const room = line.L ? line.L.up : h;
+        const fs = between(line.L, room, h);
+        const w = textWidth(s, fs), bh = fs * 1.05;
+        // Right of the stroke's end first, so the stroke never crosses the characters.
+        const x0 = from ? from[0] + fs * 0.2 : cx - w / 2;
+        const y1 = line.y1 - Math.min(h * 0.08, room * 0.1) - bh;
+        const options = [x0, cx - w / 2, x0 - w * 0.6, x0 + w * 0.6].map((x1) => ({ x1, y1, w, h: bh }));
+        const box = bestBox(options, sheet, taken, obstacles, 0.1);
+        if (!box) return false;
         write(s, box.x1, box.y2 - fs * 0.12, fs);
         if (from) draw(stroke([from, [box.x1 - fs * 0.08, box.y2 - fs * 0.3]], rand, h * 0.03), sw * 0.85);
+        return true;
       };
       let note = (m.note || '').trim(), long = '';
       if (kind === 'good') {
@@ -317,8 +348,9 @@
               const lp = loop(S[0], rand);
               draw(lp.d);
               for (const seg of S.slice(1)) draw(loop(seg, rand).d);
-              if (hk.ins) above(hk.ins, lp.top, (S[0].x1 + S[0].x2) / 2, S[0]);
-              else draw(pigtail(lp.right, S[0].h, rand), sw * 0.9); // 删除号
+              if (hk.ins) {
+                if (!above(hk.ins, lp.top, (S[0].x1 + S[0].x2) / 2, S[0])) long = '改为：' + m.fix;
+              } else draw(pigtail(lp.right, S[0].h, rand), sw * 0.9); // 删除号
             } else {
               const gap = gapAt(lines, m.start + hk.a0);
               if (!gap) continue;
@@ -326,7 +358,7 @@
               // 增补号: ∧ under the gap, a stroke up through it to the missing characters.
               draw(stroke([[x - gh * 0.2, gap.y2 + gh * 0.32], [x, gap.y2 + gh * 0.02], [x + gh * 0.2, gap.y2 + gh * 0.32]], rand, gh * 0.03));
               draw(stroke([[x, gap.y2 + gh * 0.02], [x + rand() * gh * 0.05, gap.y1 - gh * 0.12]], rand, gh * 0.04), sw * 0.85);
-              above(hk.ins, [x, gap.y1 - gh * 0.12], x + textWidth(hk.ins, fs) * 0.25, gap);
+              if (!above(hk.ins, [x, gap.y1 - gh * 0.12], x, gap)) long = '改为：' + m.fix;
             }
           }
         } else {
@@ -337,13 +369,14 @@
       }
       if (long) note = note && !long.startsWith(note) ? note + (/[。！？!?…]$/.test(note) ? '' : '。') + long : long;
       if (!note) return;
-      const size = Math.max(sheet.minFont * 1.1, h * 0.62);
+      const L = last.L || {};
+      const size = Math.min(h * 0.62, between(L, Math.max(L.up || 0, L.down || 0), h));
       const box = [...note].length <= INLINE_CHARS && !long ? place(note, size, last, sheet, taken, obstacles) : null;
       if (box) write(note, box.x1, box.y2 - size * 0.18, size);
       else {
         const n = ++counter.n;
-        const L = segs.reduce((a, b) => (b.x1 < a.x1 ? b : a)), R = segs.reduce((a, b) => (b.x2 > a.x2 ? b : a));
-        numbered.push({ i, n, text: note, y: (first.y1 + first.y2) / 2, left: L.x1, right: R.x2 });
+        const lo = segs.reduce((a, b) => (b.x1 < a.x1 ? b : a)), hi = segs.reduce((a, b) => (b.x2 > a.x2 ? b : a));
+        numbered.push({ i, n, text: note, y: (first.y1 + first.y2) / 2, left: lo.x1, right: hi.x2 });
         g.n = n;
         // The number, small and raised, just after the end of the mark.
         const r = Math.max(sheet.minFont * 0.42, h * 0.3);
@@ -358,13 +391,16 @@
     return { items, numbered };
   }
 
-  function drawScore(data, sheet, line) {
-    const size = Math.max(22, (sheet.x2 - sheet.x1) * 0.055);
+  function drawScore(data, sheet, line, obstacles) {
+    const size = Math.max(22, (sheet.x2 - sheet.x1) * (sheet.scoreRatio || 0.055));
     const label = data.showScore ? data.total + '分' : '';
     const lw0 = label ? textWidth(label, size * 1.1) + size * 0.25 : 0;
     const width = lw0 + textWidth(data.level, size * 0.95);
     const x = sheet.x2 - width - size * 0.6;
-    const y = Math.max(sheet.y1 + size * 1.05, line.y1 - size * 0.2);
+    // In the top right corner, above the first line; higher up when that would cover the student's writing.
+    let y = Math.max(sheet.y1 + size * 1.05, line.y1 - size * 0.2);
+    const box = (yy) => ({ x1: x, y1: yy - size * 1.1, x2: x + width, y2: yy + size * 0.4 });
+    if ((obstacles || []).some((o) => overlap(box(y), o))) y = sheet.y1 + size * 1.05;
     const g = { t: 'group', rot: -7, cx: x, cy: y, items: [] };
     if (label) g.items.push(pen(label, x, y, size * 1.1, 3));
     const lx = x + lw0;
@@ -461,10 +497,11 @@
       s: l.s, e: l.e, text: data.text.slice(l.s, l.e),
       x1: l.b[0] * sx, y1: l.b[1] * sy, x2: l.b[2] * sx, y2: l.b[3] * sy,
     }));
-    const sheet = { x1: page.w * 0.01, y1: page.h * 0.005, x2: page.w * 0.99, y2: page.h * 0.995, minFont: page.w * 0.034 };
+    // On a photo the red writing stays small (the gaps between handwritten lines are narrow) and keeps off the words.
+    const sheet = { x1: page.w * 0.01, y1: page.h * 0.005, x2: page.w * 0.99, y2: page.h * 0.995, minFont: page.w * 0.02, cap: 0.6, scoreRatio: 0.04 };
     const { items, numbered } = drawMarks(data, lines, sheet, counter);
     const content = [{ t: 'img', src: page.src, x: 0, y: 0, w: page.w, h: page.h }, ...items];
-    if (isFirst && lines[0]) content.push(drawScore(data, sheet, lines[0]));
+    if (isFirst && lines[0]) content.push(drawScore(data, sheet, lines[0], lines));
     return surface(page.w, page.h, content, numbered, page.w * 0.032);
   }
 
@@ -513,7 +550,7 @@
       s: L.s, e: L.e, text: '国'.repeat(L.e - L.s), // one cell per character, whatever it is
       x1: margin + L.c0 * cell, x2: margin + (L.c0 + (L.e - L.s)) * cell, y1: top(L.row), y2: top(L.row) + cell,
     }));
-    const sheet = { x1: 4, y1: 4, x2: width - 4, y2: height - 4, minFont: 22 };
+    const sheet = { x1: 4, y1: 4, x2: width - 4, y2: height - 4, minFont: 22, cap: 0.85 };
     const { items, numbered } = drawMarks(data, placed, sheet, counter);
     content.push(...items, drawScore(data, sheet, { y1: top(0) + cell }));
     return surface(width, height, content, numbered, 26);
@@ -624,7 +661,7 @@
           ctx.rotate((g.rot * Math.PI) / 180);
           if (!item.typed) {
             ctx.strokeStyle = '#fffdf7';
-            ctx.lineWidth = item.size * 0.2;
+            ctx.lineWidth = item.size * 0.08;
             ctx.lineJoin = 'round';
             ctx.strokeText(g.c, 0, 0);
           }

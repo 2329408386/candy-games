@@ -9,9 +9,12 @@ Pipeline (run by the worker, core/essay/worker.py):
               and level are computed here (never taken from the model), and every quote must occur in the essay
               text exactly (whitespace aside), otherwise the mark is dropped. Offsets of the quotes are stored so
               pages can highlight them.
-  3. check  — the check step's model re-judges every error mark (错别字 / 用词不当 / 病句 / 标点) and gives its own
-              level; marks it rejects are dropped, and a level two steps away from ours is flagged for the teacher.
-              If the check step is not configured or fails, the marks stay and the review is flagged "unchecked".
+     plausible_fix() also drops corrections that cannot be right (a 错别字 that changes the length, a 标点 fix that
+              changes words, anything touching an unreadable □).
+  3. check  — the check step's model re-judges every error mark (错别字 / 用词不当 / 病句 / 标点) and every 修改建议
+              example sentence, and gives its own level; marks it rejects or skips are dropped, and a level two steps
+              away from ours is flagged for the teacher. If the check step is not configured or fails, the marks stay,
+              the review is flagged "unchecked" and goes to the teacher instead of being published (worker.py).
 
 Prompts live in sites/teacher/prompts/; PROMPT_VERSION is a hash of those files and is stored with each review.
 Anchor essays (teacher-scored examples that calibrate the scale) go in prompts/anchors/<band>.json.
@@ -145,8 +148,8 @@ def grade_messages(essay):
 
 def check_messages(essay, marks):
     band = band_of(essay["grade"])
-    # Numbered 1, 2, … over the error marks only, in text order: apply_check counts the same way.
-    errors = [m for m in marks if m["type"] in ERROR_TYPES]
+    # Numbered 1, 2, … over checked_marks, in text order: apply_check counts the same way.
+    errors = checked_marks(marks)
     items = [{"id": i, "type": m["type"], "quote": m["quote"], "fix": m["fix"], "note": m["note"]} for i, m in enumerate(errors, 1)]
     user = (
         f"学段：{BANDS[band]['name']}\n文体：{'、'.join(genres_of(essay)) or '不指定'}\n作文主题：{topic_of(essay) or '无'}\n习作重点：{essay['requirement'] or '无'}\n\n"
@@ -214,6 +217,8 @@ def clean_review(raw, essay):
         fix = _str(m.get("fix"), 120)
         if m["type"] in ERROR_TYPES and (not fix or fix == text[span[0] : span[1]]):
             continue  # an error with no correction (or the same text) is not actionable
+        if not plausible_fix(m["type"], text[span[0] : span[1]], fix):
+            continue
         taken.add(span)
         kinds[kind] = kinds.get(kind, 0) + 1
         marks.append(
@@ -247,6 +252,33 @@ def clean_review(raw, essay):
     }
 
 
+PUNCT = set("，。、；：？！“”‘’「」『』（）《》〈〉【】…—～·,.;:?!\"'()<>[]-~ ")
+
+
+def plausible_fix(kind, quote, fix):
+    """Rules no correct correction breaks, so a wrong one never reaches a child: nothing is corrected where the
+    photo could not be read (□); a 错别字 fix swaps one or two characters and keeps the length; a 标点 fix only
+    changes punctuation."""
+    if kind not in ERROR_TYPES:
+        return True
+    if "□" in quote or "□" in fix:
+        return False
+    if kind == "错别字":
+        a, b = re.sub(r"\s+", "", quote), re.sub(r"\s+", "", fix)
+        changed = sum(1 for x, y in zip(a, b) if x != y)
+        return len(a) == len(b) and 1 <= changed <= 2 and not any(c in PUNCT for c in b)
+    if kind == "标点":
+        words = lambda t: "".join(c for c in t if c not in PUNCT and not c.isspace())
+        return words(quote) == words(fix)
+    return True
+
+
+def checked_marks(marks):
+    """The marks the checker judges, in text order (numbered 1, 2, … by check_messages and apply_check): every
+    error, and every 修改建议 with an example sentence (the child is told to write it that way, so it must be right)."""
+    return [m for m in marks if m["type"] in ERROR_TYPES or (m["type"] == "修改建议" and m.get("fix"))]
+
+
 def parse_check(raw):
     items = raw.get("items")
     if not isinstance(items, list):
@@ -260,13 +292,14 @@ def parse_check(raw):
 
 
 def apply_check(review, verdicts, level):
-    """Drops error marks the checker rejected (kept in review["rejected"] for the teacher) and flags a level that
-    disagrees by two steps or more. Marks the checker skipped are kept."""
+    """Drops the checked marks (checked_marks) the checker rejected or skipped (kept in review["rejected"] for the
+    teacher) and flags a level that disagrees by two steps or more."""
     kept, rejected, n = [], [], 0
+    checked = {id(m) for m in checked_marks(review["marks"])}
     for m in review["marks"]:
-        if m["type"] in ERROR_TYPES:
+        if id(m) in checked:
             n += 1
-            ok, reason = verdicts.get(n, (True, ""))
+            ok, reason = verdicts.get(n, (False, "复核没有确认"))
             if not ok:
                 rejected.append({**m, "reason": reason})
                 continue
