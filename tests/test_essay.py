@@ -199,15 +199,12 @@ def test_full_flow(models, klass, db):
     assert any(m["type"] == "错别字" and m["fix"] == "高兴" for m in pen["marks"])
     assert t.get(f"/teacher/essay/results/{sid}").status_code == 200
 
-    # After publishing the student may resubmit, up to MAX_ATTEMPTS in all.
+    # After publishing the student may resubmit once more (MAX_ATTEMPTS = 2); the newest one counts.
     r = jpost(s, f"/api/write/{aid}", {"text": ESSAY + "我还想再去。"})
     assert r.status_code == 200
     db.execute("UPDATE ess_submissions SET status='published' WHERE assignment_id=?", (aid,))
     db.commit()
-    assert jpost(s, f"/api/write/{aid}", {"text": ESSAY}).status_code == 200
-    db.execute("UPDATE ess_submissions SET status='published' WHERE assignment_id=?", (aid,))
-    db.commit()
-    assert "最多交" in jpost(s, f"/api/write/{aid}", {"text": ESSAY}).get_json()["error"]
+    assert "最多交 2 次" in jpost(s, f"/api/write/{aid}", {"text": ESSAY}).get_json()["error"]
 
 
 def test_auto_publish_and_publish_all(models, klass, db):
@@ -864,7 +861,8 @@ def test_home_lists_features_and_header_leads_to_classes(models, klass, db):
     new = t.get(f"/teacher/essay/new?class={cid}").get_data(as_text=True)
     assert f'data-url="/workspace/chinese/api/classes/{cid}/assignments" selected' in new
     assert "布置给：<strong>三年级二班</strong>" in new and "作文主题" in new and "data-units" in new
-    assert '"requirement"' in new  # the textbook units
+    assert '"requirement"' in new and '"intro"' in new  # the textbook units
+    assert 'name="genre" value="写人" data-many>' in new  # 文体: several or none, none ticked by default
     # The class page sends the teacher to the feature page to assign.
     assert f"/teacher/essay/new?class={cid}" in t.get(f"/teacher/classes/{cid}").get_data(as_text=True)
 
@@ -941,8 +939,48 @@ def test_textbook_units_are_built_and_valid():
     for terms in UNITS.values():
         for rows in terms.values():
             for u in rows:
-                assert u["genre"] in grading.GENRES and u["topic"] and 0 < len(u["requirement"]) <= 600 and u["unit"].startswith("第")
-    assert UNITS["3"]["上册"][1]["genre"] == "日记" and "西红柿" in UNITS["3"]["上册"][3]["requirement"]
+                assert all(g in grading.CHOICES for g in u["genres"]) and u["topic"] and u["unit"].startswith("第")
+                assert 0 < len(u["intro"]) <= 300 and 0 < len(u["requirement"]) <= 800
+    u = UNITS["3"]["上册"][4]
+    assert u["topic"] == "我们眼中的缤纷世界" and u["genres"] == ["写人", "写景", "状物"] and u["intro"].startswith("这段时间")
+    assert u["requirement"].startswith("1. 观察的准确性") and UNITS["3"]["上册"][1]["genres"] == ["日记"]
+    assert UNITS["2"]["上册"][1]["genres"] == []  # 留言条: 不指定
+
+
+def test_genres_intro_and_delete(models, klass, db):
+    t, cid, aid = klass
+    # 文体: several kept in GENRES order and joined with 、; unknown ones dropped; none = ''.
+    r = jpost(t, f"/api/classes/{cid}/assignments", {"title": "观察", "genre": ["状物", "写人", "乱写"], "intro": "把印象最深的写下来。", "requirement": "1. 观察的准确性"})
+    a2 = r.get_json()["id"]
+    row = db.execute("SELECT genre,intro,requirement FROM ess_assignments WHERE id=?", (a2,)).fetchone()
+    assert tuple(row) == ("写人、状物", "把印象最深的写下来。", "1. 观察的准确性")
+    assert jpost(t, f"/api/assignments/{a2}/edit", {"title": "观察", "genre": []}).get_json()["ok"]
+    assert db.execute("SELECT genre FROM ess_assignments WHERE id=?", (a2,)).fetchone()[0] == ""
+    msgs = grading.grade_messages({"grade": 3, "genre": "", "topic": "观察", "intro": "引言", "requirement": "", "min_chars": 0, "title": "", "text": ESSAY})
+    assert "没有指定文体" in msgs[0]["content"] and "文体：不指定" in msgs[1]["content"] and "引言（学生看到的题目说明）：引言" in msgs[1]["content"]
+    two = grading.grade_messages({"grade": 3, "genre": "写人、状物", "requirement": "", "min_chars": 0, "title": "", "text": ESSAY})
+    assert "写人：" in two[0]["content"] and "状物：" in two[0]["content"]
+    jpost(t, f"/api/assignments/{a2}/edit", {"title": "观察", "intro": "引言给学生看", "requirement": "重点只给老师看"})
+
+    # Students see the 引言, not the 习作重点.
+    s, _ = student_client(db, cid)
+    page = s.get(f"/student/essay/{a2}").get_data(as_text=True)
+    assert "引言给学生看" in page and "重点只给老师看" not in page and "成绩以最后一次为准" in page
+    assert "引言给学生看" in t.get(f"/teacher/essay/assignments/{a2}").get_data(as_text=True)
+
+    # Deleting hides it everywhere but the month's count stays.
+    sid = jpost(s, f"/api/write/{a2}", {"text": ESSAY}).get_json()["id"]
+    count = "SELECT count(*) FROM ess_submissions s JOIN ess_assignments a ON a.id=s.assignment_id WHERE a.class_id=?"
+    used = db.execute(count, (cid,)).fetchone()[0]
+    r = jpost(t, f"/api/assignments/{a2}/delete")
+    assert r.get_json()["url"].endswith("/teacher/essay/")
+    assert t.get(f"/teacher/essay/assignments/{a2}").status_code == 404
+    assert t.get(f"/teacher/essay/submissions/{sid}").status_code == 404
+    assert "观察" not in t.get("/teacher/essay/").get_data(as_text=True)
+    assert "观察" not in s.get("/student/").get_data(as_text=True)
+    assert s.get(f"/student/essay/{a2}").status_code == 404
+    assert jpost(s, f"/api/write/{a2}", {"text": ESSAY}).status_code == 404
+    assert db.execute(count, (cid,)).fetchone()[0] == used  # monthly_used() still counts it
 
 
 def test_assignment_export_lists_graded_essays(models, klass, db):

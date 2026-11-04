@@ -43,8 +43,10 @@ from . import features, grading
 DEFAULT_STUDENTS = 60
 DEFAULT_MONTHLY = 300
 MAX_CLASSES = 1  # one class per teacher
-MAX_ATTEMPTS = 3
+MAX_ATTEMPTS = 2  # the newest graded one counts
 MAX_REGRADES = 3
+INTRO_MAX = 300
+REQUIREMENT_MAX = 800
 NAME_MAX = 12
 TEACHER_NAME_MAX = 12
 CLASS_NAME_MAX = 20
@@ -209,7 +211,7 @@ def record_trial(game):
 def pending_reviews(lid):
     return db().execute(
         "SELECT count(*) FROM ess_submissions s JOIN ess_assignments a ON a.id=s.assignment_id JOIN ess_classes c ON c.id=a.class_id"
-        " WHERE c.license_id=? AND c.archived_at IS NULL AND s.status='review'",
+        " WHERE c.license_id=? AND c.archived_at IS NULL AND a.deleted_at IS NULL AND s.status='review'",
         (lid,),
     ).fetchone()[0]
 
@@ -303,7 +305,7 @@ def own_class(cid, lid):
 def own_assignment(aid, lid):
     row = db().execute(
         "SELECT a.*,c.name class_name,c.grade FROM ess_assignments a JOIN ess_classes c ON c.id=a.class_id"
-        " WHERE a.id=? AND c.license_id=? AND c.archived_at IS NULL",
+        " WHERE a.id=? AND c.license_id=? AND c.archived_at IS NULL AND a.deleted_at IS NULL",
         (aid, lid),
     ).fetchone()
     if not row:
@@ -312,14 +314,16 @@ def own_assignment(aid, lid):
 
 
 SUBMISSION_SQL = (
-    "SELECT s.*,a.title assignment_title,a.genre,a.requirement,a.min_chars,a.class_id,c.grade,c.license_id,"
+    "SELECT s.*,a.title assignment_title,a.genre,a.intro,a.requirement,a.deleted_at,a.min_chars,a.class_id,c.grade,c.license_id,"
     "c.name class_name,st.name student_name FROM ess_submissions s JOIN ess_assignments a ON a.id=s.assignment_id"
     " JOIN ess_classes c ON c.id=a.class_id JOIN ess_students st ON st.id=s.student_id"
 )
 
 
 def own_submission(sid, lid):
-    row = db().execute(SUBMISSION_SQL + " WHERE s.id=? AND c.license_id=? AND c.archived_at IS NULL", (sid, lid)).fetchone()
+    row = db().execute(
+        SUBMISSION_SQL + " WHERE s.id=? AND c.license_id=? AND c.archived_at IS NULL AND a.deleted_at IS NULL", (sid, lid)
+    ).fetchone()
     if not row:
         abort(404)
     return row
@@ -483,6 +487,7 @@ def register_essay(app):
         DIMS=grading.DIMS,
         FLAGS=grading.FLAGS,
         GENRES=list(grading.GENRES),
+        GENRE_CHOICES=grading.CHOICES,
         TOTAL=grading.TOTAL,
         essay_quota=quota,
         essay_students_used=students_used,
@@ -588,18 +593,21 @@ def register_pages(app):
         for c in class_rows(row["id"]):
             a = d.execute(
                 "SELECT count(*) n, coalesce(sum((SELECT count(DISTINCT s.student_id) FROM ess_submissions s WHERE s.assignment_id=a.id)),0) handed"
-                " FROM ess_assignments a WHERE a.class_id=?",
+                " FROM ess_assignments a WHERE a.class_id=? AND a.deleted_at IS NULL",
                 (c["id"],),
             ).fetchone()
             pending = d.execute(
-                "SELECT count(*) FROM ess_submissions s JOIN ess_assignments a ON a.id=s.assignment_id WHERE a.class_id=? AND s.status='review'",
+                "SELECT count(*) FROM ess_submissions s JOIN ess_assignments a ON a.id=s.assignment_id WHERE a.class_id=? AND a.deleted_at IS NULL AND s.status='review'",
                 (c["id"],),
             ).fetchone()[0]
             totals = [
                 json.loads(r[0])["total"]
                 for r in d.execute(
                     "SELECT coalesce(r.final,r.ai) FROM ess_reviews r JOIN ess_submissions s ON s.id=r.submission_id"
-                    " JOIN ess_assignments a ON a.id=s.assignment_id WHERE a.class_id=? AND s.status='published'",
+                    " JOIN ess_assignments a ON a.id=s.assignment_id WHERE a.class_id=? AND a.deleted_at IS NULL AND s.status='published'"
+                    # the newest published attempt of each student counts
+                    " AND s.attempt=(SELECT max(x.attempt) FROM ess_submissions x WHERE x.assignment_id=s.assignment_id"
+                    " AND x.student_id=s.student_id AND x.status='published')",
                     (c["id"],),
                 )
             ]
@@ -635,7 +643,7 @@ def register_pages(app):
         assignments = d.execute(
             "SELECT a.*,(SELECT count(DISTINCT s.student_id) FROM ess_submissions s WHERE s.assignment_id=a.id) submitted,"
             " (SELECT count(*) FROM ess_submissions s WHERE s.assignment_id=a.id AND s.status='review') pending"
-            " FROM ess_assignments a WHERE a.class_id=? ORDER BY a.id DESC",
+            " FROM ess_assignments a WHERE a.class_id=? AND a.deleted_at IS NULL ORDER BY a.id DESC",
             (cid,),
         ).fetchall()
         return render_template(
@@ -659,7 +667,7 @@ def register_pages(app):
             "SELECT s.id,s.attempt,s.created_at,s.title,a.title assignment_title,c.name class_name,st.name student_name"
             " FROM ess_submissions s JOIN ess_assignments a ON a.id=s.assignment_id JOIN ess_classes c ON c.id=a.class_id"
             " JOIN ess_students st ON st.id=s.student_id"
-            " WHERE c.license_id=? AND c.archived_at IS NULL AND s.status='review' ORDER BY s.created_at LIMIT 200",
+            " WHERE c.license_id=? AND c.archived_at IS NULL AND a.deleted_at IS NULL AND s.status='review' ORDER BY s.created_at LIMIT 200",
             (row["id"],),
         ).fetchall()
         assignments = d.execute(
@@ -668,7 +676,7 @@ def register_pages(app):
             " (SELECT count(DISTINCT s.student_id) FROM ess_submissions s WHERE s.assignment_id=a.id) submitted,"
             " (SELECT count(*) FROM ess_submissions s WHERE s.assignment_id=a.id AND s.status='review') pending"
             " FROM ess_assignments a JOIN ess_classes c ON c.id=a.class_id"
-            " WHERE c.license_id=? AND c.archived_at IS NULL ORDER BY a.id DESC",
+            " WHERE c.license_id=? AND c.archived_at IS NULL AND a.deleted_at IS NULL ORDER BY a.id DESC",
             (row["id"],),
         ).fetchall()
         now = int(time.time())
@@ -833,7 +841,7 @@ def register_pages(app):
             " ORDER BY s.attempt DESC LIMIT 1) my_status,"
             " (SELECT s.id FROM ess_submissions s WHERE s.assignment_id=a.id AND s.student_id=? AND s.status='published'"
             " ORDER BY s.attempt DESC LIMIT 1) my_result"
-            " FROM ess_assignments a WHERE a.class_id=? ORDER BY a.id DESC",
+            " FROM ess_assignments a WHERE a.class_id=? AND a.deleted_at IS NULL ORDER BY a.id DESC",
             (me["id"], me["id"], me["class_id"]),
         ).fetchall()
         return render_template("student_home.html", me=me, assignments=assignments)
@@ -843,7 +851,9 @@ def register_pages(app):
         me = student()
         if not me:
             return redirect(url_for("student_home"))
-        assignment = db().execute("SELECT * FROM ess_assignments WHERE id=? AND class_id=?", (aid, me["class_id"])).fetchone()
+        assignment = db().execute(
+            "SELECT * FROM ess_assignments WHERE id=? AND class_id=? AND deleted_at IS NULL", (aid, me["class_id"])
+        ).fetchone()
         if not assignment:
             abort(404)
         attempts = db().execute(
@@ -876,7 +886,7 @@ def register_pages(app):
         me = student()
         if not me:
             return redirect(url_for("student_home"))
-        sub = db().execute(SUBMISSION_SQL + " WHERE s.id=? AND s.student_id=?", (sid, me["id"])).fetchone()
+        sub = db().execute(SUBMISSION_SQL + " WHERE s.id=? AND s.student_id=? AND a.deleted_at IS NULL", (sid, me["id"])).fetchone()
         return result_view(sub, as_teacher=False)
 
     @app.get("/images/<int:iid>.jpg")
@@ -976,10 +986,18 @@ def parse_names(raw):
     return names
 
 
+def genre_field(value):
+    """文体: any of grading.CHOICES (a list, or one string joined with 、), stored joined with 、; '' = 不指定."""
+    if isinstance(value, str):
+        value = re.split(r"[、,，\s]+", value)
+    if not isinstance(value, list):
+        return ""
+    chosen = {v for v in value if isinstance(v, str)}
+    return "、".join(g for g in grading.CHOICES if g in chosen)
+
+
 def assignment_fields(data):
-    genre = data.get("genre")
-    if genre not in grading.GENRES:
-        raise ValueError("请选择文体")
+    genre = genre_field(data.get("genre"))
     due = data.get("due") or ""
     if due:
         if not isinstance(due, str) or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", due):
@@ -992,11 +1010,15 @@ def assignment_fields(data):
     else:
         due_at = None
     requirement = data.get("requirement", "")
-    if not isinstance(requirement, str) or len(requirement) > 600:
-        raise ValueError("习作要求最多 600 个字")
+    if not isinstance(requirement, str) or len(requirement) > REQUIREMENT_MAX:
+        raise ValueError(f"习作重点最多 {REQUIREMENT_MAX} 个字")
+    intro = data.get("intro", "")
+    if not isinstance(intro, str) or len(intro) > INTRO_MAX:
+        raise ValueError(f"引言最多 {INTRO_MAX} 个字")
     return {
         "title": text_field(data, "title", 40, True, "作文主题"),
         "requirement": grading.clean_text(requirement),
+        "intro": grading.clean_text(intro),
         "genre": genre,
         "min_chars": int_field(data, "min_chars", 0, 2000, "字数要求") if data.get("min_chars") not in (None, "") else 0,
         "due_at": due_at,
@@ -1151,8 +1173,9 @@ def register_teacher_api(app):
         features.require(db(), row["id"], "essay")
         f = assignment_fields(payload())
         aid = db().execute(
-            "INSERT INTO ess_assignments(class_id,title,requirement,genre,min_chars,due_at,auto_publish,created_at) VALUES(?,?,?,?,?,?,?,?)",
-            (cid, f["title"], f["requirement"], f["genre"], f["min_chars"], f["due_at"], f["auto_publish"], int(time.time())),
+            "INSERT INTO ess_assignments(class_id,title,intro,requirement,genre,min_chars,due_at,auto_publish,created_at)"
+            " VALUES(?,?,?,?,?,?,?,?,?)",
+            (cid, f["title"], f["intro"], f["requirement"], f["genre"], f["min_chars"], f["due_at"], f["auto_publish"], int(time.time())),
         ).lastrowid
         return jsonify(ok=True, id=aid, url=url_for("assignment_page", aid=aid))
 
@@ -1162,10 +1185,18 @@ def register_teacher_api(app):
         own_assignment(aid, row["id"])
         f = assignment_fields(payload())
         db().execute(
-            "UPDATE ess_assignments SET title=?,requirement=?,genre=?,min_chars=?,due_at=?,auto_publish=? WHERE id=?",
-            (f["title"], f["requirement"], f["genre"], f["min_chars"], f["due_at"], f["auto_publish"], aid),
+            "UPDATE ess_assignments SET title=?,intro=?,requirement=?,genre=?,min_chars=?,due_at=?,auto_publish=? WHERE id=?",
+            (f["title"], f["intro"], f["requirement"], f["genre"], f["min_chars"], f["due_at"], f["auto_publish"], aid),
         )
         return jsonify(ok=True)
+
+    @app.post("/api/assignments/<int:aid>/delete")
+    @teacher_api
+    def assignment_delete(row, aid):
+        """Hidden from every page (teachers and students); the rows stay so the month's 批改篇数 still counts them."""
+        own_assignment(aid, row["id"])
+        db().execute("UPDATE ess_assignments SET deleted_at=? WHERE id=?", (int(time.time()), aid))
+        return jsonify(ok=True, url=url_for("essay_home"))
 
     @app.post("/api/assignments/<int:aid>/<any(close,reopen):action>")
     @teacher_api
@@ -1332,7 +1363,9 @@ def register_student_api(app):
         if not me:
             return error("请先登录", 403)
         d = db()
-        assignment = d.execute("SELECT * FROM ess_assignments WHERE id=? AND class_id=?", (aid, me["class_id"])).fetchone()
+        assignment = d.execute(
+            "SELECT * FROM ess_assignments WHERE id=? AND class_id=? AND deleted_at IS NULL", (aid, me["class_id"])
+        ).fetchone()
         if not assignment:
             abort(404)
         if limited("submit", 150, 600):
@@ -1380,9 +1413,7 @@ def register_trial(app):
         try:
             data = payload()
             grade = int_field(data, "grade", 1, 6, "年级")
-            genre = data.get("genre")
-            if genre not in grading.GENRES:
-                raise ValueError("请选择文体")
+            genre = genre_field(data.get("genre"))
             title = text_field(data, "title", 40, label="作文主题")
             photos = submission_photos()
         except ValueError as e:

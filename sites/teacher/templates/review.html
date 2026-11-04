@@ -5,7 +5,7 @@
   <div class="wb-heading">
     <div>
       <h1>{{sub.student_name}} ·《{{sub.title or sub.assignment_title}}》</h1>
-      <p class="muted">{{sub.class_name}} · {{sub.assignment_title}} · {{sub.genre}} · 第 {{sub.attempt}} 次提交 · {{sub.created_at|moment}}{% if sub.source == 'teacher' %} · 老师代交{% elif sub.source == 'photo' %} · 拍照提交{% endif %}
+      <p class="muted">{{sub.class_name}} · {{sub.assignment_title}}{% if sub.genre %} · {{sub.genre}}{% endif %} · 第 {{sub.attempt}} 次提交 · {{sub.created_at|moment}}{% if sub.source == 'teacher' %} · 老师代交{% elif sub.source == 'photo' %} · 拍照提交{% endif %}
         {% if others|length > 1 %} · 其他几次：{% for o in others if o.id != sub.id %}<a href="{{url_for('review_page', sid=o.id)}}">第 {{o.attempt}} 次</a> {% endfor %}{% endif %}</p>
     </div>
     <div class="heading-actions">

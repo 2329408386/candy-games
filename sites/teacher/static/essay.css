@@ -43,6 +43,10 @@ a.wb-card:hover{transform:translateY(-2px);border-color:#c9d6c3}
 
 .wb-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;margin:6px 0 22px}
 .wb-heading .heading-actions{display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap;justify-content:flex-end}
+.wb-form label[hidden]{display:none}
+.intro-line{margin:4px 0 0;color:var(--ink);font-size:.92em}
+.genre-pick{border:0;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:6px 16px}
+.genre-pick legend{font-weight:600;margin-bottom:6px;padding:0}
 .requirement{background:var(--soft);border-radius:12px;padding:10px 14px;margin:10px 0 0;white-space:pre-wrap;max-width:760px}
 .wb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px}
 .class-card h2{font-size:22px}
@@ -241,7 +245,7 @@ mark.mk{background:none}
 .typed-alt>summary{cursor:pointer;color:var(--green);font-size:14px;margin:4px 0}
 .photo-plain{display:block;max-width:100%;border-radius:12px;border:1px solid var(--line);margin:0 auto 14px}
 
-/* red pen (static/redpen.js?v=b5b0a52e) */
+/* red pen (static/redpen.js?v=4ae0bc90) */
 @font-face{font-family:RedPen;src:url(redpen-font.0924cd57.woff2) format('woff2');font-display:swap}
 .redpen{position:relative;max-width:1040px;margin:0 auto}
 .rp-page{position:relative;width:100%;margin:0 0 16px;border-radius:6px;overflow:hidden;box-shadow:0 6px 24px #344b3818;background:#fff}

@@ -5,8 +5,8 @@
   <div class="wb-heading">
     <div>
       <h1>{{assignment.title}}</h1>
-      <p class="muted">{{assignment.genre}}{% if assignment.min_chars %} · 不少于 {{assignment.min_chars}} 字{% endif %}{% if assignment.due_at %} · {{assignment.due_at|date}} 截止{% endif %}</p>
-      {% if assignment.requirement %}<p class="requirement">{{assignment.requirement}}</p>{% endif %}
+      <p class="muted">{{assignment.genre or '文体不限'}}{% if assignment.min_chars %} · 不少于 {{assignment.min_chars}} 字{% endif %}{% if assignment.due_at %} · {{assignment.due_at|date}} 截止{% endif %}</p>
+      {% if assignment.intro %}<p class="requirement">{{assignment.intro}}</p>{% endif %}
     </div>
   </div>
   {% if attempts %}
@@ -25,7 +25,7 @@
   {% if can_submit %}
     <section class="wb-card">
       <form id="write-form" class="wb-form">
-        {% if last %}<p class="hint">这是第 {{attempts|length + 1}} 次提交（最多 {{max_attempts}} 次）。按老师的批改改好再交。</p>{% endif %}
+        {% if last %}<p class="hint">这是第 {{attempts|length + 1}} 次提交（最多 {{max_attempts}} 次）。按老师的批改改好再交，成绩以最后一次为准。</p>{% else %}<p class="hint">这篇作文最多可以交 {{max_attempts}} 次，成绩以最后一次为准。</p>{% endif %}
         <div class="tabs" role="tablist">
           <button type="button" role="tab" class="tab active" data-tab="photo" aria-selected="true"><svg><use href="#i-camera"/></svg>拍照交作文</button>
           <button type="button" role="tab" class="tab" data-tab="typed" aria-selected="false"><svg><use href="#i-pen"/></svg>打字</button>

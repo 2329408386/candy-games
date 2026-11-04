@@ -48,6 +48,7 @@ def _read(name):
 
 BANDS = json.loads(_read("bands.json"))
 GENRES = json.loads(_read("genres.json"))
+CHOICES = [g for g in GENRES if g != "其他"]  # what a teacher may tick (several, or none)
 GRADE_PROMPT = _read("grade.md")
 CHECK_PROMPT = _read("check.md")
 OCR_PROMPT = _read("ocr.md")
@@ -105,19 +106,37 @@ def topic_of(essay):
     return "" if topic == "试用" else topic or ""
 
 
+def genres_of(essay):
+    return [g for g in (essay["genre"] or "").split("、") if g in GENRES and g != "其他"]
+
+
+def genre_text(essay):
+    """The 文体 part of the system prompt: what each chosen genre asks for, or how to go on when none is chosen."""
+    chosen = genres_of(essay)
+    if not chosen:
+        return "老师没有指定文体：先判断这篇作文主要是哪种文体（写人、记事、写景、状物、想象……），再按那种文体的一般要求批改；不要因为文体扣分。"
+    head = "" if len(chosen) == 1 else f"老师给了 {len(chosen)} 种文体，学生写其中任意一种都可以，按他实际写的那种来要求：\n"
+    return head + "\n".join(f"{g}：{GENRES[g]}" for g in chosen)
+
+
+def intro_of(essay):
+    return essay["intro"] if "intro" in essay.keys() and essay["intro"] else ""
+
+
 def grade_messages(essay):
     """essay: dict with grade, genre, requirement, min_chars, title, text. The system prompt only depends on the
     band and genre, so it is the same for a whole assignment and providers can cache it."""
     band = band_of(essay["grade"])
     system = (
         GRADE_PROMPT.replace("{band}", BANDS[band]["name"] + "\n" + BANDS[band]["text"])
-        .replace("{genre}", f"{essay['genre']}：{GENRES.get(essay['genre'], GENRES['其他'])}")
+        .replace("{genre}", genre_text(essay))
         .replace("{anchors}", anchors_text(band))
     )
     user = (
-        f"年级：{essay['grade']}年级\n文体：{essay['genre']}\n"
+        f"年级：{essay['grade']}年级\n文体：{'、'.join(genres_of(essay)) or '不指定'}\n"
         f"作文主题：{topic_of(essay) or '（老师没有定主题）'}\n"
-        f"习作要求：{essay['requirement'] or '（老师没有写具体要求）'}\n"
+        + (f"引言（学生看到的题目说明）：{intro_of(essay)}\n" if intro_of(essay) else "")
+        + f"习作重点：{essay['requirement'] or '（老师没有写具体要求）'}\n"
         + (f"字数要求：不少于 {essay['min_chars']} 字（这篇约 {char_count(essay['text'])} 字）\n" if essay["min_chars"] else "")
         + f"作文标题：{essay['title'] or '（无标题）'}\n\n作文正文：\n{essay['text']}"
     )
@@ -130,7 +149,7 @@ def check_messages(essay, marks):
     errors = [m for m in marks if m["type"] in ERROR_TYPES]
     items = [{"id": i, "type": m["type"], "quote": m["quote"], "fix": m["fix"], "note": m["note"]} for i, m in enumerate(errors, 1)]
     user = (
-        f"学段：{BANDS[band]['name']}\n文体：{essay['genre']}\n作文主题：{topic_of(essay) or '无'}\n习作要求：{essay['requirement'] or '无'}\n\n"
+        f"学段：{BANDS[band]['name']}\n文体：{'、'.join(genres_of(essay)) or '不指定'}\n作文主题：{topic_of(essay) or '无'}\n习作重点：{essay['requirement'] or '无'}\n\n"
         f"作文正文：\n{essay['text']}\n\n需要复核的标注：\n{json.dumps(items, ensure_ascii=False, indent=1)}"
     )
     return [{"role": "system", "content": CHECK_PROMPT}, {"role": "user", "content": user}]

@@ -165,6 +165,16 @@ def migrate(d):
         d.execute("DELETE FROM trials WHERE site='teacher' AND game='lesson'")
         d.execute("DELETE FROM ess_usage WHERE step='lesson'")
         d.execute("INSERT INTO migrations VALUES('drop_lessons',?)", (int(time.time()),))
+    if "assignment_intro_delete" not in done:
+        # 布置作文 got an 引言 shown to students and teachers may delete an assignment (hidden, kept for the monthly
+        # count); 文体 may be several joined with 、 or none, so the old catch-all 其他 becomes none.
+        cols = {r[1] for r in d.execute("PRAGMA table_info(ess_assignments)")}
+        if "intro" not in cols:
+            d.execute("ALTER TABLE ess_assignments ADD COLUMN intro TEXT NOT NULL DEFAULT ''")
+        if "deleted_at" not in cols:
+            d.execute("ALTER TABLE ess_assignments ADD COLUMN deleted_at INTEGER")
+        d.execute("UPDATE ess_assignments SET genre='' WHERE genre='其他'")
+        d.execute("INSERT INTO migrations VALUES('assignment_intro_delete',?)", (int(time.time()),))
 
 
 BEIJING = 8 * 3600

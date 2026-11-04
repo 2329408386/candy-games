@@ -118,7 +118,7 @@
   };
 
   /* .tabs buttons [data-tab] show the matching [data-pane] inside the same parent. */
-  /* 布置作文: 年级 → 上下册 → 单元 from the textbook fills in 主题, 文体 and 习作要求 (the teacher may still edit them).
+  /* 布置作文: 年级 → 上下册 → 单元 from the textbook fills in 主题, 文体, 引言 and 习作重点 (the teacher may still edit them).
    * The grade follows the class picked above it. */
   WB.unitPicker = function (form, classPick) {
     const box = form && form.querySelector('.unit-picker');
@@ -147,7 +147,8 @@
       const r = list()[Number(unit.value)];
       if (unit.value === '' || !r) return;
       form.elements.title.value = r.topic.slice(0, 40);
-      form.elements.genre.value = r.genre;
+      form.querySelectorAll('input[name=genre]').forEach((c) => (c.checked = r.genres.includes(c.value)));
+      form.elements.intro.value = r.intro;
       form.elements.requirement.value = r.requirement;
     });
     followClass();
@@ -223,7 +224,11 @@
     const data = {};
     for (const el of form.elements) {
       if (!el.name || el.type === 'file') continue;
-      if (el.type === 'checkbox') data[el.name] = el.checked;
+      // Checkboxes marked data-many share a name and give the list of ticked values (文体).
+      if (el.type === 'checkbox' && 'many' in el.dataset) {
+        data[el.name] = data[el.name] || [];
+        if (el.checked) data[el.name].push(el.value);
+      } else if (el.type === 'checkbox') data[el.name] = el.checked;
       else data[el.name] = el.value;
     }
     return data;

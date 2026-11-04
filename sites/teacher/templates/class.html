@@ -33,7 +33,7 @@
           {% for a in assignments %}
             <tr>
               <td><a href="{{url_for('assignment_page', aid=a.id)}}">{{a.title}}</a>{% if a.closed_at %} <span class="tag off">已停止提交</span>{% endif %}</td>
-              <td>{{a.genre}}</td>
+              <td>{{a.genre or '不指定'}}</td>
               <td>{{a.due_at|date or '—'}}</td>
               <td>{{a.submitted}} / {{students|length}}</td>
               <td>{% if a.pending %}<span class="badge">{{a.pending}}</span>{% else %}0{% endif %}</td>

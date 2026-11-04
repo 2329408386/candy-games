@@ -1,122 +1,74 @@
 """Builds sites/teacher/data/units.json — the 习作 / 写话 of each unit of the 统编版 primary-school textbooks — from
-docs/chinese/小学语文各册习作与写话要求汇总.md. 布置作文 uses it to fill in the 主题, 文体 and 习作要求 when the
-teacher picks 年级 → 上下册 → 单元.
+docs/chinese/习作单元.md. 布置作文 uses it to fill in the 主题, 文体, 引言 and 习作重点 when the teacher picks
+年级 → 上下册 → 单元.
 
     python tools/units.py           rebuild the JSON
-    python tools/units.py --check   fail when the JSON is out of date (run by tests)
+    python tools/units.py --check   fail when the JSON is out of date or the source is malformed (run by tests)
 
-Output: {"<grade>": {"上册": [{"unit", "topic", "genre", "requirement"}], "下册": [...]}}; a term without 习作 has
-an empty list. genre is one of grading.GENRES (the textbook's own wording is mapped below); requirement is the
-summary of the task plus the notes under the term's table that belong to that unit (by 第N单元 or by 第N页).
+Source: "## <N>年级<上|下>册", then per unit "### 第<N>单元" followed by the lines 主题：…, 文体：… (several joined
+with 、, or empty for 不指定), 引言：… and 习作重点： with its numbered lines under it.
+Output: {"<grade>": {"上册": [{"unit", "topic", "genres", "intro", "requirement"}], "下册": [...]}}; a term
+without 习作 has an empty list. genres are taken from grading.CHOICES.
 """
 
 import json, re, sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-SOURCE = ROOT / "docs" / "chinese" / "小学语文各册习作与写话要求汇总.md"
+SOURCE = ROOT / "docs" / "chinese" / "习作单元.md"
 OUT = ROOT / "sites" / "teacher" / "data" / "units.json"
+GENRES = ROOT / "sites" / "teacher" / "prompts" / "genres.json"
 GRADES = {"一": 1, "二": 2, "三": 3, "四": 4, "五": 5, "六": 6}
-NUMBERS = {"一": 1, "二": 2, "三": 3, "四": 4, "五": 5, "六": 6, "七": 7, "八": 8}
-REQUIREMENT_MAX = 600
-
-# The textbook's 文体 → the workbench's genre (grading.GENRES); first match wins.
-GENRE_RULES = (
-    ("日记", "日记"),
-    ("书信", "书信"),
-    ("读后感", "读后感"),
-    ("看图", None),  # 看图写话 in grade 2, otherwise by what is written (想象 / 记事)
-    ("多图", None),
-    ("写景", "写景"),
-    ("游记", "写景"),
-    ("地点", "写景"),
-    ("写人", "写人"),
-    ("想象", "想象"),
-    ("童话", "想象"),
-    ("故事", "想象"),
-    ("科幻", "想象"),
-    ("续写", "想象"),
-    ("改编", "想象"),
-    ("状物", "状物"),
-    ("观察", "状物"),
-    ("动物", "状物"),
-    ("事物介绍", "状物"),
-    ("说明", "状物"),
-    ("叙事", "记事"),
-    ("记叙", "记事"),
-    ("经历", "记事"),
-    ("活动", "记事"),
-    ("实验", "记事"),
-)
-
-
-def genre_of(label, grade):
-    for key, genre in GENRE_RULES:
-        if key in label:
-            if genre is None:
-                return "看图写话" if grade <= 2 else "想象" if "想象" in label else "记事"
-            return genre
-    return "其他"
-
-
-def unit_number(cell):
-    cell = cell.strip()
-    if cell.isdigit():
-        return int(cell)
-    m = re.match(r"第(.)单元", cell)
-    return NUMBERS.get(m[1]) if m else None
-
-
-def clip(text, limit):
-    if len(text) <= limit:
-        return text
-    cut = text[:limit]
-    end = max(cut.rfind(c) for c in "。；！？\n")
-    return cut[: end + 1] if end > limit // 2 else cut
+INTRO_MAX, REQUIREMENT_MAX = 300, 800  # core/essay INTRO_MAX / REQUIREMENT_MAX
 
 
 def build():
-    out, grade, term, rows = {}, None, None, None
-    for raw in SOURCE.read_text(encoding="utf-8").splitlines():
+    choices = [g for g in json.loads(GENRES.read_text(encoding="utf-8")) if g != "其他"]
+    out = {str(g): {"上册": [], "下册": []} for g in range(1, 7)}
+    rows, unit, field = None, None, None
+    for n, raw in enumerate(SOURCE.read_text(encoding="utf-8").splitlines(), 1):
         line = raw.strip()
-        m = re.match(r"## (.)年级(上|下)册", line)
+        m = re.fullmatch(r"## (.)年级(上|下)册", line)
         if m:
-            grade, term = GRADES[m[1]], m[2] + "册"
-            rows = out.setdefault(str(grade), {}).setdefault(term, [])
+            rows, unit = out[str(GRADES[m[1]])][m[2] + "册"], None
             continue
-        if rows is None or not line:
+        m = re.fullmatch(r"### (第.单元)", line)
+        if m and rows is not None:
+            unit = {"unit": m[1], "topic": "", "genres": [], "intro": "", "requirement": ""}
+            rows.append(unit)
+            field = None
             continue
-        if line.startswith("|"):
-            cells = [c.strip() for c in line.strip("|").split("|")]
-            if len(cells) < 6 or cells[0] in ("单元", "单元／栏目位置") or set(cells[0]) <= set("-:"):
-                continue
-            unit, topic, label, _, summary, page = cells[:6]
-            n = unit_number(unit)
-            rows.append({
-                "unit": f"第{n}单元",
-                "n": n,
-                "page": page,
-                "topic": topic,
-                "genre": genre_of(label, grade),
-                "requirement": "\n".join(s.strip() for s in summary.split("<br>") if s.strip()),
-            })
+        if unit is None or not line:
             continue
-        # A note under the table: belongs to the unit it names, or to the row on the page it names.
-        m = re.match(r"第(.)单元", line)
-        p = re.search(r"第(\d+)页", line)
-        target = None
-        if m and NUMBERS.get(m[1]):
-            target = next((r for r in rows if r["n"] == NUMBERS[m[1]]), None)
-        elif p:
-            target = next((r for r in rows if r["page"] == p[1]), None)
-        if target:
-            note = re.sub(r"^第.单元", "", line) if m else line
-            target["requirement"] += "\n" + note.lstrip("：:")
+        m = re.match(r"(主题|文体|引言|习作重点)：(.*)", line)
+        if m:
+            key, value = m[1], m[2].strip()
+            if key == "主题":
+                unit["topic"] = value
+            elif key == "文体":
+                genres = [g for g in re.split(r"[、，,\s]+", value) if g]
+                bad = [g for g in genres if g not in choices]
+                if bad:
+                    sys.exit(f"{SOURCE.name}:{n}: 不认识的文体 {bad}，可选：{'、'.join(choices)}")
+                unit["genres"] = genres
+            elif key == "引言":
+                unit["intro"] = value
+            field = key
+            if key == "习作重点" and value:
+                unit["requirement"] = value
+            continue
+        if field == "习作重点":
+            unit["requirement"] += ("\n" if unit["requirement"] else "") + line
+        else:
+            sys.exit(f"{SOURCE.name}:{n}: 这一行不属于任何一项：{line}")
     for terms in out.values():
-        for rows in terms.values():
-            for r in rows:
-                r["requirement"] = clip(r["requirement"], REQUIREMENT_MAX)
-                del r["n"], r["page"]
+        for units in terms.values():
+            for u in units:
+                where = f"{u['unit']}《{u['topic']}》"
+                if not (u["topic"] and u["intro"] and u["requirement"]):
+                    sys.exit(f"{where} 缺少主题、引言或习作重点")
+                if len(u["topic"]) > 40 or len(u["intro"]) > INTRO_MAX or len(u["requirement"]) > REQUIREMENT_MAX:
+                    sys.exit(f"{where} 太长：主题 ≤40、引言 ≤{INTRO_MAX}、习作重点 ≤{REQUIREMENT_MAX} 字")
     return out
 
 

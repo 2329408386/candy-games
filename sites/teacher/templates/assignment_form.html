@@ -1,7 +1,7 @@
 <form id="assignment-form" class="wb-form">
   {% if not a and units %}
     <fieldset class="unit-picker" data-term="{{term}}">
-      <legend>从课本选（选好后自动填写主题和要求，可以再改）</legend>
+      <legend>从课本选（选好后自动填写主题、文体、引言和习作重点，可以再改）</legend>
       <div class="wb-row">
         <label>年级<select data-unit="grade">{% for g in range(1, 7) %}<option value="{{g}}">{{g}}年级</option>{% endfor %}</select></label>
         <label>上下册<select data-unit="term"><option>上册</option><option>下册</option></select></label>
@@ -11,13 +11,19 @@
     </fieldset>
   {% endif %}
   <label>作文主题<input name="title" maxlength="40" required value="{{a.title if a else ''}}" placeholder="例如 我的植物朋友"></label>
+  {% set chosen = (a.genre if a else '').split('、') %}
+  <fieldset class="genre-pick">
+    <legend>文体 <small class="muted">可多选，不选就是不指定</small></legend>
+    {% for g in GENRE_CHOICES %}<label class="check"><input type="checkbox" name="genre" value="{{g}}" data-many{{' checked' if g in chosen}}> {{g}}</label>{% endfor %}
+  </fieldset>
   <div class="wb-row">
-    <label>文体<select name="genre">{% for g in GENRES %}<option{{' selected' if a and a.genre == g}}>{{g}}</option>{% endfor %}</select></label>
     <label>字数要求<input name="min_chars" type="number" min="0" max="2000" value="{{a.min_chars if a and a.min_chars else ''}}" placeholder="不少于多少字（可不填）"></label>
     <label>截止日期<input name="due" type="date" value="{{a.due_at|date if a else ''}}"></label>
   </div>
-  <label>习作要求（AI 会按这个批改）<textarea name="requirement" rows="5" maxlength="600" placeholder="例如：选一种植物，按一定顺序写出它的样子和特点，写出你对它的喜爱。可以写观察日记里的发现。">{{a.requirement if a else ''}}</textarea></label>
+  <label>引言（学生能看到）<textarea name="intro" rows="3" maxlength="300" placeholder="例如：这段时间我们观察了不少身边的事物，有了很多新发现。这次习作，就把最近观察时印象最深的一种事物或一处场景写下来。">{{a.intro if a else ''}}</textarea></label>
+  <label>习作重点（批改时按这个看，学生看不到）<textarea name="requirement" rows="6" maxlength="800" placeholder="例如：1. 观察的准确性：……&#10;2. 描述的详细程度：……">{{a.requirement if a else ''}}</textarea></label>
   <label class="check"><input type="checkbox" name="auto_publish"{{' checked' if not a or a.auto_publish}}> AI 批改完直接发给学生（不勾选：老师审核后再发布）</label>
   <p class="wb-error" role="alert"></p>
-  <button>{{'保存' if a else '布置'}}</button>
+  {% if a %}<div class="form-actions"><button>保存</button><button type="button" class="secondary" data-cancel>取消</button></div>
+  {% else %}<button>布置</button>{% endif %}
 </form>

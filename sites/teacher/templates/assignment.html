@@ -7,8 +7,9 @@
   <div class="wb-heading">
     <div>
       <h1>{{assignment.title}}</h1>
-      <p class="muted">{{assignment.class_name}} · {{assignment.genre}}{% if assignment.min_chars %} · 不少于 {{assignment.min_chars}} 字{% endif %}{% if assignment.due_at %} · {{assignment.due_at|date}} 截止{% endif %} · {{'AI 批完直接发布' if assignment.auto_publish else '老师审核后发布'}}{% if assignment.closed_at %} · <span class="tag off">已停止提交</span>{% endif %}</p>
-      {% if assignment.requirement %}<p class="requirement">{{assignment.requirement}}</p>{% endif %}
+      <p class="muted">{{assignment.class_name}} · {{assignment.genre or '文体不指定'}}{% if assignment.min_chars %} · 不少于 {{assignment.min_chars}} 字{% endif %}{% if assignment.due_at %} · {{assignment.due_at|date}} 截止{% endif %} · {{'AI 批完直接发布' if assignment.auto_publish else '老师审核后发布'}}{% if assignment.closed_at %} · <span class="tag off">已停止提交</span>{% endif %}</p>
+      {% if assignment.intro %}<p class="requirement"><strong>引言：</strong>{{assignment.intro}}</p>{% endif %}
+      {% if assignment.requirement %}<p class="requirement"><strong>习作重点：</strong>{{assignment.requirement}}</p>{% endif %}
     </div>
     <div class="heading-actions">
       {% if not essay_open %}<span class="tag off">作文批改已到期或未开通</span>{% endif %}
@@ -25,6 +26,7 @@
         {% else %}
           <button type="button" class="secondary" data-post="{{url_for('assignment_close', aid=assignment.id, action='close')}}" data-confirm="停止提交后学生不能再交这篇作文。确定？">停止提交</button>
         {% endif %}
+        <button type="button" class="danger" data-post="{{url_for('assignment_delete', aid=assignment.id)}}" data-confirm="删除后学生和老师都看不到这次作业和已交的作文，不能恢复。确定删除？">删除这次作业</button>
       </details>
     </div>
   </div>
@@ -92,6 +94,12 @@
         }
       });
     WB.form('#assignment-form', {{url_for('assignment_edit', aid=assignment.id)|tojson}}, () => location.reload());
+    const settingsForm = document.getElementById('assignment-form');
+    settingsForm.querySelector('[data-cancel]').addEventListener('click', () => {
+      settingsForm.reset();
+      settingsForm.querySelector('.wb-error').textContent = '';
+      settingsForm.closest('details').open = false;
+    });
     const dialog = document.getElementById('submit-for');
     document.querySelectorAll('[data-submit-for]').forEach((b) =>
       b.addEventListener('click', () => {

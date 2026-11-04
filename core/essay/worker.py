@@ -71,7 +71,7 @@ def claim(d):
 
 def essay_of(d, submission_id):
     return d.execute(
-        "SELECT s.*,a.title topic,a.genre,a.requirement,a.min_chars,a.auto_publish,c.grade,c.license_id FROM ess_submissions s"
+        "SELECT s.*,a.title topic,a.genre,a.intro,a.requirement,a.min_chars,a.auto_publish,c.grade,c.license_id FROM ess_submissions s"
         " JOIN ess_assignments a ON a.id=s.assignment_id JOIN ess_classes c ON c.id=a.class_id WHERE s.id=?",
         (submission_id,),
     ).fetchone()

@@ -873,16 +873,31 @@
       pop.style.left = Math.max(8, x) + 'px';
       pop.style.top = gr.bottom - r.top + 8 + 'px';
     };
+    // Tapping a mark opens its comment; tapping the same mark again (or the comment itself) closes it.
+    const toggle = (g, e) => {
+      const pop = container.querySelector('.rp-pop');
+      if (!pop.hidden && pop.dataset.open === g.dataset.i) {
+        pop.hidden = true;
+        delete pop.dataset.open;
+      } else {
+        show(g, e);
+        pop.dataset.open = g.dataset.i;
+      }
+    };
     container.addEventListener('click', (e) => {
       const g = e.target.closest('.mark');
-      if (g) show(g, e);
-      else if (!e.target.closest('.rp-pop')) container.querySelector('.rp-pop').hidden = true;
+      const pop = container.querySelector('.rp-pop');
+      if (g) toggle(g, e);
+      else {
+        pop.hidden = true;
+        delete pop.dataset.open;
+      }
     });
     container.addEventListener('keydown', (e) => {
       const g = e.target.closest && e.target.closest('.mark');
       if (g && (e.key === 'Enter' || e.key === ' ')) {
         e.preventDefault();
-        show(g);
+        toggle(g);
       }
     });
   }
