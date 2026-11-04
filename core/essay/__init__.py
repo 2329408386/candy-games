@@ -37,7 +37,7 @@ features.py, admin.py (模型设置, quotas and feature expiry in the back offic
 
 import calendar, io, json, re, secrets, time
 from flask import Response, abort, g, jsonify, redirect, render_template, request, session, url_for
-from core.app import KEY_ALPHABET, csrf, current, data_dir, db, device_hash, limited, site
+from core.app import KEY_ALPHABET, csrf, current, data_dir, db, device_hash, limited, new_xlsx, site, xlsx_download
 from . import features, grading
 
 DEFAULT_STUDENTS = 60
@@ -711,14 +711,46 @@ def register_pages(app):
             feature=features.describe(features.rows(db(), row["id"]).get("essay")),
         )
 
-    @app.get("/teacher/classes/<int:cid>/slips")
+    @app.get("/teacher/classes/<int:cid>/slips.xlsx")
     def class_slips(cid):
+        """登录条 as an Excel sheet: the 网址 and 班级码 once at the top, then one bordered row per student to print and cut."""
         row = teacher()
         if not row:
             return redirect(url_for("teacher_home"))
         klass = own_class(cid, row["id"])
         students = db().execute("SELECT * FROM ess_students WHERE class_id=? AND removed_at IS NULL ORDER BY id", (cid,)).fetchall()
-        return render_template("slips.html", klass=klass, students=students)
+        url = request.host_url.rstrip("/") + url_for("student_home")
+        out, book = new_xlsx()
+        ws = book.add_worksheet("登录条")
+        title = book.add_format({"bold": True, "font_size": 16, "valign": "vcenter"})
+        info = book.add_format({"font_size": 14, "valign": "vcenter"})
+        head = book.add_format({"bold": True, "font_size": 14, "border": 1, "align": "center", "valign": "vcenter", "bg_color": "#EEEEEE"})
+        cell = book.add_format({"font_size": 16, "border": 1, "align": "center", "valign": "vcenter"})
+        name = book.add_format({"font_size": 16, "border": 1, "bold": True, "align": "center", "valign": "vcenter"})
+        ws.set_column(0, 0, 8)
+        ws.set_column(1, 1, 18)
+        ws.set_column(2, 3, 16)
+        ws.merge_range(0, 0, 0, 3, klass["name"] + " 登录条", title)
+        ws.merge_range(1, 0, 1, 3, "学生登录网址：" + url, info)
+        ws.merge_range(2, 0, 2, 3, "班级码：" + klass["code"] + "　　（登录时填 班级码 + 姓名 + 口令）", info)
+        ws.set_row(0, 30)
+        ws.set_row(1, 24)
+        ws.set_row(2, 24)
+        ws.write_row(4, 0, ["序号", "姓名", "班级码", "口令"], head)
+        for i, s in enumerate(students, 1):
+            ws.set_row(4 + i, 32)
+            ws.write_number(4 + i, 0, i, cell)
+            ws.write_string(4 + i, 1, s["name"], name)
+            ws.write_string(4 + i, 2, klass["code"], cell)
+            ws.write_string(4 + i, 3, s["pin"], cell)
+        ws.freeze_panes(5, 0)
+        ws.set_paper(9)  # A4
+        ws.fit_to_pages(1, 0)
+        ws.center_horizontally()
+        ws.repeat_rows(4)
+        ws.set_header("&L&12" + url.replace("&", "&&"))
+        book.close()
+        return xlsx_download(out.getvalue(), klass["name"] + " 登录条.xlsx")
 
     @app.get("/teacher/essay/assignments/<int:aid>")
     def assignment_page(aid):

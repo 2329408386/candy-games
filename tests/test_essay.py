@@ -1,7 +1,7 @@
 """语文老师工作台: accounts, the submit → grade → review → publish flow, model settings and the grading checks.
 Model calls are faked (core.essay.llm.post), so nothing here touches the network."""
 
-import json, re, time
+import io, json, re, time, zipfile
 import pytest
 from conftest import KEYS, TEACHER2_KEY, SiteClient
 from core.essay import grading, llm, models_sync, worker
@@ -297,6 +297,20 @@ def test_student_login_lock_and_pin_reset(klass, db):
     assert "我的作业" in s.get("/student/").get_data(as_text=True)
     jpost(t, f"/api/students/{st['id']}/pin")  # a new reset signs the student out
     assert 'id="student-login"' in s.get("/student/").get_data(as_text=True)
+
+
+def test_login_slips_export_as_excel(models, klass, db):
+    t, cid, aid = klass
+    r = t.get(f"/teacher/classes/{cid}/slips.xlsx")
+    assert r.status_code == 200 and r.mimetype == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    assert "filename*=UTF-8''" in r.headers["Content-Disposition"]
+    with zipfile.ZipFile(io.BytesIO(r.data)) as z:
+        strings = z.read("xl/sharedStrings.xml").decode()
+    for name, st in students_of(db, cid).items():
+        assert name in strings and st["pin"] in strings and st["code"] in strings
+    assert strings.count("/workspace/chinese/student") == 1  # the 网址 once at the top, not on every row
+    assert f"/teacher/classes/{cid}/slips.xlsx" in t.get(f"/teacher/classes/{cid}").get_data(as_text=True)
+    assert teacher_client(TEACHER2_KEY).get(f"/teacher/classes/{cid}/slips.xlsx").status_code == 404
 
 
 def test_isolation_between_teachers_and_students(models, klass, db):

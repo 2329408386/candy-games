@@ -50,7 +50,7 @@
   <section class="wb-section">
     <div class="wb-section-head">
       <h2>学生（{{students|length}} 人）</h2>
-      {% if students %}<a class="button secondary small" href="{{url_for('class_slips', cid=klass.id)}}" target="_blank">打印登录条</a>{% endif %}
+      {% if students %}<a class="button secondary small" href="{{url_for('class_slips', cid=klass.id)}}">导出登录条（Excel）</a>{% endif %}
     </div>
     {% if students %}
       <table class="wb-table roster">

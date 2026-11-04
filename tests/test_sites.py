@@ -1,4 +1,4 @@
-import re
+import io, re, zipfile
 import pytest
 from conftest import SiteClient, KEYS, FLASK, PREFIX, other_site, bank_size
 from sites import ALL_SITES, SITES
@@ -179,8 +179,12 @@ def test_license_edits_export_and_archive_guard(admin, site):
     user = SiteClient(site)
     assert user.activate().status_code == 200
     admin.post("/admin/licenses/1/assign", {"buyer": "=1+1"})
-    csv = admin.get("/admin/export").get_data(as_text=True)
-    assert "'=1+1" in csv and KEYS[site] in csv and "三年级上册／A组" in csv
+    r = admin.get("/admin/export")
+    assert r.mimetype == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    with zipfile.ZipFile(io.BytesIO(r.data)) as z:
+        strings, sheet = z.read("xl/sharedStrings.xml").decode(), z.read("xl/worksheets/sheet1.xml").decode()
+    assert "=1+1" in strings and KEYS[site] in strings and "三年级上册／A组" in strings
+    assert "<f>" not in sheet  # written as text, never as a formula
     assert admin.post("/admin/licenses/3/enable", {}).status_code == 403
     admin.post("/admin/licenses/1/limit", {"device_limit": "0"})
     admin.post("/admin/licenses/1/disable", {})

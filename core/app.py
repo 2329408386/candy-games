@@ -1,4 +1,4 @@
-import csv, functools, hashlib, hmac, io, json, os, secrets, sqlite3, time
+import functools, hashlib, hmac, io, json, os, secrets, sqlite3, time
 from pathlib import Path
 from flask import (
     Flask,
@@ -19,6 +19,8 @@ from jinja2 import ChoiceLoader, FileSystemLoader
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.exceptions import HTTPException
 from itsdangerous import URLSafeSerializer, BadSignature
+from urllib.parse import quote
+import xlsxwriter
 from . import schema
 from sites import ALL_SITES, SITES
 
@@ -329,27 +331,59 @@ def filtered():
     return " WHERE " + " AND ".join(where), params
 
 
-def csv_response(rows):
+XLSX_MIME = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+
+
+def new_xlsx():
+    """An in-memory workbook whose strings are always written as text (never formulas, so no formula injection)."""
+    out = io.BytesIO()
+    book = xlsxwriter.Workbook(out, {"in_memory": True, "strings_to_formulas": False, "strings_to_urls": False, "strings_to_numbers": False})
+    return out, book
+
+
+def xlsx_table(header, rows, widths, sheet="Sheet1"):
+    """A plain one-sheet table (bold frozen header) as .xlsx bytes."""
+    out, book = new_xlsx()
+    ws = book.add_worksheet(sheet)
+    bold = book.add_format({"bold": True, "bg_color": "#EEEEEE", "border": 1})
+    for i, w in enumerate(widths):
+        ws.set_column(i, i, w)
+    ws.write_row(0, 0, header, bold)
+    for n, row in enumerate(rows, 1):
+        ws.write_row(n, 0, row)
+    ws.freeze_panes(1, 0)
+    book.close()
+    return out.getvalue()
+
+
+def xlsx_download(data, filename):
+    return Response(
+        data,
+        mimetype=XLSX_MIME,
+        headers={"Content-Disposition": f"attachment; filename=\"{filename if filename.isascii() else 'export.xlsx'}\"; filename*=UTF-8''{quote(filename)}"},
+    )
+
+
+def licenses_xlsx(rows):
     keys = license_codes()
     groups = all_license_group_ids()
-    out = io.StringIO()
-    w = csv.writer(out)
-    w.writerow(["编号", "授权码", "授权年级／学期／组", "最多设备", "状态", "买家备注", "历史游戏权限"])
-    for r in rows:
-        note = r["buyer"]
-        note = "'" + note if note.startswith(("=", "+", "-", "@", "\t", "\r")) else note
-        w.writerow(
+    return xlsx_table(
+        ["编号", "授权码", "授权年级／学期／组", "最多设备", "状态", "买家备注", "历史游戏权限"],
+        [
             [
                 r["id"],
                 keys[r["key_hash"]],
                 "、".join(group_labels(groups.get(r["id"], []))),
                 r["device_limit"],
                 "已归档（不可使用）" if r["archived_at"] is not None else ("启用" if r["enabled"] else "停用"),
-                note,
+                r["buyer"],
                 "、".join(site().games[g] for g in json.loads(r["games"])) if r["archived_at"] is not None else "",
             ]
-        )
-    return "﻿" + out.getvalue()
+            for r in rows
+        ],
+        [8, 26, 30, 10, 18, 24, 30],
+        "授权码",
+    )
 
 
 # ---- static assets ----
@@ -1044,11 +1078,7 @@ def register_admin(app):
         rows = db().execute("SELECT * FROM licenses" + where + " ORDER BY id", params).fetchall()
         audit("export", details=str(len(rows)))
         db().commit()
-        return Response(
-            csv_response(rows),
-            mimetype="text/csv",
-            headers={"Content-Disposition": 'attachment; filename="licenses.csv"'},
-        )
+        return xlsx_download(licenses_xlsx(rows), "licenses.xlsx")
 
     @app.get("/admin/games")
     @admin_only

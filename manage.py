@@ -1,7 +1,7 @@
 import argparse, datetime, json, os, secrets, shutil, sqlite3, time, zipfile
 from werkzeug.security import generate_password_hash
 from core import schema
-from core.app import create_app, data_dir, db, csv_response, group_map, group_labels, GRADES
+from core.app import create_app, data_dir, db, licenses_xlsx, group_map, group_labels, GRADES
 from sites import ALL_SITES as SITES
 
 os.umask(0o077)
@@ -76,17 +76,17 @@ def export(site):
         )
         if rows:
             groups[group_labels([gid])[0].replace("/", "-") + "-" + gid] = rows
-    for old in folder.glob("*.csv"):
+    for old in [*folder.glob("*.csv"), *folder.glob("*.xlsx")]:
         old.unlink()
     for name, rows in groups.items():
-        (folder / (name + ".csv")).write_text(csv_response(rows), encoding="utf-8")
+        (folder / (name + ".xlsx")).write_bytes(licenses_xlsx(rows))
     with zipfile.ZipFile(site_dir(site) / "新服务器授权码-卖家专用.zip", "w", zipfile.ZIP_DEFLATED) as z:
-        for f in sorted(folder.glob("*.csv")):
+        for f in sorted(folder.glob("*.xlsx")):
             z.write(f, f.name)
     archived = (
         db().execute("SELECT * FROM licenses WHERE site=? AND archived_at IS NOT NULL ORDER BY id", (s,)).fetchall()
     )
-    (site_dir(site) / "历史归档授权码-不可使用.csv").write_text(csv_response(archived), encoding="utf-8")
+    (site_dir(site) / "历史归档授权码-不可使用.xlsx").write_bytes(licenses_xlsx(archived))
     print("导出完成：" + str(folder))
 
 
