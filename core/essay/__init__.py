@@ -431,6 +431,26 @@ def store_photos(sid, photos):
         image_path(iid).write_bytes(data)
 
 
+def rotate_image(d, row, degrees):
+    """Turns a stored photo clockwise by degrees (90/180/270). It gets a new id, so the new picture has a new address
+    (photos are served as immutable); returns the new ess_images row."""
+    from PIL import Image
+
+    with Image.open(image_path(row["id"])) as img:
+        img = img.rotate(-degrees, expand=True)
+        buf = io.BytesIO()
+        img.save(buf, "JPEG", quality=90)
+    iid = d.execute(
+        "INSERT INTO ess_images(submission_id,page,w,h,created_at) VALUES(?,?,?,?,?)",
+        (row["submission_id"], row["page"], img.width, img.height, row["created_at"]),
+    ).lastrowid
+    image_path(iid).write_bytes(buf.getvalue())
+    d.execute("DELETE FROM ess_images WHERE id=?", (row["id"],))
+    d.commit()
+    image_path(row["id"]).unlink(missing_ok=True)
+    return d.execute("SELECT * FROM ess_images WHERE id=?", (iid,)).fetchone()
+
+
 def images_of(sid):
     return db().execute("SELECT * FROM ess_images WHERE submission_id=? ORDER BY page", (sid,)).fetchall()
 
@@ -907,8 +927,7 @@ def register_pages(app):
             " FROM ess_assignments a WHERE a.class_id=? AND a.deleted_at IS NULL ORDER BY a.id DESC",
             (me["id"], me["id"], me["class_id"]),
         ).fetchall()
-        again = {a["id"] for a in assignments if a["my_status"] == "published" and resubmit_open(a["id"], me["id"], me["license_id"])}
-        return render_template("student_home.html", me=me, assignments=assignments, again=again)
+        return render_template("student_home.html", me=me, assignments=assignments)
 
     @app.get("/student/essay/<int:aid>")
     def write_page(aid):
@@ -1025,7 +1044,6 @@ def result_view(sub, as_teacher):
         project=as_teacher and request.args.get("project") == "1",
         hide_name=request.args.get("anon") == "1",
         resubmit=not as_teacher and resubmit_open(sub["assignment_id"], sub["student_id"], student()["license_id"]),
-        max_attempts=MAX_ATTEMPTS,
     )
 
 

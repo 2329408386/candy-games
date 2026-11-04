@@ -25,7 +25,7 @@
   {% if can_submit %}
     <section class="wb-card">
       <form id="write-form" class="wb-form">
-        {% if last %}<p class="hint">这是第 {{attempts|length + 1}} 次提交（最多 {{max_attempts}} 次）。按老师的批改改好再交，成绩以最后一次为准。</p>{% else %}<p class="hint">这篇作文最多可以交 {{max_attempts}} 次，成绩以最后一次为准。</p>{% endif %}
+        {% if last %}<p class="hint">重新交以后，以这一次的批改为准。</p>{% else %}<p class="hint">交之前检查一遍：照片要拍正、拍全、拍清楚。一般只交一次。</p>{% endif %}
         <div class="tabs" role="tablist">
           <button type="button" role="tab" class="tab active" data-tab="photo" aria-selected="true"><svg><use href="#i-camera"/></svg>拍照交作文</button>
           <button type="button" role="tab" class="tab" data-tab="typed" aria-selected="false"><svg><use href="#i-pen"/></svg>打字</button>

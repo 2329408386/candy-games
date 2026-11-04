@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS ess_students(id INTEGER PRIMARY KEY,class_id INTEGER 
 CREATE UNIQUE INDEX IF NOT EXISTS ess_students_name ON ess_students(class_id,name) WHERE removed_at IS NULL;
 CREATE TABLE IF NOT EXISTS ess_assignments(id INTEGER PRIMARY KEY,class_id INTEGER NOT NULL REFERENCES ess_classes(id),title TEXT NOT NULL,requirement TEXT NOT NULL,genre TEXT NOT NULL,min_chars INTEGER NOT NULL DEFAULT 0,due_at INTEGER,auto_publish INTEGER NOT NULL DEFAULT 0,created_at INTEGER NOT NULL,closed_at INTEGER);
 CREATE INDEX IF NOT EXISTS ess_assignments_class ON ess_assignments(class_id);
-CREATE TABLE IF NOT EXISTS ess_submissions(id INTEGER PRIMARY KEY,assignment_id INTEGER NOT NULL REFERENCES ess_assignments(id),student_id INTEGER NOT NULL REFERENCES ess_students(id),attempt INTEGER NOT NULL,source TEXT NOT NULL,title TEXT NOT NULL DEFAULT '',text TEXT NOT NULL,status TEXT NOT NULL,hold TEXT NOT NULL DEFAULT '',created_at INTEGER NOT NULL,graded_at INTEGER,published_at INTEGER,UNIQUE(assignment_id,student_id,attempt));
+CREATE TABLE IF NOT EXISTS ess_submissions(id INTEGER PRIMARY KEY,assignment_id INTEGER NOT NULL REFERENCES ess_assignments(id),student_id INTEGER NOT NULL REFERENCES ess_students(id),attempt INTEGER NOT NULL,source TEXT NOT NULL,title TEXT NOT NULL DEFAULT '',text TEXT NOT NULL,status TEXT NOT NULL,hold TEXT NOT NULL DEFAULT '',created_at INTEGER NOT NULL,graded_at INTEGER,published_at INTEGER,writing TEXT NOT NULL DEFAULT '',UNIQUE(assignment_id,student_id,attempt));
 CREATE INDEX IF NOT EXISTS ess_submissions_status ON ess_submissions(status);
 CREATE TABLE IF NOT EXISTS ess_reviews(submission_id INTEGER PRIMARY KEY REFERENCES ess_submissions(id),ai TEXT NOT NULL,final TEXT,model TEXT NOT NULL,prompt_version TEXT NOT NULL,created_at INTEGER NOT NULL,edited_at INTEGER);
 CREATE TABLE IF NOT EXISTS ess_jobs(id INTEGER PRIMARY KEY,submission_id INTEGER NOT NULL REFERENCES ess_submissions(id),kind TEXT NOT NULL,status TEXT NOT NULL,attempts INTEGER NOT NULL DEFAULT 0,run_after INTEGER NOT NULL,locked_at INTEGER,error TEXT NOT NULL DEFAULT '',created_at INTEGER NOT NULL);
@@ -183,6 +183,11 @@ def migrate(d):
             d.execute("ALTER TABLE ess_assignments ADD COLUMN deleted_at INTEGER")
         d.execute("UPDATE ess_assignments SET genre='' WHERE genre='其他'")
         d.execute("INSERT INTO migrations VALUES('assignment_intro_delete',?)", (int(time.time()),))
+    if "submission_writing" not in done:
+        # How neat the handwriting of a photographed essay is (工整/一般/凌乱, read by the ocr step); graded in 规范.
+        if "writing" not in {r[1] for r in d.execute("PRAGMA table_info(ess_submissions)")}:
+            d.execute("ALTER TABLE ess_submissions ADD COLUMN writing TEXT NOT NULL DEFAULT ''")
+        d.execute("INSERT INTO migrations VALUES('submission_writing',?)", (int(time.time()),))
 
 
 BEIJING = 8 * 3600

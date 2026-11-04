@@ -78,6 +78,29 @@
   };
 
   /* <div class="photo-picker" data-max="3">: pages of an essay, in order, shrunk in the browser before uploading. */
+  /* A JPEG blob turned 90° clockwise (for a photo taken sideways). */
+  WB.rotate = async function (blob) {
+    const url = URL.createObjectURL(blob);
+    try {
+      const img = await new Promise((resolve, reject) => {
+        const el = new Image();
+        el.onload = () => resolve(el);
+        el.onerror = () => reject(new Error('这张照片打不开，请换一张'));
+        el.src = url;
+      });
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalHeight;
+      canvas.height = img.naturalWidth;
+      const ctx = canvas.getContext('2d');
+      ctx.translate(canvas.width, 0);
+      ctx.rotate(Math.PI / 2);
+      ctx.drawImage(img, 0, 0);
+      return await new Promise((resolve, reject) => canvas.toBlob((b) => (b ? resolve(b) : reject(new Error('照片处理失败，请换一张'))), 'image/jpeg', 0.9));
+    } finally {
+      URL.revokeObjectURL(url);
+    }
+  };
+
   WB.photoPicker = function (root) {
     if (!root) return { files: () => [] };
     const max = Number(root.dataset.max || 3);
@@ -87,7 +110,7 @@
     const items = [];
     const draw = () => {
       list.innerHTML = items
-        .map((it, i) => '<figure class="photo-item"><img src="' + it.url + '" alt="第 ' + (i + 1) + ' 页"><figcaption>第 ' + (i + 1) + ' 页</figcaption><button type="button" class="photo-remove" data-remove="' + i + '" aria-label="删掉第 ' + (i + 1) + ' 页">×</button></figure>')
+        .map((it, i) => '<figure class="photo-item"><img src="' + it.url + '" alt="第 ' + (i + 1) + ' 页"><figcaption>第 ' + (i + 1) + ' 页</figcaption><button type="button" class="photo-remove" data-remove="' + i + '" aria-label="删掉第 ' + (i + 1) + ' 页">×</button><button type="button" class="photo-rotate" data-rotate="' + i + '" aria-label="把第 ' + (i + 1) + ' 页转一下">↻</button></figure>')
         .join('');
       add.hidden = items.length >= max;
     };
@@ -106,7 +129,22 @@
       add.classList.remove('busy');
       draw();
     });
-    list.addEventListener('click', (e) => {
+    list.addEventListener('click', async (e) => {
+      const turn = e.target.closest('[data-rotate]');
+      if (turn) {
+        const it = items[Number(turn.dataset.rotate)];
+        turn.disabled = true;
+        try {
+          const blob = await WB.rotate(it.blob);
+          URL.revokeObjectURL(it.url);
+          it.blob = blob;
+          it.url = URL.createObjectURL(blob);
+        } catch (err) {
+          alert(err.message);
+        }
+        draw();
+        return;
+      }
       const b = e.target.closest('[data-remove]');
       if (!b) return;
       URL.revokeObjectURL(items[Number(b.dataset.remove)].url);
@@ -357,8 +395,8 @@
   if (window.REVIEW) document.addEventListener('DOMContentLoaded', () => reviewEditor(window.REVIEW));
 
   function levelOf(total) {
-    // Out of 25: 优 22–25, 良 19–21, 及格 15–18 (grading.level_of).
-    return total >= 22 ? '优' : total >= 19 ? '良' : total >= 15 ? '及格' : '待提高';
+    // Out of 25: 优 22–25, 良 18–21, 及格 15–17 (grading.level_of).
+    return total >= 22 ? '优' : total >= 18 ? '良' : total >= 15 ? '及格' : '待提高';
   }
 
   function reviewEditor(page) {

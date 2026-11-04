@@ -67,7 +67,11 @@ class FakeModels:
         if row["model"] in self.fail:
             raise llm.LLMError("HTTP 429: rate limited")
         system = body["messages"][0]["content"]
-        answer = self.ocr if "誊抄" in system[:80] else self.check if "复核" in system[:60] else self.grade
+        if "誊抄" in system[:80]:
+            answer = self.ocr.pop(0) if isinstance(self.ocr, list) else self.ocr  # a list: one answer per call
+        else:
+            answer = None
+        answer = answer if answer is not None else self.check if "复核" in system[:60] else self.grade
         return json.dumps(answer, ensure_ascii=False), 3000, 2500, 800
 
 
@@ -197,18 +201,17 @@ def test_full_flow(models, klass, db):
     assert pen["summary"] == "老师改过的评语" and any(m["note"] == "结尾可以再写写感受" for m in pen["marks"])
     assert pen["total"] == 21 and pen["max"] == 25 and pen["level"] == "良" and not pen["onPhoto"]
     assert any(m["type"] == "错别字" and m["fix"] == "高兴" for m in pen["marks"])
-    assert "改好再交" not in t.get(f"/teacher/essay/results/{sid}").get_data(as_text=True)
+    assert "重新交一次" not in t.get(f"/teacher/essay/results/{sid}").get_data(as_text=True)
 
-    # After publishing the student may resubmit once more (MAX_ATTEMPTS = 2); the newest one counts.
-    assert "改好再交（第 2 次）" in html and f"/student/essay/{aid}" in html
-    assert "可再交一次" in s.get("/student/").get_data(as_text=True)
+    # After publishing the student may resubmit once more (MAX_ATTEMPTS = 2); the newest one counts. The way back is
+    # a small link at the bottom of the result, for a wrong photo or the like.
+    assert "重新交一次" in html and f"/student/essay/{aid}" in html
     r = jpost(s, f"/api/write/{aid}", {"text": ESSAY + "我还想再去。"})
     assert r.status_code == 200
     db.execute("UPDATE ess_submissions SET status='published' WHERE assignment_id=?", (aid,))
     db.commit()
     assert "最多交 2 次" in jpost(s, f"/api/write/{aid}", {"text": ESSAY}).get_json()["error"]
-    assert "改好再交" not in s.get(f"/student/essay/results/{sid}").get_data(as_text=True)
-    assert "可再交一次" not in s.get("/student/").get_data(as_text=True)
+    assert "重新交一次" not in s.get(f"/student/essay/results/{sid}").get_data(as_text=True)
 
 
 def test_auto_publish_and_publish_all(models, klass, db):
@@ -453,7 +456,7 @@ def test_grading_helpers():
     text = "第一段。\n\n第二 段有空格。"
     assert grading.locate(text, "第二段有空格") == (text.index("第二"), len(text) - 1)
     assert grading.locate(text, "没有") is None
-    assert [grading.level_of(n) for n in (25, 22, 21, 19, 18, 15, 14, 0)] == ["优", "优", "良", "良", "及格", "及格", "待提高", "待提高"]
+    assert [grading.level_of(n) for n in (25, 22, 21, 19, 18, 17, 15, 14, 0)] == ["优", "优", "良", "良", "良", "及格", "及格", "待提高", "待提高"]
     assert all(sum(b["max"].values()) == grading.TOTAL == 25 for b in grading.BANDS.values())
     assert grading.clean_text("  a  \r\n\r\n\r\n\r\nb　") == "  a\n\nb"
     essay = {"grade": 1, "genre": "看图写话", "requirement": "", "min_chars": 0, "title": "", "text": ESSAY}
@@ -752,6 +755,46 @@ def test_photo_essay_is_read_graded_and_drawn_on_the_photo(models, klass, db):
     assert s.c.get(src).status_code == 200 and t.c.get(src).status_code == 200
     s2, _ = student_client(db, cid, "李华")
     assert s2.c.get(src).status_code == 404 and teacher_client(TEACHER2_KEY).c.get(src).status_code == 404
+
+
+def test_sideways_photo_is_turned_upright_and_read_again(models, klass, db):
+    t, cid, aid = klass
+    s, _ = student_client(db, cid, "李华")
+    # The first answer says the photo must turn 90° clockwise (boxes useless); the second reads the upright photo.
+    sideways = {**OCR_PAGE, "rotate": 90, "writing": "工整", "lines": [{**l, "box": None} for l in OCR_PAGE["lines"]]}
+    models.ocr = [sideways, {**OCR_PAGE, "rotate": 0, "writing": "凌乱"}]
+    sid = upload(s, f"/api/write/{aid}", [photo_bytes(size=(1600, 1200))]).get_json()["id"]
+    old = db.execute("SELECT id FROM ess_images WHERE submission_id=?", (sid,)).fetchone()[0]
+    run_worker()
+    img = db.execute("SELECT * FROM ess_images WHERE submission_id=?", (sid,)).fetchone()
+    assert img["id"] != old and (img["w"], img["h"]) == (1200, 1600) and json.loads(img["lines"])
+    ocr_calls = [b for m, b in models.calls if "誊抄" in b["messages"][0]["content"][:80]]
+    assert len(ocr_calls) == 2
+    sub = db.execute("SELECT * FROM ess_submissions WHERE id=?", (sid,)).fetchone()
+    assert sub["writing"] == "凌乱" and sub["status"] in ("review", "published")
+    grade_call = [b for m, b in models.calls if m == "big"][-1]
+    assert "书写：凌乱" in grade_call["messages"][1]["content"]
+    # The admin's essay-reread grades it again from the photos.
+    import manage, wsgi
+
+    models.ocr = {**OCR_PAGE, "rotate": 0, "writing": "工整"}
+    with wsgi.teacher.app_context():
+        manage.essay_reread(sid)
+    sub = db.execute("SELECT * FROM ess_submissions WHERE id=?", (sid,)).fetchone()
+    assert sub["status"] == "queued" and sub["text"] == ""
+    run_worker()
+    assert db.execute("SELECT writing FROM ess_submissions WHERE id=?", (sid,)).fetchone()[0] == "工整"
+
+
+def test_handwriting_and_ocr_extras():
+    page = grading.parse_ocr({"title": "", "lines": [{"text": "一行", "box": [1, 1, 9, 9]}], "rotate": 270, "writing": "一般"})
+    assert page["rotate"] == 270 and page["writing"] == "一般"
+    assert grading.parse_ocr({"lines": [], "rotate": 45, "writing": "好"})["rotate"] == 0
+    assert grading.worst_writing([{"writing": "工整"}, {"writing": "一般"}, {"writing": ""}]) == "一般"
+    assert grading.worst_writing([{"writing": ""}]) == ""
+    essay = {"grade": 3, "genre": "", "requirement": "", "min_chars": 0, "title": "", "text": ESSAY}
+    assert "书写：打字提交" in grading.grade_messages(essay)[1]["content"]
+    assert "书写：工整" in grading.grade_messages({**essay, "source": "photo", "writing": "工整"})[1]["content"]
 
 
 def test_teacher_corrects_recognised_text(models, klass, db):
@@ -1100,7 +1143,7 @@ def test_genres_intro_and_delete(models, klass, db):
     # Students see the 引言, not the 习作重点.
     s, _ = student_client(db, cid)
     page = s.get(f"/student/essay/{a2}").get_data(as_text=True)
-    assert "引言给学生看" in page and "重点只给老师看" not in page and "成绩以最后一次为准" in page
+    assert "引言给学生看" in page and "重点只给老师看" not in page and "一般只交一次" in page
     assert "引言给学生看" in t.get(f"/teacher/essay/assignments/{a2}").get_data(as_text=True)
 
     # Deleting hides it everywhere but the month's count stays.

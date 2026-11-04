@@ -105,6 +105,23 @@ def backup():
     print("备份完成：" + str(folder))
 
 
+def essay_reread(sid):
+    """Grades a photographed essay again from its photos (read again, turned upright when taken sideways). What the
+    student saw is replaced by the new grading (published by itself or after the teacher's review, as the assignment
+    is set)."""
+    from core.essay import enqueue
+
+    d = db()
+    row = d.execute("SELECT id,source,status FROM ess_submissions WHERE id=?", (sid,)).fetchone()
+    if not row or row["source"] != "photo":
+        raise SystemExit(f"没有编号为 {sid} 的拍照作文")
+    d.execute("UPDATE ess_submissions SET text='',writing='',status='queued',hold='' WHERE id=?", (sid,))
+    d.execute("UPDATE ess_images SET lines='' WHERE submission_id=?", (sid,))
+    enqueue(sid)
+    d.commit()
+    print(f"作文 {sid} 已重新排队（原来是 {row['status']}），会从识别照片开始重新批改")
+
+
 def summary(site):
     d = db()
     s = site.key
@@ -138,12 +155,19 @@ def summary(site):
 
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
-    p.add_argument("command", choices=["seed", "export", "backup", "reset-password", "summary"])
+    p.add_argument("command", choices=["seed", "export", "backup", "reset-password", "summary", "essay-reread"])
     p.add_argument("--site", choices=sorted(SITES))
+    p.add_argument("--id", type=int, help="essay-reread: 作文提交编号")
     args = p.parse_args()
     schema.initialize(data_dir() / schema.DB_NAME)
     if args.command == "backup":
         backup()
+        raise SystemExit
+    if args.command == "essay-reread":
+        if not args.id:
+            p.error("essay-reread 需要 --id")
+        with create_app(SITES["teacher"]).app_context():
+            essay_reread(args.id)
         raise SystemExit
     targets = [SITES[args.site]] if args.site else list(SITES.values())
     if args.command == "reset-password" and not args.site:

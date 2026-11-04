@@ -71,8 +71,8 @@ def band_of(grade):
 
 
 def level_of(total):
-    """优 22–25, 良 19–21, 及格 15–18, below that 待提高."""
-    return "优" if total >= 22 else "良" if total >= 19 else "及格" if total >= 15 else "待提高"
+    """优 22–25, 良 18–21, 及格 15–17, below that 待提高."""
+    return "优" if total >= 22 else "良" if total >= 18 else "及格" if total >= 15 else "待提高"
 
 
 def clean_text(text):
@@ -126,6 +126,23 @@ def intro_of(essay):
     return essay["intro"] if "intro" in essay.keys() and essay["intro"] else ""
 
 
+WRITINGS = ("工整", "一般", "凌乱")  # how neat the handwriting is (ocr step), best first
+
+
+def writing_line(essay):
+    """essay: a dict or a sqlite row (source and writing may be missing: a typed essay)."""
+    get = lambda key: essay[key] if key in essay.keys() else ""
+    if get("source") != "photo":
+        return "打字提交，不评书写"
+    return get("writing") or "看不出来，不评书写"
+
+
+def worst_writing(pages):
+    """The handwriting of a submission: the worst page's."""
+    found = [p["writing"] for p in pages if p.get("writing") in WRITINGS]
+    return max(found, key=WRITINGS.index) if found else ""
+
+
 def grade_messages(essay):
     """essay: dict with grade, genre, requirement, min_chars, title, text. The system prompt only depends on the
     band and genre, so it is the same for a whole assignment and providers can cache it."""
@@ -141,6 +158,7 @@ def grade_messages(essay):
         + (f"引言（学生看到的题目说明）：{intro_of(essay)}\n" if intro_of(essay) else "")
         + f"习作重点：{essay['requirement'] or '（老师没有写具体要求）'}\n"
         + (f"字数要求：不少于 {essay['min_chars']} 字（这篇约 {char_count(essay['text'])} 字）\n" if essay["min_chars"] else "")
+        + f"书写：{writing_line(essay)}\n"
         + f"作文标题：{essay['title'] or '（无标题）'}\n\n作文正文：\n{essay['text']}"
     )
     return [{"role": "system", "content": system}, {"role": "user", "content": user}]
@@ -377,7 +395,8 @@ def _box(value):
 
 
 def parse_ocr(raw):
-    """One page of the ocr step's JSON → {"title", "lines": [{"text", "box" or None, "para"}]}. Raises ValueError."""
+    """One page of the ocr step's JSON → {"title", "lines": [{"text", "box" or None, "para"}], "writing", "rotate"}
+    (writing: one of WRITINGS or ""; rotate: degrees clockwise that would make the photo upright). Raises ValueError."""
     lines = raw.get("lines")
     if not isinstance(lines, list):
         raise ValueError("识别结果缺少 lines")
@@ -391,7 +410,9 @@ def parse_ocr(raw):
     if out and sum(1 for line in out if line["box"]) < 0.7 * len(out):
         for line in out:  # too few usable boxes: show the page without drawing on it
             line["box"] = None
-    return {"title": _str(raw.get("title"), 40), "lines": out}
+    writing = raw.get("writing") if raw.get("writing") in WRITINGS else ""
+    rotate = raw.get("rotate") if raw.get("rotate") in (0, 90, 180, 270) else 0
+    return {"title": _str(raw.get("title"), 40), "lines": out, "writing": writing, "rotate": rotate}
 
 
 def assemble(pages):
