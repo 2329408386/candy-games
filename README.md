@@ -109,7 +109,7 @@ deploy/deploy.sh rollback   # 切回上一个版本
 - https：Let's Encrypt 给 IP 签的短期证书（约 6 天），certbot 装在 `/opt/certbot`，`candy-games-cert.timer` 每天两次续期并重载 nginx；首次签发用 `/opt/candy-games/current/deploy/install.sh cert`。http 和 https 内容完全一样（共用 `deploy/nginx-locations.conf`），不强制跳转；授权 Cookie 两边通用，错题本和设置存在浏览器 localStorage、两边各一份，从 http 点「🔒 安全连接」或读句子时会带过去合并（`shared-static/social/carry.js`）。
 - 登录：授权和后台登录的 Cookie 有效期 10 年、每次访问续期，相当于永久；后台改密码后其它设备的后台登录失效。
 - 自动恢复：进程退出后 1 秒内由 systemd 重新拉起（不限次数）；`candy-games-watchdog.timer` 每 30 秒检查两个站点的 `/health`，卡死时自动重启服务；nginx 也设置了自动重启。
-- 备份：`candy-games-backup.timer` 每天 03:15 备份到 `/var/lib/candy-games/backups/`，保留 30 天；每次发布前也备份一次。
+- 备份：`candy-games-backup.timer` 每天 03:15 备份到 `/var/lib/candy-games/backups/`，保留 3 天；每次发布前也备份一次。
 - 异地备份：在开发机上运行 `deploy/pull-backups.sh`，把服务器备份（含 secret.env）拉到 `~/candy-games-backups/`；需要每天自动拉取时，按脚本开头的说明加入开发机 crontab。
 - 管理命令（在服务器上）：
   ```bash

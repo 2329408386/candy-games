@@ -100,7 +100,7 @@ def backup():
     if (data_dir() / "secret.env").exists():
         shutil.copy2(data_dir() / "secret.env", folder / "secret.env")
     for f in root.iterdir():
-        if f.is_dir() and f.stat().st_mtime < time.time() - 30 * 86400:
+        if f.is_dir() and f.stat().st_mtime < time.time() - 3 * 86400:
             shutil.rmtree(f)
     print("备份完成：" + str(folder))
 
