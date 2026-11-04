@@ -232,7 +232,8 @@ def test_backup_model_and_failure(models, klass, db):
     run_worker()
     assert db.execute("SELECT status FROM ess_submissions WHERE id=?", (sid,)).fetchone()[0] == "review"
     assert "spare" in db.execute("SELECT model FROM ess_reviews WHERE submission_id=?", (sid,)).fetchone()[0]
-    assert [r[0] for r in db.execute("SELECT ok FROM ess_usage WHERE submission_id=? AND step='grade' ORDER BY id", (sid,))] == [0, 1]
+    # The main model is asked twice (a failure that may pass), then the backup answers.
+    assert [r[0] for r in db.execute("SELECT ok FROM ess_usage WHERE submission_id=? AND step='grade' ORDER BY id", (sid,))] == [0, 0, 1]
 
     # Both fail: retried later (rate limit), then failed once the retries run out; the teacher can regrade.
     models.fail = {"big", "spare"}
@@ -248,6 +249,24 @@ def test_backup_model_and_failure(models, klass, db):
     assert jpost(t, f"/api/submissions/{sid2}/regrade").status_code == 200
     run_worker()
     assert db.execute("SELECT status FROM ess_submissions WHERE id=?", (sid2,)).fetchone()[0] == "review"
+
+
+def test_a_one_off_failure_is_retried_on_the_same_model(models, klass, db, monkeypatch):
+    t, cid, aid = klass
+    calls = []
+
+    def flaky(row, body):
+        calls.append(row["model"])
+        if len(calls) == 1:  # the provider's own "please retry" answer, a 400
+            raise llm.LLMError("HTTP 400: Model output became abnormal ... Please retry", retry=bool(llm.PLEASE_RETRY.search("Please retry")))
+        return models(row, body)
+
+    monkeypatch.setattr(llm, "post", flaky)
+    s, _ = student_client(db, cid)
+    sid = jpost(s, f"/api/write/{aid}", {"text": ESSAY}).get_json()["id"]
+    run_worker()
+    assert calls[:2] == ["big", "big"]
+    assert "big" in db.execute("SELECT model FROM ess_reviews WHERE submission_id=?", (sid,)).fetchone()[0]
 
 
 def test_check_failure_keeps_marks_and_flags(models, klass, db):

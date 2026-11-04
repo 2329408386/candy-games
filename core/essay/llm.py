@@ -38,6 +38,9 @@ class LLMError(Exception):
 MODEL_MISSING = re.compile(r"model.{0,40}(not.{0,10}(found|exist|support|available)|does ?n.t exist|unknown|invalid)|(no|unknown|invalid) model|模型.{0,10}(不存在|不支持|下线)", re.I | re.S)
 
 
+PLEASE_RETRY = re.compile(r"please retry|try again|output became abnormal|请重试|稍后再试", re.I)
+
+
 class NotConfigured(LLMError):
     def __init__(self, step):
         super().__init__(f"{STEPS.get(step, step)}还没有配置模型", retry=False)
@@ -165,7 +168,8 @@ def post(row, body):
     except urllib.error.HTTPError as e:
         detail = e.read()[:300].decode(errors="replace")
         # 400/401/403/404 are configuration problems; the backup may still work, but retrying this one won't.
-        error = LLMError(f"HTTP {e.code}: {detail}", retry=e.code in (408, 409, 429) or e.code >= 500)
+        # …except when the provider itself says to try again (e.g. "Model output became abnormal … Please retry").
+        error = LLMError(f"HTTP {e.code}: {detail}", retry=e.code in (408, 409, 429) or e.code >= 500 or bool(PLEASE_RETRY.search(detail)))
         error.model_missing = e.code in (400, 404) and bool(MODEL_MISSING.search(detail))
         raise error from None
     except (TimeoutError, socket.timeout):
@@ -207,45 +211,53 @@ def log_usage(d, row, license_id, submission_id, step, tokens, ok, error="", sta
     d.commit()
 
 
+TRIES = 2  # each model is asked this many times before the next one (a failure that may pass is often gone at once)
+
+
 def chat(d, step, messages, *, json_mode=False, license_id=0, submission_id=None, parse=None):
-    """Runs a step on its main model, falling back to the backup. parse(content) may raise ValueError to reject an
-    answer (e.g. JSON that does not fit the schema): that counts as a failure of that model.
+    """Runs a step on its main model, falling back to the backup. A failure that may pass (timeout, rate limit,
+    server error, an answer that is not usable JSON) is tried again on the same model first, up to TRIES times;
+    one that cannot (bad key, wrong model name) goes straight to the next model. parse(content) may raise ValueError
+    to reject an answer (e.g. JSON that does not fit the schema): that counts as a failure of that model.
     Returns (parsed or content, model label)."""
     rows = step_rows(d, step)
     if not rows:
         raise NotConfigured(step)
     errors, retry = [], False
     for row in rows:
-        started = time.time()
-        try:
+        for attempt in range(TRIES):
+            started = time.time()
             try:
-                content, *tokens = post(row, request_body(row, messages, json_mode))
-            except LLMError as e:
-                if not (e.model_missing and row["auto_mode"] != "fixed"):
-                    raise
-                # Renamed or retired: switch the slot to the newest model of its series and try that once.
-                from . import models_sync
+                try:
+                    content, *tokens = post(row, request_body(row, messages, json_mode))
+                except LLMError as e:
+                    if not (e.model_missing and row["auto_mode"] != "fixed"):
+                        raise
+                    # Renamed or retired: switch the slot to the newest model of its series and try that once.
+                    from . import models_sync
 
+                    log_usage(d, row, license_id, submission_id, step, (0, 0, 0), False, e, started)
+                    if not models_sync.sync(d, only=(row["step"], row["slot"])):
+                        raise
+                    row = next(r for r in step_rows(d, step) if r["slot"] == row["slot"])
+                    started = time.time()
+                    content, *tokens = post(row, request_body(row, messages, json_mode))
+            except LLMError as e:
                 log_usage(d, row, license_id, submission_id, step, (0, 0, 0), False, e, started)
-                if not models_sync.sync(d, only=(row["step"], row["slot"])):
-                    raise
-                row = next(r for r in step_rows(d, step) if r["slot"] == row["slot"])
-                started = time.time()
-                content, *tokens = post(row, request_body(row, messages, json_mode))
-        except LLMError as e:
-            log_usage(d, row, license_id, submission_id, step, (0, 0, 0), False, e, started)
-            errors.append(f"{SLOTS[row['slot']]}：{e}")
-            retry = retry or e.retry
-            continue
-        try:
-            result = parse(content) if parse else content
-        except ValueError as e:
-            log_usage(d, row, license_id, submission_id, step, tokens, False, f"返回内容不能用：{e}", started)
-            errors.append(f"{SLOTS[row['slot']]}：{e}")
-            retry = True
-            continue
-        log_usage(d, row, license_id, submission_id, step, tokens, True, "", started)
-        return result, row["provider_name"] + " / " + row["model"]
+                errors.append(f"{SLOTS[row['slot']]}：{e}")
+                retry = retry or e.retry
+                if e.retry:
+                    continue
+                break
+            try:
+                result = parse(content) if parse else content
+            except ValueError as e:
+                log_usage(d, row, license_id, submission_id, step, tokens, False, f"返回内容不能用：{e}", started)
+                errors.append(f"{SLOTS[row['slot']]}：{e}")
+                retry = True
+                continue
+            log_usage(d, row, license_id, submission_id, step, tokens, True, "", started)
+            return result, row["provider_name"] + " / " + row["model"]
     raise LLMError("；".join(errors), retry=retry)
 
 

@@ -9,7 +9,7 @@ Web requests only insert a row into ess_jobs and set the submission to 'queued';
 A job is claimed under a write lock, so several threads (or a second process during a deploy) never run it twice.
 Failures that may pass (timeouts, rate limits, malformed answers) are retried after RETRY_DELAYS; when those run
 out, or the failure cannot pass (bad key, wrong model name), the submission becomes 'failed' and the teacher can
-press 重新批改. When the check step fails twice the review goes to the teacher ('review') instead of being
+press 重新批改. When the check step fails the review goes to the teacher ('review') instead of being
 published. Jobs wait without being counted as attempts while the step is not configured or today's spending
 has reached the daily budget (ess_meta 'daily_budget', yuan); the submission's `hold` column says why.
 """
@@ -57,14 +57,14 @@ def heartbeat(d):
 
 def stale_seconds(d):
     """How long a job may run before it counts as interrupted: the longest a job can take with the configured
-    timeouts (every photo read by the main and then the backup model, grading, the check tried twice), plus a margin.
+    timeouts (every model of a step timing out llm.TRIES times; every photo read that way), plus a margin.
     Shorter would run a slow job a second time while the first is still going."""
     longest = {
-        step: sum(r["timeout"] or 120 for r in llm.step_rows(d, step)) for step in ("ocr", "grade", "check")
+        step: llm.TRIES * sum(r["timeout"] or 120 for r in llm.step_rows(d, step)) for step in ("ocr", "grade", "check")
     }
     from . import MAX_PHOTOS
 
-    return max(STALE_SECONDS, longest["ocr"] * MAX_PHOTOS + longest["grade"] + longest["check"] * 2 + 300)
+    return max(STALE_SECONDS, longest["ocr"] * MAX_PHOTOS + longest["grade"] + longest["check"] + 300)
 
 
 def claim(d):
@@ -142,23 +142,20 @@ def grade(d, essay):
         parse=lambda content: grading.clean_review(llm.parse_json(content), essay),
         **meta,
     )
-    # The checker always runs, even without error marks: it also gives its own level. It is tried twice; a review
-    # that could not be checked is not published by itself (run_job sends it to the teacher first).
-    for attempt in range(2):
-        try:
-            (verdicts, level), _ = llm.chat(
-                d,
-                "check",
-                grading.check_messages(essay, review["marks"]),
-                json_mode=True,
-                parse=lambda content: grading.parse_check(llm.parse_json(content)),
-                **meta,
-            )
-            return grading.apply_check(review, verdicts, level), model
-        except llm.LLMError as e:
-            log.warning("check failed for submission %s (try %d): %s", essay["id"], attempt + 1, e)
-            if isinstance(e, llm.NotConfigured):
-                break
+    # The checker always runs, even without error marks: it also gives its own level (llm.chat tries each model
+    # twice). A review that could not be checked is not published by itself (run_job sends it to the teacher first).
+    try:
+        (verdicts, level), _ = llm.chat(
+            d,
+            "check",
+            grading.check_messages(essay, review["marks"]),
+            json_mode=True,
+            parse=lambda content: grading.parse_check(llm.parse_json(content)),
+            **meta,
+        )
+        return grading.apply_check(review, verdicts, level), model
+    except llm.LLMError as e:
+        log.warning("check failed for submission %s: %s", essay["id"], e)
     return {**review, "flags": review["flags"] + ["unchecked"], "rejected": [], "check_level": None}, model
 
 
