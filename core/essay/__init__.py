@@ -907,7 +907,8 @@ def register_pages(app):
             " FROM ess_assignments a WHERE a.class_id=? AND a.deleted_at IS NULL ORDER BY a.id DESC",
             (me["id"], me["id"], me["class_id"]),
         ).fetchall()
-        return render_template("student_home.html", me=me, assignments=assignments)
+        again = {a["id"] for a in assignments if a["my_status"] == "published" and resubmit_open(a["id"], me["id"], me["license_id"])}
+        return render_template("student_home.html", me=me, assignments=assignments, again=again)
 
     @app.get("/student/essay/<int:aid>")
     def write_page(aid):
@@ -924,12 +925,7 @@ def register_pages(app):
         ).fetchall()
         last = attempts[-1] if attempts else None
         essay_open = features.active(db(), me["license_id"], "essay")
-        can_submit = (
-            essay_open
-            and not assignment["closed_at"]
-            and len(attempts) < MAX_ATTEMPTS
-            and (not last or last["status"] in ("published", "failed"))
-        )
+        can_submit = essay_open and may_submit(assignment, attempts)
         return render_template(
             "write.html",
             me=me,
@@ -991,6 +987,24 @@ def trial_owns(iid):
     return bool(db().execute("SELECT 1 FROM ess_images WHERE id=? AND submission_id=?", (iid, sid)).fetchone())
 
 
+def may_submit(assignment, attempts):
+    """Whether the student may hand in (again) now, the feature being active: the assignment is open, attempts are
+    left and the last one is finished."""
+    return (
+        not assignment["closed_at"]
+        and len(attempts) < MAX_ATTEMPTS
+        and (not attempts or attempts[-1]["status"] in ("published", "failed"))
+    )
+
+
+def resubmit_open(aid, student_id, license_id):
+    assignment = db().execute("SELECT * FROM ess_assignments WHERE id=? AND deleted_at IS NULL", (aid,)).fetchone()
+    attempts = db().execute(
+        "SELECT attempt,status FROM ess_submissions WHERE assignment_id=? AND student_id=? ORDER BY attempt", (aid, student_id)
+    ).fetchall()
+    return bool(assignment and attempts and may_submit(assignment, attempts) and features.active(db(), license_id, "essay"))
+
+
 def result_view(sub, as_teacher):
     if not sub or sub["status"] != "published":
         abort(404)
@@ -1010,6 +1024,8 @@ def result_view(sub, as_teacher):
         as_teacher=as_teacher,
         project=as_teacher and request.args.get("project") == "1",
         hide_name=request.args.get("anon") == "1",
+        resubmit=not as_teacher and resubmit_open(sub["assignment_id"], sub["student_id"], student()["license_id"]),
+        max_attempts=MAX_ATTEMPTS,
     )
 
 

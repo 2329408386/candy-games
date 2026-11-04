@@ -8,9 +8,10 @@
       <h1>《{{sub.title or sub.assignment_title}}》</h1>
       <p class="muted">{% if not hide_name %}{{sub.student_name}} · {% endif %}第 {{sub.attempt}} 次提交{% if previous %} · 上次 {{previous.total}} 分（{{previous.level}}）{% endif %}</p>
     </div>
+    {% if resubmit %}<a class="button" href="{{url_for('write_page', aid=sub.assignment_id)}}">改好再交（第 {{sub.attempt + 1}} 次）</a>{% endif %}
   </div>
   <div class="redpen" id="redpen"></div>
-  {% if not project and not as_teacher %}<p class="hint center">点一点红笔批注，可以看到老师写的详细说明。</p>{% endif %}
+  {% if not project and not as_teacher %}<p class="hint center">点一点红笔批注，可以看到老师写的详细说明。{% if resubmit %}看完可以按批改改好，再交一次（最多 {{max_attempts}} 次，成绩以最后一次为准）。{% endif %}</p>{% endif %}
   {% if not project %}<p class="rp-export"><button type="button" class="secondary" id="rp-export">导出打印（PDF）</button></p>{% endif %}
 {% endblock %}
 {% block page_data %}<script>window.REDPEN={{redpen|tojson}};</script>{% endblock %}

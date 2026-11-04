@@ -197,14 +197,18 @@ def test_full_flow(models, klass, db):
     assert pen["summary"] == "老师改过的评语" and any(m["note"] == "结尾可以再写写感受" for m in pen["marks"])
     assert pen["total"] == 21 and pen["max"] == 25 and pen["level"] == "良" and not pen["onPhoto"]
     assert any(m["type"] == "错别字" and m["fix"] == "高兴" for m in pen["marks"])
-    assert t.get(f"/teacher/essay/results/{sid}").status_code == 200
+    assert "改好再交" not in t.get(f"/teacher/essay/results/{sid}").get_data(as_text=True)
 
     # After publishing the student may resubmit once more (MAX_ATTEMPTS = 2); the newest one counts.
+    assert "改好再交（第 2 次）" in html and f"/student/essay/{aid}" in html
+    assert "可再交一次" in s.get("/student/").get_data(as_text=True)
     r = jpost(s, f"/api/write/{aid}", {"text": ESSAY + "我还想再去。"})
     assert r.status_code == 200
     db.execute("UPDATE ess_submissions SET status='published' WHERE assignment_id=?", (aid,))
     db.commit()
     assert "最多交 2 次" in jpost(s, f"/api/write/{aid}", {"text": ESSAY}).get_json()["error"]
+    assert "改好再交" not in s.get(f"/student/essay/results/{sid}").get_data(as_text=True)
+    assert "可再交一次" not in s.get("/student/").get_data(as_text=True)
 
 
 def test_auto_publish_and_publish_all(models, klass, db):
