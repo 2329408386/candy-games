@@ -37,35 +37,41 @@
       <option value="order">按名单</option>
       <option value="desc">分数从高到低</option>
       <option value="asc">分数从低到高</option>
+      <option value="submitted-asc">提交时间从早到晚</option>
+      <option value="submitted-desc">提交时间从晚到早</option>
+      <option value="graded-asc">批改完成从早到晚</option>
+      <option value="graded-desc">批改完成从晚到早</option>
     </select></label>
   </div>
   {% endif %}
   <table class="wb-table" id="assignment-table">
-    <thead><tr><th>学生</th><th>状态</th><th>第几次</th><th>等级</th><th>分数</th><th></th></tr></thead>
+    <thead><tr><th>学生</th><th>状态</th><th>第几次</th><th>等级</th><th>分数</th><th class="col-time">提交时间</th><th class="col-time">批改完成</th><th></th></tr></thead>
     <tbody>
       {% for s in students %}
         {% set sub = latest.get(s.id) %}
         {% set r = scores.get(sub.id) if sub else None %}
-        <tr data-order="{{loop.index}}" data-score="{{r.total if r else ''}}">
+        <tr data-order="{{loop.index}}" data-score="{{r.total if r else ''}}" data-submitted="{{sub.created_at if sub else ''}}" data-graded="{{sub.graded_at or '' if sub else ''}}">
           <td>{{s.name}}</td>
           {% if sub %}
             <td><span class="status status-{{sub.status}}">{{STATUS[sub.status]}}</span>{% if sub.hold %}<br><small class="muted">{{HOLDS.get(sub.hold, '')}}</small>{% endif %}{% if assignment.due_at and sub.created_at > assignment.due_at %} <span class="tag off">迟交</span>{% endif %}</td>
             <td>{{sub.attempt}} / {{max_attempts}}</td>
             <td>{{r.level if r else ''}}</td>
             <td>{{r.total if r else ''}}</td>
+            <td class="col-time">{{sub.created_at|moment}}</td>
+            <td class="col-time">{{sub.graded_at|moment}}</td>
             <td class="row-actions">
               {% if sub.status == 'review' %}<a class="button small" href="{{url_for('review_page', sid=sub.id)}}">审核</a>
-              {% elif sub.status == 'published' %}<a class="button secondary small" href="{{url_for('review_page', sid=sub.id)}}">修改</a> <a class="link-button" href="{{url_for('teacher_result', sid=sub.id)}}">学生看到的</a>
+              {% elif sub.status == 'published' %}<a class="button secondary small" href="{{url_for('review_page', sid=sub.id)}}">修改</a> <a class="link-button" href="{{url_for('teacher_result', sid=sub.id, back='assignment')}}">学生看到的</a>
               {% elif sub.status == 'failed' %}<button type="button" class="small" data-post="{{url_for('regrade', sid=sub.id)}}">重新批改</button>
               {% else %}<a class="link-button" href="{{url_for('review_page', sid=sub.id)}}">查看原文</a>{% endif %}
             </td>
           {% else %}
-            <td class="muted">未交</td><td></td><td></td><td></td>
+            <td class="muted">未交</td><td></td><td></td><td></td><td class="col-time"></td><td class="col-time"></td>
             <td class="row-actions">{% if essay_open and not assignment.closed_at %}<button type="button" class="link-button" data-submit-for="{{s.id}}" data-name="{{s.name}}">代交</button>{% endif %}</td>
           {% endif %}
         </tr>
       {% else %}
-        <tr><td colspan="6" class="hint">班里还没有学生，先到班级页面添加学生。</td></tr>
+        <tr><td colspan="8" class="hint">班里还没有学生，先到班级页面添加学生。</td></tr>
       {% endfor %}
     </tbody>
   </table>
@@ -120,18 +126,20 @@
     dialog.querySelector('[data-close]').addEventListener('click', () => dialog.close());
     const picker = WB.photoPicker(dialog.querySelector('.photo-picker'));
     WB.submitEssay('#submit-for-form', {{url_for('submit_for', aid=assignment.id)|tojson}}, picker, () => location.reload());
-    // 排序: by the class list or by score (students without a graded essay stay at the bottom); remembered.
+    // 排序: by the class list, score, 提交时间 or 批改完成 (rows without that value stay at the bottom); remembered.
     const sortPick = document.getElementById('sort-rows');
     if (sortPick) {
       const body = document.querySelector('#assignment-table tbody');
+      const SORTS = { desc: ['score', -1], asc: ['score', 1], 'submitted-asc': ['submitted', 1], 'submitted-desc': ['submitted', -1], 'graded-asc': ['graded', 1], 'graded-desc': ['graded', -1] };
       const sortRows = () => {
         const how = sortPick.value;
+        const [key, dir] = SORTS[how] || [];
         const rows = [...body.rows];
-        const score = (r) => (r.dataset.score === '' ? null : Number(r.dataset.score));
+        const value = (r) => (!key || !r.dataset[key] ? null : Number(r.dataset[key]));
         rows.sort((a, b) => {
-          const sa = score(a), sb = score(b);
-          if (how !== 'order' && (sa === null) !== (sb === null)) return sa === null ? 1 : -1;
-          if (how !== 'order' && sa !== sb) return how === 'desc' ? sb - sa : sa - sb;
+          const va = value(a), vb = value(b);
+          if (key && (va === null) !== (vb === null)) return va === null ? 1 : -1;
+          if (key && va !== vb) return dir * (va - vb);
           return a.dataset.order - b.dataset.order;
         });
         rows.forEach((r) => body.appendChild(r));

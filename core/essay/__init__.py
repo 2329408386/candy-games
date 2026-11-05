@@ -1062,6 +1062,7 @@ def result_view(sub, as_teacher):
         redpen={**redpen_data(sub, final), **({"student": ""} if request.args.get("anon") == "1" else {})},
         previous=previous and json.loads(previous["final"]),
         as_teacher=as_teacher,
+        back=request.args.get("back"),
         project=as_teacher and request.args.get("project") == "1",
         hide_name=request.args.get("anon") == "1",
         resubmit=not as_teacher and resubmit_open(sub["assignment_id"], sub["student_id"], student()["license_id"]),

@@ -181,6 +181,7 @@ mark.mk{background:none}
   .wb-card{padding:16px}
   .essay-text{font-size:17px}
   .wb-table th:nth-child(3),.wb-table td:nth-child(3){display:none}
+  .wb-table .col-time{display:none}
   .wb-table th,.wb-table td{padding:9px 8px}
   .level-badge{min-width:86px;min-height:86px}
   .level-badge strong{font-size:30px}

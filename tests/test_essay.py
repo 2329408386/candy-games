@@ -209,6 +209,12 @@ def test_full_flow(models, klass, db):
     assert pen["total"] == 21 and pen["max"] == 25 and pen["level"] == "良" and not pen["onPhoto"]
     assert any(m["type"] == "错别字" and m["fix"] == "高兴" for m in pen["marks"])
     assert "重新交一次" not in t.get(f"/teacher/essay/results/{sid}").get_data(as_text=True)
+    # 「学生看到的」 opened from the assignment page leads back there; opened from the review page, back to the review.
+    assert "返回审核" in t.get(f"/teacher/essay/results/{sid}").get_data(as_text=True)
+    back = t.get(f"/teacher/essay/results/{sid}?back=assignment").get_data(as_text=True)
+    assert "返回作业" in back and f"/teacher/essay/assignments/{aid}" in back and "返回审核" not in back
+    page = t.get(f"/teacher/essay/assignments/{aid}").get_data(as_text=True)
+    assert "提交时间" in page and "批改完成" in page and 'value="graded-desc"' in page and "back=assignment" in page
 
     # After publishing the student may resubmit once more (MAX_ATTEMPTS = 2); the newest one counts. The way back is
     # a small link at the bottom of the result, for a wrong photo or the like.
