@@ -1312,3 +1312,14 @@ def test_typed_essays_are_not_looked_at_on_a_photo(models, klass, db):
     assert models.verified == []
     check = [b for m, b in models.calls if "复核" in b["messages"][0]["content"][:60]][-1]
     assert "照片识别" not in check["messages"][1]["content"]
+
+
+def test_post_explains_thinking_model_out_of_tokens(monkeypatch):
+    import io, urllib.request
+
+    answer = b'{"choices": [{"index": 0, "message": {"role": "assistant"}, "finish_reason": "length"}], "usage": {"completion_tokens": 17}}'
+    monkeypatch.setattr(urllib.request, "urlopen", lambda req, timeout: io.BytesIO(answer))
+    row = {"base_url": "https://x/v1", "key_enc": llm.encrypt_key("sk-1"), "timeout": 5, "provider_id": 999, "concurrency": 1}
+    with pytest.raises(llm.LLMError) as e:
+        llm.post(row, {"model": "gemini-3.8-flash", "messages": []})
+    assert "最大输出 token" in str(e.value) and not e.value.retry

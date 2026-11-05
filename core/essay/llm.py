@@ -210,9 +210,17 @@ def post(row, body):
     except ValueError:
         raise LLMError("返回的不是 JSON") from None
     try:
-        content = data["choices"][0]["message"]["content"] or ""
-    except (KeyError, IndexError, TypeError):
+        choice = data["choices"][0]
+        content = choice["message"].get("content") or ""
+    except (KeyError, IndexError, TypeError, AttributeError):
         raise LLMError("返回格式不对：" + json.dumps(data, ensure_ascii=False)[:300]) from None
+    if not content.strip() and choice.get("finish_reason") == "length":
+        # Thinking models (e.g. gemini-3.x-flash) can spend the whole max_tokens on reasoning and return no content.
+        raise LLMError(
+            f"输出 token 用完了还没写出回答（模型先思考，用掉了 {(data.get('usage') or {}).get('completion_tokens', '?')} 个 token）："
+            "把「最大输出 token」调大或留空",
+            retry=False,
+        )
     usage = data.get("usage") or {}
     cached = usage.get("prompt_cache_hit_tokens") or (usage.get("prompt_tokens_details") or {}).get("cached_tokens") or 0
     return content, int(usage.get("prompt_tokens") or 0), int(cached), int(usage.get("completion_tokens") or 0)

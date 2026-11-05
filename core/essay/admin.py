@@ -257,7 +257,7 @@ def register(app):
             }
         row = {**row, "timeout": min(row["timeout"] or 20, 20)}  # stays under the web worker's 30 s limit
         body = llm.request_body(row, [{"role": "user", "content": "请只回复两个字：你好"}], False)
-        body["max_tokens"] = 20
+        body["max_tokens"] = 1024  # thinking models (gemini-3.x-flash…) spend tokens reasoning before they answer
         started = time.time()
         try:
             content, tin, tcached, tout = llm.post(row, body)
