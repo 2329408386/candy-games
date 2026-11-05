@@ -9,8 +9,9 @@ Pipeline (run by the worker, core/essay/worker.py):
               and level are computed here (never taken from the model), and every quote must occur in the essay
               text exactly (whitespace aside), otherwise the mark is dropped. Offsets of the quotes are stored so
               pages can highlight them.
-     plausible_fix() also drops corrections that cannot be right (a 错别字 that changes the length, a 标点 fix that
-              changes words, anything touching an unreadable □).
+     plausible_fix() also drops corrections that cannot be right (a 错别字 that changes the length — except pinyin
+              the child wrote for a character, which the fix replaces with 汉字 —, a 标点 fix that changes words,
+              anything touching an unreadable □).
   3. check  — the check step's model re-judges every error mark (错别字 / 用词不当 / 病句 / 标点) and every 修改建议
               example sentence, and gives its own level; marks it rejects or skips are dropped, and a level two steps
               away from ours is flagged for the teacher. If the check step is not configured or fails, the marks stay,
@@ -285,16 +286,32 @@ def para_start(text, start):
     return text[:start].rstrip(" \t\u3000").endswith("\n") or not text[:start].strip()
 
 
+PINYIN = re.compile(r"[a-zA-Zāáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜüê]+")
+HAN = re.compile(r"[\u4e00-\u9fff]{1,6}")
+
+
+def pinyin_fix(a, b):
+    """Whether b is a with its one run of pinyin (whitespace already removed) written as 1–6 汉字."""
+    runs = list(PINYIN.finditer(a))
+    if len(runs) != 1:
+        return False
+    head, tail = a[: runs[0].start()], a[runs[0].end() :]
+    middle = b[len(head) : len(b) - len(tail)] if len(b) > len(head) + len(tail) else ""
+    return b.startswith(head) and b.endswith(tail) and bool(HAN.fullmatch(middle))
+
+
 def plausible_fix(kind, quote, fix):
     """Rules no correct correction breaks, so a wrong one never reaches a child: nothing is corrected where the
-    photo could not be read (□); a 错别字 fix swaps one or two characters and keeps the length; a 标点 fix only
-    changes punctuation."""
+    photo could not be read (□); a 错别字 fix swaps one or two characters and keeps the length, or writes the pinyin
+    a child used for a character as 汉字; a 标点 fix only changes punctuation."""
     if kind not in ERROR_TYPES:
         return True
     if "□" in quote or "□" in fix:
         return False
     if kind == "错别字":
         a, b = re.sub(r"\s+", "", quote), re.sub(r"\s+", "", fix)
+        if PINYIN.search(a):
+            return pinyin_fix(a, b)
         changed = sum(1 for x, y in zip(a, b) if x != y)
         return len(a) == len(b) and 1 <= changed <= 2 and not any(c in PUNCT for c in b)
     if kind == "标点":

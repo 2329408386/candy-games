@@ -990,6 +990,19 @@ def test_corrections_that_cannot_be_right_are_dropped():
     assert kept == ["高心", "这真是快乐的一天！"]
 
 
+def test_pinyin_is_written_as_characters():
+    essay = {"grade": 1, "genre": "", "requirement": "", "min_chars": 0, "title": "", "text": "我很gāo xìng。小鸟在fēi。我们去hua园。"}
+    dims = {k: {"score": 3} for k in grading.DIMS}
+    marks = [
+        {"quote": "gāo xìng", "type": "错别字", "fix": "高兴", "note": ""},  # kept
+        {"quote": "在fēi", "type": "错别字", "fix": "在fei飞", "note": ""},  # fix still has pinyin: dropped
+        {"quote": "去hua园", "type": "错别字", "fix": "到花园", "note": ""},  # changes a character around it: dropped
+    ]
+    kept = [(m["quote"], m["fix"]) for m in grading.clean_review({"dims": dims, "marks": marks}, essay)["marks"]]
+    assert kept == [("gāo xìng", "高兴")]
+    assert grading.plausible_fix("错别字", "去hua园", "去花园")
+
+
 def test_check_covers_tips_and_rejects_skipped(models, klass, db):
     t, cid, aid = klass
     models.grade = grade_answer(marks=[
