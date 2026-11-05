@@ -112,6 +112,10 @@ def initialize(path):
         if "recheck_of" not in {r[1] for r in d.execute("PRAGMA table_info(ess_submissions)")}:
             # 再次检视: the teacher had the published essay graded again as a new attempt; the id of the one rechecked.
             d.execute("ALTER TABLE ess_submissions ADD COLUMN recheck_of INTEGER")
+        if "shapes" not in {r[1] for r in d.execute("PRAGMA table_info(ess_submissions)")}:
+            # Characters a photo essay has written wrong so that they are no character at all (grading.unshape):
+            # JSON [{"pos", "char", "note"}] confirmed on the photo; '' for none.
+            d.execute("ALTER TABLE ess_submissions ADD COLUMN shapes TEXT NOT NULL DEFAULT ''")
         migrate(d)
     path.chmod(0o600)
 

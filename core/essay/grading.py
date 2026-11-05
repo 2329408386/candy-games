@@ -3,7 +3,11 @@
 Pipeline (run by the worker, core/essay/worker.py):
   0. ocr    — photos only: the ocr step's vision model copies each page line by line, with each line's box on the
               photo (prompts/ocr.md); assemble() joins the lines into the essay text and keeps where every line is,
-              so the result page can draw the marks on the photo in red pen.
+              so the result page can draw the marks on the photo in red pen. A character the child wrote wrong so that
+              it is no character at all (wrong 偏旁, a stroke too many) cannot be copied: the ocr step writes it as
+              〔暖|日字旁写成了目字旁〕; parse_ocr puts the intended character in the text and keeps the note, the photo
+              is looked at again for each (shape_targets, keep_shapes), and shape_marks adds a 错别字 mark for every one
+              confirmed (quote = fix = the right character) once the review is checked.
   1. grade  — the grade step's model returns dims / marks / summary (one encouraging paragraph) (prompts/grade.md).
   2. clean  — the server keeps only what fits the schema: scores are clamped to each dimension's maximum, the total
               and level are computed here (never taken from the model), and every quote must occur in the essay
@@ -13,7 +17,7 @@ Pipeline (run by the worker, core/essay/worker.py):
               the child wrote for a character, which the fix replaces with 汉字 —, a 标点 fix that changes words,
               anything touching an unreadable □).
   3. check  — the check step's model re-judges every error mark (错别字 / 用词不当 / 病句 / 标点) and every 修改建议
-              example sentence, and gives its own level; marks it rejects or skips are dropped, and a level two steps
+              example sentence, and gives its own level; marks it finds wrong are dropped (skipped ones stay), and a level two steps
               away from ours is flagged for the teacher. If the check step is not configured or fails, the marks stay,
               the review is flagged "unchecked" and goes to the teacher instead of being published (worker.py).
   4. verify — photos only: each character a 错别字 mark changes is cut out of the photo (its line) and the ocr step's
@@ -339,14 +343,14 @@ def parse_check(raw):
 
 
 def apply_check(review, verdicts, level):
-    """Drops the checked marks (checked_marks) the checker rejected or skipped (kept in review["rejected"] for the
-    teacher) and flags a level that disagrees by two steps or more."""
+    """Drops the checked marks (checked_marks) the checker found wrong (kept in review["rejected"] for the teacher; a
+    mark it skipped is kept) and flags a level that disagrees by two steps or more."""
     kept, rejected, n = [], [], 0
     checked = {id(m) for m in checked_marks(review["marks"])}
     for m in review["marks"]:
         if id(m) in checked:
             n += 1
-            ok, reason = verdicts.get(n, (False, "复核没有确认"))
+            ok, reason = verdicts.get(n, (True, ""))
             if not ok:
                 rejected.append({**m, "reason": reason})
                 continue
@@ -457,7 +461,11 @@ def verify_messages(targets, crops):
 
     content = []
     for t, data in zip(targets, crops):
-        content.append({"type": "text", "text": f"第 {t['id']} 项：这一行识别为「{t['line']}」，请看其中第 {t['nth']} 个字（识别成了「{t['wrong']}」，批改认为应该是「{t['right']}」）。"})
+        if "char" in t:  # shape_targets: was it really written wrong?
+            ask = f"（识别时认为学生想写「{t['char']}」，但写错了：{t['note'] or '写成了字典里没有的字'}）。这个字真的写错了吗？"
+        else:
+            ask = f"（识别成了「{t['wrong']}」，批改认为应该是「{t['right']}」）。"
+        content.append({"type": "text", "text": f"第 {t['id']} 项：这一行识别为「{t['line']}」，请看其中第 {t['nth']} 个字{ask}"})
         content.append({"type": "image_url", "image_url": {"url": "data:image/jpeg;base64," + base64.b64encode(data).decode()}})
     content.append({"type": "text", "text": "请逐项回答纸上写的是哪个字。"})
     return [{"role": "system", "content": VERIFY_PROMPT}, {"role": "user", "content": content}]
@@ -515,23 +523,40 @@ def parse_ocr(raw):
     for line in lines:
         if not isinstance(line, dict) or not isinstance(line.get("text"), str):
             continue
-        text = "".join(c for c in line["text"] if c.isprintable()).strip()
+        text, shapes = unshape("".join(c for c in line["text"] if c.isprintable()).strip())
         if text:
-            out.append({"text": text, "box": _box(line.get("box")), "para": line.get("para") is True})
+            out.append({"text": text, "box": _box(line.get("box")), "para": line.get("para") is True, "shapes": shapes})
     if out and sum(1 for line in out if line["box"]) < 0.7 * len(out):
         for line in out:  # too few usable boxes: show the page without drawing on it
             line["box"] = None
     writing = raw.get("writing") if raw.get("writing") in WRITINGS else ""
     rotate = raw.get("rotate") if raw.get("rotate") in (0, 90, 180, 270) else 0
-    return {"title": _str(raw.get("title"), 40), "lines": out, "writing": writing, "rotate": rotate}
+    title = unshape(raw.get("title"))[0] if isinstance(raw.get("title"), str) else ""
+    return {"title": _str(title, 40), "lines": out, "writing": writing, "rotate": rotate}
+
+
+SHAPE = re.compile(r"〔\s*([\u4e00-\u9fff])\s*[|｜]\s*([^〔〕]{0,40}?)\s*〕")
+
+
+def unshape(text):
+    """A line from the ocr step → (text with each 〔字|说明〕 written as 字, [{"at": index in that text, "char",
+    "note"}]). A bracket not in that form stays as it is."""
+    out, shapes, last = "", [], 0
+    for m in SHAPE.finditer(text):
+        out += text[last : m.start()]
+        shapes.append({"at": len(out), "char": m.group(1), "note": m.group(2).strip()})
+        out += m.group(1)
+        last = m.end()
+    return out + text[last:], shapes
 
 
 def assemble(pages):
-    """Pages from parse_ocr → (title, text, [[{"s", "e", "b"}…] per page]): the essay text (a newline between
-    paragraphs) and, for every line with a box, where its characters are in the text."""
+    """Pages from parse_ocr → (title, text, [[{"s", "e", "b"}…] per page], shapes): the essay text (a newline between
+    paragraphs), for every line with a box where its characters are in the text, and the characters written wrong
+    (unshape) as [{"pos" in the text, "char", "note", "page" index}]."""
     title = next((p["title"] for p in pages if p["title"]), "")
-    text, placed = "", []
-    for page in pages:
+    text, placed, shapes = "", [], []
+    for n, page in enumerate(pages):
         spots = []
         for line in page["lines"]:
             if text and line["para"]:
@@ -540,12 +565,55 @@ def assemble(pages):
             text += line["text"]
             if line["box"]:
                 spots.append({"s": start, "e": len(text), "b": line["box"]})
+            shapes += [{"pos": start + x["at"], "char": x["char"], "note": x["note"], "page": n} for x in line.get("shapes", [])]
         placed.append(spots)
-    return title, text, placed
+    return title, text, placed, shapes
 
 
-def remap(old, new, spots):
-    """Line positions after a teacher corrected the recognised text: offsets follow the edit."""
+def shape_targets(shapes, text, pages):
+    """The characters written wrong to look at again on the photo, like typo_targets: pages is
+    [(image id, [{"s", "e", "b"}…])]. Shapes whose line has no box are left out (not confirmed, so not marked)."""
+    out = []
+    for k, x in enumerate(shapes):
+        pos = x["pos"]
+        if pos >= len(text) or text[pos] != x["char"]:
+            continue
+        spot = next(((iid, sp) for iid, spots in pages for sp in spots if sp["s"] <= pos < sp["e"]), None)
+        if not spot:
+            continue
+        iid, sp = spot
+        out.append({"shape": k, "pos": pos, "char": x["char"], "note": x["note"], "iid": iid, "box": sp["b"],
+                    "line": text[sp["s"] : sp["e"]], "nth": pos - sp["s"] + 1})
+    return out
+
+
+WRONG = "×"  # what the photo check answers for a character really written wrong
+
+
+def keep_shapes(shapes, targets, seen):
+    """The shapes the photo check confirmed written wrong (seen: {target id: answer}), as stored: [{"pos", "char",
+    "note"}]."""
+    ok = {t["shape"] for t in targets if seen.get(t["id"]) == WRONG}
+    return [{"pos": x["pos"], "char": x["char"], "note": x["note"]} for k, x in enumerate(shapes) if k in ok]
+
+
+def shape_marks(review, text, shapes):
+    """Adds a 错别字 mark for each confirmed shape (quote = fix = the right character; note says what was wrong),
+    unless a 错别字 mark already covers that character."""
+    marks = list(review["marks"])
+    for x in shapes:
+        pos = x["pos"]
+        if pos >= len(text) or text[pos] != x["char"]:
+            continue
+        if any(m["type"] == "错别字" and m["start"] <= pos < m["end"] for m in marks):
+            continue
+        note = f"“{x['char']}”写错了" + (f"：{x['note']}" if x["note"] else "")
+        marks.append({"type": "错别字", "start": pos, "end": pos + 1, "quote": x["char"], "fix": x["char"], "note": note[:60], "shape": True})
+    marks.sort(key=lambda m: m["start"])
+    return {**review, "marks": marks}
+
+
+def _offsets(old, new):
     import difflib
 
     table = [None] * (len(old) + 1)
@@ -553,6 +621,24 @@ def remap(old, new, spots):
         for k in range(a1, a2 + 1):
             table[k] = b1 + (k - a1 if tag == "equal" else (b2 - b1) * (k - a1) // max(1, a2 - a1))
     table[len(old)] = len(new)
+    return table
+
+
+def remap_shapes(old, new, shapes):
+    """The characters written wrong after a teacher corrected the recognised text: each follows the edit, and goes
+    when its character is no longer there."""
+    table = _offsets(old, new)
+    out = []
+    for x in shapes:
+        pos = table[x["pos"]] if x["pos"] < len(old) else None
+        if pos is not None and pos < len(new) and new[pos] == x["char"]:
+            out.append({**x, "pos": pos})
+    return out
+
+
+def remap(old, new, spots):
+    """Line positions after a teacher corrected the recognised text: offsets follow the edit."""
+    table = _offsets(old, new)
     out = []
     for page in spots:
         lines = []

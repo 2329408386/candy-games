@@ -1063,7 +1063,7 @@ def test_pinyin_is_written_as_characters():
     assert grading.plausible_fix("错别字", "去hua园", "去花园")
 
 
-def test_check_covers_tips_and_rejects_skipped(models, klass, db):
+def test_check_covers_tips_and_keeps_skipped(models, klass, db):
     t, cid, aid = klass
     models.grade = grade_answer(marks=[
         {"quote": "高心", "type": "错别字", "fix": "高兴", "note": ""},
@@ -1079,8 +1079,9 @@ def test_check_covers_tips_and_rejects_skipped(models, klass, db):
     listed = json.loads(check_body["messages"][1]["content"].split("需要复核的标注：\n")[1])
     assert [i["type"] for i in listed] == ["病句", "错别字", "修改建议"]
     review = json.loads(db.execute("SELECT ai FROM ess_reviews WHERE submission_id=?", (sid,)).fetchone()[0])
-    assert [m["quote"] for m in review["marks"]] == ["我和妈妈去公园玩", "高心"]
-    assert review["rejected"][0]["quote"] == "我记住了"
+    # Only a mark the checker found wrong is dropped: the one it skipped stays.
+    assert [m["quote"] for m in review["marks"]] == ["我和妈妈去公园玩", "高心", "我记住了"]
+    assert review["rejected"] == []
 
 
 def test_reviews_rescaled_to_25(db):
@@ -1396,3 +1397,62 @@ def test_post_explains_thinking_model_out_of_tokens(monkeypatch):
     with pytest.raises(llm.LLMError) as e:
         llm.post(row, {"model": "gemini-3.8-flash", "messages": []})
     assert "最大输出 token" in str(e.value) and not e.value.retry
+
+
+def test_miswritten_characters_helpers():
+    page = grading.parse_ocr({"title": "〔暖|x〕冬", "lines": [
+        {"text": "今天很〔暖|日字旁写成了目字旁〕和，〔真｜少一横〕好。", "box": [1, 1, 900, 60], "para": True},
+        {"text": "〔不对〕的括号照抄", "box": [1, 80, 900, 130], "para": False},
+    ]})
+    assert page["title"] == "暖冬"
+    assert page["lines"][0]["text"] == "今天很暖和，真好。" and page["lines"][1]["text"] == "〔不对〕的括号照抄"
+    assert page["lines"][0]["shapes"] == [{"at": 3, "char": "暖", "note": "日字旁写成了目字旁"}, {"at": 6, "char": "真", "note": "少一横"}]
+    title, text, spots, shapes = grading.assemble([page])
+    assert [(x["pos"], text[x["pos"]]) for x in shapes] == [(3, "暖"), (6, "真")]
+    targets = grading.shape_targets(shapes, text, [(7, spots[0])])
+    for n, t in enumerate(targets, 1):
+        t["id"] = n
+    assert [(t["char"], t["nth"], t["iid"]) for t in targets] == [("暖", 4, 7), ("真", 7, 7)]
+    assert "这个字真的写错了吗" in grading.verify_messages(targets, [b"a", b"b"])[1]["content"][0]["text"]
+    # Only what the photo check confirms (×) is kept.
+    kept = grading.keep_shapes(shapes, targets, {1: "×", 2: "真"})
+    assert kept == [{"pos": 3, "char": "暖", "note": "日字旁写成了目字旁"}]
+    review = grading.shape_marks({"marks": [{"type": "病句", "start": 0, "end": 5, "quote": "今天很暖和", "fix": "", "note": ""}]}, text, kept)
+    assert review["marks"][1] == {"type": "错别字", "start": 3, "end": 4, "quote": "暖", "fix": "暖", "note": "“暖”写错了：日字旁写成了目字旁", "shape": True}
+    # Not twice where a 错别字 mark already covers it.
+    typo = {"marks": [{"type": "错别字", "start": 3, "end": 5, "quote": "暖和", "fix": "暖和", "note": ""}]}
+    assert len(grading.shape_marks(typo, text, kept)["marks"]) == 1
+    # A teacher's correction of the text: the position follows, and goes when the character changes.
+    assert grading.remap_shapes(text, "今天天气很暖和，真好。", kept)[0]["pos"] == 5
+    assert grading.remap_shapes(text, "今天很温和，真好。", kept) == []
+
+
+def test_photo_miswritten_character_is_marked(models, klass, db):
+    t, cid, aid = klass
+    st = students_of(db, cid)["王小明"]
+    lines = [dict(l) for l in OCR_PAGE["lines"]]
+    lines[0]["text"] = "今天是星期天，我和〔妈|女字旁写成了子字旁〕妈去公园玩。"
+    models.ocr = {**OCR_PAGE, "lines": lines}
+    models.grade = grade_answer(marks=[])
+    models.verify = {"items": [{"id": 1, "seen": "×"}]}
+    sid = upload(t, f"/api/assignments/{aid}/submit_for", [photo_bytes()], student_id=str(st["id"])).get_json()["id"]
+    run_worker()
+    sub = db.execute("SELECT * FROM ess_submissions WHERE id=?", (sid,)).fetchone()
+    assert sub["text"].startswith("今天是星期天，我和妈妈去公园玩。") and json.loads(sub["shapes"])[0]["pos"] == 9
+    ai = json.loads(db.execute("SELECT ai FROM ess_reviews WHERE submission_id=?", (sid,)).fetchone()[0])
+    assert [(m["quote"], m["fix"], m["start"]) for m in ai["marks"] if m["type"] == "错别字"] == [("妈", "妈", 9)]
+    # The teacher corrects the text elsewhere: the character stays marked when graded again.
+    fixed = sub["text"].replace("星期天", "星期日")
+    assert jpost(t, f"/api/submissions/{sid}/text", {"text": fixed}).status_code == 200
+    assert json.loads(db.execute("SELECT shapes FROM ess_submissions WHERE id=?", (sid,)).fetchone()[0])[0]["pos"] == 9
+    # The photo shows it written right (or the check fails): not marked.
+    for verify in ({"items": [{"id": 1, "seen": "妈"}]}, {"bad": 1}):
+        models.verify = verify
+        sid = upload(t, f"/api/assignments/{aid}/submit_for", [photo_bytes()], student_id=str(students_of(db, cid)["李华"]["id"])).get_json()["id"]
+        run_worker()
+        sub = db.execute("SELECT * FROM ess_submissions WHERE id=?", (sid,)).fetchone()
+        assert sub["shapes"] == "" and "我和妈妈" in sub["text"]
+        ai = json.loads(db.execute("SELECT ai FROM ess_reviews WHERE submission_id=?", (sid,)).fetchone()[0])
+        assert not [m for m in ai["marks"] if m["type"] == "错别字"]
+        db.execute("DELETE FROM ess_submissions WHERE id=?", (sid,))
+        db.commit()

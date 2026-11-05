@@ -1418,9 +1418,9 @@ def register_teacher_api(app):
             raise ValueError("试用的批改篇数已经用完了" if is_trial(sub["license_id"]) else "本月的批改篇数已经用完")
         now = int(time.time())
         new_id = d.execute(
-            "INSERT INTO ess_submissions(assignment_id,student_id,attempt,source,title,text,writing,status,created_at,recheck_of)"
-            " VALUES(?,?,?,?,?,?,?,'queued',?,?)",
-            (sub["assignment_id"], sub["student_id"], sub["attempt"] + 1, sub["source"], sub["title"], sub["text"], sub["writing"], now, sid),
+            "INSERT INTO ess_submissions(assignment_id,student_id,attempt,source,title,text,writing,status,created_at,recheck_of,shapes)"
+            " VALUES(?,?,?,?,?,?,?,'queued',?,?,?)",
+            (sub["assignment_id"], sub["student_id"], sub["attempt"] + 1, sub["source"], sub["title"], sub["text"], sub["writing"], now, sid, sub["shapes"]),
         ).lastrowid
         for ph in images_of(sid):
             iid = d.execute(
@@ -1449,7 +1449,11 @@ def register_teacher_api(app):
             for p, lines in zip(photos, spots):
                 if p["lines"]:
                     d.execute("UPDATE ess_images SET lines=? WHERE id=?", (json.dumps(lines), p["id"]))
-        d.execute("UPDATE ess_submissions SET text=?,status='queued',hold='' WHERE id=?", (text, sid))
+        shapes = grading.remap_shapes(sub["text"], text, json.loads(sub["shapes"])) if sub["shapes"] and sub["text"] else []
+        d.execute(
+            "UPDATE ess_submissions SET text=?,shapes=?,status='queued',hold='' WHERE id=?",
+            (text, json.dumps(shapes, ensure_ascii=False) if shapes else "", sid),
+        )
         enqueue(sid)
         return jsonify(ok=True)
 

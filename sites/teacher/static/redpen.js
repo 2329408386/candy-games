@@ -344,9 +344,17 @@
         note = note || '另起一段';
       } else {
         const quote = data.text.slice(m.start, m.end);
-        const ops = m.fix ? editOps(quote, m.fix) : null;
+        // fix === quote: a character written wrong so that it is no character at all (the photo shows it wrong,
+        // the text has the right one): ring it and write it correctly above.
+        const same = !!m.fix && m.fix === quote;
+        const ops = m.fix && !same ? editOps(quote, m.fix) : null;
         const sub = (a0, a1) => segments(lines, { start: m.start + a0, end: m.start + a1 });
-        if (ops && ops.swap) {
+        if (same) {
+          const lp = loop(first, rand);
+          draw(lp.d);
+          for (const seg of segs.slice(1)) draw(loop(seg, rand).d);
+          if (!above(m.fix, lp.top, (first.x1 + first.x2) / 2, first)) long = '正确写法：' + m.fix;
+        } else if (ops && ops.swap) {
           const [p0, p1, p2] = ops.swap, A = sub(p0, p1), B = sub(p1, p2);
           if (A.length === 1 && B.length === 1 && Math.abs(A[0].y1 - B[0].y1) < A[0].h * 0.5) draw(swapLine(A[0], B[0], rand));
           else for (const seg of segs) draw(underline(seg, rand)), (long = '改为：' + m.fix);
@@ -376,7 +384,7 @@
           for (const seg of segs) draw(underline(seg, rand));
           if (m.fix) long = '改为：' + m.fix;
         }
-        if (kind === 'typo' && !long) note = ''; // the right word above says it all; the full note is a tap away
+        if (kind === 'typo' && !long && !same) note = ''; // the right word above says it all; the full note is a tap away
       }
       if (long) note = note && !long.startsWith(note) ? note + (/[。！？!?…]$/.test(note) ? '' : '。') + long : long;
       if (!note) return;
@@ -913,7 +921,7 @@
       const n = Number(g.dataset.n || 0);
       pop.innerHTML =
         '<strong>' + (n ? esc(CIRCLED[n - 1] || n) + ' ' : '') + esc(m.type) + '</strong><q>' + esc(quote) + '</q>' +
-        (m.fix && m.type !== '好词好句' ? '<p>' + (m.type === '修改建议' ? '可以写成' : '改成') + '：<b>' + esc(m.fix) + '</b></p>' : '') +
+        (m.fix && m.type !== '好词好句' ? '<p>' + (m.type === '修改建议' ? '可以写成' : m.fix === quote ? '正确写法' : '改成') + '：<b>' + esc(m.fix) + '</b></p>' : '') +
         (m.note ? '<p>' + esc(m.note) + '</p>' : '');
       pop.hidden = false;
       const r = container.getBoundingClientRect(), gr = g.getBoundingClientRect();

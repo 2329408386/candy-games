@@ -130,19 +130,51 @@ def read_photos(d, essay):
         pages.append(page)
         upright.append(img)
     images = upright
-    title, text, spots = grading.assemble(pages)
+    title, text, spots, shapes = grading.assemble(pages)
     writing = grading.worst_writing(pages)
     if grading.char_count(text) < 10:
         raise llm.LLMError("照片里没有认出作文，请拍清楚整页作文再交", retry=False)
     text = text[: grading.MAX_TEXT]
-    d.execute(
-        "UPDATE ess_submissions SET text=?,title=CASE WHEN title='' THEN ? ELSE title END,writing=? WHERE id=?",
-        (text, title, writing, essay["id"]),
-    )
+    spots = [[l for l in lines if l["e"] <= len(text)] for lines in spots]
     for img, lines in zip(images, spots):
-        d.execute("UPDATE ess_images SET lines=? WHERE id=?", (json.dumps([l for l in lines if l["e"] <= len(text)]), img["id"]))
+        d.execute("UPDATE ess_images SET lines=? WHERE id=?", (json.dumps(lines), img["id"]))
     d.commit()
-    return {**essay, "text": text, "title": essay["title"] or title, "writing": writing}
+    shapes = verify_shapes(d, essay, [s for s in shapes if s["pos"] < len(text)], text, [(img["id"], lines) for img, lines in zip(images, spots)])
+    d.execute(
+        "UPDATE ess_submissions SET text=?,title=CASE WHEN title='' THEN ? ELSE title END,writing=?,shapes=? WHERE id=?",
+        (text, title, writing, json.dumps(shapes, ensure_ascii=False) if shapes else "", essay["id"]),
+    )
+    d.commit()
+    return {**essay, "text": text, "title": essay["title"] or title, "writing": writing, "shapes": json.dumps(shapes, ensure_ascii=False) if shapes else ""}
+
+
+def verify_shapes(d, essay, shapes, text, pages):
+    """The characters the ocr step says were written wrong (no character at all), looked at again on the photo:
+    only the ones the photo check confirms are kept. A failed call keeps none (better miss one than mark a right one)."""
+    from . import crop_line
+
+    targets = grading.shape_targets(shapes, text, pages)
+    if not targets:
+        return []
+    for n, t in enumerate(targets, 1):
+        t["id"] = n
+    try:
+        crops = [crop_line(t["iid"], t["box"]) for t in targets]
+        seen, _ = llm.chat(
+            d,
+            "ocr",
+            grading.verify_messages(targets, crops),
+            json_mode=True,
+            parse=lambda content: grading.parse_verify(llm.parse_json(content), len(targets)),
+            license_id=essay["license_id"],
+            submission_id=essay["id"],
+        )
+    except (llm.LLMError, OSError, ValueError) as e:
+        log.warning("shape verify failed for submission %s: %s", essay["id"], e)
+        return []
+    kept = grading.keep_shapes(shapes, targets, seen)
+    log.info("submission %s: %s of %s miswritten character(s) confirmed", essay["id"], len(kept), len(targets))
+    return kept
 
 
 def grade(d, essay):
@@ -175,6 +207,9 @@ def grade(d, essay):
         review = {**review, "flags": review["flags"] + ["unchecked"], "rejected": [], "check_level": None}
     if essay["source"] == "photo":
         review = verify_typos(d, essay, review)
+        if essay["shapes"]:
+            text = d.execute("SELECT text FROM ess_submissions WHERE id=?", (essay["id"],)).fetchone()[0]
+            review = grading.shape_marks(review, text, json.loads(essay["shapes"]))
     return review, model
 
 
