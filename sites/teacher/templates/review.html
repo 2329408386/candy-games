@@ -5,11 +5,13 @@
   <div class="wb-heading">
     <div>
       <h1>{{sub.student_name}} ·《{{sub.title or sub.assignment_title}}》</h1>
-      <p class="muted">{{sub.class_name}} · {{sub.assignment_title}}{% if sub.genre %} · {{sub.genre}}{% endif %} · 第 {{sub.attempt}} 次提交 · {{sub.created_at|moment}}{% if sub.source == 'teacher' %} · 老师代交{% elif sub.source == 'photo' %} · 拍照提交{% endif %}
+      <p class="muted">{{sub.class_name}} · {{sub.assignment_title}}{% if sub.genre %} · {{sub.genre}}{% endif %} · 第 {{sub.attempt}} 次{{" · 老师再次检视" if sub.recheck_of else "提交"}} · {{sub.created_at|moment}}{% if sub.source == 'teacher' %} · 老师代交{% elif sub.source == 'photo' %} · 拍照提交{% endif %}
         {% if others|length > 1 %} · 其他几次：{% for o in others if o.id != sub.id %}<a href="{{url_for('review_page', sid=o.id)}}">第 {{o.attempt}} 次</a> {% endfor %}{% endif %}</p>
     </div>
     <div class="heading-actions">
-      {% if sub.status == 'published' %}<a class="button secondary" href="{{url_for('teacher_result', sid=sub.id)}}">学生看到的</a><a class="button secondary" href="{{url_for('teacher_result', sid=sub.id, project=1, anon=1)}}" target="_blank">投屏讲评（隐藏姓名）</a>{% endif %}
+      {% if sub.status == 'published' %}<a class="button secondary" href="{{url_for('teacher_result', sid=sub.id)}}">学生看到的</a><a class="button secondary" href="{{url_for('teacher_result', sid=sub.id, project=1, anon=1)}}" target="_blank">投屏讲评（隐藏姓名）</a>
+        {% if can_recheck %}<button type="button" class="secondary" data-post="{{url_for('recheck', sid=sub.id)}}" data-confirm="让 AI 再检视一遍这篇作文？会生成第 {{sub.attempt + 1}} 次批改结果，占这名学生 1 次提交机会（每次作业合计 {{max_attempts}} 次），检视后学生不能再交。">再次检视</button>
+        {% elif others[-1].id == sub.id %}<small class="muted">已用满 {{max_attempts}} 次，不能再次检视</small>{% endif %}{% endif %}
       {% if sub.status in ('review', 'failed') %}<button type="button" class="secondary" data-post="{{url_for('regrade', sid=sub.id)}}" data-confirm="让 AI 重新批改这篇作文？老师在这一篇上做的修改会丢掉。">重新批改</button>{% endif %}
     </div>
   </div>

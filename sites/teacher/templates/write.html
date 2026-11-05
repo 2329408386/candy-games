@@ -13,7 +13,7 @@
     <div class="attempts">
       {% for s in attempts %}
         <div class="attempt">
-          第 {{s.attempt}} 次 · {{s.created_at|moment}} ·
+          第 {{s.attempt}} 次{% if s.recheck_of %}（老师重新检视）{% endif %} · {{s.created_at|moment}} ·
           {% if s.status == 'published' %}<a href="{{url_for('result_page', sid=s.id)}}">看老师的批改</a>
           {% elif s.status in BUSY %}<span data-poll="{{url_for('submission_state', sid=s.id, **{'as': 'student'})}}"><span data-label>{{STUDENT_STATUS[s.status]}}</span></span>
           {% elif s.status == 'review' %}已经批好，老师正在看，看完就能看到批改

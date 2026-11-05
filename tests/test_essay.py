@@ -4,6 +4,7 @@ Model calls are faked (core.essay.llm.post), so nothing here touches the network
 import io, json, re, time, zipfile
 import pytest
 from conftest import KEYS, TEACHER2_KEY, SiteClient
+import core.essay as essay
 from core.essay import grading, llm, models_sync, worker
 
 ESSAY = (
@@ -114,6 +115,7 @@ def jpost(c, path, data=None):
 def klass(db):
     """A teacher with a fresh class of three students and one assignment (earlier tests' classes archived)."""
     db.execute("UPDATE ess_classes SET archived_at=1 WHERE license_id=1 AND archived_at IS NULL")
+    db.execute("DELETE FROM limits WHERE bucket LIKE '%:activate:%'")  # the suite activates more than 30 times in 5 min
     db.commit()
     t = teacher_client()
     r = jpost(t, "/api/classes", {"name": "三年级二班", "grade": 3})
@@ -240,6 +242,58 @@ def test_auto_publish_and_publish_all(models, klass, db):
     assert db.execute("SELECT status FROM ess_submissions WHERE id=?", (sid2,)).fetchone()[0] == "review"
     assert jpost(t, f"/api/assignments/{aid}/publish_all").get_json()["published"] == 1
     assert s2.get(f"/student/essay/results/{sid2}").status_code == 200
+
+
+def test_teacher_rechecks_a_published_essay_using_an_attempt(models, klass, db):
+    t, cid, aid = klass
+    s, _ = student_client(db, cid)
+    sid = jpost(s, f"/api/write/{aid}", {"text": ESSAY}).get_json()["id"]
+    run_worker()
+    assert "只有已发布" in jpost(t, f"/api/submissions/{sid}/recheck").get_json()["error"]
+    assert "再次检视</button>" not in t.get(f"/teacher/essay/submissions/{sid}").get_data(as_text=True)
+    assert jpost(t, f"/api/assignments/{aid}/publish_all").get_json()["published"] == 1
+    assert "再次检视</button>" in t.get(f"/teacher/essay/submissions/{sid}").get_data(as_text=True)
+    r = jpost(t, f"/api/submissions/{sid}/recheck")
+    assert r.status_code == 200, r.get_json()
+    new = r.get_json()["id"]
+    assert r.get_json()["url"].endswith(f"/teacher/essay/submissions/{new}")
+    row = db.execute("SELECT * FROM ess_submissions WHERE id=?", (new,)).fetchone()
+    assert row["attempt"] == 2 and row["recheck_of"] == sid and row["text"] == ESSAY and row["status"] == "queued"
+    run_worker()
+    assert db.execute("SELECT status FROM ess_submissions WHERE id=?", (new,)).fetchone()[0] == "review"
+    page = t.get(f"/teacher/essay/submissions/{new}").get_data(as_text=True)
+    assert "老师再次检视" in page and "不能再次检视" not in page  # not published yet
+    # Both attempts are used: neither the student nor the teacher can add another.
+    assert "更新的一次" in jpost(t, f"/api/submissions/{sid}/recheck").get_json()["error"]
+    jpost(t, f"/api/assignments/{aid}/publish_all")
+    assert "最多交" in jpost(s, f"/api/write/{aid}", {"text": ESSAY}).get_json()["error"]
+    assert "用满" in jpost(t, f"/api/submissions/{new}/recheck").get_json()["error"]
+    assert "不能再次检视" in t.get(f"/teacher/essay/submissions/{new}").get_data(as_text=True)
+    assert "老师重新检视" in s.get(f"/student/essay/results/{new}").get_data(as_text=True)
+    assert "老师重新检视" in s.get(f"/student/essay/{aid}").get_data(as_text=True)
+
+
+def test_recheck_copies_photos_and_counts_toward_the_month(models, klass, db):
+    t, cid, aid = klass
+    s, _ = student_client(db, cid)
+    sid = upload(s, f"/api/write/{aid}", [photo_bytes()]).get_json()["id"]
+    run_worker()
+    jpost(t, f"/api/assignments/{aid}/publish_all")
+    month = db.execute("SELECT count(*) FROM ess_submissions s JOIN ess_assignments a ON a.id=s.assignment_id JOIN ess_classes c ON c.id=a.class_id WHERE c.license_id=1").fetchone()[0]
+    db.execute("INSERT OR REPLACE INTO ess_quota VALUES(1,1000,?)", (month,))
+    db.commit()
+    assert "篇数已经用完" in jpost(t, f"/api/submissions/{sid}/recheck").get_json()["error"]
+    db.execute("DELETE FROM ess_quota")
+    db.commit()
+    calls = len(models.calls)
+    new = jpost(t, f"/api/submissions/{sid}/recheck").get_json()["id"]
+    old_img = db.execute("SELECT * FROM ess_images WHERE submission_id=?", (sid,)).fetchone()
+    img = db.execute("SELECT * FROM ess_images WHERE submission_id=?", (new,)).fetchone()
+    assert img["id"] != old_img["id"] and img["lines"] == old_img["lines"] and essay.image_path(img["id"]).exists()
+    run_worker()
+    assert not [b for m, b in models.calls[calls:] if "誊抄" in b["messages"][0]["content"][:80]]  # not read again
+    row = db.execute("SELECT * FROM ess_submissions WHERE id=?", (new,)).fetchone()
+    assert row["status"] in ("review", "published") and row["source"] == "photo"
 
 
 def test_backup_model_and_failure(models, klass, db):

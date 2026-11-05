@@ -6,7 +6,7 @@
   <div class="result-head">
     <div>
       <h1>《{{sub.title or sub.assignment_title}}》</h1>
-      <p class="muted">{% if not hide_name %}{{sub.student_name}} · {% endif %}第 {{sub.attempt}} 次提交{% if previous %} · 上次 {{previous.total}} 分（{{previous.level}}）{% endif %}</p>
+      <p class="muted">{% if not hide_name %}{{sub.student_name}} · {% endif %}第 {{sub.attempt}} 次{{" · 老师重新检视" if sub.recheck_of else "提交"}}{% if previous %} · 上次 {{previous.total}} 分（{{previous.level}}）{% endif %}</p>
     </div>
   </div>
   <div class="redpen" id="redpen"></div>

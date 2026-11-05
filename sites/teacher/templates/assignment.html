@@ -54,7 +54,7 @@
           <td>{{s.name}}</td>
           {% if sub %}
             <td><span class="status status-{{sub.status}}">{{STATUS[sub.status]}}</span>{% if sub.hold %}<br><small class="muted">{{HOLDS.get(sub.hold, '')}}</small>{% endif %}{% if assignment.due_at and sub.created_at > assignment.due_at %} <span class="tag off">迟交</span>{% endif %}</td>
-            <td>{{sub.attempt}} / {{max_attempts}}</td>
+            <td>{{sub.attempt}} / {{max_attempts}}{% if sub.recheck_of %}<br><small class="muted">再次检视</small>{% endif %}</td>
             <td>{{r.level if r else ''}}</td>
             <td>{{r.total if r else ''}}</td>
             <td class="col-time">{{sub.created_at|moment}}</td>

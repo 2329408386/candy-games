@@ -109,6 +109,9 @@ def initialize(path):
         if "error" not in columns:  # why a call failed and how long it took, for 模型设置
             d.execute("ALTER TABLE ess_usage ADD COLUMN error TEXT NOT NULL DEFAULT ''")
             d.execute("ALTER TABLE ess_usage ADD COLUMN ms INTEGER")
+        if "recheck_of" not in {r[1] for r in d.execute("PRAGMA table_info(ess_submissions)")}:
+            # 再次检视: the teacher had the published essay graded again as a new attempt; the id of the one rechecked.
+            d.execute("ALTER TABLE ess_submissions ADD COLUMN recheck_of INTEGER")
         migrate(d)
     path.chmod(0o600)
 

@@ -898,12 +898,15 @@ def register_pages(app):
         ]
         band = grading.BANDS[grading.band_of(sub["grade"])]
         next_id = next((q for q in queue if q != sid), None)
+        can_recheck = sub["status"] == "published" and others[-1]["id"] == sid and sub["attempt"] < MAX_ATTEMPTS
         current_review = review and (review["final"] or review["ai"])
         return render_template(
             "review.html",
             sub=sub,
             review=review,
             others=others,
+            can_recheck=can_recheck,
+            max_attempts=MAX_ATTEMPTS,
             band=band,
             next_id=next_id,
             photos=images_of(sid),
@@ -1393,6 +1396,40 @@ def register_teacher_api(app):
         db().execute("UPDATE ess_submissions SET status='queued',hold='' WHERE id=?", (sid,))
         enqueue(sid)
         return jsonify(ok=True)
+
+    @app.post("/api/submissions/<int:sid>/recheck")
+    @teacher_api
+    def recheck(row, sid):
+        """再次检视: a published essay is graded again as the student's next attempt (same text, photos and 书写),
+        so it uses one of the MAX_ATTEMPTS shared with the student's own submissions and counts toward the month."""
+        sub = own_submission(sid, row["id"])
+        if sub["status"] != "published":
+            raise ValueError("只有已发布的作文可以再次检视")
+        d = db()
+        latest = d.execute(
+            "SELECT max(attempt) FROM ess_submissions WHERE assignment_id=? AND student_id=?", (sub["assignment_id"], sub["student_id"])
+        ).fetchone()[0]
+        if latest != sub["attempt"]:
+            raise ValueError("这名学生已经有更新的一次了，请在最新的一次上再次检视")
+        if sub["attempt"] >= MAX_ATTEMPTS:
+            raise ValueError(f"这次作业已经用满 {MAX_ATTEMPTS} 次（学生提交和再次检视合计），不能再检视")
+        features.require(d, sub["license_id"], "essay")
+        if monthly_used(sub["license_id"]) >= quota(sub["license_id"])["monthly"]:
+            raise ValueError("试用的批改篇数已经用完了" if is_trial(sub["license_id"]) else "本月的批改篇数已经用完")
+        now = int(time.time())
+        new_id = d.execute(
+            "INSERT INTO ess_submissions(assignment_id,student_id,attempt,source,title,text,writing,status,created_at,recheck_of)"
+            " VALUES(?,?,?,?,?,?,?,'queued',?,?)",
+            (sub["assignment_id"], sub["student_id"], sub["attempt"] + 1, sub["source"], sub["title"], sub["text"], sub["writing"], now, sid),
+        ).lastrowid
+        for ph in images_of(sid):
+            iid = d.execute(
+                "INSERT INTO ess_images(submission_id,page,w,h,lines,created_at) VALUES(?,?,?,?,?,?)",
+                (new_id, ph["page"], ph["w"], ph["h"], ph["lines"], now),
+            ).lastrowid
+            image_path(iid).write_bytes(image_path(ph["id"]).read_bytes())
+        enqueue(new_id)
+        return jsonify(ok=True, id=new_id, url=url_for("review_page", sid=new_id))
 
     @app.post("/api/submissions/<int:sid>/text")
     @teacher_api
