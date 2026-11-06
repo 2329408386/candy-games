@@ -120,7 +120,7 @@
       add.classList.add('busy');
       for (const f of files) {
         try {
-          const blob = await WB.shrink(f, 2800, 0.85);
+          const blob = await WB.shrink(f, 2000, 0.85);
           items.push({ blob, url: URL.createObjectURL(blob) });
         } catch (err) {
           alert(err.message);

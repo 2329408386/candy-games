@@ -8,10 +8,6 @@ Pipeline (run by the worker, core/essay/worker.py):
               〔暖|日字旁写成了目字旁〕; parse_ocr puts the intended character in the text and keeps the note, the photo
               is looked at again for each (shape_targets, keep_shapes), and shape_marks adds a 错别字 mark for every one
               confirmed (quote = fix = the right character) once the review is checked.
-              Pixels help where switched on (ess_meta, core/essay/photo.py): photo_rectify cuts the sheet out of the
-              picture first, photo_snap moves the line boxes onto the rows of handwriting, shape_scan has the look step
-              (llm.look_step) search enlarged lines for more such characters (prompts/shape_scan.md) and confirm each
-              against a close-up and the standard form (prompts/shape_verify.md).
   1. grade  — the grade step's model returns dims / marks / summary (one encouraging paragraph) (prompts/grade.md).
   2. clean  — the server keeps only what fits the schema: scores are clamped to each dimension's maximum, the total
               and level are computed here (never taken from the model), and every quote must occur in the essay
@@ -68,8 +64,6 @@ GRADE_PROMPT = _read("grade.md")
 CHECK_PROMPT = _read("check.md")
 OCR_PROMPT = _read("ocr.md")
 VERIFY_PROMPT = _read("verify.md")
-SCAN_PROMPT = _read("shape_scan.md")
-SHAPE_VERIFY_PROMPT = _read("shape_verify.md")
 
 
 def _anchor_files():
@@ -461,26 +455,10 @@ def typo_targets(review, text, pages):
     return out
 
 
-def verify_messages(targets, crops, closeups=None):
-    """crops: the JPEG bytes of each target's line, in the same order. closeups (shape targets only): (the character
-    enlarged, its standard form or None) for each; the model is then told what the child meant, not what looked wrong."""
+def verify_messages(targets, crops):
+    """crops: the JPEG bytes of each target's line, in the same order."""
     import base64
 
-    def picture(data):
-        return {"type": "image_url", "image_url": {"url": "data:image/jpeg;base64," + base64.b64encode(data).decode()}}
-
-    if closeups is not None:
-        content = []
-        for t, data, (close, standard) in zip(targets, crops, closeups):
-            content += [
-                {"type": "text", "text": f"第 {t['id']} 项：这一行识别为「{t['line']}」，请看其中第 {t['nth']} 个字，学生想写的是「{t['char']}」。这个字真的写错了吗？下面依次是整行、放大的小图" + ("、规范写法。" if standard else "。")},
-                picture(data),
-                picture(close),
-            ]
-            if standard:
-                content.append(picture(standard))
-        content.append({"type": "text", "text": "请逐项先写看到的部件，再回答。"})
-        return [{"role": "system", "content": SHAPE_VERIFY_PROMPT}, {"role": "user", "content": content}]
     content = []
     for t, data in zip(targets, crops):
         if "char" in t:  # shape_targets: was it really written wrong?
@@ -488,7 +466,7 @@ def verify_messages(targets, crops, closeups=None):
         else:
             ask = f"（识别成了「{t['wrong']}」，批改认为应该是「{t['right']}」）。"
         content.append({"type": "text", "text": f"第 {t['id']} 项：这一行识别为「{t['line']}」，请看其中第 {t['nth']} 个字{ask}"})
-        content.append(picture(data))
+        content.append({"type": "image_url", "image_url": {"url": "data:image/jpeg;base64," + base64.b64encode(data).decode()}})
     content.append({"type": "text", "text": "请逐项回答纸上写的是哪个字。"})
     return [{"role": "system", "content": VERIFY_PROMPT}, {"role": "user", "content": content}]
 
@@ -607,65 +585,6 @@ def shape_targets(shapes, text, pages):
         out.append({"shape": k, "pos": pos, "char": x["char"], "note": x["note"], "iid": iid, "box": sp["b"],
                     "line": text[sp["s"] : sp["e"]], "nth": pos - sp["s"] + 1})
     return out
-
-
-SCAN_ROWS = 5  # lines of a page in one picture of the shape scan
-SCAN_MAX = 8  # candidates kept per page: a model that finds more is not looking at strokes
-
-
-def scan_messages(texts, sheets):
-    """texts: [(line number, text)] of a page; sheets: [(the numbers in the picture, JPEG bytes)]."""
-    import base64
-
-    by_number = dict(texts)
-    content = []
-    for numbers, data in sheets:
-        listed = "\n".join(f"第 {n} 行：{by_number[n]}" for n in numbers)
-        content.append({"type": "text", "text": "下面这张图里各行识别出来的文字（只用来定位）：\n" + listed})
-        content.append({"type": "image_url", "image_url": {"url": "data:image/jpeg;base64," + base64.b64encode(data).decode()}})
-    content.append({"type": "text", "text": "请找出写错笔画、部件的字。"})
-    return [{"role": "system", "content": SCAN_PROMPT}, {"role": "user", "content": content}]
-
-
-def parse_scan(raw):
-    """The shape scan's answer → [{"line", "nth", "char", "note"}]. Raises ValueError."""
-    items = raw.get("items")
-    if not isinstance(items, list):
-        raise ValueError("筛查结果缺少 items")
-    out = []
-    for item in items:
-        if not isinstance(item, dict) or not isinstance(item.get("line"), int) or not isinstance(item.get("nth"), int):
-            continue
-        char = item.get("char")
-        if isinstance(char, str) and len(char.strip()) == 1 and "\u4e00" <= char.strip() <= "\u9fff":
-            note = item.get("note")
-            out.append({"line": item["line"], "nth": item["nth"], "char": char.strip(), "note": _str(note, 40) if isinstance(note, str) else ""})
-    return out
-
-
-def scan_shapes(items, text, spots, page):
-    """Candidates of the scan on one page → shapes like assemble's: each must be the character the text has at that
-    place (one off is allowed, models miscount). spots: the page's lines, numbered from 1 by the scan."""
-    out, seen = [], set()
-    for item in items:
-        if not 1 <= item["line"] <= len(spots):
-            continue
-        spot = spots[item["line"] - 1]
-        wanted = spot["s"] + item["nth"] - 1
-        pos = next((p for p in (wanted, wanted - 1, wanted + 1) if spot["s"] <= p < spot["e"] and p < len(text) and text[p] == item["char"]), None)
-        if pos is None or pos in seen:
-            continue
-        seen.add(pos)
-        out.append({"pos": pos, "char": item["char"], "note": item["note"], "page": page})
-        if len(out) == SCAN_MAX:
-            break
-    return out
-
-
-def merge_shapes(first, more):
-    """Shapes of the ocr step, then those of the scan at places the ocr step did not name, in text order."""
-    known = {x["pos"] for x in first}
-    return sorted(first + [x for x in more if x["pos"] not in known], key=lambda x: x["pos"])
 
 
 WRONG = "×"  # what the photo check answers for a character really written wrong

@@ -67,9 +67,9 @@ def usable(model, step):
     if model.get("type") not in (None, "chat"):
         return False
     inputs = (model.get("modalities") or {}).get("input")
-    if step in ("ocr", "verify") and inputs is not None and not any(str(x).startswith("image") for x in inputs):
+    if step == "ocr" and inputs is not None and not any(str(x).startswith("image") for x in inputs):
         return False
-    if step not in ("ocr", "verify") and (model.get("capabilities") or {}).get("structured_output") is False:
+    if step != "ocr" and (model.get("capabilities") or {}).get("structured_output") is False:
         return False
     return True
 
