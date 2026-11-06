@@ -1266,6 +1266,11 @@ def test_help_pages(db, klass):
     assert 'href="/workspace/chinese/teacher/help"' in anonymous.get("/teacher/").get_data(as_text=True)
     assert 'href="/workspace/chinese/student/help"' in anonymous.get("/student/").get_data(as_text=True)
     assert "help-link" not in words
+    for page in (teacher_doc, student_doc):  # the screenshots exist
+        shots = re.findall(r'<img src="/workspace/chinese(/static/help/[^"]+)"', page.get_data(as_text=True))
+        assert len(shots) == 4
+        for shot in shots:
+            assert anonymous.get(shot).status_code == 200
     t, cid, _ = klass
     signed_in = t.get("/teacher/").get_data(as_text=True)
     assert "help-link" in signed_in and "<span>班级</span>" in signed_in

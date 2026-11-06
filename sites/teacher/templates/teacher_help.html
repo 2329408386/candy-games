@@ -3,18 +3,18 @@
 {% block header_actions %}<a class="header-link" href="{{url_for('teacher_home')}}">返回工作台</a>{% endblock %}
 {% block content %}
   <div class="help-doc">
-    <div class="wb-heading"><div><h1>老师端使用帮助</h1><p class="muted">从建班到讲评，按下面的顺序做就可以。</p></div></div>
+    <div class="wb-heading"><div><h1>老师端使用帮助</h1><p class="muted">从建班到讲评，按下面的顺序做就可以。图里红框是要点的地方，名字都是示例。</p></div></div>
     <section class="wb-card">
       <h2>使用步骤</h2>
       <ol>
         <li><strong>登录：</strong>输入授权码；没有授权码可以先点「免费试用」。</li>
-        <li><strong>建班：</strong>点右上角「班级」，新建班级。每位老师可以建 1 个班。</li>
-        <li><strong>添加学生：</strong>进入班级，点「添加学生」，一行写一个名字，系统会给每人生成 4 位口令。还能加多少人，那里会有提示。</li>
-        <li><strong>发登录条：</strong>在班级页点「导出登录条（Excel）」，打印后发给学生。</li>
-        <li><strong>布置作文：</strong>进入「我的功能 → 作文批改 → 布置作文」。可以从课本选单元，主题、文体、引言和习作重点会自动填好，也可以再改。</li>
+        <li><strong>建班：</strong>点右上角「班级」，新建班级。每位老师可以建 1 个班。<figure class="help-shot"><img src="{{url_for('static', filename='help/help-teacher-class.ef4d6c47.webp')}}" width="390" height="515" loading="lazy" alt="我的班级页面：右上角的班级按钮和新建班级表单"></figure></li>
+        <li><strong>添加学生：</strong>进入班级，在学生名单下面点「添加学生」，一行写一个名字，系统会给每人生成 4 位口令。还能加多少人，那里会有提示。</li>
+        <li><strong>发登录条：</strong>在班级页点「导出登录条（Excel）」，打印后发给学生。<figure class="help-shot"><img src="{{url_for('static', filename='help/help-teacher-students.97506862.webp')}}" width="390" height="400" loading="lazy" alt="班级页面：导出登录条按钮和添加学生"></figure></li>
+        <li><strong>布置作文：</strong>进入「我的功能 → 作文批改 → 布置作文」。可以从课本选单元，主题、文体、引言和习作重点会自动填好，也可以再改。<figure class="help-shot"><img src="{{url_for('static', filename='help/help-teacher-assign.2a7b9d2c.webp')}}" width="390" height="620" loading="lazy" alt="布置作文页面：从课本选年级、上下册和单元"></figure></li>
         <li><strong>收作文：</strong>学生登录后拍照或打字提交。学生交的是纸质作文时，可以在作业页点这名学生后面的「代交」。</li>
         <li><strong>批改和发布：</strong>默认批改完直接发给学生。布置时不勾选这一项，就要在作业页点「开始审核」，改好后再发布。</li>
-        <li><strong>讲评：</strong>作业页可以「批量导出（PDF）」；打开一篇已发布的作文，可以用「投屏讲评（隐藏姓名）」。</li>
+        <li><strong>讲评：</strong>作业页可以「批量导出（PDF）」；打开一篇已发布的作文，可以用「投屏讲评（隐藏姓名）」。<figure class="help-shot"><img src="{{url_for('static', filename='help/help-teacher-export.4727e2f6.webp')}}" width="390" height="310" loading="lazy" alt="作业页面：批量导出 PDF 按钮"></figure></li>
       </ol>
     </section>
     <section class="wb-card">

@@ -351,6 +351,8 @@ a.feature-card{display:flex}
 .help-doc .wb-card+.wb-card{margin-top:16px}
 .help-doc ol,.help-doc ul{margin:0;padding-left:1.4em}
 .help-doc li{margin:8px 0;line-height:1.7}
+.help-shot{margin:10px 0 14px}
+.help-shot img{display:block;width:100%;max-width:300px;height:auto;border:1px solid var(--line);border-radius:12px}
 .help-doc dt{font-weight:650;margin-top:12px}
 .help-doc dt:first-of-type{margin-top:0}
 .help-doc dd{margin:4px 0 0;line-height:1.7;color:var(--muted)}

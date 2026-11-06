@@ -3,15 +3,15 @@
 {% block header_actions %}<a class="header-link" href="{{url_for('student_home')}}">我的作业</a>{% endblock %}
 {% block content %}
   <div class="help-doc">
-    <div class="wb-heading"><div><h1>学生端使用帮助</h1><p class="muted">跟着下面几步，就能把作文交给老师。</p></div></div>
+    <div class="wb-heading"><div><h1>学生端使用帮助</h1><p class="muted">跟着下面几步，就能把作文交给老师。图里红框是要点的地方，名字都是示例。</p></div></div>
     <section class="wb-card">
       <h2>怎么交作文</h2>
       <ol>
-        <li><strong>登录：</strong>填老师发的登录条上的班级码、姓名和 4 位口令。登录一次以后，这台设备会记住你。</li>
-        <li><strong>选作业：</strong>在「我的作业」里点「去交作文」。</li>
+        <li><strong>登录：</strong>填老师发的登录条上的班级码、姓名和 4 位口令。登录一次以后，这台设备会记住你。<figure class="help-shot"><img src="{{url_for('static', filename='help/help-student-login.736fe48f.webp')}}" width="390" height="660" loading="lazy" alt="学生登录页面：填班级码、姓名和口令"></figure></li>
+        <li><strong>选作业：</strong>在「我的作业」里点「去交作文」。<figure class="help-shot"><img src="{{url_for('static', filename='help/help-student-home.016cf178.webp')}}" width="390" height="465" loading="lazy" alt="我的作业页面：去交作文按钮"></figure></li>
         <li><strong>拍照：</strong>作文有几页就拍几张，最多 3 张，按顺序拍。拍正、拍全、光线亮一点，再把作文纸以外的部分裁掉。不方便拍照的话，也可以选「打字」。</li>
-        <li><strong>交给老师：</strong>检查一遍，点「交给老师」。这时会显示「老师批改中」，请耐心等一等。</li>
-        <li><strong>看批改：</strong>作业旁边出现「看批改」就可以打开了。点一点红笔批注，能看到老师写的详细说明。</li>
+        <li><strong>交给老师：</strong>检查一遍，点「交给老师」。这时会显示「老师批改中」，请耐心等一等。<figure class="help-shot"><img src="{{url_for('static', filename='help/help-student-write.51beec1d.webp')}}" width="390" height="680" loading="lazy" alt="交作文页面：拍照交作文和交给老师按钮"></figure></li>
+        <li><strong>看批改：</strong>作业旁边出现「看批改」就可以打开了。点一点红笔批注，能看到老师写的详细说明。<figure class="help-shot"><img src="{{url_for('static', filename='help/help-student-result.84523093.webp')}}" width="390" height="640" loading="lazy" alt="批改结果页面：作文上的红笔批注和总评"></figure></li>
       </ol>
     </section>
     <section class="wb-card">
