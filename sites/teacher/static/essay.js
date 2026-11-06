@@ -101,6 +101,135 @@
     }
   };
 
+  /* The crop screen: the student keeps only the sheet of paper, since whatever else is in the picture makes the marks
+   * land in the wrong place. source: the whole photo (a JPEG blob). Resolves to { blob: the cropped photo, source: the
+   * whole photo, turned as the student turned it }, or to null when cancelled. */
+  WB.cropPhoto = function (source, label) {
+    const SIDE = 2000, QUALITY = 0.85, MIN = 0.15; // MIN: the frame's smallest width and height, of the photo's
+    return new Promise((resolve) => {
+      const dialog = document.createElement('dialog');
+      dialog.className = 'crop-dialog';
+      dialog.innerHTML =
+        '<h2></h2><p class="hint">拖动边框，只留下作文纸</p>' +
+        '<div class="crop-stage"><div class="crop-sheet"><img alt="" draggable="false"><div class="crop-shade"><div class="crop-hole"></div></div>' +
+        '<div class="crop-box" data-drag="move">' +
+        ['nw', 'n', 'ne', 'e', 'se', 's', 'sw', 'w'].map((d) => '<i class="crop-handle crop-' + d + '" data-drag="' + d + '"></i>').join('') +
+        '</div></div></div>' +
+        '<div class="form-actions"><button type="button" class="secondary" data-act="turn">转一下</button><button type="button" class="secondary" data-act="cancel">取消</button><button type="button" data-act="ok" autofocus>确定</button></div>';
+      dialog.querySelector('h2').textContent = '裁剪' + label;
+      const stage = dialog.querySelector('.crop-stage'), sheet = dialog.querySelector('.crop-sheet'), img = dialog.querySelector('img');
+      const hole = dialog.querySelector('.crop-hole'), box = dialog.querySelector('.crop-box');
+      const buttons = [...dialog.querySelectorAll('button')];
+      let frame = { x1: 0, y1: 0, x2: 1, y2: 1 }, url = null, drag = null;
+
+      const drawFrame = () => {
+        for (const el of [hole, box]) {
+          el.style.left = frame.x1 * 100 + '%';
+          el.style.top = frame.y1 * 100 + '%';
+          el.style.width = (frame.x2 - frame.x1) * 100 + '%';
+          el.style.height = (frame.y2 - frame.y1) * 100 + '%';
+        }
+      };
+      /* The photo as big as the screen allows, leaving room for the handles around it. */
+      const fit = () => {
+        if (!img.naturalWidth) return;
+        const css = getComputedStyle(stage);
+        const room = (a, b, c) => a - parseFloat(b) - parseFloat(c);
+        const w = room(stage.clientWidth, css.paddingLeft, css.paddingRight), h = room(stage.clientHeight, css.paddingTop, css.paddingBottom);
+        const scale = Math.min(w / img.naturalWidth, h / img.naturalHeight);
+        sheet.style.width = Math.max(1, Math.floor(img.naturalWidth * scale)) + 'px';
+        sheet.style.height = Math.max(1, Math.floor(img.naturalHeight * scale)) + 'px';
+      };
+      const show = (blob) =>
+        new Promise((done, fail) => {
+          if (url) URL.revokeObjectURL(url);
+          url = URL.createObjectURL(blob);
+          img.onload = done;
+          img.onerror = () => fail(new Error('这张照片打不开，请换一张'));
+          img.src = url;
+        }).then(() => {
+          frame = { x1: 0, y1: 0, x2: 1, y2: 1 };
+          fit();
+          drawFrame();
+        });
+      const finish = (answer) => {
+        window.removeEventListener('resize', fit);
+        dialog.close();
+        dialog.remove();
+        if (url) URL.revokeObjectURL(url);
+        resolve(answer);
+      };
+      const crop = () => {
+        const sx = Math.round(frame.x1 * img.naturalWidth), sy = Math.round(frame.y1 * img.naturalHeight);
+        const sw = Math.max(1, Math.round((frame.x2 - frame.x1) * img.naturalWidth)), sh = Math.max(1, Math.round((frame.y2 - frame.y1) * img.naturalHeight));
+        const scale = Math.min(1, SIDE / Math.max(sw, sh));
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.round(sw * scale);
+        canvas.height = Math.round(sh * scale);
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
+        return new Promise((done, fail) => canvas.toBlob((b) => (b ? done(b) : fail(new Error('照片处理失败，请换一张'))), 'image/jpeg', QUALITY));
+      };
+
+      box.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        const rect = sheet.getBoundingClientRect();
+        drag = { how: e.target.dataset.drag, x: e.clientX, y: e.clientY, w: rect.width, h: rect.height, from: { ...frame } };
+        box.setPointerCapture(e.pointerId);
+      });
+      box.addEventListener('pointermove', (e) => {
+        if (!drag) return;
+        const dx = (e.clientX - drag.x) / drag.w, dy = (e.clientY - drag.y) / drag.h, f = { ...drag.from };
+        if (drag.how === 'move') {
+          const mx = Math.min(1 - f.x2, Math.max(-f.x1, dx)), my = Math.min(1 - f.y2, Math.max(-f.y1, dy));
+          f.x1 += mx; f.x2 += mx; f.y1 += my; f.y2 += my;
+        } else {
+          if (drag.how.includes('w')) f.x1 = Math.max(0, Math.min(f.x2 - MIN, f.x1 + dx));
+          if (drag.how.includes('e')) f.x2 = Math.min(1, Math.max(f.x1 + MIN, f.x2 + dx));
+          if (drag.how.includes('n')) f.y1 = Math.max(0, Math.min(f.y2 - MIN, f.y1 + dy));
+          if (drag.how.includes('s')) f.y2 = Math.min(1, Math.max(f.y1 + MIN, f.y2 + dy));
+        }
+        frame = f;
+        drawFrame();
+      });
+      const drop = () => { drag = null; };
+      box.addEventListener('pointerup', drop);
+      box.addEventListener('pointercancel', drop);
+
+      dialog.addEventListener('cancel', (e) => {
+        e.preventDefault();
+        finish(null);
+      });
+      dialog.addEventListener('click', async (e) => {
+        const act = e.target.dataset && e.target.dataset.act;
+        if (!act) return;
+        if (act === 'cancel') return finish(null);
+        buttons.forEach((b) => (b.disabled = true));
+        try {
+          if (act === 'turn') {
+            source = await WB.rotate(source);
+            await show(source);
+          } else {
+            return finish({ blob: await crop(), source });
+          }
+        } catch (err) {
+          alert(err.message);
+        }
+        buttons.forEach((b) => (b.disabled = false));
+      });
+
+      window.addEventListener('resize', fit);
+      document.body.appendChild(dialog);
+      dialog.showModal();
+      show(source).catch((err) => {
+        alert(err.message);
+        finish(null);
+      });
+    });
+  };
+
   WB.photoPicker = function (root) {
     if (!root) return { files: () => [] };
     const max = Number(root.dataset.max || 3);
@@ -110,7 +239,7 @@
     const items = [];
     const draw = () => {
       list.innerHTML = items
-        .map((it, i) => '<figure class="photo-item"><img src="' + it.url + '" alt="第 ' + (i + 1) + ' 页"><figcaption>第 ' + (i + 1) + ' 页</figcaption><button type="button" class="photo-remove" data-remove="' + i + '" aria-label="删掉第 ' + (i + 1) + ' 页">×</button><button type="button" class="photo-rotate" data-rotate="' + i + '" aria-label="把第 ' + (i + 1) + ' 页转一下">↻</button></figure>')
+        .map((it, i) => '<figure class="photo-item"><img src="' + it.url + '" alt="第 ' + (i + 1) + ' 页"><figcaption>第 ' + (i + 1) + ' 页</figcaption><button type="button" class="photo-remove" data-remove="' + i + '" aria-label="删掉第 ' + (i + 1) + ' 页">×</button><button type="button" class="photo-crop" data-crop="' + i + '" aria-label="重新裁剪第 ' + (i + 1) + ' 页">裁剪</button></figure>')
         .join('');
       add.hidden = items.length >= max;
     };
@@ -120,8 +249,10 @@
       add.classList.add('busy');
       for (const f of files) {
         try {
-          const blob = await WB.shrink(f, 2000, 0.85);
-          items.push({ blob, url: URL.createObjectURL(blob) });
+          // A bigger picture to crop from, so what is kept of it is still sharp (WB.cropPhoto brings it down to size).
+          const whole = await WB.shrink(f, 2800, 0.85);
+          const done = await WB.cropPhoto(whole, '第 ' + (items.length + 1) + ' 页');
+          if (done) items.push({ blob: done.blob, source: done.source, url: URL.createObjectURL(done.blob) });
         } catch (err) {
           alert(err.message);
         }
@@ -130,19 +261,15 @@
       draw();
     });
     list.addEventListener('click', async (e) => {
-      const turn = e.target.closest('[data-rotate]');
-      if (turn) {
-        const it = items[Number(turn.dataset.rotate)];
-        turn.disabled = true;
-        try {
-          const blob = await WB.rotate(it.blob);
+      const again = e.target.closest('[data-crop]');
+      if (again) {
+        const n = Number(again.dataset.crop), it = items[n];
+        const done = await WB.cropPhoto(it.source, '第 ' + (n + 1) + ' 页');
+        if (done) {
           URL.revokeObjectURL(it.url);
-          it.blob = blob;
-          it.url = URL.createObjectURL(blob);
-        } catch (err) {
-          alert(err.message);
+          Object.assign(it, { blob: done.blob, source: done.source, url: URL.createObjectURL(done.blob) });
+          draw();
         }
-        draw();
         return;
       }
       const b = e.target.closest('[data-remove]');
