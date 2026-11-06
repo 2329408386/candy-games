@@ -61,6 +61,7 @@ def on_desk(page, corners, size=(1800, 2400)):
 
 
 CORNERS = [[420, 330], [1450, 410], [1520, 2120], [330, 2150]]
+ON_SHEET = [{"text": "字", "box": [300, 220, 780, 260]}, {"text": "字", "box": [300, 500, 780, 540]}]
 
 
 def test_finds_the_sheet_among_clutter_and_flattens_it():
@@ -68,7 +69,8 @@ def test_finds_the_sheet_among_clutter_and_flattens_it():
     img = on_desk(page, CORNERS)
     found = photo.find_paper(img)
     assert found is not None and np.abs(found - np.float32(CORNERS)).max() < 30
-    data, w, h = photo.rectify(encode(img))
+    data, w, h, moved = photo.rectify(encode(img), ON_SHEET)
+    assert moved[0]["box"][1] < moved[1]["box"][1] and moved[0]["text"] == "字"
     assert 1.2 < h / w < 1.6 and max(w, h) <= photo.STORED_SIDE
     flat = cv2.imdecode(np.frombuffer(data, np.uint8), cv2.IMREAD_GRAYSCALE)
     # Nothing of the desk is left inside, apart from the thin margin kept around the page.
@@ -85,19 +87,19 @@ def test_finds_the_sheet_among_clutter_and_flattens_it():
     lambda: np.random.default_rng(1).integers(40, 120, (1600, 1200, 3), dtype=np.uint8),  # no paper
 ])
 def test_leaves_the_photo_alone_when_not_sure(make):
-    assert photo.rectify(encode(make())) is None
+    assert photo.rectify(encode(make()), ON_SHEET) is None
 
 
 def test_white_sheet_on_a_white_table_is_left_alone():
     page, _ = sheet()
     img = np.full((2400, 1800, 3), 238, np.uint8)
     img[500:1900, 400:1400] = page
-    assert photo.rectify(encode(img)) is None
+    assert photo.rectify(encode(img), ON_SHEET) is None
 
 
 def test_rectified_again_stays_as_it_is():
-    data, _, _ = photo.rectify(encode(on_desk(sheet()[0], CORNERS)))
-    assert photo.rectify(data) is None
+    data, _, _, moved = photo.rectify(encode(on_desk(sheet()[0], CORNERS)), ON_SHEET)
+    assert photo.rectify(data, moved) is None
 
 
 def model_lines(spots, w, h, dy=0.0, dx=0.0):
@@ -142,15 +144,32 @@ def test_a_title_above_does_not_put_the_page_one_row_off(dy):
         assert abs((line["box"][1] + line["box"][3]) / 2 / 1000 * h - (top + bottom) / 2) < 16
 
 
-def test_outside_paper_counts_what_the_cut_would_lose():
+def test_a_cut_never_goes_through_a_line_that_was_read():
+    img = encode(on_desk(sheet()[0], CORNERS))
+    assert photo.rectify(img, ON_SHEET) is not None
+    # The model read a line reaching beyond the sheet found: a shadow may have cut the paper in two. Not cut.
+    assert photo.rectify(img, ON_SHEET + [{"text": "字", "box": [300, 900, 980, 940]}]) is None
+    assert photo.rectify(img, [{"text": "字", "box": None}]) is None  # no evidence of where the writing is
+    assert photo.rectify(img, []) is None
+
+
+def test_boxes_moved_by_the_cut_fit_the_rows_on_the_flattened_page():
+    """The whole way: boxes read on the cluttered photo, cut, snapped: each on its own row of the flat page."""
     page, spots = sheet()
-    img = on_desk(page, CORNERS)
-    h, w = img.shape[:2]
-    inside = {"box": [450, 300, 550, 330]}
-    beyond = {"box": [20, 900, 120, 930]}
-    assert photo.outside_paper(encode(img), [inside]) == 0
-    assert photo.outside_paper(encode(img), [inside, beyond]) == 0.5
-    assert photo.outside_paper(encode(page), [beyond]) == 0  # not cut at all
+    ph, pw = page.shape[:2]
+    src = np.float32([[[l, t]] for t, b, l, r in spots] + [[[r, b]] for t, b, l, r in spots])
+    to_photo = cv2.getPerspectiveTransform(np.float32([[0, 0], [pw, 0], [pw, ph], [0, ph]]), np.float32(CORNERS))
+    points = cv2.perspectiveTransform(src, to_photo).reshape(-1, 2)
+    n = len(spots)
+    lines = [
+        {"text": "字", "box": [round(points[k][0] / 1.8), round(points[k][1] / 2.4), round(points[n + k][0] / 1.8), round(points[n + k][1] / 2.4)]}
+        for k in range(n)
+    ]
+    data, w, h, moved = photo.rectify(encode(on_desk(page, CORNERS)), lines)
+    snapped, stats = photo.snap_lines(data, moved)
+    assert stats["matched"] == n
+    middles = [(line["box"][1] + line["box"][3]) / 2 for line in snapped]
+    assert all(b - a > 40 for a, b in zip(middles, middles[1:]))
 
 
 def test_a_line_without_ink_moves_with_the_page():

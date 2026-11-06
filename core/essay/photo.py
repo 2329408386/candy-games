@@ -1,7 +1,8 @@
 """Looking at the pixels of an essay photo: what the vision model's rough coordinates cannot give.
 
-  rectify(data)            finds the sheet of paper among whatever else is in the picture and flattens it. None when
-                           it is not sure (the photo is then used as it is: a wrong cut would lose the child's writing).
+  rectify(data, lines)     finds the sheet of paper among whatever else is in the picture and flattens it, moving the
+                           line boxes with it. None when it is not sure, or when a line the model read would not be
+                           inside (the photo is then used as it is: a wrong cut would lose the child's writing).
   snap_lines(data, lines)  moves the model's line boxes onto the real rows of handwriting.
   fit, crop_char, glyph, stitch_lines   small picture helpers for the ocr and photo-check steps.
 
@@ -146,13 +147,17 @@ def find_paper(img):
     return None if best is None else best / scale
 
 
-def rectify(data):
-    """JPEG bytes → (the flattened sheet as JPEG bytes, width, height), or None when the photo should stay as it is."""
+def rectify(data, lines):
+    """JPEG bytes and the page's lines from the ocr step → (the flattened sheet as JPEG bytes, width, height, the lines
+    with their boxes on that picture), or None when the photo should stay as it is. Every line must lie inside the
+    sheet: the model has read writing there, so a cut through it would lose the child's work (a shadow or a second
+    sheet can make the paper found too small). No lines with a box, no evidence: not cut."""
     import numpy as np
 
     cv2 = _cv()
     img = _decode(data)
-    q = find_paper(img)
+    boxed = [line for line in lines if line.get("box")]
+    q = find_paper(img) if boxed else None
     if q is None:
         return None
     h, w = img.shape[:2]
@@ -160,14 +165,35 @@ def rectify(data):
     q = center + (q - center) * (1 + 2 * _MARGIN)
     q[:, 0] = np.clip(q[:, 0], 0, w - 1)
     q[:, 1] = np.clip(q[:, 1], 0, h - 1)
+    q = q.astype(np.float32)
+
+    def corners(box):
+        x1, y1, x2, y2 = box[0] / 1000 * w, box[1] / 1000 * h, box[2] / 1000 * w, box[3] / 1000 * h
+        return [(x1, y1), (x2, y1), (x2, y2), (x1, y2)]
+
+    outline = q.reshape(-1, 1, 2)
+    if any(cv2.pointPolygonTest(outline, (float(x), float(y)), False) < 0 for line in boxed for x, y in corners(line["box"])):
+        return None
     sides = _sides(q)
     width, height = (sides[0] + sides[2]) / 2, (sides[1] + sides[3]) / 2
     scale = min(1.0, STORED_SIDE / max(width, height))
     width, height = max(1, round(width * scale)), max(1, round(height * scale))
     target = np.array([[0, 0], [width - 1, 0], [width - 1, height - 1], [0, height - 1]], dtype=np.float32)
-    flat = cv2.warpPerspective(img, cv2.getPerspectiveTransform(q.astype(np.float32), target), (width, height), flags=cv2.INTER_AREA if scale < 1 else cv2.INTER_LINEAR)
+    transform = cv2.getPerspectiveTransform(q, target)
+    flat = cv2.warpPerspective(img, transform, (width, height), flags=cv2.INTER_AREA if scale < 1 else cv2.INTER_LINEAR)
     ok, out = cv2.imencode(".jpg", flat, [cv2.IMWRITE_JPEG_QUALITY, 90])
-    return (out.tobytes(), width, height) if ok else None
+    if not ok:
+        return None
+    moved = []
+    for line in lines:
+        if not line.get("box"):
+            moved.append(line)
+            continue
+        points = cv2.perspectiveTransform(np.float32(corners(line["box"])).reshape(-1, 1, 2), transform).reshape(-1, 2)
+        x1, y1 = max(0, min(999, round(float(points[:, 0].min()) / width * 1000))), max(0, min(999, round(float(points[:, 1].min()) / height * 1000)))
+        x2, y2 = min(1000, round(float(points[:, 0].max()) / width * 1000)), min(1000, round(float(points[:, 1].max()) / height * 1000))
+        moved.append({**line, "box": [x1, y1, max(x1 + 1, x2), max(y1 + 1, y2)]})
+    return out.tobytes(), width, height, moved
 
 
 # ---- rows of handwriting ----
@@ -366,28 +392,6 @@ def snap_lines(data, lines):
         x1, y1 = max(0, min(999, round(b[0] / w * 1000))), max(0, min(999, round(b[1] / h * 1000)))
         out[k]["box"] = [x1, y1, max(x1 + 1, min(1000, round(b[2] / w * 1000))), max(y1 + 1, min(1000, round(b[3] / h * 1000)))]
     return out, stats
-
-
-def outside_paper(data, lines):
-    """The share of the line boxes (0–1000 of this photo) that rectify would not keep whole, without calling a model:
-    above 0, cutting would lose writing the model saw."""
-    import numpy as np
-
-    cv2 = _cv()
-    boxes = [line["box"] for line in lines if line.get("box")]
-    img = _decode(data)
-    q = find_paper(img)
-    if q is None or not boxes:
-        return 0.0
-    h, w = img.shape[:2]
-    center = q.mean(axis=0)
-    q = (center + (q - center) * (1 + 2 * _MARGIN)).astype(np.float32).reshape(-1, 1, 2)
-    lost = 0
-    for x1, y1, x2, y2 in boxes:
-        ends = [(x1, (y1 + y2) / 2), (x2, (y1 + y2) / 2)]
-        if any(cv2.pointPolygonTest(q, (x / 1000 * w, y / 1000 * h), False) < 0 for x, y in ends):
-            lost += 1
-    return round(lost / len(boxes), 3)
 
 
 def _cover(mask, boxes):
