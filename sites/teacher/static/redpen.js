@@ -4,8 +4,9 @@
  *   text, title, student, marks [{type, start, end, fix, note}], total, max, level, showScore, summary,
  *   pages [{src, w, h, lines: [{s, e, b: [x1, y1, x2, y2] (0–1000)}]}], onPhoto.
  * RedPen.exportPdf(container) — the same drawing on A4 pages, as a PDF to print.
- * RedPen.exportMany(list, fileName, button, progress) — several essays (a list of such data) in one PDF, each
- *   starting on a new page (批量导出 on the assignment page).
+ * RedPen.exportMany(list, fileName, button, note) — several essays (a list of such data) in one PDF, each
+ *   starting on a new page (批量导出 on the assignment page). Android WeChat cannot save a blob: file, so there the
+ *   PDF goes to the server and a dialog gives a link for a while, with `note` above it; the answer's `link` says so.
  *
  * With onPhoto the marks are drawn on the student's own photos: every recognised line knows which characters of
  * the text it holds and where it is, and a character's place within its line is estimated from its position
@@ -840,6 +841,92 @@
     setTimeout(() => URL.revokeObjectURL(url), 60000);
   }
 
+  const androidWeChat = () => /MicroMessenger/i.test(navigator.userAgent) && /Android/i.test(navigator.userAgent);
+  const LINK_PART_BYTES = 25 * 1024 * 1024; // the server takes 30 MB at most
+
+  function splitPages(pages) {
+    const parts = [[]];
+    let size = 0;
+    for (const page of pages) {
+      if (size && size + page.jpeg.length > LINK_PART_BYTES) {
+        parts.push([]);
+        size = 0;
+      }
+      parts[parts.length - 1].push(page);
+      size += page.jpeg.length;
+    }
+    return parts;
+  }
+
+  async function copyText(text, box) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch (e) {}
+    const area = document.createElement('textarea');
+    area.value = text;
+    box.appendChild(area); // inside the dialog: nothing outside a modal dialog can be selected
+    area.select();
+    let copied = false;
+    try {
+      copied = document.execCommand('copy');
+    } catch (e) {}
+    area.remove();
+    return copied;
+  }
+
+  function linkDialog(links, note) {
+    const dialog = document.createElement('dialog');
+    dialog.className = 'wb-dialog pdf-link-dialog';
+    const add = (parent, tag, cls, text) => {
+      const el = document.createElement(tag);
+      if (cls) el.className = cls;
+      if (text) el.textContent = text;
+      parent.appendChild(el);
+      return el;
+    };
+    add(dialog, 'h2', '', 'PDF 已生成');
+    if (note) add(dialog, 'p', 'hint', note);
+    links.forEach((url, k) => {
+      const row = add(dialog, 'p', 'pdf-link-row');
+      const open = add(row, 'a', 'button small', links.length > 1 ? `打开第 ${k + 1} 份` : '打开 PDF');
+      open.href = url;
+      const copy = add(row, 'button', 'secondary small', '复制链接');
+      copy.type = 'button';
+      copy.addEventListener('click', async () => {
+        copy.textContent = (await copyText(url, dialog)) ? '已复制' : '复制失败，请长按「打开」';
+      });
+    });
+    if (links.length > 1) add(dialog, 'p', 'hint', '文件比较大，分成了 ' + links.length + ' 份。');
+    add(dialog, 'p', 'hint', '打不开的话，点右上角 ··· 选「在浏览器打开」，或者复制链接到浏览器，不用重新登录。链接 1 小时内有效，请不要转发给别人。');
+    const close = add(add(dialog, 'p', 'form-actions'), 'button', 'secondary', '关闭');
+    close.type = 'button';
+    close.addEventListener('click', () => dialog.close());
+    dialog.addEventListener('close', () => dialog.remove());
+    document.body.appendChild(dialog);
+    dialog.showModal();
+  }
+
+  /* Hands the pages over as a file: a download, or on Android WeChat a link from the server. */
+  async function deliver(pages, name, button, note) {
+    if (!androidWeChat()) {
+      const blob = makePdf(pages);
+      download(blob, name);
+      return { link: false, blob };
+    }
+    const parts = splitPages(pages), links = [];
+    for (let k = 0; k < parts.length; k++) {
+      if (button) button.textContent = parts.length > 1 ? `正在上传 ${k + 1}/${parts.length}…` : '正在上传…';
+      const label = parts.length > 1 ? name.replace(/\.pdf$/i, '') + `-第${k + 1}份.pdf` : name;
+      const answer = await WB.upload(window.WB_PDF_LINKS + '?name=' + encodeURIComponent(label), makePdf(parts[k])).catch((e) => {
+        throw e instanceof TypeError ? new Error('上传失败，请检查网络后重试') : e; // fetch itself failed
+      });
+      links.push(new URL(answer.url, location.href).href);
+    }
+    linkDialog(links, note);
+    return { link: true };
+  }
+
   async function busy(button, label, work) {
     const old = button && button.textContent;
     if (button) (button.disabled = true), (button.textContent = label);
@@ -856,15 +943,19 @@
   async function exportPdf(container, button) {
     const data = container.rpData, list = container.rpScenes;
     if (!data || !list) return;
-    await busy(button, '正在生成…', async () => {
-      const blob = makePdf(await essayPages(data, list));
-      download(blob, ['《' + (data.title || '作文') + '》', data.student, '批改'].filter(Boolean).join('-') + '.pdf');
-      container.rpLastPdf = blob; // for tests
-    });
+    try {
+      await busy(button, '正在生成…', async () => {
+        const name = ['《' + (data.title || '作文') + '》', data.student, '批改'].filter(Boolean).join('-') + '.pdf';
+        const sent = await deliver(await essayPages(data, list), name, button);
+        container.rpLastPdf = sent.blob; // for tests
+      });
+    } catch (e) {
+      alert(e.message || '导出失败，请稍后再试');
+    }
   }
 
   /* 批量导出: every essay of a list in one PDF, each starting on a new page. */
-  async function exportMany(list, fileName, button) {
+  async function exportMany(list, fileName, button, note) {
     if (!list || !list.length) return null;
     return busy(button, '正在生成…', async () => {
       const pages = [];
@@ -872,9 +963,7 @@
         if (button) button.textContent = `正在生成 ${k + 1}/${list.length}…`;
         pages.push(...(await essayPages(list[k], scenes(list[k]))));
       }
-      const blob = makePdf(pages);
-      download(blob, fileName);
-      return blob;
+      return deliver(pages, fileName, button, note);
     });
   }
 

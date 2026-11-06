@@ -42,7 +42,8 @@ features.py, admin.py (模型设置, quotas and feature expiry in the back offic
 """
 
 import calendar, io, json, re, secrets, time
-from flask import Response, abort, g, jsonify, redirect, render_template, request, session, url_for
+from urllib.parse import quote
+from flask import Response, abort, g, jsonify, redirect, render_template, request, send_file, session, url_for
 from core.app import KEY_ALPHABET, csrf, current, data_dir, db, device_hash, limited, new_xlsx, site, xlsx_download
 from . import features, grading
 
@@ -597,7 +598,98 @@ def register_essay(app):
     register_teacher_api(app)
     register_student_api(app)
     register_trial(app)
+    register_pdf_links(app)
     admin.register(app)
+
+
+# ---- PDF links: Android WeChat cannot save the blob: PDF that RedPen makes, so there it is parked here for a while ----
+PDF_LINK_SECONDS = 3600
+PDF_LINK_MAX_BYTES = 30 * 1024 * 1024  # same as MAX_CONTENT_LENGTH
+PDF_LINK_TOTAL_BYTES = 500 * 1024 * 1024
+PDF_LINK_TOKEN = re.compile(r"[A-Za-z0-9_-]{43}")
+
+
+def pdf_link_dir():
+    folder = data_dir() / "pdf-links"
+    folder.mkdir(exist_ok=True)
+    return folder
+
+
+def pdf_link_expired(path):
+    return path.stat().st_mtime < time.time() - PDF_LINK_SECONDS
+
+
+def sweep_pdf_links(folder):
+    """Removes what has expired; returns the bytes still kept. Another worker may be removing the same files."""
+    kept = 0
+    for path in folder.iterdir():
+        try:
+            if pdf_link_expired(path):
+                path.unlink(missing_ok=True)
+            else:
+                kept += path.stat().st_size
+        except FileNotFoundError:
+            pass
+    return kept
+
+
+def pdf_link_name(raw):
+    name = re.sub(r'[\\/:*?"<>|\x00-\x1f\x7f]', "", raw or "").strip()
+    name = re.sub(r"\.pdf$", "", name, flags=re.I).strip(". ")[:80]
+    return (name or "批改") + ".pdf"
+
+
+def register_pdf_links(app):
+    @app.post("/api/pdf-links")
+    def pdf_link_create():
+        if not teacher() and not student():
+            return error("请先登录", 403)
+        if limited("pdf_link", 200, 3600):  # per IP: a whole class may share one school network
+            return error("导出太频繁了，请稍后再试", 429)
+        folder = pdf_link_dir()
+        if sweep_pdf_links(folder) + (request.content_length or 0) > PDF_LINK_TOTAL_BYTES:
+            return error("现在导出的人比较多，请过一会儿再试", 503)
+        token = secrets.token_urlsafe(32)
+        partial = folder / (token + ".tmp")
+        try:
+            with partial.open("wb") as out:
+                head = request.stream.read(5)
+                if head != b"%PDF-":
+                    return error("文件不对，请重新导出")
+                out.write(head)
+                size = len(head)
+                while chunk := request.stream.read(1024 * 1024):
+                    size += len(chunk)
+                    if size > PDF_LINK_MAX_BYTES:
+                        return error("文件太大了", 413)
+                    out.write(chunk)
+            (folder / (token + ".name")).write_text(pdf_link_name(request.args.get("name")), encoding="utf-8")
+            partial.rename(folder / (token + ".pdf"))
+        finally:
+            partial.unlink(missing_ok=True)
+        return jsonify(url=url_for("pdf_link_open", token=token))
+
+    @app.get("/pdf/<token>")
+    def pdf_link_open(token):
+        gone = Response("这个链接已经失效了，请回到工作台重新导出。", 404, mimetype="text/plain; charset=utf-8")
+        if not PDF_LINK_TOKEN.fullmatch(token):
+            return gone
+        folder = pdf_link_dir()
+        path, name = folder / (token + ".pdf"), folder / (token + ".name")
+        try:
+            if pdf_link_expired(path):
+                path.unlink(missing_ok=True)
+                name.unlink(missing_ok=True)
+                return gone
+            filename = name.read_text(encoding="utf-8")
+        except FileNotFoundError:
+            return gone
+        r = send_file(path, mimetype="application/pdf")
+        # A plain name first for downloaders that do not read filename* (the automatic one is just "--.pdf").
+        r.headers["Content-Disposition"] = f"attachment; filename=\"essay.pdf\"; filename*=UTF-8''{quote(filename)}"
+        r.headers["Cache-Control"] = "no-store"
+        r.headers["X-Content-Type-Options"] = "nosniff"
+        return r
 
 
 # ---- pages ----

@@ -1273,6 +1273,72 @@ def test_help_pages(db, klass):
     assert "help-link" in s.get("/student/").get_data(as_text=True)
 
 
+PDF_BYTES = b"%PDF-1.4 test"
+
+
+def pdf_upload(c, name="《春天》-王小明-批改.pdf", body=PDF_BYTES):
+    from urllib.parse import quote
+
+    headers = {"X-CSRF-Token": c.token(), "Content-Type": "application/pdf"}
+    return c.c.post(c.prefix + "/api/pdf-links?name=" + quote(name), data=body, headers=headers)
+
+
+def pdf_files():
+    from pathlib import Path
+    from conftest import TMP
+
+    return Path(TMP.name) / "pdf-links"
+
+
+def test_pdf_link_upload_and_download(db, klass):
+    t, cid, _ = klass
+    anonymous = SiteClient("teacher")
+    assert pdf_upload(anonymous).status_code == 403
+    assert pdf_upload(t, body=b"not a pdf").status_code == 400
+    r = pdf_upload(t)
+    assert r.status_code == 200
+    url = r.get_json()["url"]
+    assert url.startswith("/workspace/chinese/pdf/")
+    got = anonymous.get(url.removeprefix("/workspace/chinese"))  # no sign-in needed: it may open in another browser
+    assert got.status_code == 200 and got.data == PDF_BYTES
+    assert got.headers["Content-Type"] == "application/pdf"
+    assert got.headers["Cache-Control"] == "no-store" and got.headers["X-Content-Type-Options"] == "nosniff"
+    disposition = got.headers["Content-Disposition"]
+    assert disposition.startswith('attachment; filename="essay.pdf"; filename*=UTF-8''') and "%E6%98%A5%E5%A4%A9" in disposition
+    s, _ = student_client(db, cid)
+    assert pdf_upload(s).status_code == 200
+
+
+def test_pdf_link_names_tokens_and_expiry(db, klass):
+    import os
+    from core.essay import PDF_LINK_SECONDS, pdf_link_name
+
+    assert pdf_link_name('a/b\\c:"<x>|?*.PDF') == "abcx.pdf"
+    assert pdf_link_name("") == pdf_link_name("...") == "批改.pdf"
+    assert len(pdf_link_name("长" * 300)) == 84
+    t, _, _ = klass
+    anonymous = SiteClient("teacher")
+    for bad in ("short", "..%2F..%2Fsecret", "a" * 42 + "!"):
+        assert anonymous.get("/pdf/" + bad).status_code == 404
+    token = pdf_upload(t).get_json()["url"].rsplit("/", 1)[1]
+    other = pdf_upload(t).get_json()["url"].rsplit("/", 1)[1]
+    old = time.time() - PDF_LINK_SECONDS - 5
+    for tok in (token, other):
+        for ext in (".pdf", ".name"):
+            os.utime(pdf_files() / (tok + ext), (old, old))
+    assert anonymous.get("/pdf/" + token).status_code == 404
+    assert not (pdf_files() / (token + ".pdf")).exists() and not (pdf_files() / (token + ".name")).exists()
+    pdf_upload(t)  # each upload clears what has expired
+    assert not (pdf_files() / (other + ".pdf")).exists() and not (pdf_files() / (other + ".name")).exists()
+    assert not list(pdf_files().glob("*.tmp"))
+
+
+def test_pdf_link_total_limit(db, klass, monkeypatch):
+    t, _, _ = klass
+    monkeypatch.setattr(essay, "PDF_LINK_TOTAL_BYTES", 0)
+    assert pdf_upload(t).status_code == 503
+
+
 def test_migration_sets_existing_students_to_70_once(tmp_path):
     import sqlite3
     from core import schema
