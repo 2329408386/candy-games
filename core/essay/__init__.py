@@ -46,7 +46,7 @@ from flask import Response, abort, g, jsonify, redirect, render_template, reques
 from core.app import KEY_ALPHABET, csrf, current, data_dir, db, device_hash, limited, new_xlsx, site, xlsx_download
 from . import features, grading
 
-DEFAULT_STUDENTS = 60
+DEFAULT_STUDENTS = 70
 DEFAULT_MONTHLY = 300
 MAX_CLASSES = 1  # one class per teacher
 MAX_ATTEMPTS = 2  # the newest graded one counts
@@ -66,7 +66,7 @@ TRIAL_DAILY = 50
 TRIAL_PER_IP = 3
 TRIAL_GAME = "essay-class"  # trials.game of the full trial (the old one-essay trial used "essay")
 TRIAL_DAYS = 7
-TRIAL_STUDENTS = 60
+TRIAL_STUDENTS = 70
 TRIAL_ESSAYS = 80
 TRIAL_ASSIGNMENTS = 1
 BUSY = ("queued", "grading")
@@ -640,6 +640,14 @@ def register_pages(app):
             pending=pending_reviews(row["id"]),
             has_classes=bool(class_rows(row["id"])),
         )
+
+    @app.get("/teacher/help")
+    def teacher_help():
+        return render_template("teacher_help.html")
+
+    @app.get("/student/help")
+    def student_help():
+        return render_template("student_help.html")
 
     @app.get("/teacher/profile")
     def profile_page():

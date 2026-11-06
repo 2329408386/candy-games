@@ -342,17 +342,32 @@ a.feature-card{display:flex}
 .narrow-card{max-width:760px}
 .narrow-card .wb-form+.wb-form{margin-top:12px}
 
+/* 使用帮助 */
+.help-doc{max-width:760px;margin:0 auto}
+.help-doc h2{font-size:18px;margin:0 0 10px}
+.help-doc .wb-card+.wb-card{margin-top:16px}
+.help-doc ol,.help-doc ul{margin:0;padding-left:1.4em}
+.help-doc li{margin:8px 0;line-height:1.7}
+.help-doc dt{font-weight:650;margin-top:12px}
+.help-doc dt:first-of-type{margin-top:0}
+.help-doc dd{margin:4px 0 0;line-height:1.7;color:var(--muted)}
+
 @media(max-width:700px){
   .class-stats{grid-template-columns:repeat(2,1fr)}
-  .header-chip span{display:none}
   .feature-grid{grid-template-columns:1fr}
+  .me-menu>summary .me-name:not(:only-child){display:none}
+  .me-menu>summary:has(.me-avatar){padding-right:4px}
+}
+/* Phones: the buttons keep their words, the site name and the page-level link give way. */
+@media(max-width:560px){
+  .workbench .site-header:has(.me-menu) .brand>span:last-child{display:none}
+  .workbench .header-link:has(+ .header-chip){display:none}
 }
 @media(max-width:440px){
-  .workbench .header-actions{gap:8px}
-  .header-chip{padding:6px 10px}
-  .me-menu>summary .me-name:not(:only-child){display:none}
-  .me-menu>summary{padding-right:4px}
-  .workbench .header-link:has(+ .header-chip){display:none}
+  .workbench .header-actions{gap:6px;min-width:0}
+  .header-chip{padding:6px 10px;white-space:nowrap}
+  .help-link>span{display:none}
+  .me-menu{min-width:0}
 }
 
 /* 布置作文: pick a unit from the textbook */

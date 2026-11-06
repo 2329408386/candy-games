@@ -1241,6 +1241,56 @@ def test_migration_drops_lesson_data(tmp_path):
         assert not d.execute("SELECT 1 FROM trials WHERE game='lesson'").fetchone()
 
 
+def test_default_students_is_70_and_the_admin_may_set_more(db):
+    import core.essay as essay
+
+    assert essay.DEFAULT_STUDENTS == essay.TRIAL_STUDENTS == 70
+    a = SiteClient("teacher")
+    a.login()
+    a.post("/admin/licenses/2/essay_quota", {"students": "100", "monthly": "300"})
+    assert db.execute("SELECT students FROM ess_quota WHERE license_id=2").fetchone()[0] == 100
+    db.execute("DELETE FROM ess_quota")
+    db.commit()
+
+
+def test_help_pages(db, klass):
+    anonymous = SiteClient("teacher")
+    teacher_doc = anonymous.get("/teacher/help")
+    student_doc = anonymous.get("/student/help")
+    assert teacher_doc.status_code == student_doc.status_code == 200
+    assert "老师端使用帮助" in teacher_doc.get_data(as_text=True)
+    words = student_doc.get_data(as_text=True)
+    assert "学生端使用帮助" in words
+    assert not any(w in words for w in ("AI", "智能", "模型", "识别"))
+    # The button is on both sides, signed in or not, except on the help page itself.
+    assert 'href="/workspace/chinese/teacher/help"' in anonymous.get("/teacher/").get_data(as_text=True)
+    assert 'href="/workspace/chinese/student/help"' in anonymous.get("/student/").get_data(as_text=True)
+    assert "help-link" not in words
+    t, cid, _ = klass
+    signed_in = t.get("/teacher/").get_data(as_text=True)
+    assert "help-link" in signed_in and "<span>班级</span>" in signed_in
+    s, _ = student_client(db, cid)
+    assert "help-link" in s.get("/student/").get_data(as_text=True)
+
+
+def test_migration_sets_existing_students_to_70_once(tmp_path):
+    import sqlite3
+    from core import schema
+
+    path = tmp_path / "old.sqlite3"
+    schema.initialize(path)
+    with sqlite3.connect(path) as d:
+        d.execute("DELETE FROM migrations WHERE name='essay_students_70'")
+        d.execute("INSERT INTO ess_quota VALUES(1,60,300),(2,200,500)")
+    schema.initialize(path)
+    with sqlite3.connect(path) as d:
+        assert d.execute("SELECT students,monthly FROM ess_quota ORDER BY license_id").fetchall() == [(70, 300), (70, 500)]
+        d.execute("UPDATE ess_quota SET students=100 WHERE license_id=1")  # an admin's later change
+    schema.initialize(path)
+    with sqlite3.connect(path) as d:
+        assert d.execute("SELECT students FROM ess_quota WHERE license_id=1").fetchone() == (100,)
+
+
 def test_textbook_units_are_built_and_valid():
     import subprocess, sys
     from core.essay import UNITS

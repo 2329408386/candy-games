@@ -40,6 +40,11 @@
           {% block header_actions %}{% endblock %}
           {% if side == 'teacher' and me_teacher %}
             <a class="header-chip" href="{{url_for('classes_page')}}" title="我的班级：学生名单和各班统计"><svg><use href="#i-grid"/></svg><span>班级</span>{% if me_teacher.classes %}<small>{{me_teacher.classes}}</small>{% endif %}</a>
+          {% endif %}
+          {% if side and not project and request.endpoint not in ('teacher_help', 'student_help') %}
+            <a class="header-link help-link" href="{{url_for('teacher_help' if side == 'teacher' else 'student_help')}}" aria-label="使用帮助"><span>使用</span>帮助</a>
+          {% endif %}
+          {% if side == 'teacher' and me_teacher %}
             <details class="me-menu">
               <summary aria-label="我的账号">
                 {% if me_teacher.avatar %}<img class="me-avatar" src="{{me_teacher.avatar}}" alt="" width="34" height="34">{% else %}<span class="me-avatar letter">{{me_teacher.initial}}</span>{% endif %}

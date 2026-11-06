@@ -216,6 +216,10 @@ def migrate(d):
         if "writing" not in {r[1] for r in d.execute("PRAGMA table_info(ess_submissions)")}:
             d.execute("ALTER TABLE ess_submissions ADD COLUMN writing TEXT NOT NULL DEFAULT ''")
         d.execute("INSERT INTO migrations VALUES('submission_writing',?)", (int(time.time()),))
+    if "essay_students_70" not in done:
+        # The default became 70 students: every license already handed out gets 70 too. Later changes in the admin stay.
+        d.execute("UPDATE ess_quota SET students=70")
+        d.execute("INSERT INTO migrations VALUES('essay_students_70',?)", (int(time.time()),))
 
 
 BEIJING = 8 * 3600

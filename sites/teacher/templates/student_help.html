@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}学生端使用帮助 · 语文老师工作台{% endblock %}
+{% block header_actions %}<a class="header-link" href="{{url_for('student_home')}}">我的作业</a>{% endblock %}
+{% block content %}
+  <div class="help-doc">
+    <div class="wb-heading"><div><h1>学生端使用帮助</h1><p class="muted">跟着下面几步，就能把作文交给老师。</p></div></div>
+    <section class="wb-card">
+      <h2>怎么交作文</h2>
+      <ol>
+        <li><strong>登录：</strong>填老师发的登录条上的班级码、姓名和 4 位口令。登录一次以后，这台设备会记住你。</li>
+        <li><strong>选作业：</strong>在「我的作业」里点「去交作文」。</li>
+        <li><strong>拍照：</strong>作文有几页就拍几张，最多 3 张，按顺序拍。拍正、拍全、光线亮一点，再把作文纸以外的部分裁掉。不方便拍照的话，也可以选「打字」。</li>
+        <li><strong>交给老师：</strong>检查一遍，点「交给老师」。这时会显示「老师批改中」，请耐心等一等。</li>
+        <li><strong>看批改：</strong>作业旁边出现「看批改」就可以打开了。点一点红笔批注，能看到老师写的详细说明。</li>
+      </ol>
+    </section>
+    <section class="wb-card">
+      <h2>常见问题</h2>
+      <dl>
+        <dt>登录不上？</dt>
+        <dd>看看班级码和口令有没有填错，姓名要和老师名单上的一样。还是不行就找老师。</dd>
+        <dt>忘了口令，或者提示输错太多次？</dt>
+        <dd>请老师帮你换一个新口令。</dd>
+        <dt>交错了，或者照片没拍好？</dt>
+        <dd>等这次批改好以后，可以点「重新交一次」。每次作业最多交 2 次，以最新一次的批改为准。</dd>
+        <dt>显示「请重新提交」？</dt>
+        <dd>这次批改出了问题，打开作业再交一次就可以。</dd>
+      </dl>
+    </section>
+    <p class="hint center"><a href="{{url_for('student_home')}}">回到我的作业 →</a></p>
+  </div>
+{% endblock %}
