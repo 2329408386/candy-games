@@ -1,4 +1,4 @@
-// Pictures for the English games (loaded after choice.js or tiles.js on the English game pages).
+// Pictures for the English games (loaded after choice.js on the English game pages).
 //   PK.picture(key)    -> node for one picture: a word from PICTURES (emoji, drawn SVG, a colour swatch or a number of
 //                         apples), or any other text, shown as is (scene emoji such as "👋").
 //   PK.figures.pic     -> the row of pictures in q.pic, drawn under the question. An item may also be

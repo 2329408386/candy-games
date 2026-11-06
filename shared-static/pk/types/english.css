@@ -29,8 +29,6 @@
 /* in: the item sticks out of the container (its lower half hidden behind it); on: it sits on top, fully visible */
 .pic-place.in .pic-item { top: 1.375rem; z-index: 0; }
 .pic-place.in .pic-at { position: relative; z-index: 1; }
-.q-tiles .card { font-family: "Arial Rounded MT Bold", Arial, system-ui, sans-serif; }
-.answer-line .tail { font-size: 1.375rem; font-weight: 700; }
 @media (max-width: 560px) {
   .options-pictures { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .pk-arena:not(.solo) .options-pictures .card { min-height: 5.5rem; }
@@ -44,10 +42,11 @@
 .write-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.25rem; margin: 0.5rem 0; }
 .write-cell { display: grid; justify-items: center; gap: 0.25rem; }
 .write-label { font-size: 0.875rem; color: var(--muted); }
-.write-box { width: clamp(6.5rem, 30vw, 8.75rem); aspect-ratio: 4 / 5; border: 2px solid #c6d4e6; border-radius: 0.5rem; background: #fff;
-  touch-action: none; cursor: crosshair; display: block; }
-.write-cell.right .write-box { border-color: var(--right-line); background: var(--right); }
-.write-cell.wrong .write-box { border-color: var(--wrong-line); background: var(--wrong); }
+.write-box { width: clamp(6.5rem, 30vw, 8.75rem); aspect-ratio: 4 / 5; touch-action: none; cursor: crosshair; display: block; }
+.write-cell.right .write-label { color: var(--right-line); font-weight: 700; }
+.write-cell.wrong .write-label { color: var(--wrong-line); font-weight: 700; }
+.write-cell.right .write-label::after { content: " ✓"; }
+.write-cell.wrong .write-label::after { content: " ✗"; }
 .write-clear, .read-skip { border: 0; background: none; padding: 0.25rem 0.5rem; color: var(--muted); font-size: 0.9375rem; text-decoration: underline; cursor: pointer; }
 .write-clear:disabled { visibility: hidden; }
 

@@ -124,6 +124,11 @@ def check_choice(q, bank, game):
         errors.append("空格处原字与答案不一致")
     if "targetWord" in q and q["prompt"][q["focus"][0]] not in q["targetWord"]:
         errors.append("标出的字不在目标词中")
+    if game == "grammar":
+        if len(options) != 3:
+            errors.append("句子小侦探每题应有3个选项")
+        if q.get("prompt", "").count("___") != 1:
+            errors.append("句子小侦探的题干应有且只有一处 ___")
     if game == "similar-char":
         if not 3 <= len(options) <= 5:
             errors.append("形近字题应有3~5个选项（2~4个干扰字）")

@@ -1,4 +1,4 @@
-import sqlite3, time
+import json, sqlite3, time
 from pathlib import Path
 from . import ranks
 
@@ -158,6 +158,24 @@ def migrate(d):
         d.execute("UPDATE OR IGNORE game_memberships SET game='read' WHERE site='english' AND game='listen-judge'")
         d.execute("DELETE FROM game_memberships WHERE site='english' AND game='listen-judge'")
         d.execute("INSERT INTO migrations VALUES('english_read_replaces_listen_judge',?)", (int(time.time()),))
+    if "english_grammar_replaces_sentence" not in done:
+        # 句子拼图PK became 句子小侦探 (game id "grammar"): it takes over the old game's place in its group. Stored game
+        # lists are rewritten because the admin pages look every id up by name; open rooms of the old game are closed.
+        # Old scores keep the old id and simply stop being shown.
+        d.execute("UPDATE OR IGNORE game_memberships SET game='grammar' WHERE site='english' AND game='sentence'")
+        d.execute("DELETE FROM game_memberships WHERE site='english' AND game='sentence'")
+        for table in ("licenses", "generation_batches"):
+            for rowid, games in d.execute(f"SELECT rowid,games FROM {table} WHERE site='english'").fetchall():
+                listed = json.loads(games)
+                if "sentence" in listed:
+                    renamed = ["grammar" if g == "sentence" else g for g in listed]
+                    d.execute(f"UPDATE {table} SET games=? WHERE rowid=?", (json.dumps(renamed), rowid))
+        for rooms, players in (("pk_rooms", "pk_seats"), ("rooms", "room_players")):
+            d.execute(
+                f"DELETE FROM {players} WHERE site='english' AND code IN (SELECT code FROM {rooms} WHERE site='english' AND game='sentence')"
+            )
+            d.execute(f"DELETE FROM {rooms} WHERE site='english' AND game='sentence'")
+        d.execute("INSERT INTO migrations VALUES('english_grammar_replaces_sentence',?)", (int(time.time()),))
     if "workbench_entitlements" not in done:
         # Workbench licenses became per feature with an expiry: every existing teacher code gets 作文批改 for a year,
         # counted from today if it is already in use, otherwise from its activation.

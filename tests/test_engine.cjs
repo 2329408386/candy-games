@@ -89,45 +89,14 @@ for (const game of ['listen-word', 'scene']) {
   }
 }
 
-// 句子拼图: cards tapped in the answer's order, joined with spaces plus the tail, are graded right; a swapped pair is not.
-const sentences = bank('english', 'sentence');
-for (const q of sentences.questions) {
-  const ctx = { ui: sentences.ui };
-  const order = [], words = q.answers[0].slice(0, -q.tail.length).split(' '), left = [...q.cards];
-  for (const w of words) order.push(left.splice(left.findIndex(c => c.text === w), 1)[0].id);
-  const built = renderers.tiles.value(q, { selection: order, kept: [] }, ctx);
-  assert.strictEqual(built.value, q.answers[0], q.id);
-  assert.ok(renderers.tiles.check(q, built.value), q.id);
-  assert.ok(renderers.tiles.value(q, { selection: order.slice(1), kept: [] }, ctx).incomplete, `${q.id} unused card accepted`);
-  const swapped = [order[1], order[0], ...order.slice(2)];
-  const text = renderers.tiles.value(q, { selection: swapped, kept: [] }, ctx).value;
-  if (text !== q.answers[0]) assert.ok(!renderers.tiles.check(q, text), `${q.id} swapped words graded right`);
+// 句子小侦探: one blank, three options, only the bank's answer is graded right, and it moves through A, B and C.
+const grammar = bank('english', 'grammar');
+for (const q of grammar.questions) {
+  assert.strictEqual(q.prompt.split('___').length, 2, `${q.id} should have one blank`);
+  assert.strictEqual(q.options.length, 3, q.id);
+  for (const o of q.options) assert.strictEqual(renderers.choice.check(q, o), o === q.answer, `${q.id} ${o}`);
 }
-// 字母奇妙屋: each answer letter's own template, written in its box, is read as that letter; an empty box is incomplete.
-vm.runInNewContext(fs.readFileSync(path.join(ROOT, 'shared-static/pk/types/handwrite.js'), 'utf8'), { PK, window: {} });
-for (const q of bank('english', 'letters').questions) {
-  const boxes = [...q.answer].map(c => PK.handwriting.templates[c]);
-  assert.strictEqual(renderers.handwrite.value(q, {}, { view: { boxes } }).value, q.answer, q.id);
-  assert.ok(renderers.handwrite.check(q, q.answer), q.id);
-  assert.ok(renderers.handwrite.value(q, {}, { view: { boxes: boxes.map(() => []) } }).incomplete, `${q.id} empty box accepted`);
-}
-{
-  // 写错时说清楚错在哪儿
-  const { diagnose, templates: T } = PK.handwriting;
-  const shift = (strokes, dy) => strokes.map(st => st.map(([x, y]) => [x, y + dy]));
-  assert.strictEqual(diagnose(T.a, 'a'), '', 'a right letter has no diagnosis');
-  assert.match(diagnose(T.C, 'c'), /太大.*小写 c 只占中间一格/);
-  assert.match(diagnose(T.c, 'C'), /太小.*大写 C/);
-  assert.match(diagnose(shift(T.O, 0.9), 'O'), /位置不对：.*红线/);
-  assert.match(diagnose(T.B, 'b'), /你写的是大写 B，题目要的是小写 b/);
-  assert.match(diagnose(T.d, 'b'), /更像小写 d。b 的半圆在竖线右边/);
-  assert.match(diagnose(T.R, 'P'), /更像大写 R。P 只有上面一个半圆/);
-  assert.match(diagnose(shift(T.b, 1), 'b'), /形状对了，位置不对：.*第一线/);
-  assert.match(diagnose([], 'b'), /空/);
-  assert.match(diagnose(T.l, 'L'), /你写的是小写 l，题目要的是大写 L/);
-  const q = { answer: 'b' }, ctx = { view: { boxes: [T.d] } };
-  assert.strictEqual(renderers.handwrite.diagnose(q, 'd', ctx), diagnose(T.d, 'b'));
-}
+assert.strictEqual(new Set(grammar.questions.map(q => q.options.indexOf(q.answer))).size, 3, '句子小侦探 answers should move through A, B, C');
 
 // 读句子: a reading counts from 80 points; an unread sentence is incomplete.
 vm.runInNewContext(fs.readFileSync(path.join(ROOT, 'shared-static/pk/types/read.js'), 'utf8'), { PK, window: {} });

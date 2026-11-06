@@ -354,3 +354,30 @@ def test_sign_ins_do_not_expire(admin, site, monkeypatch):
     monkeypatch.setattr(_time, "time", lambda: later)
     assert admin.get("/admin").status_code == 200, "admin stays signed in"
     assert "data-copy=" in admin.get("/admin").get_data(as_text=True)
+
+
+def test_sentence_game_moves_to_grammar(db):
+    from core import schema
+
+    a = SiteClient("english")
+    assert a.login().status_code == 302
+    db.execute("DELETE FROM game_memberships WHERE site='english' AND game='grammar'")
+    db.execute("INSERT INTO game_memberships VALUES('english','sentence','g3-t1-a')")
+    db.execute(
+        "INSERT INTO licenses(site,id,key_hash,games,enabled,created_at,grade_scopes,archived_at)"
+        " VALUES('english',90,'old-sentence','[\"scene\",\"sentence\"]',0,1,'[]',2)"
+    )
+    db.execute(
+        "INSERT INTO pk_rooms(site,code,game,host,host_seat,host_device,status,seconds,question_ids,version,created_at,started_at,deadline)"
+        " VALUES('english','OLDPK','sentence',1,'a','d','waiting',180,'[]',1,1,0,0)"
+    )
+    db.execute("DELETE FROM migrations WHERE name='english_grammar_replaces_sentence'")
+    schema.migrate(db)
+    db.commit()
+    rows = db.execute("SELECT game,group_id FROM game_memberships WHERE site='english' AND game IN ('grammar','sentence')").fetchall()
+    assert [tuple(r) for r in rows] == [("grammar", "g3-t1-a")]
+    assert db.execute("SELECT games FROM licenses WHERE site='english' AND id=90").fetchone()[0] == '["scene", "grammar"]'
+    assert not db.execute("SELECT 1 FROM pk_rooms WHERE site='english' AND code='OLDPK'").fetchone()
+    # An archived license's old game list is shown by name in the admin.
+    page = a.get("/admin?archived=1")
+    assert page.status_code == 200 and "句子小侦探" in page.get_data(as_text=True)

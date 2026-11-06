@@ -1,0 +1,3270 @@
+{
+ "type": "choice",
+ "meta": {"notes": ["题目依据外研版（三起）2024新版三年级上册各单元核心单词和句型自编，非教材原题。", "每题考一个简单语法点，只有一个选项正确；正确选项在 A、B、C 中轮换。"]},
+ "draw": {
+  "by": ["unit"],
+  "alternatives": [
+   {"U1": 4, "U2": 4, "U3": 3, "U4": 3, "U5": 3, "U6": 3},
+   {"U1": 3, "U2": 3, "U3": 4, "U4": 4, "U5": 3, "U6": 3},
+   {"U1": 3, "U2": 3, "U3": 3, "U4": 3, "U5": 4, "U6": 4},
+   {"U1": 4, "U2": 3, "U3": 3, "U4": 4, "U5": 3, "U6": 3},
+   {"U1": 3, "U2": 4, "U3": 3, "U4": 3, "U5": 4, "U6": 3},
+   {"U1": 3, "U2": 3, "U3": 4, "U4": 3, "U5": 3, "U6": 4}
+  ]
+ },
+ "ui": {
+  "instruction": "读句子，找出填进横线最合适的一项，再提交。",
+  "lettered": true,
+  "units": ["U1", "U2", "U3", "U4", "U5", "U6"],
+  "unitNames": {
+   "U1": "Unit 1 Let's be friends! · 交朋友",
+   "U2": "Unit 2 My school things · 学习用品",
+   "U3": "Unit 3 It's a colourful world! · 颜色",
+   "U4": "Unit 4 Fun with numbers · 数字",
+   "U5": "Unit 5 We're family · 家庭成员",
+   "U6": "Unit 6 My sweet home · 我的家"
+  }
+ },
+ "questions": [
+  {
+   "id": "gr-001",
+   "unit": "U1",
+   "category": "choice",
+   "prompt": "I ___ Lily.",
+   "options": ["am", "is", "are"],
+   "answer": "am",
+   "explanation": "I am Lily. 意思是“我是莉莉”。考点：I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 1 Let's be friends!",
+    "point": "am / is / are",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 1 · am / is / are",
+    "detailTitle": "查看考点",
+    "detail": "Unit 1 Let's be friends! · I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。"
+   }
+  },
+  {
+   "id": "gr-002",
+   "unit": "U1",
+   "category": "choice",
+   "prompt": "___ your name?",
+   "options": ["He's", "What's", "I'm"],
+   "answer": "What's",
+   "explanation": "What's your name? 意思是“你叫什么名字”。考点：这是要记牢的固定说法，每个词都不能换。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 1 Let's be friends!",
+    "point": "固定说法",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 1 · 固定说法",
+    "detailTitle": "查看考点",
+    "detail": "Unit 1 Let's be friends! · 这是要记牢的固定说法，每个词都不能换。"
+   }
+  },
+  {
+   "id": "gr-003",
+   "unit": "U1",
+   "category": "choice",
+   "prompt": "He ___ Tom.",
+   "options": ["am", "are", "is"],
+   "answer": "is",
+   "explanation": "He is Tom. 意思是“他是汤姆”。考点：I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 1 Let's be friends!",
+    "point": "am / is / are",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 1 · am / is / are",
+    "detailTitle": "查看考点",
+    "detail": "Unit 1 Let's be friends! · I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。"
+   }
+  },
+  {
+   "id": "gr-004",
+   "unit": "U1",
+   "category": "choice",
+   "prompt": "She ___ Amy.",
+   "options": ["is", "am", "are"],
+   "answer": "is",
+   "explanation": "She is Amy. 意思是“她是埃米”。考点：I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 1 Let's be friends!",
+    "point": "am / is / are",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 1 · am / is / are",
+    "detailTitle": "查看考点",
+    "detail": "Unit 1 Let's be friends! · I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。"
+   }
+  },
+  {
+   "id": "gr-005",
+   "unit": "U1",
+   "category": "choice",
+   "prompt": "We ___ friends.",
+   "options": ["am", "are", "is"],
+   "answer": "are",
+   "explanation": "We are friends. 意思是“我们是朋友”。考点：I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 1 Let's be friends!",
+    "point": "am / is / are",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 1 · am / is / are",
+    "detailTitle": "查看考点",
+    "detail": "Unit 1 Let's be friends! · I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。"
+   }
+  },
+  {
+   "id": "gr-006",
+   "unit": "U1",
+   "category": "choice",
+   "prompt": "We ___ good friends.",
+   "options": ["am", "is", "are"],
+   "answer": "are",
+   "explanation": "We are good friends. 意思是“我们是好朋友”。考点：I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 1 Let's be friends!",
+    "point": "am / is / are",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 1 · am / is / are",
+    "detailTitle": "查看考点",
+    "detail": "Unit 1 Let's be friends! · I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。"
+   }
+  },
+  {
+   "id": "gr-007",
+   "unit": "U1",
+   "category": "choice",
+   "prompt": "He ___ my friend.",
+   "options": ["is", "am", "are"],
+   "answer": "is",
+   "explanation": "He is my friend. 意思是“他是我的朋友”。考点：I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 1 Let's be friends!",
+    "point": "am / is / are",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 1 · am / is / are",
+    "detailTitle": "查看考点",
+    "detail": "Unit 1 Let's be friends! · I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。"
+   }
+  },
+  {
+   "id": "gr-008",
+   "unit": "U1",
+   "category": "choice",
+   "prompt": "She ___ my friend.",
+   "options": ["am", "is", "are"],
+   "answer": "is",
+   "explanation": "She is my friend. 意思是“她是我的朋友”。考点：I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 1 Let's be friends!",
+    "point": "am / is / are",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 1 · am / is / are",
+    "detailTitle": "查看考点",
+    "detail": "Unit 1 Let's be friends! · I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。"
+   }
+  },
+  {
+   "id": "gr-009",
+   "unit": "U1",
+   "category": "choice",
+   "prompt": "I ___ nine.",
+   "options": ["is", "are", "am"],
+   "answer": "am",
+   "explanation": "I am nine. 意思是“我九岁”。考点：I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 1 Let's be friends!",
+    "point": "am / is / are",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 1 · am / is / are",
+    "detailTitle": "查看考点",
+    "detail": "Unit 1 Let's be friends! · I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。"
+   }
+  },
+  {
+   "id": "gr-010",
+   "unit": "U1",
+   "category": "choice",
+   "prompt": "My name ___ Jack.",
+   "options": ["is", "am", "are"],
+   "answer": "is",
+   "explanation": "My name is Jack. 意思是“我的名字是杰克”。考点：I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 1 Let's be friends!",
+    "point": "am / is / are",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 1 · am / is / are",
+    "detailTitle": "查看考点",
+    "detail": "Unit 1 Let's be friends! · I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。"
+   }
+  },
+  {
+   "id": "gr-011",
+   "unit": "U1",
+   "category": "choice",
+   "prompt": "___ is Tom.",
+   "options": ["She", "He", "We"],
+   "answer": "He",
+   "explanation": "He is Tom. 意思是“他是汤姆”。考点：说自己用 I，男孩、男性用 he，女孩、女性用 she，说“我们”用 we。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 1 Let's be friends!",
+    "point": "人称代词",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 1 · 人称代词",
+    "detailTitle": "查看考点",
+    "detail": "Unit 1 Let's be friends! · 说自己用 I，男孩、男性用 he，女孩、女性用 she，说“我们”用 we。"
+   }
+  },
+  {
+   "id": "gr-012",
+   "unit": "U1",
+   "category": "choice",
+   "prompt": "___ is Amy.",
+   "options": ["He", "We", "She"],
+   "answer": "She",
+   "explanation": "She is Amy. 意思是“她是埃米”。考点：说自己用 I，男孩、男性用 he，女孩、女性用 she，说“我们”用 we。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 1 Let's be friends!",
+    "point": "人称代词",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 1 · 人称代词",
+    "detailTitle": "查看考点",
+    "detail": "Unit 1 Let's be friends! · 说自己用 I，男孩、男性用 he，女孩、女性用 she，说“我们”用 we。"
+   }
+  },
+  {
+   "id": "gr-013",
+   "unit": "U1",
+   "category": "choice",
+   "prompt": "___ am Sam.",
+   "options": ["I", "He", "She"],
+   "answer": "I",
+   "explanation": "I am Sam. 意思是“我是萨姆”。考点：说自己用 I，男孩、男性用 he，女孩、女性用 she，说“我们”用 we。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 1 Let's be friends!",
+    "point": "人称代词",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 1 · 人称代词",
+    "detailTitle": "查看考点",
+    "detail": "Unit 1 Let's be friends! · 说自己用 I，男孩、男性用 he，女孩、女性用 she，说“我们”用 we。"
+   }
+  },
+  {
+   "id": "gr-014",
+   "unit": "U1",
+   "category": "choice",
+   "prompt": "___ are friends.",
+   "options": ["He", "We", "I"],
+   "answer": "We",
+   "explanation": "We are friends. 意思是“我们是朋友”。考点：说自己用 I，男孩、男性用 he，女孩、女性用 she，说“我们”用 we。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 1 Let's be friends!",
+    "point": "人称代词",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 1 · 人称代词",
+    "detailTitle": "查看考点",
+    "detail": "Unit 1 Let's be friends! · 说自己用 I，男孩、男性用 he，女孩、女性用 she，说“我们”用 we。"
+   }
+  },
+  {
+   "id": "gr-015",
+   "unit": "U1",
+   "category": "choice",
+   "prompt": "Tom is my friend. ___ is nine.",
+   "options": ["She", "I", "He"],
+   "answer": "He",
+   "explanation": "Tom is my friend. He is nine. 意思是“汤姆是我的朋友。他九岁”。考点：说自己用 I，男孩、男性用 he，女孩、女性用 she，说“我们”用 we。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 1 Let's be friends!",
+    "point": "人称代词",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 1 · 人称代词",
+    "detailTitle": "查看考点",
+    "detail": "Unit 1 Let's be friends! · 说自己用 I，男孩、男性用 he，女孩、女性用 she，说“我们”用 we。"
+   }
+  },
+  {
+   "id": "gr-016",
+   "unit": "U1",
+   "category": "choice",
+   "prompt": "Amy is my friend. ___ is nine.",
+   "options": ["She", "He", "I"],
+   "answer": "She",
+   "explanation": "Amy is my friend. She is nine. 意思是“埃米是我的朋友。她九岁”。考点：说自己用 I，男孩、男性用 he，女孩、女性用 she，说“我们”用 we。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 1 Let's be friends!",
+    "point": "人称代词",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 1 · 人称代词",
+    "detailTitle": "查看考点",
+    "detail": "Unit 1 Let's be friends! · 说自己用 I，男孩、男性用 he，女孩、女性用 she，说“我们”用 we。"
+   }
+  },
+  {
+   "id": "gr-017",
+   "unit": "U1",
+   "category": "choice",
+   "prompt": "What's ___ name?（你叫什么名字？）",
+   "options": ["my", "your", "he"],
+   "answer": "your",
+   "explanation": "What's your name? 意思是“你叫什么名字”。考点：my 是“我的”，your 是“你的”，后面直接跟名词。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 1 Let's be friends!",
+    "point": "my 和 your",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 1 · my 和 your",
+    "detailTitle": "查看考点",
+    "detail": "Unit 1 Let's be friends! · my 是“我的”，your 是“你的”，后面直接跟名词。"
+   }
+  },
+  {
+   "id": "gr-018",
+   "unit": "U1",
+   "category": "choice",
+   "prompt": "___ name is Lily.（我的名字是莉莉。）",
+   "options": ["Your", "I", "My"],
+   "answer": "My",
+   "explanation": "My name is Lily. 意思是“我的名字是莉莉”。考点：my 是“我的”，your 是“你的”，后面直接跟名词。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 1 Let's be friends!",
+    "point": "my 和 your",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 1 · my 和 your",
+    "detailTitle": "查看考点",
+    "detail": "Unit 1 Let's be friends! · my 是“我的”，your 是“你的”，后面直接跟名词。"
+   }
+  },
+  {
+   "id": "gr-019",
+   "unit": "U1",
+   "category": "choice",
+   "prompt": "Hello, ___ name is Tom.",
+   "options": ["my", "I", "he"],
+   "answer": "my",
+   "explanation": "Hello, my name is Tom. 意思是“你好，我的名字是汤姆”。考点：my 是“我的”，your 是“你的”，后面直接跟名词。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 1 Let's be friends!",
+    "point": "my 和 your",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 1 · my 和 your",
+    "detailTitle": "查看考点",
+    "detail": "Unit 1 Let's be friends! · my 是“我的”，your 是“你的”，后面直接跟名词。"
+   }
+  },
+  {
+   "id": "gr-020",
+   "unit": "U1",
+   "category": "choice",
+   "prompt": "I'm Sam. = I ___ Sam.",
+   "options": ["is", "am", "are"],
+   "answer": "am",
+   "explanation": "I'm Sam. = I am Sam. 意思是“我是萨姆”。考点：I'm = I am，he's = he is，she's = she is，it's = it is，we're = we are。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 1 Let's be friends!",
+    "point": "缩写",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 1 · 缩写",
+    "detailTitle": "查看考点",
+    "detail": "Unit 1 Let's be friends! · I'm = I am，he's = he is，she's = she is，it's = it is，we're = we are。"
+   }
+  },
+  {
+   "id": "gr-021",
+   "unit": "U1",
+   "category": "choice",
+   "prompt": "He's Tom. = He ___ Tom.",
+   "options": ["am", "are", "is"],
+   "answer": "is",
+   "explanation": "He's Tom. = He is Tom. 意思是“他是汤姆”。考点：I'm = I am，he's = he is，she's = she is，it's = it is，we're = we are。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 1 Let's be friends!",
+    "point": "缩写",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 1 · 缩写",
+    "detailTitle": "查看考点",
+    "detail": "Unit 1 Let's be friends! · I'm = I am，he's = he is，she's = she is，it's = it is，we're = we are。"
+   }
+  },
+  {
+   "id": "gr-022",
+   "unit": "U1",
+   "category": "choice",
+   "prompt": "She's Amy. = She ___ Amy.",
+   "options": ["is", "am", "are"],
+   "answer": "is",
+   "explanation": "She's Amy. = She is Amy. 意思是“她是埃米”。考点：I'm = I am，he's = he is，she's = she is，it's = it is，we're = we are。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 1 Let's be friends!",
+    "point": "缩写",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 1 · 缩写",
+    "detailTitle": "查看考点",
+    "detail": "Unit 1 Let's be friends! · I'm = I am，he's = he is，she's = she is，it's = it is，we're = we are。"
+   }
+  },
+  {
+   "id": "gr-023",
+   "unit": "U1",
+   "category": "choice",
+   "prompt": "We're friends. = We ___ friends.",
+   "options": ["am", "are", "is"],
+   "answer": "are",
+   "explanation": "We're friends. = We are friends. 意思是“我们是朋友”。考点：I'm = I am，he's = he is，she's = she is，it's = it is，we're = we are。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 1 Let's be friends!",
+    "point": "缩写",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 1 · 缩写",
+    "detailTitle": "查看考点",
+    "detail": "Unit 1 Let's be friends! · I'm = I am，he's = he is，she's = she is，it's = it is，we're = we are。"
+   }
+  },
+  {
+   "id": "gr-024",
+   "unit": "U1",
+   "category": "choice",
+   "prompt": "Hi! ___ Lily. Nice to meet you.",
+   "options": ["He's", "We're", "I'm"],
+   "answer": "I'm",
+   "explanation": "Hi! I'm Lily. Nice to meet you. 意思是“嗨！我是莉莉。很高兴认识你”。考点：I'm = I am，he's = he is，she's = she is，it's = it is，we're = we are。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 1 Let's be friends!",
+    "point": "缩写",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 1 · 缩写",
+    "detailTitle": "查看考点",
+    "detail": "Unit 1 Let's be friends! · I'm = I am，he's = he is，she's = she is，it's = it is，we're = we are。"
+   }
+  },
+  {
+   "id": "gr-025",
+   "unit": "U1",
+   "category": "choice",
+   "prompt": "Look! ___ Jack.",
+   "options": ["He's", "She's", "We're"],
+   "answer": "He's",
+   "explanation": "Look! He's Jack. 意思是“看！他是杰克”。考点：I'm = I am，he's = he is，she's = she is，it's = it is，we're = we are。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 1 Let's be friends!",
+    "point": "缩写",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 1 · 缩写",
+    "detailTitle": "查看考点",
+    "detail": "Unit 1 Let's be friends! · I'm = I am，he's = he is，she's = she is，it's = it is，we're = we are。"
+   }
+  },
+  {
+   "id": "gr-026",
+   "unit": "U1",
+   "category": "choice",
+   "prompt": "Look! ___ Amy.",
+   "options": ["He's", "She's", "We're"],
+   "answer": "She's",
+   "explanation": "Look! She's Amy. 意思是“看！她是埃米”。考点：I'm = I am，he's = he is，she's = she is，it's = it is，we're = we are。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 1 Let's be friends!",
+    "point": "缩写",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 1 · 缩写",
+    "detailTitle": "查看考点",
+    "detail": "Unit 1 Let's be friends! · I'm = I am，he's = he is，she's = she is，it's = it is，we're = we are。"
+   }
+  },
+  {
+   "id": "gr-027",
+   "unit": "U1",
+   "category": "choice",
+   "prompt": "___ friends.",
+   "options": ["I'm", "He's", "We're"],
+   "answer": "We're",
+   "explanation": "We're friends. 意思是“我们是朋友”。考点：I'm = I am，he's = he is，she's = she is，it's = it is，we're = we are。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 1 Let's be friends!",
+    "point": "缩写",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 1 · 缩写",
+    "detailTitle": "查看考点",
+    "detail": "Unit 1 Let's be friends! · I'm = I am，he's = he is，she's = she is，it's = it is，we're = we are。"
+   }
+  },
+  {
+   "id": "gr-028",
+   "unit": "U1",
+   "category": "choice",
+   "prompt": "Nice to meet you, ___.",
+   "options": ["too", "to", "I"],
+   "answer": "too",
+   "explanation": "Nice to meet you, too. 意思是“我也很高兴认识你”。考点：这是要记牢的固定说法，每个词都不能换。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 1 Let's be friends!",
+    "point": "固定说法",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 1 · 固定说法",
+    "detailTitle": "查看考点",
+    "detail": "Unit 1 Let's be friends! · 这是要记牢的固定说法，每个词都不能换。"
+   }
+  },
+  {
+   "id": "gr-029",
+   "unit": "U1",
+   "category": "choice",
+   "prompt": "Let's ___ friends!",
+   "options": ["am", "be", "is"],
+   "answer": "be",
+   "explanation": "Let's be friends! 意思是“让我们做朋友吧”。考点：这是要记牢的固定说法，每个词都不能换。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 1 Let's be friends!",
+    "point": "固定说法",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 1 · 固定说法",
+    "detailTitle": "查看考点",
+    "detail": "Unit 1 Let's be friends! · 这是要记牢的固定说法，每个词都不能换。"
+   }
+  },
+  {
+   "id": "gr-030",
+   "unit": "U1",
+   "category": "choice",
+   "prompt": "Nice to ___ you.",
+   "options": ["am", "is", "meet"],
+   "answer": "meet",
+   "explanation": "Nice to meet you. 意思是“很高兴认识你”。考点：这是要记牢的固定说法，每个词都不能换。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 1 Let's be friends!",
+    "point": "固定说法",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 1 · 固定说法",
+    "detailTitle": "查看考点",
+    "detail": "Unit 1 Let's be friends! · 这是要记牢的固定说法，每个词都不能换。"
+   }
+  },
+  {
+   "id": "gr-031",
+   "unit": "U2",
+   "category": "choice",
+   "prompt": "This is ___ pen.",
+   "options": ["a", "an", "is"],
+   "answer": "a",
+   "explanation": "This is a pen. 意思是“这是一支钢笔”。考点：以元音音素开头的词前用 an（an eraser、an orange ruler），其他词前用 a。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 2 My school things",
+    "point": "a 和 an",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 2 · a 和 an",
+    "detailTitle": "查看考点",
+    "detail": "Unit 2 My school things · 以元音音素开头的词前用 an（an eraser、an orange ruler），其他词前用 a。"
+   }
+  },
+  {
+   "id": "gr-032",
+   "unit": "U2",
+   "category": "choice",
+   "prompt": "This is ___ pencil.",
+   "options": ["an", "a", "is"],
+   "answer": "a",
+   "explanation": "This is a pencil. 意思是“这是一支铅笔”。考点：以元音音素开头的词前用 an（an eraser、an orange ruler），其他词前用 a。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 2 My school things",
+    "point": "a 和 an",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 2 · a 和 an",
+    "detailTitle": "查看考点",
+    "detail": "Unit 2 My school things · 以元音音素开头的词前用 an（an eraser、an orange ruler），其他词前用 a。"
+   }
+  },
+  {
+   "id": "gr-033",
+   "unit": "U2",
+   "category": "choice",
+   "prompt": "That is ___ book.",
+   "options": ["an", "is", "a"],
+   "answer": "a",
+   "explanation": "That is a book. 意思是“那是一本书”。考点：以元音音素开头的词前用 an（an eraser、an orange ruler），其他词前用 a。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 2 My school things",
+    "point": "a 和 an",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 2 · a 和 an",
+    "detailTitle": "查看考点",
+    "detail": "Unit 2 My school things · 以元音音素开头的词前用 an（an eraser、an orange ruler），其他词前用 a。"
+   }
+  },
+  {
+   "id": "gr-034",
+   "unit": "U2",
+   "category": "choice",
+   "prompt": "This is ___ ruler.",
+   "options": ["a", "an", "is"],
+   "answer": "a",
+   "explanation": "This is a ruler. 意思是“这是一把尺子”。考点：以元音音素开头的词前用 an（an eraser、an orange ruler），其他词前用 a。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 2 My school things",
+    "point": "a 和 an",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 2 · a 和 an",
+    "detailTitle": "查看考点",
+    "detail": "Unit 2 My school things · 以元音音素开头的词前用 an（an eraser、an orange ruler），其他词前用 a。"
+   }
+  },
+  {
+   "id": "gr-035",
+   "unit": "U2",
+   "category": "choice",
+   "prompt": "This is ___ bag.",
+   "options": ["an", "a", "is"],
+   "answer": "a",
+   "explanation": "This is a bag. 意思是“这是一个书包”。考点：以元音音素开头的词前用 an（an eraser、an orange ruler），其他词前用 a。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 2 My school things",
+    "point": "a 和 an",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 2 · a 和 an",
+    "detailTitle": "查看考点",
+    "detail": "Unit 2 My school things · 以元音音素开头的词前用 an（an eraser、an orange ruler），其他词前用 a。"
+   }
+  },
+  {
+   "id": "gr-036",
+   "unit": "U2",
+   "category": "choice",
+   "prompt": "That is ___ pencil box.",
+   "options": ["an", "is", "a"],
+   "answer": "a",
+   "explanation": "That is a pencil box. 意思是“那是一个铅笔盒”。考点：以元音音素开头的词前用 an（an eraser、an orange ruler），其他词前用 a。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 2 My school things",
+    "point": "a 和 an",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 2 · a 和 an",
+    "detailTitle": "查看考点",
+    "detail": "Unit 2 My school things · 以元音音素开头的词前用 an（an eraser、an orange ruler），其他词前用 a。"
+   }
+  },
+  {
+   "id": "gr-037",
+   "unit": "U2",
+   "category": "choice",
+   "prompt": "This is ___ eraser.",
+   "options": ["an", "a", "is"],
+   "answer": "an",
+   "explanation": "This is an eraser. 意思是“这是一块橡皮”。考点：以元音音素开头的词前用 an（an eraser、an orange ruler），其他词前用 a。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 2 My school things",
+    "point": "a 和 an",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 2 · a 和 an",
+    "detailTitle": "查看考点",
+    "detail": "Unit 2 My school things · 以元音音素开头的词前用 an（an eraser、an orange ruler），其他词前用 a。"
+   }
+  },
+  {
+   "id": "gr-038",
+   "unit": "U2",
+   "category": "choice",
+   "prompt": "That is ___ eraser.",
+   "options": ["a", "an", "is"],
+   "answer": "an",
+   "explanation": "That is an eraser. 意思是“那是一块橡皮”。考点：以元音音素开头的词前用 an（an eraser、an orange ruler），其他词前用 a。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 2 My school things",
+    "point": "a 和 an",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 2 · a 和 an",
+    "detailTitle": "查看考点",
+    "detail": "Unit 2 My school things · 以元音音素开头的词前用 an（an eraser、an orange ruler），其他词前用 a。"
+   }
+  },
+  {
+   "id": "gr-039",
+   "unit": "U2",
+   "category": "choice",
+   "prompt": "This is a ___.",
+   "options": ["eraser", "my", "pencil"],
+   "answer": "pencil",
+   "explanation": "This is a pencil. 意思是“这是一支铅笔”。考点：以元音音素开头的词前用 an（an eraser、an orange ruler），其他词前用 a。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 2 My school things",
+    "point": "a 和 an",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 2 · a 和 an",
+    "detailTitle": "查看考点",
+    "detail": "Unit 2 My school things · 以元音音素开头的词前用 an（an eraser、an orange ruler），其他词前用 a。"
+   }
+  },
+  {
+   "id": "gr-040",
+   "unit": "U2",
+   "category": "choice",
+   "prompt": "This is an ___.",
+   "options": ["eraser", "pen", "book"],
+   "answer": "eraser",
+   "explanation": "This is an eraser. 意思是“这是一块橡皮”。考点：以元音音素开头的词前用 an（an eraser、an orange ruler），其他词前用 a。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 2 My school things",
+    "point": "a 和 an",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 2 · a 和 an",
+    "detailTitle": "查看考点",
+    "detail": "Unit 2 My school things · 以元音音素开头的词前用 an（an eraser、an orange ruler），其他词前用 a。"
+   }
+  },
+  {
+   "id": "gr-041",
+   "unit": "U2",
+   "category": "choice",
+   "prompt": "That is a ___.",
+   "options": ["eraser", "book", "is"],
+   "answer": "book",
+   "explanation": "That is a book. 意思是“那是一本书”。考点：以元音音素开头的词前用 an（an eraser、an orange ruler），其他词前用 a。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 2 My school things",
+    "point": "a 和 an",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 2 · a 和 an",
+    "detailTitle": "查看考点",
+    "detail": "Unit 2 My school things · 以元音音素开头的词前用 an（an eraser、an orange ruler），其他词前用 a。"
+   }
+  },
+  {
+   "id": "gr-042",
+   "unit": "U2",
+   "category": "choice",
+   "prompt": "___ is a pen.（这是一支钢笔。）",
+   "options": ["That", "I", "This"],
+   "answer": "This",
+   "explanation": "This is a pen. 意思是“这是一支钢笔”。考点：近处的东西用 this（这），远处的东西用 that（那）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 2 My school things",
+    "point": "this 和 that",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 2 · this 和 that",
+    "detailTitle": "查看考点",
+    "detail": "Unit 2 My school things · 近处的东西用 this（这），远处的东西用 that（那）。"
+   }
+  },
+  {
+   "id": "gr-043",
+   "unit": "U2",
+   "category": "choice",
+   "prompt": "___ is a book.（那是一本书。）",
+   "options": ["That", "This", "We"],
+   "answer": "That",
+   "explanation": "That is a book. 意思是“那是一本书”。考点：近处的东西用 this（这），远处的东西用 that（那）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 2 My school things",
+    "point": "this 和 that",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 2 · this 和 that",
+    "detailTitle": "查看考点",
+    "detail": "Unit 2 My school things · 近处的东西用 this（这），远处的东西用 that（那）。"
+   }
+  },
+  {
+   "id": "gr-044",
+   "unit": "U2",
+   "category": "choice",
+   "prompt": "___ is an eraser.（这是一块橡皮。）",
+   "options": ["That", "This", "I"],
+   "answer": "This",
+   "explanation": "This is an eraser. 意思是“这是一块橡皮”。考点：近处的东西用 this（这），远处的东西用 that（那）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 2 My school things",
+    "point": "this 和 that",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 2 · this 和 that",
+    "detailTitle": "查看考点",
+    "detail": "Unit 2 My school things · 近处的东西用 this（这），远处的东西用 that（那）。"
+   }
+  },
+  {
+   "id": "gr-045",
+   "unit": "U2",
+   "category": "choice",
+   "prompt": "___ is a bag.（那是一个书包。）",
+   "options": ["This", "We", "That"],
+   "answer": "That",
+   "explanation": "That is a bag. 意思是“那是一个书包”。考点：近处的东西用 this（这），远处的东西用 that（那）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 2 My school things",
+    "point": "this 和 that",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 2 · this 和 that",
+    "detailTitle": "查看考点",
+    "detail": "Unit 2 My school things · 近处的东西用 this（这），远处的东西用 that（那）。"
+   }
+  },
+  {
+   "id": "gr-046",
+   "unit": "U2",
+   "category": "choice",
+   "prompt": "___ is my ruler.（这是我的尺子。）",
+   "options": ["This", "That", "I"],
+   "answer": "This",
+   "explanation": "This is my ruler. 意思是“这是我的尺子”。考点：近处的东西用 this（这），远处的东西用 that（那）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 2 My school things",
+    "point": "this 和 that",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 2 · this 和 that",
+    "detailTitle": "查看考点",
+    "detail": "Unit 2 My school things · 近处的东西用 this（这），远处的东西用 that（那）。"
+   }
+  },
+  {
+   "id": "gr-047",
+   "unit": "U2",
+   "category": "choice",
+   "prompt": "___ is your pen.（那是你的钢笔。）",
+   "options": ["This", "That", "We"],
+   "answer": "That",
+   "explanation": "That is your pen. 意思是“那是你的钢笔”。考点：近处的东西用 this（这），远处的东西用 that（那）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 2 My school things",
+    "point": "this 和 that",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 2 · this 和 that",
+    "detailTitle": "查看考点",
+    "detail": "Unit 2 My school things · 近处的东西用 this（这），远处的东西用 that（那）。"
+   }
+  },
+  {
+   "id": "gr-048",
+   "unit": "U2",
+   "category": "choice",
+   "prompt": "This ___ a pencil.",
+   "options": ["am", "are", "is"],
+   "answer": "is",
+   "explanation": "This is a pencil. 意思是“这是一支铅笔”。考点：I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 2 My school things",
+    "point": "am / is / are",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 2 · am / is / are",
+    "detailTitle": "查看考点",
+    "detail": "Unit 2 My school things · I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。"
+   }
+  },
+  {
+   "id": "gr-049",
+   "unit": "U2",
+   "category": "choice",
+   "prompt": "That ___ a ruler.",
+   "options": ["is", "am", "are"],
+   "answer": "is",
+   "explanation": "That is a ruler. 意思是“那是一把尺子”。考点：I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 2 My school things",
+    "point": "am / is / are",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 2 · am / is / are",
+    "detailTitle": "查看考点",
+    "detail": "Unit 2 My school things · I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。"
+   }
+  },
+  {
+   "id": "gr-050",
+   "unit": "U2",
+   "category": "choice",
+   "prompt": "This ___ my bag.",
+   "options": ["am", "is", "are"],
+   "answer": "is",
+   "explanation": "This is my bag. 意思是“这是我的书包”。考点：I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 2 My school things",
+    "point": "am / is / are",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 2 · am / is / are",
+    "detailTitle": "查看考点",
+    "detail": "Unit 2 My school things · I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。"
+   }
+  },
+  {
+   "id": "gr-051",
+   "unit": "U2",
+   "category": "choice",
+   "prompt": "That ___ your book.",
+   "options": ["am", "are", "is"],
+   "answer": "is",
+   "explanation": "That is your book. 意思是“那是你的书”。考点：I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 2 My school things",
+    "point": "am / is / are",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 2 · am / is / are",
+    "detailTitle": "查看考点",
+    "detail": "Unit 2 My school things · I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。"
+   }
+  },
+  {
+   "id": "gr-052",
+   "unit": "U2",
+   "category": "choice",
+   "prompt": "This is ___ book.（这是我的书。）",
+   "options": ["my", "your", "I"],
+   "answer": "my",
+   "explanation": "This is my book. 意思是“这是我的书”。考点：my 是“我的”，your 是“你的”，后面直接跟名词。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 2 My school things",
+    "point": "my 和 your",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 2 · my 和 your",
+    "detailTitle": "查看考点",
+    "detail": "Unit 2 My school things · my 是“我的”，your 是“你的”，后面直接跟名词。"
+   }
+  },
+  {
+   "id": "gr-053",
+   "unit": "U2",
+   "category": "choice",
+   "prompt": "That is ___ pen.（那是你的钢笔。）",
+   "options": ["my", "your", "you"],
+   "answer": "your",
+   "explanation": "That is your pen. 意思是“那是你的钢笔”。考点：my 是“我的”，your 是“你的”，后面直接跟名词。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 2 My school things",
+    "point": "my 和 your",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 2 · my 和 your",
+    "detailTitle": "查看考点",
+    "detail": "Unit 2 My school things · my 是“我的”，your 是“你的”，后面直接跟名词。"
+   }
+  },
+  {
+   "id": "gr-054",
+   "unit": "U2",
+   "category": "choice",
+   "prompt": "This is ___ bag.（这是我的书包。）",
+   "options": ["your", "I", "my"],
+   "answer": "my",
+   "explanation": "This is my bag. 意思是“这是我的书包”。考点：my 是“我的”，your 是“你的”，后面直接跟名词。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 2 My school things",
+    "point": "my 和 your",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 2 · my 和 your",
+    "detailTitle": "查看考点",
+    "detail": "Unit 2 My school things · my 是“我的”，your 是“你的”，后面直接跟名词。"
+   }
+  },
+  {
+   "id": "gr-055",
+   "unit": "U2",
+   "category": "choice",
+   "prompt": "That is ___ eraser.（那是你的橡皮。）",
+   "options": ["your", "my", "you"],
+   "answer": "your",
+   "explanation": "That is your eraser. 意思是“那是你的橡皮”。考点：my 是“我的”，your 是“你的”，后面直接跟名词。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 2 My school things",
+    "point": "my 和 your",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 2 · my 和 your",
+    "detailTitle": "查看考点",
+    "detail": "Unit 2 My school things · my 是“我的”，your 是“你的”，后面直接跟名词。"
+   }
+  },
+  {
+   "id": "gr-056",
+   "unit": "U2",
+   "category": "choice",
+   "prompt": "This is ___ pencil box.（这是你的铅笔盒。）",
+   "options": ["my", "your", "you"],
+   "answer": "your",
+   "explanation": "This is your pencil box. 意思是“这是你的铅笔盒”。考点：my 是“我的”，your 是“你的”，后面直接跟名词。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 2 My school things",
+    "point": "my 和 your",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 2 · my 和 your",
+    "detailTitle": "查看考点",
+    "detail": "Unit 2 My school things · my 是“我的”，your 是“你的”，后面直接跟名词。"
+   }
+  },
+  {
+   "id": "gr-057",
+   "unit": "U2",
+   "category": "choice",
+   "prompt": "That is ___ ruler.（那是我的尺子。）",
+   "options": ["your", "I", "my"],
+   "answer": "my",
+   "explanation": "That is my ruler. 意思是“那是我的尺子”。考点：my 是“我的”，your 是“你的”，后面直接跟名词。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 2 My school things",
+    "point": "my 和 your",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 2 · my 和 your",
+    "detailTitle": "查看考点",
+    "detail": "Unit 2 My school things · my 是“我的”，your 是“你的”，后面直接跟名词。"
+   }
+  },
+  {
+   "id": "gr-058",
+   "unit": "U2",
+   "category": "choice",
+   "prompt": "Here you ___.",
+   "options": ["are", "is", "am"],
+   "answer": "are",
+   "explanation": "Here you are. 意思是“给你”。考点：这是要记牢的固定说法，每个词都不能换。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 2 My school things",
+    "point": "固定说法",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 2 · 固定说法",
+    "detailTitle": "查看考点",
+    "detail": "Unit 2 My school things · 这是要记牢的固定说法，每个词都不能换。"
+   }
+  },
+  {
+   "id": "gr-059",
+   "unit": "U2",
+   "category": "choice",
+   "prompt": "Here ___ are.",
+   "options": ["I", "you", "he"],
+   "answer": "you",
+   "explanation": "Here you are. 意思是“给你”。考点：这是要记牢的固定说法，每个词都不能换。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 2 My school things",
+    "point": "固定说法",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 2 · 固定说法",
+    "detailTitle": "查看考点",
+    "detail": "Unit 2 My school things · 这是要记牢的固定说法，每个词都不能换。"
+   }
+  },
+  {
+   "id": "gr-060",
+   "unit": "U2",
+   "category": "choice",
+   "prompt": "___ you are.",
+   "options": ["This", "That", "Here"],
+   "answer": "Here",
+   "explanation": "Here you are. 意思是“给你”。考点：这是要记牢的固定说法，每个词都不能换。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 2 My school things",
+    "point": "固定说法",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 2 · 固定说法",
+    "detailTitle": "查看考点",
+    "detail": "Unit 2 My school things · 这是要记牢的固定说法，每个词都不能换。"
+   }
+  },
+  {
+   "id": "gr-061",
+   "unit": "U3",
+   "category": "choice",
+   "prompt": "It ___ red.",
+   "options": ["is", "am", "are"],
+   "answer": "is",
+   "explanation": "It is red. 意思是“它是红色的”。考点：I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 3 It's a colourful world!",
+    "point": "am / is / are",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 3 · am / is / are",
+    "detailTitle": "查看考点",
+    "detail": "Unit 3 It's a colourful world! · I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。"
+   }
+  },
+  {
+   "id": "gr-062",
+   "unit": "U3",
+   "category": "choice",
+   "prompt": "It ___ blue.",
+   "options": ["am", "is", "are"],
+   "answer": "is",
+   "explanation": "It is blue. 意思是“它是蓝色的”。考点：I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 3 It's a colourful world!",
+    "point": "am / is / are",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 3 · am / is / are",
+    "detailTitle": "查看考点",
+    "detail": "Unit 3 It's a colourful world! · I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。"
+   }
+  },
+  {
+   "id": "gr-063",
+   "unit": "U3",
+   "category": "choice",
+   "prompt": "___ is green.（它是绿色的。）",
+   "options": ["I", "We", "It"],
+   "answer": "It",
+   "explanation": "It is green. 意思是“它是绿色的”。考点：说自己用 I，男孩、男性用 he，女孩、女性用 she，说“我们”用 we。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 3 It's a colourful world!",
+    "point": "人称代词",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 3 · 人称代词",
+    "detailTitle": "查看考点",
+    "detail": "Unit 3 It's a colourful world! · 说自己用 I，男孩、男性用 he，女孩、女性用 she，说“我们”用 we。"
+   }
+  },
+  {
+   "id": "gr-064",
+   "unit": "U3",
+   "category": "choice",
+   "prompt": "___ yellow.（它是黄色的。）",
+   "options": ["It's", "I'm", "We're"],
+   "answer": "It's",
+   "explanation": "It's yellow. 意思是“它是黄色的”。考点：I'm = I am，he's = he is，she's = she is，it's = it is，we're = we are。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 3 It's a colourful world!",
+    "point": "缩写",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 3 · 缩写",
+    "detailTitle": "查看考点",
+    "detail": "Unit 3 It's a colourful world! · I'm = I am，he's = he is，she's = she is，it's = it is，we're = we are。"
+   }
+  },
+  {
+   "id": "gr-065",
+   "unit": "U3",
+   "category": "choice",
+   "prompt": "It's brown. = It ___ brown.",
+   "options": ["am", "is", "are"],
+   "answer": "is",
+   "explanation": "It's brown. = It is brown. 意思是“它是棕色的”。考点：I'm = I am，he's = he is，she's = she is，it's = it is，we're = we are。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 3 It's a colourful world!",
+    "point": "缩写",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 3 · 缩写",
+    "detailTitle": "查看考点",
+    "detail": "Unit 3 It's a colourful world! · I'm = I am，he's = he is，she's = she is，it's = it is，we're = we are。"
+   }
+  },
+  {
+   "id": "gr-066",
+   "unit": "U3",
+   "category": "choice",
+   "prompt": "I ___ red.（我看见红色。）",
+   "options": ["is", "am", "see"],
+   "answer": "see",
+   "explanation": "I see red. 意思是“我看见红色”。考点：“我看见……”用 I see …，主语 I 不能换成 it。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 3 It's a colourful world!",
+    "point": "I see",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 3 · I see",
+    "detailTitle": "查看考点",
+    "detail": "Unit 3 It's a colourful world! · “我看见……”用 I see …，主语 I 不能换成 it。"
+   }
+  },
+  {
+   "id": "gr-067",
+   "unit": "U3",
+   "category": "choice",
+   "prompt": "I ___ blue and green.（我看见蓝色和绿色。）",
+   "options": ["see", "is", "am"],
+   "answer": "see",
+   "explanation": "I see blue and green. 意思是“我看见蓝色和绿色”。考点：“我看见……”用 I see …，主语 I 不能换成 it。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 3 It's a colourful world!",
+    "point": "I see",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 3 · I see",
+    "detailTitle": "查看考点",
+    "detail": "Unit 3 It's a colourful world! · “我看见……”用 I see …，主语 I 不能换成 it。"
+   }
+  },
+  {
+   "id": "gr-068",
+   "unit": "U3",
+   "category": "choice",
+   "prompt": "___ see yellow.",
+   "options": ["It", "I", "He"],
+   "answer": "I",
+   "explanation": "I see yellow. 意思是“我看见黄色”。考点：“我看见……”用 I see …，主语 I 不能换成 it。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 3 It's a colourful world!",
+    "point": "I see",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 3 · I see",
+    "detailTitle": "查看考点",
+    "detail": "Unit 3 It's a colourful world! · “我看见……”用 I see …，主语 I 不能换成 it。"
+   }
+  },
+  {
+   "id": "gr-069",
+   "unit": "U3",
+   "category": "choice",
+   "prompt": "___ see a blue bag.",
+   "options": ["It", "She", "I"],
+   "answer": "I",
+   "explanation": "I see a blue bag. 意思是“我看见一个蓝色的书包”。考点：“我看见……”用 I see …，主语 I 不能换成 it。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 3 It's a colourful world!",
+    "point": "I see",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 3 · I see",
+    "detailTitle": "查看考点",
+    "detail": "Unit 3 It's a colourful world! · “我看见……”用 I see …，主语 I 不能换成 it。"
+   }
+  },
+  {
+   "id": "gr-070",
+   "unit": "U3",
+   "category": "choice",
+   "prompt": "It's black ___ white.",
+   "options": ["and", "is", "see"],
+   "answer": "and",
+   "explanation": "It's black and white. 意思是“它是黑白相间的”。考点：连接两样东西用 and（和）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 3 It's a colourful world!",
+    "point": "and 连接",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 3 · and 连接",
+    "detailTitle": "查看考点",
+    "detail": "Unit 3 It's a colourful world! · 连接两样东西用 and（和）。"
+   }
+  },
+  {
+   "id": "gr-071",
+   "unit": "U3",
+   "category": "choice",
+   "prompt": "I see red ___ blue.",
+   "options": ["is", "and", "am"],
+   "answer": "and",
+   "explanation": "I see red and blue. 意思是“我看见红色和蓝色”。考点：连接两样东西用 and（和）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 3 It's a colourful world!",
+    "point": "and 连接",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 3 · and 连接",
+    "detailTitle": "查看考点",
+    "detail": "Unit 3 It's a colourful world! · 连接两样东西用 and（和）。"
+   }
+  },
+  {
+   "id": "gr-072",
+   "unit": "U3",
+   "category": "choice",
+   "prompt": "It's red ___ yellow.",
+   "options": ["is", "a", "and"],
+   "answer": "and",
+   "explanation": "It's red and yellow. 意思是“它是红色和黄色的”。考点：连接两样东西用 and（和）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 3 It's a colourful world!",
+    "point": "and 连接",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 3 · and 连接",
+    "detailTitle": "查看考点",
+    "detail": "Unit 3 It's a colourful world! · 连接两样东西用 and（和）。"
+   }
+  },
+  {
+   "id": "gr-073",
+   "unit": "U3",
+   "category": "choice",
+   "prompt": "It's ___ red pen.",
+   "options": ["a", "an", "is"],
+   "answer": "a",
+   "explanation": "It's a red pen. 意思是“它是一支红色的钢笔”。考点：以元音音素开头的词前用 an（an eraser、an orange ruler），其他词前用 a。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 3 It's a colourful world!",
+    "point": "a 和 an",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 3 · a 和 an",
+    "detailTitle": "查看考点",
+    "detail": "Unit 3 It's a colourful world! · 以元音音素开头的词前用 an（an eraser、an orange ruler），其他词前用 a。"
+   }
+  },
+  {
+   "id": "gr-074",
+   "unit": "U3",
+   "category": "choice",
+   "prompt": "It's ___ blue bag.",
+   "options": ["an", "a", "is"],
+   "answer": "a",
+   "explanation": "It's a blue bag. 意思是“它是一个蓝色的书包”。考点：以元音音素开头的词前用 an（an eraser、an orange ruler），其他词前用 a。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 3 It's a colourful world!",
+    "point": "a 和 an",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 3 · a 和 an",
+    "detailTitle": "查看考点",
+    "detail": "Unit 3 It's a colourful world! · 以元音音素开头的词前用 an（an eraser、an orange ruler），其他词前用 a。"
+   }
+  },
+  {
+   "id": "gr-075",
+   "unit": "U3",
+   "category": "choice",
+   "prompt": "It's ___ green book.",
+   "options": ["an", "is", "a"],
+   "answer": "a",
+   "explanation": "It's a green book. 意思是“它是一本绿色的书”。考点：以元音音素开头的词前用 an（an eraser、an orange ruler），其他词前用 a。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 3 It's a colourful world!",
+    "point": "a 和 an",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 3 · a 和 an",
+    "detailTitle": "查看考点",
+    "detail": "Unit 3 It's a colourful world! · 以元音音素开头的词前用 an（an eraser、an orange ruler），其他词前用 a。"
+   }
+  },
+  {
+   "id": "gr-076",
+   "unit": "U3",
+   "category": "choice",
+   "prompt": "I see ___ yellow pencil.",
+   "options": ["a", "an", "is"],
+   "answer": "a",
+   "explanation": "I see a yellow pencil. 意思是“我看见一支黄色的铅笔”。考点：以元音音素开头的词前用 an（an eraser、an orange ruler），其他词前用 a。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 3 It's a colourful world!",
+    "point": "a 和 an",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 3 · a 和 an",
+    "detailTitle": "查看考点",
+    "detail": "Unit 3 It's a colourful world! · 以元音音素开头的词前用 an（an eraser、an orange ruler），其他词前用 a。"
+   }
+  },
+  {
+   "id": "gr-077",
+   "unit": "U3",
+   "category": "choice",
+   "prompt": "It's ___ orange ruler.",
+   "options": ["a", "an", "is"],
+   "answer": "an",
+   "explanation": "It's an orange ruler. 意思是“它是一把橙色的尺子”。考点：以元音音素开头的词前用 an（an eraser、an orange ruler），其他词前用 a。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 3 It's a colourful world!",
+    "point": "a 和 an",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 3 · a 和 an",
+    "detailTitle": "查看考点",
+    "detail": "Unit 3 It's a colourful world! · 以元音音素开头的词前用 an（an eraser、an orange ruler），其他词前用 a。"
+   }
+  },
+  {
+   "id": "gr-078",
+   "unit": "U3",
+   "category": "choice",
+   "prompt": "I see ___ orange bag.",
+   "options": ["a", "is", "an"],
+   "answer": "an",
+   "explanation": "I see an orange bag. 意思是“我看见一个橙色的书包”。考点：以元音音素开头的词前用 an（an eraser、an orange ruler），其他词前用 a。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 3 It's a colourful world!",
+    "point": "a 和 an",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 3 · a 和 an",
+    "detailTitle": "查看考点",
+    "detail": "Unit 3 It's a colourful world! · 以元音音素开头的词前用 an（an eraser、an orange ruler），其他词前用 a。"
+   }
+  },
+  {
+   "id": "gr-079",
+   "unit": "U3",
+   "category": "choice",
+   "prompt": "It's ___ black bag.",
+   "options": ["a", "an", "is"],
+   "answer": "a",
+   "explanation": "It's a black bag. 意思是“它是一个黑色的书包”。考点：以元音音素开头的词前用 an（an eraser、an orange ruler），其他词前用 a。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 3 It's a colourful world!",
+    "point": "a 和 an",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 3 · a 和 an",
+    "detailTitle": "查看考点",
+    "detail": "Unit 3 It's a colourful world! · 以元音音素开头的词前用 an（an eraser、an orange ruler），其他词前用 a。"
+   }
+  },
+  {
+   "id": "gr-080",
+   "unit": "U3",
+   "category": "choice",
+   "prompt": "It's a ___ pen.",
+   "options": ["orange", "red", "is"],
+   "answer": "red",
+   "explanation": "It's a red pen. 意思是“它是一支红色的钢笔”。考点：以元音音素开头的词前用 an（an eraser、an orange ruler），其他词前用 a。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 3 It's a colourful world!",
+    "point": "a 和 an",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 3 · a 和 an",
+    "detailTitle": "查看考点",
+    "detail": "Unit 3 It's a colourful world! · 以元音音素开头的词前用 an（an eraser、an orange ruler），其他词前用 a。"
+   }
+  },
+  {
+   "id": "gr-081",
+   "unit": "U3",
+   "category": "choice",
+   "prompt": "It's an ___ bag.",
+   "options": ["red", "blue", "orange"],
+   "answer": "orange",
+   "explanation": "It's an orange bag. 意思是“它是一个橙色的书包”。考点：以元音音素开头的词前用 an（an eraser、an orange ruler），其他词前用 a。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 3 It's a colourful world!",
+    "point": "a 和 an",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 3 · a 和 an",
+    "detailTitle": "查看考点",
+    "detail": "Unit 3 It's a colourful world! · 以元音音素开头的词前用 an（an eraser、an orange ruler），其他词前用 a。"
+   }
+  },
+  {
+   "id": "gr-082",
+   "unit": "U3",
+   "category": "choice",
+   "prompt": "My bag ___ red.",
+   "options": ["is", "am", "are"],
+   "answer": "is",
+   "explanation": "My bag is red. 意思是“我的书包是红色的”。考点：I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 3 It's a colourful world!",
+    "point": "am / is / are",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 3 · am / is / are",
+    "detailTitle": "查看考点",
+    "detail": "Unit 3 It's a colourful world! · I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。"
+   }
+  },
+  {
+   "id": "gr-083",
+   "unit": "U3",
+   "category": "choice",
+   "prompt": "My pen ___ blue.",
+   "options": ["am", "is", "are"],
+   "answer": "is",
+   "explanation": "My pen is blue. 意思是“我的钢笔是蓝色的”。考点：I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 3 It's a colourful world!",
+    "point": "am / is / are",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 3 · am / is / are",
+    "detailTitle": "查看考点",
+    "detail": "Unit 3 It's a colourful world! · I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。"
+   }
+  },
+  {
+   "id": "gr-084",
+   "unit": "U3",
+   "category": "choice",
+   "prompt": "The pencil ___ yellow.",
+   "options": ["am", "are", "is"],
+   "answer": "is",
+   "explanation": "The pencil is yellow. 意思是“这支铅笔是黄色的”。考点：I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 3 It's a colourful world!",
+    "point": "am / is / are",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 3 · am / is / are",
+    "detailTitle": "查看考点",
+    "detail": "Unit 3 It's a colourful world! · I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。"
+   }
+  },
+  {
+   "id": "gr-085",
+   "unit": "U3",
+   "category": "choice",
+   "prompt": "My book ___ green.",
+   "options": ["is", "am", "are"],
+   "answer": "is",
+   "explanation": "My book is green. 意思是“我的书是绿色的”。考点：I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 3 It's a colourful world!",
+    "point": "am / is / are",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 3 · am / is / are",
+    "detailTitle": "查看考点",
+    "detail": "Unit 3 It's a colourful world! · I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。"
+   }
+  },
+  {
+   "id": "gr-086",
+   "unit": "U3",
+   "category": "choice",
+   "prompt": "It's a ___.（它是一支红色的钢笔。）",
+   "options": ["pen red", "red pen", "red a pen"],
+   "answer": "red pen",
+   "explanation": "It's a red pen. 意思是“它是一支红色的钢笔”。考点：颜色词放在名词前面：a red pen。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 3 It's a colourful world!",
+    "point": "词序",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 3 · 词序",
+    "detailTitle": "查看考点",
+    "detail": "Unit 3 It's a colourful world! · 颜色词放在名词前面：a red pen。"
+   }
+  },
+  {
+   "id": "gr-087",
+   "unit": "U3",
+   "category": "choice",
+   "prompt": "I see a ___.（我看见一个蓝色的书包。）",
+   "options": ["bag blue", "blue a bag", "blue bag"],
+   "answer": "blue bag",
+   "explanation": "I see a blue bag. 意思是“我看见一个蓝色的书包”。考点：颜色词放在名词前面：a red pen。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 3 It's a colourful world!",
+    "point": "词序",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 3 · 词序",
+    "detailTitle": "查看考点",
+    "detail": "Unit 3 It's a colourful world! · 颜色词放在名词前面：a red pen。"
+   }
+  },
+  {
+   "id": "gr-088",
+   "unit": "U3",
+   "category": "choice",
+   "prompt": "What ___ is it? It's red.",
+   "options": ["colour", "name", "is"],
+   "answer": "colour",
+   "explanation": "What colour is it? It's red. 意思是“它是什么颜色的？它是红色的”。考点：问颜色用 What colour is it? 回答用 It's + 颜色。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 3 It's a colourful world!",
+    "point": "问颜色",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 3 · 问颜色",
+    "detailTitle": "查看考点",
+    "detail": "Unit 3 It's a colourful world! · 问颜色用 What colour is it? 回答用 It's + 颜色。"
+   }
+  },
+  {
+   "id": "gr-089",
+   "unit": "U3",
+   "category": "choice",
+   "prompt": "What colour ___ it? It's blue.",
+   "options": ["am", "is", "are"],
+   "answer": "is",
+   "explanation": "What colour is it? It's blue. 意思是“它是什么颜色的？它是蓝色的”。考点：问颜色用 What colour is it? 回答用 It's + 颜色。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 3 It's a colourful world!",
+    "point": "问颜色",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 3 · 问颜色",
+    "detailTitle": "查看考点",
+    "detail": "Unit 3 It's a colourful world! · 问颜色用 What colour is it? 回答用 It's + 颜色。"
+   }
+  },
+  {
+   "id": "gr-090",
+   "unit": "U3",
+   "category": "choice",
+   "prompt": "What colour is it? ___ green.",
+   "options": ["I'm", "We're", "It's"],
+   "answer": "It's",
+   "explanation": "What colour is it? It's green. 意思是“它是什么颜色的？它是绿色的”。考点：问颜色用 What colour is it? 回答用 It's + 颜色。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 3 It's a colourful world!",
+    "point": "问颜色",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 3 · 问颜色",
+    "detailTitle": "查看考点",
+    "detail": "Unit 3 It's a colourful world! · 问颜色用 What colour is it? 回答用 It's + 颜色。"
+   }
+  },
+  {
+   "id": "gr-091",
+   "unit": "U4",
+   "category": "choice",
+   "prompt": "I see three ___.",
+   "options": ["pens", "pen", "a pen"],
+   "answer": "pens",
+   "explanation": "I see three pens. 意思是“我看见三支钢笔”。考点：二及以上的数字后面，名词要加 s；one 后面的名词不加 s。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 4 Fun with numbers",
+    "point": "名词复数",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 4 · 名词复数",
+    "detailTitle": "查看考点",
+    "detail": "Unit 4 Fun with numbers · 二及以上的数字后面，名词要加 s；one 后面的名词不加 s。"
+   }
+  },
+  {
+   "id": "gr-092",
+   "unit": "U4",
+   "category": "choice",
+   "prompt": "I see five ___.",
+   "options": ["book", "books", "a book"],
+   "answer": "books",
+   "explanation": "I see five books. 意思是“我看见五本书”。考点：二及以上的数字后面，名词要加 s；one 后面的名词不加 s。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 4 Fun with numbers",
+    "point": "名词复数",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 4 · 名词复数",
+    "detailTitle": "查看考点",
+    "detail": "Unit 4 Fun with numbers · 二及以上的数字后面，名词要加 s；one 后面的名词不加 s。"
+   }
+  },
+  {
+   "id": "gr-093",
+   "unit": "U4",
+   "category": "choice",
+   "prompt": "I see seven ___.",
+   "options": ["ruler", "a ruler", "rulers"],
+   "answer": "rulers",
+   "explanation": "I see seven rulers. 意思是“我看见七把尺子”。考点：二及以上的数字后面，名词要加 s；one 后面的名词不加 s。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 4 Fun with numbers",
+    "point": "名词复数",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 4 · 名词复数",
+    "detailTitle": "查看考点",
+    "detail": "Unit 4 Fun with numbers · 二及以上的数字后面，名词要加 s；one 后面的名词不加 s。"
+   }
+  },
+  {
+   "id": "gr-094",
+   "unit": "U4",
+   "category": "choice",
+   "prompt": "I see four ___.",
+   "options": ["erasers", "eraser", "an eraser"],
+   "answer": "erasers",
+   "explanation": "I see four erasers. 意思是“我看见四块橡皮”。考点：二及以上的数字后面，名词要加 s；one 后面的名词不加 s。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 4 Fun with numbers",
+    "point": "名词复数",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 4 · 名词复数",
+    "detailTitle": "查看考点",
+    "detail": "Unit 4 Fun with numbers · 二及以上的数字后面，名词要加 s；one 后面的名词不加 s。"
+   }
+  },
+  {
+   "id": "gr-095",
+   "unit": "U4",
+   "category": "choice",
+   "prompt": "I see six ___.",
+   "options": ["bag", "bags", "a bag"],
+   "answer": "bags",
+   "explanation": "I see six bags. 意思是“我看见六个书包”。考点：二及以上的数字后面，名词要加 s；one 后面的名词不加 s。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 4 Fun with numbers",
+    "point": "名词复数",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 4 · 名词复数",
+    "detailTitle": "查看考点",
+    "detail": "Unit 4 Fun with numbers · 二及以上的数字后面，名词要加 s；one 后面的名词不加 s。"
+   }
+  },
+  {
+   "id": "gr-096",
+   "unit": "U4",
+   "category": "choice",
+   "prompt": "I see eight ___.",
+   "options": ["pen", "a pen", "pens"],
+   "answer": "pens",
+   "explanation": "I see eight pens. 意思是“我看见八支钢笔”。考点：二及以上的数字后面，名词要加 s；one 后面的名词不加 s。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 4 Fun with numbers",
+    "point": "名词复数",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 4 · 名词复数",
+    "detailTitle": "查看考点",
+    "detail": "Unit 4 Fun with numbers · 二及以上的数字后面，名词要加 s；one 后面的名词不加 s。"
+   }
+  },
+  {
+   "id": "gr-097",
+   "unit": "U4",
+   "category": "choice",
+   "prompt": "I see two ___.",
+   "options": ["pencils", "pencil", "a pencil"],
+   "answer": "pencils",
+   "explanation": "I see two pencils. 意思是“我看见两支铅笔”。考点：二及以上的数字后面，名词要加 s；one 后面的名词不加 s。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 4 Fun with numbers",
+    "point": "名词复数",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 4 · 名词复数",
+    "detailTitle": "查看考点",
+    "detail": "Unit 4 Fun with numbers · 二及以上的数字后面，名词要加 s；one 后面的名词不加 s。"
+   }
+  },
+  {
+   "id": "gr-098",
+   "unit": "U4",
+   "category": "choice",
+   "prompt": "I see ten ___.",
+   "options": ["pencil", "pencils", "a pencil"],
+   "answer": "pencils",
+   "explanation": "I see ten pencils. 意思是“我看见十支铅笔”。考点：二及以上的数字后面，名词要加 s；one 后面的名词不加 s。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 4 Fun with numbers",
+    "point": "名词复数",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 4 · 名词复数",
+    "detailTitle": "查看考点",
+    "detail": "Unit 4 Fun with numbers · 二及以上的数字后面，名词要加 s；one 后面的名词不加 s。"
+   }
+  },
+  {
+   "id": "gr-099",
+   "unit": "U4",
+   "category": "choice",
+   "prompt": "I see nine ___.",
+   "options": ["ruler", "a ruler", "rulers"],
+   "answer": "rulers",
+   "explanation": "I see nine rulers. 意思是“我看见九把尺子”。考点：二及以上的数字后面，名词要加 s；one 后面的名词不加 s。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 4 Fun with numbers",
+    "point": "名词复数",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 4 · 名词复数",
+    "detailTitle": "查看考点",
+    "detail": "Unit 4 Fun with numbers · 二及以上的数字后面，名词要加 s；one 后面的名词不加 s。"
+   }
+  },
+  {
+   "id": "gr-100",
+   "unit": "U4",
+   "category": "choice",
+   "prompt": "I see one ___.",
+   "options": ["book", "books", "a book"],
+   "answer": "book",
+   "explanation": "I see one book. 意思是“我看见一本书”。考点：one 后面跟不加 s 的名词，二及以上的数字后面跟加 s 的名词；a、an 只能跟一个东西。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 4 Fun with numbers",
+    "point": "数字和名词",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 4 · 数字和名词",
+    "detailTitle": "查看考点",
+    "detail": "Unit 4 Fun with numbers · one 后面跟不加 s 的名词，二及以上的数字后面跟加 s 的名词；a、an 只能跟一个东西。"
+   }
+  },
+  {
+   "id": "gr-101",
+   "unit": "U4",
+   "category": "choice",
+   "prompt": "How many pens? I see one ___.",
+   "options": ["pens", "pen", "a pen"],
+   "answer": "pen",
+   "explanation": "How many pens? I see one pen. 意思是“有多少支钢笔？我看见一支钢笔”。考点：one 后面跟不加 s 的名词，二及以上的数字后面跟加 s 的名词；a、an 只能跟一个东西。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 4 Fun with numbers",
+    "point": "数字和名词",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 4 · 数字和名词",
+    "detailTitle": "查看考点",
+    "detail": "Unit 4 Fun with numbers · one 后面跟不加 s 的名词，二及以上的数字后面跟加 s 的名词；a、an 只能跟一个东西。"
+   }
+  },
+  {
+   "id": "gr-102",
+   "unit": "U4",
+   "category": "choice",
+   "prompt": "I see ___ pen.",
+   "options": ["two", "three", "one"],
+   "answer": "one",
+   "explanation": "I see one pen. 意思是“我看见一支钢笔”。考点：one 后面跟不加 s 的名词，二及以上的数字后面跟加 s 的名词；a、an 只能跟一个东西。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 4 Fun with numbers",
+    "point": "数字和名词",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 4 · 数字和名词",
+    "detailTitle": "查看考点",
+    "detail": "Unit 4 Fun with numbers · one 后面跟不加 s 的名词，二及以上的数字后面跟加 s 的名词；a、an 只能跟一个东西。"
+   }
+  },
+  {
+   "id": "gr-103",
+   "unit": "U4",
+   "category": "choice",
+   "prompt": "I see ___ books.",
+   "options": ["five", "one", "a"],
+   "answer": "five",
+   "explanation": "I see five books. 意思是“我看见五本书”。考点：one 后面跟不加 s 的名词，二及以上的数字后面跟加 s 的名词；a、an 只能跟一个东西。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 4 Fun with numbers",
+    "point": "数字和名词",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 4 · 数字和名词",
+    "detailTitle": "查看考点",
+    "detail": "Unit 4 Fun with numbers · one 后面跟不加 s 的名词，二及以上的数字后面跟加 s 的名词；a、an 只能跟一个东西。"
+   }
+  },
+  {
+   "id": "gr-104",
+   "unit": "U4",
+   "category": "choice",
+   "prompt": "I see ___ rulers.",
+   "options": ["one", "seven", "a"],
+   "answer": "seven",
+   "explanation": "I see seven rulers. 意思是“我看见七把尺子”。考点：one 后面跟不加 s 的名词，二及以上的数字后面跟加 s 的名词；a、an 只能跟一个东西。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 4 Fun with numbers",
+    "point": "数字和名词",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 4 · 数字和名词",
+    "detailTitle": "查看考点",
+    "detail": "Unit 4 Fun with numbers · one 后面跟不加 s 的名词，二及以上的数字后面跟加 s 的名词；a、an 只能跟一个东西。"
+   }
+  },
+  {
+   "id": "gr-105",
+   "unit": "U4",
+   "category": "choice",
+   "prompt": "I see ___ erasers.",
+   "options": ["one", "an", "four"],
+   "answer": "four",
+   "explanation": "I see four erasers. 意思是“我看见四块橡皮”。考点：one 后面跟不加 s 的名词，二及以上的数字后面跟加 s 的名词；a、an 只能跟一个东西。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 4 Fun with numbers",
+    "point": "数字和名词",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 4 · 数字和名词",
+    "detailTitle": "查看考点",
+    "detail": "Unit 4 Fun with numbers · one 后面跟不加 s 的名词，二及以上的数字后面跟加 s 的名词；a、an 只能跟一个东西。"
+   }
+  },
+  {
+   "id": "gr-106",
+   "unit": "U4",
+   "category": "choice",
+   "prompt": "I see ___ bag.",
+   "options": ["one", "two", "six"],
+   "answer": "one",
+   "explanation": "I see one bag. 意思是“我看见一个书包”。考点：one 后面跟不加 s 的名词，二及以上的数字后面跟加 s 的名词；a、an 只能跟一个东西。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 4 Fun with numbers",
+    "point": "数字和名词",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 4 · 数字和名词",
+    "detailTitle": "查看考点",
+    "detail": "Unit 4 Fun with numbers · one 后面跟不加 s 的名词，二及以上的数字后面跟加 s 的名词；a、an 只能跟一个东西。"
+   }
+  },
+  {
+   "id": "gr-107",
+   "unit": "U4",
+   "category": "choice",
+   "prompt": "How ___ pens?",
+   "options": ["are", "many", "is"],
+   "answer": "many",
+   "explanation": "How many pens? 意思是“有多少支钢笔”。考点：问数量用 How many，后面的名词要加 s。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 4 Fun with numbers",
+    "point": "How many",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 4 · How many",
+    "detailTitle": "查看考点",
+    "detail": "Unit 4 Fun with numbers · 问数量用 How many，后面的名词要加 s。"
+   }
+  },
+  {
+   "id": "gr-108",
+   "unit": "U4",
+   "category": "choice",
+   "prompt": "How ___ books?",
+   "options": ["are", "is", "many"],
+   "answer": "many",
+   "explanation": "How many books? 意思是“有多少本书”。考点：问数量用 How many，后面的名词要加 s。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 4 Fun with numbers",
+    "point": "How many",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 4 · How many",
+    "detailTitle": "查看考点",
+    "detail": "Unit 4 Fun with numbers · 问数量用 How many，后面的名词要加 s。"
+   }
+  },
+  {
+   "id": "gr-109",
+   "unit": "U4",
+   "category": "choice",
+   "prompt": "___ many rulers?",
+   "options": ["How", "What", "This"],
+   "answer": "How",
+   "explanation": "How many rulers? 意思是“有多少把尺子”。考点：问数量用 How many，后面的名词要加 s。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 4 Fun with numbers",
+    "point": "How many",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 4 · How many",
+    "detailTitle": "查看考点",
+    "detail": "Unit 4 Fun with numbers · 问数量用 How many，后面的名词要加 s。"
+   }
+  },
+  {
+   "id": "gr-110",
+   "unit": "U4",
+   "category": "choice",
+   "prompt": "___ many bags?",
+   "options": ["What", "How", "It"],
+   "answer": "How",
+   "explanation": "How many bags? 意思是“有多少个书包”。考点：问数量用 How many，后面的名词要加 s。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 4 Fun with numbers",
+    "point": "How many",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 4 · How many",
+    "detailTitle": "查看考点",
+    "detail": "Unit 4 Fun with numbers · 问数量用 How many，后面的名词要加 s。"
+   }
+  },
+  {
+   "id": "gr-111",
+   "unit": "U4",
+   "category": "choice",
+   "prompt": "How many ___?",
+   "options": ["pen", "a pen", "pens"],
+   "answer": "pens",
+   "explanation": "How many pens? 意思是“有多少支钢笔”。考点：问数量用 How many，后面的名词要加 s。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 4 Fun with numbers",
+    "point": "How many",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 4 · How many",
+    "detailTitle": "查看考点",
+    "detail": "Unit 4 Fun with numbers · 问数量用 How many，后面的名词要加 s。"
+   }
+  },
+  {
+   "id": "gr-112",
+   "unit": "U4",
+   "category": "choice",
+   "prompt": "How many ___? I see two.",
+   "options": ["books", "book", "a book"],
+   "answer": "books",
+   "explanation": "How many books? I see two. 意思是“有多少本书？我看见两本”。考点：问数量用 How many，后面的名词要加 s。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 4 Fun with numbers",
+    "point": "How many",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 4 · How many",
+    "detailTitle": "查看考点",
+    "detail": "Unit 4 Fun with numbers · 问数量用 How many，后面的名词要加 s。"
+   }
+  },
+  {
+   "id": "gr-113",
+   "unit": "U4",
+   "category": "choice",
+   "prompt": "How many ___? I see four.",
+   "options": ["eraser", "erasers", "an eraser"],
+   "answer": "erasers",
+   "explanation": "How many erasers? I see four. 意思是“有多少块橡皮？我看见四块”。考点：问数量用 How many，后面的名词要加 s。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 4 Fun with numbers",
+    "point": "How many",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 4 · How many",
+    "detailTitle": "查看考点",
+    "detail": "Unit 4 Fun with numbers · 问数量用 How many，后面的名词要加 s。"
+   }
+  },
+  {
+   "id": "gr-114",
+   "unit": "U4",
+   "category": "choice",
+   "prompt": "How many ___? I see six.",
+   "options": ["friend", "a friend", "friends"],
+   "answer": "friends",
+   "explanation": "How many friends? I see six. 意思是“有多少个朋友？我看见六个”。考点：问数量用 How many，后面的名词要加 s。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 4 Fun with numbers",
+    "point": "How many",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 4 · How many",
+    "detailTitle": "查看考点",
+    "detail": "Unit 4 Fun with numbers · 问数量用 How many，后面的名词要加 s。"
+   }
+  },
+  {
+   "id": "gr-115",
+   "unit": "U4",
+   "category": "choice",
+   "prompt": "How many ___? I see ten.",
+   "options": ["pencils", "pencil", "a pencil"],
+   "answer": "pencils",
+   "explanation": "How many pencils? I see ten. 意思是“有多少支铅笔？我看见十支”。考点：问数量用 How many，后面的名词要加 s。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 4 Fun with numbers",
+    "point": "How many",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 4 · How many",
+    "detailTitle": "查看考点",
+    "detail": "Unit 4 Fun with numbers · 问数量用 How many，后面的名词要加 s。"
+   }
+  },
+  {
+   "id": "gr-116",
+   "unit": "U4",
+   "category": "choice",
+   "prompt": "Two and three ___ five.",
+   "options": ["am", "is", "see"],
+   "answer": "is",
+   "explanation": "Two and three is five. 意思是“二加三等于五”。考点：说加法用 … and … is …，例如 Two and three is five.",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 4 Fun with numbers",
+    "point": "加法句型",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 4 · 加法句型",
+    "detailTitle": "查看考点",
+    "detail": "Unit 4 Fun with numbers · 说加法用 … and … is …，例如 Two and three is five."
+   }
+  },
+  {
+   "id": "gr-117",
+   "unit": "U4",
+   "category": "choice",
+   "prompt": "Five and five ___ ten.",
+   "options": ["am", "see", "is"],
+   "answer": "is",
+   "explanation": "Five and five is ten. 意思是“五加五等于十”。考点：说加法用 … and … is …，例如 Two and three is five.",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 4 Fun with numbers",
+    "point": "加法句型",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 4 · 加法句型",
+    "detailTitle": "查看考点",
+    "detail": "Unit 4 Fun with numbers · 说加法用 … and … is …，例如 Two and three is five."
+   }
+  },
+  {
+   "id": "gr-118",
+   "unit": "U4",
+   "category": "choice",
+   "prompt": "One ___ one is two.",
+   "options": ["and", "is", "see"],
+   "answer": "and",
+   "explanation": "One and one is two. 意思是“一加一等于二”。考点：说加法用 … and … is …，例如 Two and three is five.",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 4 Fun with numbers",
+    "point": "加法句型",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 4 · 加法句型",
+    "detailTitle": "查看考点",
+    "detail": "Unit 4 Fun with numbers · 说加法用 … and … is …，例如 Two and three is five."
+   }
+  },
+  {
+   "id": "gr-119",
+   "unit": "U4",
+   "category": "choice",
+   "prompt": "Six ___ two is eight.",
+   "options": ["is", "and", "see"],
+   "answer": "and",
+   "explanation": "Six and two is eight. 意思是“六加二等于八”。考点：说加法用 … and … is …，例如 Two and three is five.",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 4 Fun with numbers",
+    "point": "加法句型",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 4 · 加法句型",
+    "detailTitle": "查看考点",
+    "detail": "Unit 4 Fun with numbers · 说加法用 … and … is …，例如 Two and three is five."
+   }
+  },
+  {
+   "id": "gr-120",
+   "unit": "U4",
+   "category": "choice",
+   "prompt": "How many pens? ___ three pens.",
+   "options": ["I am", "He is", "I see"],
+   "answer": "I see",
+   "explanation": "How many pens? I see three pens. 意思是“有多少支钢笔？我看见三支钢笔”。考点：“我看见……”用 I see，后面跟数量和名词。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 4 Fun with numbers",
+    "point": "回答数量",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 4 · 回答数量",
+    "detailTitle": "查看考点",
+    "detail": "Unit 4 Fun with numbers · “我看见……”用 I see，后面跟数量和名词。"
+   }
+  },
+  {
+   "id": "gr-121",
+   "unit": "U5",
+   "category": "choice",
+   "prompt": "___ is my mum.",
+   "options": ["She", "He", "I"],
+   "answer": "She",
+   "explanation": "She is my mum. 意思是“她是我的妈妈”。考点：说自己用 I，男孩、男性用 he，女孩、女性用 she，说“我们”用 we。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 5 We're family",
+    "point": "人称代词",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 5 · 人称代词",
+    "detailTitle": "查看考点",
+    "detail": "Unit 5 We're family · 说自己用 I，男孩、男性用 he，女孩、女性用 she，说“我们”用 we。"
+   }
+  },
+  {
+   "id": "gr-122",
+   "unit": "U5",
+   "category": "choice",
+   "prompt": "___ is my dad.",
+   "options": ["She", "He", "I"],
+   "answer": "He",
+   "explanation": "He is my dad. 意思是“他是我的爸爸”。考点：说自己用 I，男孩、男性用 he，女孩、女性用 she，说“我们”用 we。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 5 We're family",
+    "point": "人称代词",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 5 · 人称代词",
+    "detailTitle": "查看考点",
+    "detail": "Unit 5 We're family · 说自己用 I，男孩、男性用 he，女孩、女性用 she，说“我们”用 we。"
+   }
+  },
+  {
+   "id": "gr-123",
+   "unit": "U5",
+   "category": "choice",
+   "prompt": "___ is my sister.",
+   "options": ["He", "I", "She"],
+   "answer": "She",
+   "explanation": "She is my sister. 意思是“她是我的姐姐（妹妹）”。考点：说自己用 I，男孩、男性用 he，女孩、女性用 she，说“我们”用 we。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 5 We're family",
+    "point": "人称代词",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 5 · 人称代词",
+    "detailTitle": "查看考点",
+    "detail": "Unit 5 We're family · 说自己用 I，男孩、男性用 he，女孩、女性用 she，说“我们”用 we。"
+   }
+  },
+  {
+   "id": "gr-124",
+   "unit": "U5",
+   "category": "choice",
+   "prompt": "___ is my brother.",
+   "options": ["He", "She", "I"],
+   "answer": "He",
+   "explanation": "He is my brother. 意思是“他是我的哥哥（弟弟）”。考点：说自己用 I，男孩、男性用 he，女孩、女性用 she，说“我们”用 we。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 5 We're family",
+    "point": "人称代词",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 5 · 人称代词",
+    "detailTitle": "查看考点",
+    "detail": "Unit 5 We're family · 说自己用 I，男孩、男性用 he，女孩、女性用 she，说“我们”用 we。"
+   }
+  },
+  {
+   "id": "gr-125",
+   "unit": "U5",
+   "category": "choice",
+   "prompt": "___ is my grandma.",
+   "options": ["He", "She", "I"],
+   "answer": "She",
+   "explanation": "She is my grandma. 意思是“她是我的奶奶（外婆）”。考点：说自己用 I，男孩、男性用 he，女孩、女性用 she，说“我们”用 we。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 5 We're family",
+    "point": "人称代词",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 5 · 人称代词",
+    "detailTitle": "查看考点",
+    "detail": "Unit 5 We're family · 说自己用 I，男孩、男性用 he，女孩、女性用 she，说“我们”用 we。"
+   }
+  },
+  {
+   "id": "gr-126",
+   "unit": "U5",
+   "category": "choice",
+   "prompt": "___ is my grandpa.",
+   "options": ["She", "I", "He"],
+   "answer": "He",
+   "explanation": "He is my grandpa. 意思是“他是我的爷爷（外公）”。考点：说自己用 I，男孩、男性用 he，女孩、女性用 she，说“我们”用 we。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 5 We're family",
+    "point": "人称代词",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 5 · 人称代词",
+    "detailTitle": "查看考点",
+    "detail": "Unit 5 We're family · 说自己用 I，男孩、男性用 he，女孩、女性用 she，说“我们”用 we。"
+   }
+  },
+  {
+   "id": "gr-127",
+   "unit": "U5",
+   "category": "choice",
+   "prompt": "This is Tom. ___ my brother.",
+   "options": ["He's", "She's", "I'm"],
+   "answer": "He's",
+   "explanation": "This is Tom. He's my brother. 意思是“这是汤姆。他是我的哥哥（弟弟）”。考点：I'm = I am，he's = he is，she's = she is，it's = it is，we're = we are。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 5 We're family",
+    "point": "缩写",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 5 · 缩写",
+    "detailTitle": "查看考点",
+    "detail": "Unit 5 We're family · I'm = I am，he's = he is，she's = she is，it's = it is，we're = we are。"
+   }
+  },
+  {
+   "id": "gr-128",
+   "unit": "U5",
+   "category": "choice",
+   "prompt": "This is Amy. ___ my sister.",
+   "options": ["He's", "She's", "I'm"],
+   "answer": "She's",
+   "explanation": "This is Amy. She's my sister. 意思是“这是埃米。她是我的姐姐（妹妹）”。考点：I'm = I am，he's = he is，she's = she is，it's = it is，we're = we are。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 5 We're family",
+    "point": "缩写",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 5 · 缩写",
+    "detailTitle": "查看考点",
+    "detail": "Unit 5 We're family · I'm = I am，he's = he is，she's = she is，it's = it is，we're = we are。"
+   }
+  },
+  {
+   "id": "gr-129",
+   "unit": "U5",
+   "category": "choice",
+   "prompt": "This is Lily. ___ my sister.",
+   "options": ["He's", "I'm", "She's"],
+   "answer": "She's",
+   "explanation": "This is Lily. She's my sister. 意思是“这是莉莉。她是我的姐姐（妹妹）”。考点：I'm = I am，he's = he is，she's = she is，it's = it is，we're = we are。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 5 We're family",
+    "point": "缩写",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 5 · 缩写",
+    "detailTitle": "查看考点",
+    "detail": "Unit 5 We're family · I'm = I am，he's = he is，she's = she is，it's = it is，we're = we are。"
+   }
+  },
+  {
+   "id": "gr-130",
+   "unit": "U5",
+   "category": "choice",
+   "prompt": "This is Sam. ___ my brother.",
+   "options": ["He's", "She's", "I'm"],
+   "answer": "He's",
+   "explanation": "This is Sam. He's my brother. 意思是“这是萨姆。他是我的哥哥（弟弟）”。考点：I'm = I am，he's = he is，she's = she is，it's = it is，we're = we are。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 5 We're family",
+    "point": "缩写",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 5 · 缩写",
+    "detailTitle": "查看考点",
+    "detail": "Unit 5 We're family · I'm = I am，he's = he is，she's = she is，it's = it is，we're = we are。"
+   }
+  },
+  {
+   "id": "gr-131",
+   "unit": "U5",
+   "category": "choice",
+   "prompt": "___ my mum.",
+   "options": ["He's", "She's", "I'm"],
+   "answer": "She's",
+   "explanation": "She's my mum. 意思是“她是我的妈妈”。考点：I'm = I am，he's = he is，she's = she is，it's = it is，we're = we are。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 5 We're family",
+    "point": "缩写",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 5 · 缩写",
+    "detailTitle": "查看考点",
+    "detail": "Unit 5 We're family · I'm = I am，he's = he is，she's = she is，it's = it is，we're = we are。"
+   }
+  },
+  {
+   "id": "gr-132",
+   "unit": "U5",
+   "category": "choice",
+   "prompt": "___ my dad.",
+   "options": ["She's", "I'm", "He's"],
+   "answer": "He's",
+   "explanation": "He's my dad. 意思是“他是我的爸爸”。考点：I'm = I am，he's = he is，she's = she is，it's = it is，we're = we are。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 5 We're family",
+    "point": "缩写",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 5 · 缩写",
+    "detailTitle": "查看考点",
+    "detail": "Unit 5 We're family · I'm = I am，he's = he is，she's = she is，it's = it is，we're = we are。"
+   }
+  },
+  {
+   "id": "gr-133",
+   "unit": "U5",
+   "category": "choice",
+   "prompt": "___ my grandma.",
+   "options": ["She's", "He's", "I'm"],
+   "answer": "She's",
+   "explanation": "She's my grandma. 意思是“她是我的奶奶（外婆）”。考点：I'm = I am，he's = he is，she's = she is，it's = it is，we're = we are。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 5 We're family",
+    "point": "缩写",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 5 · 缩写",
+    "detailTitle": "查看考点",
+    "detail": "Unit 5 We're family · I'm = I am，he's = he is，she's = she is，it's = it is，we're = we are。"
+   }
+  },
+  {
+   "id": "gr-134",
+   "unit": "U5",
+   "category": "choice",
+   "prompt": "___ my grandpa.",
+   "options": ["She's", "He's", "I'm"],
+   "answer": "He's",
+   "explanation": "He's my grandpa. 意思是“他是我的爷爷（外公）”。考点：I'm = I am，he's = he is，she's = she is，it's = it is，we're = we are。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 5 We're family",
+    "point": "缩写",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 5 · 缩写",
+    "detailTitle": "查看考点",
+    "detail": "Unit 5 We're family · I'm = I am，he's = he is，she's = she is，it's = it is，we're = we are。"
+   }
+  },
+  {
+   "id": "gr-135",
+   "unit": "U5",
+   "category": "choice",
+   "prompt": "She's my ___.",
+   "options": ["dad", "brother", "mum"],
+   "answer": "mum",
+   "explanation": "She's my mum. 意思是“她是我的妈妈”。考点：说自己用 I，男孩、男性用 he，女孩、女性用 she，说“我们”用 we。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 5 We're family",
+    "point": "人称代词",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 5 · 人称代词",
+    "detailTitle": "查看考点",
+    "detail": "Unit 5 We're family · 说自己用 I，男孩、男性用 he，女孩、女性用 she，说“我们”用 we。"
+   }
+  },
+  {
+   "id": "gr-136",
+   "unit": "U5",
+   "category": "choice",
+   "prompt": "He's my ___.",
+   "options": ["dad", "mum", "sister"],
+   "answer": "dad",
+   "explanation": "He's my dad. 意思是“他是我的爸爸”。考点：说自己用 I，男孩、男性用 he，女孩、女性用 she，说“我们”用 we。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 5 We're family",
+    "point": "人称代词",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 5 · 人称代词",
+    "detailTitle": "查看考点",
+    "detail": "Unit 5 We're family · 说自己用 I，男孩、男性用 he，女孩、女性用 she，说“我们”用 we。"
+   }
+  },
+  {
+   "id": "gr-137",
+   "unit": "U5",
+   "category": "choice",
+   "prompt": "She's Amy. She's my ___.",
+   "options": ["brother", "sister", "dad"],
+   "answer": "sister",
+   "explanation": "She's Amy. She's my sister. 意思是“她是埃米。她是我的姐姐（妹妹）”。考点：说自己用 I，男孩、男性用 he，女孩、女性用 she，说“我们”用 we。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 5 We're family",
+    "point": "人称代词",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 5 · 人称代词",
+    "detailTitle": "查看考点",
+    "detail": "Unit 5 We're family · 说自己用 I，男孩、男性用 he，女孩、女性用 she，说“我们”用 we。"
+   }
+  },
+  {
+   "id": "gr-138",
+   "unit": "U5",
+   "category": "choice",
+   "prompt": "He's Sam. He's my ___.",
+   "options": ["sister", "mum", "brother"],
+   "answer": "brother",
+   "explanation": "He's Sam. He's my brother. 意思是“他是萨姆。他是我的哥哥（弟弟）”。考点：说自己用 I，男孩、男性用 he，女孩、女性用 she，说“我们”用 we。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 5 We're family",
+    "point": "人称代词",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 5 · 人称代词",
+    "detailTitle": "查看考点",
+    "detail": "Unit 5 We're family · 说自己用 I，男孩、男性用 he，女孩、女性用 she，说“我们”用 we。"
+   }
+  },
+  {
+   "id": "gr-139",
+   "unit": "U5",
+   "category": "choice",
+   "prompt": "This ___ my family.",
+   "options": ["is", "am", "are"],
+   "answer": "is",
+   "explanation": "This is my family. 意思是“这是我的家人”。考点：I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 5 We're family",
+    "point": "am / is / are",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 5 · am / is / are",
+    "detailTitle": "查看考点",
+    "detail": "Unit 5 We're family · I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。"
+   }
+  },
+  {
+   "id": "gr-140",
+   "unit": "U5",
+   "category": "choice",
+   "prompt": "This ___ my mum.",
+   "options": ["am", "is", "are"],
+   "answer": "is",
+   "explanation": "This is my mum. 意思是“这是我的妈妈”。考点：I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 5 We're family",
+    "point": "am / is / are",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 5 · am / is / are",
+    "detailTitle": "查看考点",
+    "detail": "Unit 5 We're family · I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。"
+   }
+  },
+  {
+   "id": "gr-141",
+   "unit": "U5",
+   "category": "choice",
+   "prompt": "That ___ my brother.",
+   "options": ["am", "are", "is"],
+   "answer": "is",
+   "explanation": "That is my brother. 意思是“那是我的哥哥（弟弟）”。考点：I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 5 We're family",
+    "point": "am / is / are",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 5 · am / is / are",
+    "detailTitle": "查看考点",
+    "detail": "Unit 5 We're family · I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。"
+   }
+  },
+  {
+   "id": "gr-142",
+   "unit": "U5",
+   "category": "choice",
+   "prompt": "We ___ family.",
+   "options": ["are", "is", "am"],
+   "answer": "are",
+   "explanation": "We are family. 意思是“我们是一家人”。考点：I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 5 We're family",
+    "point": "am / is / are",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 5 · am / is / are",
+    "detailTitle": "查看考点",
+    "detail": "Unit 5 We're family · I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。"
+   }
+  },
+  {
+   "id": "gr-143",
+   "unit": "U5",
+   "category": "choice",
+   "prompt": "We ___ a happy family.",
+   "options": ["is", "are", "am"],
+   "answer": "are",
+   "explanation": "We are a happy family. 意思是“我们是幸福的一家人”。考点：I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 5 We're family",
+    "point": "am / is / are",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 5 · am / is / are",
+    "detailTitle": "查看考点",
+    "detail": "Unit 5 We're family · I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。"
+   }
+  },
+  {
+   "id": "gr-144",
+   "unit": "U5",
+   "category": "choice",
+   "prompt": "This is ___ dad.（这是我的爸爸。）",
+   "options": ["your", "I", "my"],
+   "answer": "my",
+   "explanation": "This is my dad. 意思是“这是我的爸爸”。考点：my 是“我的”，your 是“你的”，后面直接跟名词。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 5 We're family",
+    "point": "my 和 your",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 5 · my 和 your",
+    "detailTitle": "查看考点",
+    "detail": "Unit 5 We're family · my 是“我的”，your 是“你的”，后面直接跟名词。"
+   }
+  },
+  {
+   "id": "gr-145",
+   "unit": "U5",
+   "category": "choice",
+   "prompt": "This is ___ grandpa.（这是你的爷爷。）",
+   "options": ["your", "my", "you"],
+   "answer": "your",
+   "explanation": "This is your grandpa. 意思是“这是你的爷爷”。考点：my 是“我的”，your 是“你的”，后面直接跟名词。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 5 We're family",
+    "point": "my 和 your",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 5 · my 和 your",
+    "detailTitle": "查看考点",
+    "detail": "Unit 5 We're family · my 是“我的”，your 是“你的”，后面直接跟名词。"
+   }
+  },
+  {
+   "id": "gr-146",
+   "unit": "U5",
+   "category": "choice",
+   "prompt": "___ family.（我们是一家人。）",
+   "options": ["I'm", "We're", "He's"],
+   "answer": "We're",
+   "explanation": "We're family. 意思是“我们是一家人”。考点：I'm = I am，he's = he is，she's = she is，it's = it is，we're = we are。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 5 We're family",
+    "point": "缩写",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 5 · 缩写",
+    "detailTitle": "查看考点",
+    "detail": "Unit 5 We're family · I'm = I am，he's = he is，she's = she is，it's = it is，we're = we are。"
+   }
+  },
+  {
+   "id": "gr-147",
+   "unit": "U5",
+   "category": "choice",
+   "prompt": "Mum, ___ is Amy.",
+   "options": ["he", "we", "this"],
+   "answer": "this",
+   "explanation": "Mum, this is Amy. 意思是“妈妈，这是埃米”。考点：近处的东西用 this（这），远处的东西用 that（那）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 5 We're family",
+    "point": "this 和 that",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 5 · this 和 that",
+    "detailTitle": "查看考点",
+    "detail": "Unit 5 We're family · 近处的东西用 this（这），远处的东西用 that（那）。"
+   }
+  },
+  {
+   "id": "gr-148",
+   "unit": "U5",
+   "category": "choice",
+   "prompt": "Dad, ___ is my friend.",
+   "options": ["this", "I", "we"],
+   "answer": "this",
+   "explanation": "Dad, this is my friend. 意思是“爸爸，这是我的朋友”。考点：近处的东西用 this（这），远处的东西用 that（那）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 5 We're family",
+    "point": "this 和 that",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 5 · this 和 that",
+    "detailTitle": "查看考点",
+    "detail": "Unit 5 We're family · 近处的东西用 this（这），远处的东西用 that（那）。"
+   }
+  },
+  {
+   "id": "gr-149",
+   "unit": "U5",
+   "category": "choice",
+   "prompt": "Look, ___ is my family.",
+   "options": ["I", "this", "we"],
+   "answer": "this",
+   "explanation": "Look, this is my family. 意思是“看，这是我的家人”。考点：近处的东西用 this（这），远处的东西用 that（那）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 5 We're family",
+    "point": "this 和 that",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 5 · this 和 that",
+    "detailTitle": "查看考点",
+    "detail": "Unit 5 We're family · 近处的东西用 this（这），远处的东西用 that（那）。"
+   }
+  },
+  {
+   "id": "gr-150",
+   "unit": "U5",
+   "category": "choice",
+   "prompt": "I ___ my family.",
+   "options": ["am", "is", "love"],
+   "answer": "love",
+   "explanation": "I love my family. 意思是“我爱我的家人”。考点：这是单元里的常用句，要记住每个词的位置。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 5 We're family",
+    "point": "常用句",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 5 · 常用句",
+    "detailTitle": "查看考点",
+    "detail": "Unit 5 We're family · 这是单元里的常用句，要记住每个词的位置。"
+   }
+  },
+  {
+   "id": "gr-151",
+   "unit": "U6",
+   "category": "choice",
+   "prompt": "The book is ___ the bag.（书在书包里。）",
+   "options": ["in", "on", "and"],
+   "answer": "in",
+   "explanation": "The book is in the bag. 意思是“书在书包里”。考点：in 是“在……里面”，on 是“在……上面”。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 6 My sweet home",
+    "point": "in 和 on",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 6 · in 和 on",
+    "detailTitle": "查看考点",
+    "detail": "Unit 6 My sweet home · in 是“在……里面”，on 是“在……上面”。"
+   }
+  },
+  {
+   "id": "gr-152",
+   "unit": "U6",
+   "category": "choice",
+   "prompt": "The cat is ___ the bed.（猫在床上。）",
+   "options": ["in", "on", "and"],
+   "answer": "on",
+   "explanation": "The cat is on the bed. 意思是“猫在床上”。考点：in 是“在……里面”，on 是“在……上面”。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 6 My sweet home",
+    "point": "in 和 on",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 6 · in 和 on",
+    "detailTitle": "查看考点",
+    "detail": "Unit 6 My sweet home · in 是“在……里面”，on 是“在……上面”。"
+   }
+  },
+  {
+   "id": "gr-153",
+   "unit": "U6",
+   "category": "choice",
+   "prompt": "My pen is ___ the bag.（我的钢笔在书包里。）",
+   "options": ["on", "and", "in"],
+   "answer": "in",
+   "explanation": "My pen is in the bag. 意思是“我的钢笔在书包里”。考点：in 是“在……里面”，on 是“在……上面”。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 6 My sweet home",
+    "point": "in 和 on",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 6 · in 和 on",
+    "detailTitle": "查看考点",
+    "detail": "Unit 6 My sweet home · in 是“在……里面”，on 是“在……上面”。"
+   }
+  },
+  {
+   "id": "gr-154",
+   "unit": "U6",
+   "category": "choice",
+   "prompt": "My book is ___ the desk.（我的书在书桌上。）",
+   "options": ["on", "in", "and"],
+   "answer": "on",
+   "explanation": "My book is on the desk. 意思是“我的书在书桌上”。考点：in 是“在……里面”，on 是“在……上面”。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 6 My sweet home",
+    "point": "in 和 on",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 6 · in 和 on",
+    "detailTitle": "查看考点",
+    "detail": "Unit 6 My sweet home · in 是“在……里面”，on 是“在……上面”。"
+   }
+  },
+  {
+   "id": "gr-155",
+   "unit": "U6",
+   "category": "choice",
+   "prompt": "My bag is ___ the chair.（我的书包在椅子上。）",
+   "options": ["in", "on", "and"],
+   "answer": "on",
+   "explanation": "My bag is on the chair. 意思是“我的书包在椅子上”。考点：in 是“在……里面”，on 是“在……上面”。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 6 My sweet home",
+    "point": "in 和 on",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 6 · in 和 on",
+    "detailTitle": "查看考点",
+    "detail": "Unit 6 My sweet home · in 是“在……里面”，on 是“在……上面”。"
+   }
+  },
+  {
+   "id": "gr-156",
+   "unit": "U6",
+   "category": "choice",
+   "prompt": "My ruler is ___ the pencil box.（我的尺子在铅笔盒里。）",
+   "options": ["on", "and", "in"],
+   "answer": "in",
+   "explanation": "My ruler is in the pencil box. 意思是“我的尺子在铅笔盒里”。考点：in 是“在……里面”，on 是“在……上面”。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 6 My sweet home",
+    "point": "in 和 on",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 6 · in 和 on",
+    "detailTitle": "查看考点",
+    "detail": "Unit 6 My sweet home · in 是“在……里面”，on 是“在……上面”。"
+   }
+  },
+  {
+   "id": "gr-157",
+   "unit": "U6",
+   "category": "choice",
+   "prompt": "My eraser is ___ the desk.（我的橡皮在书桌上。）",
+   "options": ["on", "in", "and"],
+   "answer": "on",
+   "explanation": "My eraser is on the desk. 意思是“我的橡皮在书桌上”。考点：in 是“在……里面”，on 是“在……上面”。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 6 My sweet home",
+    "point": "in 和 on",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 6 · in 和 on",
+    "detailTitle": "查看考点",
+    "detail": "Unit 6 My sweet home · in 是“在……里面”，on 是“在……上面”。"
+   }
+  },
+  {
+   "id": "gr-158",
+   "unit": "U6",
+   "category": "choice",
+   "prompt": "It's ___ the bag.（它在书包里。）",
+   "options": ["on", "in", "and"],
+   "answer": "in",
+   "explanation": "It's in the bag. 意思是“它在书包里”。考点：in 是“在……里面”，on 是“在……上面”。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 6 My sweet home",
+    "point": "in 和 on",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 6 · in 和 on",
+    "detailTitle": "查看考点",
+    "detail": "Unit 6 My sweet home · in 是“在……里面”，on 是“在……上面”。"
+   }
+  },
+  {
+   "id": "gr-159",
+   "unit": "U6",
+   "category": "choice",
+   "prompt": "It's ___ the bed.（它在床上。）",
+   "options": ["in", "and", "on"],
+   "answer": "on",
+   "explanation": "It's on the bed. 意思是“它在床上”。考点：in 是“在……里面”，on 是“在……上面”。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 6 My sweet home",
+    "point": "in 和 on",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 6 · in 和 on",
+    "detailTitle": "查看考点",
+    "detail": "Unit 6 My sweet home · in 是“在……里面”，on 是“在……上面”。"
+   }
+  },
+  {
+   "id": "gr-160",
+   "unit": "U6",
+   "category": "choice",
+   "prompt": "It's ___ the chair.（它在椅子上。）",
+   "options": ["on", "in", "and"],
+   "answer": "on",
+   "explanation": "It's on the chair. 意思是“它在椅子上”。考点：in 是“在……里面”，on 是“在……上面”。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 6 My sweet home",
+    "point": "in 和 on",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 6 · in 和 on",
+    "detailTitle": "查看考点",
+    "detail": "Unit 6 My sweet home · in 是“在……里面”，on 是“在……上面”。"
+   }
+  },
+  {
+   "id": "gr-161",
+   "unit": "U6",
+   "category": "choice",
+   "prompt": "It's ___ the pencil box.（它在铅笔盒里。）",
+   "options": ["on", "in", "and"],
+   "answer": "in",
+   "explanation": "It's in the pencil box. 意思是“它在铅笔盒里”。考点：in 是“在……里面”，on 是“在……上面”。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 6 My sweet home",
+    "point": "in 和 on",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 6 · in 和 on",
+    "detailTitle": "查看考点",
+    "detail": "Unit 6 My sweet home · in 是“在……里面”，on 是“在……上面”。"
+   }
+  },
+  {
+   "id": "gr-162",
+   "unit": "U6",
+   "category": "choice",
+   "prompt": "It's ___ the room.（它在房间里。）",
+   "options": ["on", "and", "in"],
+   "answer": "in",
+   "explanation": "It's in the room. 意思是“它在房间里”。考点：in 是“在……里面”，on 是“在……上面”。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 6 My sweet home",
+    "point": "in 和 on",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 6 · in 和 on",
+    "detailTitle": "查看考点",
+    "detail": "Unit 6 My sweet home · in 是“在……里面”，on 是“在……上面”。"
+   }
+  },
+  {
+   "id": "gr-163",
+   "unit": "U6",
+   "category": "choice",
+   "prompt": "The pencil is ___ the book.（铅笔在书上。）",
+   "options": ["on", "in", "and"],
+   "answer": "on",
+   "explanation": "The pencil is on the book. 意思是“铅笔在书上”。考点：in 是“在……里面”，on 是“在……上面”。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 6 My sweet home",
+    "point": "in 和 on",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 6 · in 和 on",
+    "detailTitle": "查看考点",
+    "detail": "Unit 6 My sweet home · in 是“在……里面”，on 是“在……上面”。"
+   }
+  },
+  {
+   "id": "gr-164",
+   "unit": "U6",
+   "category": "choice",
+   "prompt": "___ my pen? It's in the bag.",
+   "options": ["What's", "Where's", "It's"],
+   "answer": "Where's",
+   "explanation": "Where's my pen? It's in the bag. 意思是“我的钢笔在哪里？它在书包里”。考点：问在哪里用 Where's …?（Where's = Where is），回答用 It's in/on …",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 6 My sweet home",
+    "point": "问位置",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 6 · 问位置",
+    "detailTitle": "查看考点",
+    "detail": "Unit 6 My sweet home · 问在哪里用 Where's …?（Where's = Where is），回答用 It's in/on …"
+   }
+  },
+  {
+   "id": "gr-165",
+   "unit": "U6",
+   "category": "choice",
+   "prompt": "___ the cat? It's on the bed.",
+   "options": ["What's", "It's", "Where's"],
+   "answer": "Where's",
+   "explanation": "Where's the cat? It's on the bed. 意思是“猫在哪里？它在床上”。考点：问在哪里用 Where's …?（Where's = Where is），回答用 It's in/on …",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 6 My sweet home",
+    "point": "问位置",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 6 · 问位置",
+    "detailTitle": "查看考点",
+    "detail": "Unit 6 My sweet home · 问在哪里用 Where's …?（Where's = Where is），回答用 It's in/on …"
+   }
+  },
+  {
+   "id": "gr-166",
+   "unit": "U6",
+   "category": "choice",
+   "prompt": "___ my ruler? It's on the desk.",
+   "options": ["Where's", "What's", "It's"],
+   "answer": "Where's",
+   "explanation": "Where's my ruler? It's on the desk. 意思是“我的尺子在哪里？它在书桌上”。考点：问在哪里用 Where's …?（Where's = Where is），回答用 It's in/on …",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 6 My sweet home",
+    "point": "问位置",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 6 · 问位置",
+    "detailTitle": "查看考点",
+    "detail": "Unit 6 My sweet home · 问在哪里用 Where's …?（Where's = Where is），回答用 It's in/on …"
+   }
+  },
+  {
+   "id": "gr-167",
+   "unit": "U6",
+   "category": "choice",
+   "prompt": "Where's my bag? ___ on the chair.",
+   "options": ["I'm", "It's", "We're"],
+   "answer": "It's",
+   "explanation": "Where's my bag? It's on the chair. 意思是“我的书包在哪里？它在椅子上”。考点：问在哪里用 Where's …?（Where's = Where is），回答用 It's in/on …",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 6 My sweet home",
+    "point": "问位置",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 6 · 问位置",
+    "detailTitle": "查看考点",
+    "detail": "Unit 6 My sweet home · 问在哪里用 Where's …?（Where's = Where is），回答用 It's in/on …"
+   }
+  },
+  {
+   "id": "gr-168",
+   "unit": "U6",
+   "category": "choice",
+   "prompt": "Where's the cat? ___ on the bed.",
+   "options": ["I'm", "We're", "It's"],
+   "answer": "It's",
+   "explanation": "Where's the cat? It's on the bed. 意思是“猫在哪里？它在床上”。考点：问在哪里用 Where's …?（Where's = Where is），回答用 It's in/on …",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 6 My sweet home",
+    "point": "问位置",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 6 · 问位置",
+    "detailTitle": "查看考点",
+    "detail": "Unit 6 My sweet home · 问在哪里用 Where's …?（Where's = Where is），回答用 It's in/on …"
+   }
+  },
+  {
+   "id": "gr-169",
+   "unit": "U6",
+   "category": "choice",
+   "prompt": "Where's my pen? ___ in the pencil box.",
+   "options": ["It's", "I'm", "We're"],
+   "answer": "It's",
+   "explanation": "Where's my pen? It's in the pencil box. 意思是“我的钢笔在哪里？它在铅笔盒里”。考点：问在哪里用 Where's …?（Where's = Where is），回答用 It's in/on …",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 6 My sweet home",
+    "point": "问位置",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 6 · 问位置",
+    "detailTitle": "查看考点",
+    "detail": "Unit 6 My sweet home · 问在哪里用 Where's …?（Where's = Where is），回答用 It's in/on …"
+   }
+  },
+  {
+   "id": "gr-170",
+   "unit": "U6",
+   "category": "choice",
+   "prompt": "Where ___ my book? It's on the desk.",
+   "options": ["am", "is", "are"],
+   "answer": "is",
+   "explanation": "Where is my book? It's on the desk. 意思是“我的书在哪里？它在书桌上”。考点：问在哪里用 Where's …?（Where's = Where is），回答用 It's in/on …",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 6 My sweet home",
+    "point": "问位置",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 6 · 问位置",
+    "detailTitle": "查看考点",
+    "detail": "Unit 6 My sweet home · 问在哪里用 Where's …?（Where's = Where is），回答用 It's in/on …"
+   }
+  },
+  {
+   "id": "gr-171",
+   "unit": "U6",
+   "category": "choice",
+   "prompt": "It's on ___ desk.",
+   "options": ["an", "is", "the"],
+   "answer": "the",
+   "explanation": "It's on the desk. 意思是“它在书桌上”。考点：说房间里具体的东西时，in、on 后面用 the：on the desk、in the bag。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 6 My sweet home",
+    "point": "the",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 6 · the",
+    "detailTitle": "查看考点",
+    "detail": "Unit 6 My sweet home · 说房间里具体的东西时，in、on 后面用 the：on the desk、in the bag。"
+   }
+  },
+  {
+   "id": "gr-172",
+   "unit": "U6",
+   "category": "choice",
+   "prompt": "It's in ___ bag.",
+   "options": ["the", "an", "is"],
+   "answer": "the",
+   "explanation": "It's in the bag. 意思是“它在书包里”。考点：说房间里具体的东西时，in、on 后面用 the：on the desk、in the bag。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 6 My sweet home",
+    "point": "the",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 6 · the",
+    "detailTitle": "查看考点",
+    "detail": "Unit 6 My sweet home · 说房间里具体的东西时，in、on 后面用 the：on the desk、in the bag。"
+   }
+  },
+  {
+   "id": "gr-173",
+   "unit": "U6",
+   "category": "choice",
+   "prompt": "My bag ___ on the chair.",
+   "options": ["am", "is", "are"],
+   "answer": "is",
+   "explanation": "My bag is on the chair. 意思是“我的书包在椅子上”。考点：I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 6 My sweet home",
+    "point": "am / is / are",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 6 · am / is / are",
+    "detailTitle": "查看考点",
+    "detail": "Unit 6 My sweet home · I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。"
+   }
+  },
+  {
+   "id": "gr-174",
+   "unit": "U6",
+   "category": "choice",
+   "prompt": "My pen ___ in the bag.",
+   "options": ["am", "are", "is"],
+   "answer": "is",
+   "explanation": "My pen is in the bag. 意思是“我的钢笔在书包里”。考点：I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 6 My sweet home",
+    "point": "am / is / are",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 6 · am / is / are",
+    "detailTitle": "查看考点",
+    "detail": "Unit 6 My sweet home · I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。"
+   }
+  },
+  {
+   "id": "gr-175",
+   "unit": "U6",
+   "category": "choice",
+   "prompt": "The cat ___ on the bed.",
+   "options": ["is", "am", "are"],
+   "answer": "is",
+   "explanation": "The cat is on the bed. 意思是“猫在床上”。考点：I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 6 My sweet home",
+    "point": "am / is / are",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 6 · am / is / are",
+    "detailTitle": "查看考点",
+    "detail": "Unit 6 My sweet home · I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。"
+   }
+  },
+  {
+   "id": "gr-176",
+   "unit": "U6",
+   "category": "choice",
+   "prompt": "This ___ my room.",
+   "options": ["am", "is", "are"],
+   "answer": "is",
+   "explanation": "This is my room. 意思是“这是我的房间”。考点：I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 6 My sweet home",
+    "point": "am / is / are",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 6 · am / is / are",
+    "detailTitle": "查看考点",
+    "detail": "Unit 6 My sweet home · I 后面用 am；he、she、it、this、that 和单个的人或东西后面用 is；we 后面用 are。"
+   }
+  },
+  {
+   "id": "gr-177",
+   "unit": "U6",
+   "category": "choice",
+   "prompt": "This is ___ door.",
+   "options": ["an", "is", "a"],
+   "answer": "a",
+   "explanation": "This is a door. 意思是“这是一扇门”。考点：以元音音素开头的词前用 an（an eraser、an orange ruler），其他词前用 a。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 6 My sweet home",
+    "point": "a 和 an",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 6 · a 和 an",
+    "detailTitle": "查看考点",
+    "detail": "Unit 6 My sweet home · 以元音音素开头的词前用 an（an eraser、an orange ruler），其他词前用 a。"
+   }
+  },
+  {
+   "id": "gr-178",
+   "unit": "U6",
+   "category": "choice",
+   "prompt": "That is ___ window.",
+   "options": ["a", "an", "is"],
+   "answer": "a",
+   "explanation": "That is a window. 意思是“那是一扇窗户”。考点：以元音音素开头的词前用 an（an eraser、an orange ruler），其他词前用 a。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 6 My sweet home",
+    "point": "a 和 an",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 6 · a 和 an",
+    "detailTitle": "查看考点",
+    "detail": "Unit 6 My sweet home · 以元音音素开头的词前用 an（an eraser、an orange ruler），其他词前用 a。"
+   }
+  },
+  {
+   "id": "gr-179",
+   "unit": "U6",
+   "category": "choice",
+   "prompt": "I see a door ___ a window.",
+   "options": ["is", "and", "in"],
+   "answer": "and",
+   "explanation": "I see a door and a window. 意思是“我看见一扇门和一扇窗户”。考点：连接两样东西用 and（和）。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 6 My sweet home",
+    "point": "and 连接",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 6 · and 连接",
+    "detailTitle": "查看考点",
+    "detail": "Unit 6 My sweet home · 连接两样东西用 and（和）。"
+   }
+  },
+  {
+   "id": "gr-180",
+   "unit": "U6",
+   "category": "choice",
+   "prompt": "Look ___ my room.（看看我的房间。）",
+   "options": ["is", "and", "at"],
+   "answer": "at",
+   "explanation": "Look at my room. 意思是“看看我的房间”。考点：这是单元里的常用句，要记住每个词的位置。",
+   "source": {
+    "book": "外研版（三起）2024新版三年级上册英语（单元知识点）",
+    "unit": "Unit 6 My sweet home",
+    "point": "常用句",
+    "type": "依据教材单元知识点自编",
+    "label": "Unit 6 · 常用句",
+    "detailTitle": "查看考点",
+    "detail": "Unit 6 My sweet home · 这是单元里的常用句，要记住每个词的位置。"
+   }
+  }
+ ]
+}

@@ -1,5 +1,6 @@
-// 字母奇妙屋 (English): write letters by hand on English four-line paper. One box per letter: as wide as a 田字格
-// box, as tall as the four lines of an English exercise book (the third line, the baseline, is red).
+// 字母奇妙屋 (English): write letters by hand on English four-line paper. One writing area per letter: as wide as a
+// 田字格 box, as tall as the four lines of an English exercise book (the third line, the baseline, is red). Only the
+// four lines are drawn, with no frame around them.
 // q = {kind ("upper-to-lower" | "lower-to-upper"), prompt, answer (the letter to write), shown (the letter given)}.
 // Nothing is read aloud. A stylus reads best and a mouse worst; the start page says so (cfg.highlight in letters.html).
 //
@@ -229,7 +230,7 @@
 
   // One or two sentences on what is wrong with a drawing of `expected` ('' when it is right).
   function diagnose(strokes, expected, ranked = rank(strokes)) {
-    if (!ranked.length) return '格子是空的，没有写字母。';
+    if (!ranked.length) return '这里是空的，没有写字母。';
     let got = read(strokes, expected, ranked);
     if (got === expected) return '';
     // I and l are one stroke: when the other one is the other case of the asked letter (asked L, wrote l), say that
@@ -260,7 +261,7 @@
       if (parts.length) return `形状对了，位置不对：${parts.join('，')}。${rule(expected)}。`;
       return '写得不够清楚，和别的字母分不开。' + look;
     }
-    if (!got || got === '?') return '没认出这是哪个字母，笔画要连贯、写在格子中间。' + look;
+    if (!got || got === '?') return '没认出这是哪个字母，笔画要连贯、写在横线中间。' + look;
     return `写出来更像${named(got)}。` + (PAIRS[[expected, got].sort().join('')] || look);
   }
   PK.handwriting = { rank, read, diagnose, templates: T };
@@ -352,7 +353,7 @@
       ctx.view.boxes.forEach((strokes, i) => {
         const cell = el('div', 'write-cell');
         const canvas = el('canvas', 'write-box');
-        canvas.setAttribute('aria-label', `第${i + 1}格：${LABEL[q.answer.length][i]}`);
+        canvas.setAttribute('aria-label', `第${i + 1}组横线：${LABEL[q.answer.length][i]}`);
         canvas.setAttribute('role', 'img');
         if (ctx.result) cell.classList.add(value[i] === q.answer[i] ? 'right' : 'wrong');
         else attach(canvas, strokes, ctx);
@@ -382,7 +383,7 @@
     },
     value(q, a, ctx) {
       const boxes = ctx.view.boxes;
-      if (boxes.some(b => !b.length)) return { incomplete: boxes.length > 1 ? '大写和小写两个格子都要写哦。' : '先在格子里写出字母。' };
+      if (boxes.some(b => !b.length)) return { incomplete: boxes.length > 1 ? '大写和小写都要写哦。' : '先在横线上写出字母。' };
       return { value: boxes.map((b, i) => read(b, q.answer[i]) || '?').join('') };
     },
     check: (q, value) => value === q.answer,
