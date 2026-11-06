@@ -63,6 +63,25 @@ def test_nothing_to_go_on_keeps_the_boxes():
     assert photo.calibrate(page(rows), boxless)[0] == boxless
 
 
+def test_a_fit_making_the_line_ends_worse_keeps_the_boxes():
+    rows = SPREADING[:12]
+    lines = lines_at(rows)
+    # Ends the ink cannot support: every line claims the whole width while the rows are short.
+    short = [(y, 300, 540) for y, _, _ in rows]
+    wide = [{**line, "box": [50, line["box"][1] + 12, 950, line["box"][3] + 12]} for line in lines]
+    assert photo.calibrate(page(short), wide)[0] == wide
+
+
+def test_faint_first_character_stays_inside_the_box():
+    mask = (__import__("numpy").zeros((400, 1000), dtype="uint8"))
+    mask[100:140, 200:800] = 1  # the ink begins a character after where the model says the line begins
+    import cv2, numpy as np
+
+    boxes = np.array([[120.0, 100, 800, 140], [120, 200, 800, 240], [120, 300, 800, 340]])
+    column = photo._Column(mask, cv2.integral(mask).astype(np.int64), boxes)
+    assert column.ends(0, 100, 140, "字")[0] == 120.0
+
+
 def test_two_pages_on_one_photo_are_fitted_apart():
     lines = [{"text": "字", "box": [100, y, 400, y + 30]} for y in (100, 150, 200, 250)] + [{"text": "字", "box": [600, y, 900, y + 30]} for y in (100, 150, 200)]
     assert photo._columns(lines) == [[0, 1, 2, 3], [4, 5, 6]]

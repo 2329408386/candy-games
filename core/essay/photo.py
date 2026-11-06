@@ -4,7 +4,8 @@ can end up a whole row too high by the end of the page and the red pen lands on 
 
 The boxes of a column are treated as one template and stretched to fit the ink (y' = a + b*y + c*y², plus a tilt), then
 each line may move a little and its ends follow the ink. Short lines and indents tell a page from the same page one
-row off. When the fit is no better than the model's own boxes, or would move them implausibly far, they stay.
+row off. When the fit is no better than the model's own boxes, would move them implausibly far, or makes the lines'
+ends agree less with the ink, they stay.
 Only the worker imports this module (OpenCV and numpy are not loaded in the web processes)."""
 
 import cv2
@@ -14,6 +15,8 @@ SIDE = 1600  # ink is looked for on a picture this big
 MIN_LINES = 3  # fewer lines than this in a column cannot be fitted
 MAX_SHIFT = 2.5  # rows: further than this and the fit is not believed
 MIN_GAIN = 0.005  # how much better (share of the ink covered minus share of the area) a fit must be than the model
+MAX_ENDS_OFF = 0.2  # beyond this the ink says too little about the lines (very faint writing, a steep slant): no move
+ENDS_SLACK = 0.01  # the lines' ends may agree this much less with the ink than the model's own boxes did
 NEAR = (0.35, 0.7, 1.1)  # rows: the best fit moving at most this far is also tried
 CLOSE = 0.02  # the smallest move wins among fits scoring within this of the best
 PUNCTUATION = set("，。、；：？！…—”’）》,.;:?!)")
@@ -119,6 +122,28 @@ class _Column:
         top = max(value for _, value in fits)
         return min((f for f in fits if f[1] >= top - CLOSE), key=lambda f: self.shift(f[0]))
 
+    def ends_off(self, y, s):
+        """How far the ink on the rows at y starts and ends from where the model says each line does (share of the page
+        width, each line at most 0.5; a row without ink counts 0.5). A page one row off fits the rows as well as the
+        right one, but its short lines and indents land on the wrong rows, which only this shows."""
+        heights = np.gradient(y)
+        left = max(0, int(self.boxes[:, 0].min() - 0.05 * self.w))
+        right = min(self.w, int(self.boxes[:, 2].max() + 0.05 * self.w))
+        total = 0.0
+        for k, box in enumerate(self.boxes):
+            mid = y[k] + s * ((box[0] + box[2]) / 2 - self.xc)
+            half = max(4, 0.36 * heights[k])
+            y1, y2 = int(np.clip(mid - half, 0, self.h)), int(np.clip(mid + half, 0, self.h))
+            dense = self._dense(self.mask[y1:y2, left:right], y2 - y1) if y2 > y1 else []
+            total += min(0.5, (abs(left + dense[0] - box[0]) + abs(left + dense[-1] - box[2])) / self.w) if len(dense) else 0.5
+        return total / len(self.boxes)
+
+    @staticmethod
+    def _dense(rows, height):
+        """Columns of this slice with a character's worth of ink around them, rather than a thin rule."""
+        window = max(3, height // 2)
+        return np.flatnonzero(np.convolve(rows.sum(axis=0).astype(float), np.ones(window) / window, mode="same") / height >= 0.10)
+
     def nudged(self, y, s):
         """Each row a little up or down, wherever it holds the most ink."""
         heights = np.gradient(y)
@@ -144,8 +169,8 @@ class _Column:
         if hi <= lo or y2 <= y1:
             return box[0], box[2]
         column = self.mask[y1:y2, lo:hi].sum(axis=0).astype(float)
-        window = max(3, (y2 - y1) // 2)
-        dense = np.flatnonzero(np.convolve(column, np.ones(window) / window, mode="same") / (y2 - y1) >= 0.10)
+        window = max(3, (y2 - y1) // 2)  # as in _dense
+        dense = self._dense(self.mask[y1:y2, lo:hi], y2 - y1)
         if not len(dense):
             return box[0], box[2]
         strokes = np.flatnonzero(column >= 2)
@@ -161,9 +186,10 @@ class _Column:
         pad = max(1, (y2 - y1) // 12)
         x1, x2 = max(0, x1 - pad), min(self.w, x2 + pad)
         # The model is roughly right about the ends: a far-off end is a stray mark or a slanted row leaving the slice.
-        limit = 1.5 * (y2 - y1)
-        x1 = x1 if abs(x1 - box[0]) <= limit else box[0]
-        x2 = x2 if abs(x2 - box[2]) <= limit else box[2]
+        # Moving in is held back more: faint first or last characters must not fall outside the box.
+        outward, inward = 1.5 * (y2 - y1), 0.75 * (y2 - y1)
+        x1 = x1 if -outward <= x1 - box[0] <= inward else box[0]
+        x2 = x2 if -inward <= x2 - box[2] <= outward else box[2]
         return (x1, x2) if x1 < x2 else (box[0], box[2])
 
 
@@ -208,6 +234,9 @@ def calibrate(data, lines):
         y = column.warp(p)
         s = p[3]
         if value < base + MIN_GAIN or np.abs(y - column.ys).max() > MAX_SHIFT * column.pitch:
+            continue
+        off = column.ends_off(y, s)
+        if off > MAX_ENDS_OFF or off > column.ends_off(column.ys, 0.0) + ENDS_SLACK:
             continue
         y = column.nudged(y, s)
         heights = np.gradient(y)

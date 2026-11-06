@@ -1,4 +1,5 @@
 import argparse, datetime, json, os, secrets, shutil, sqlite3, time, zipfile
+from pathlib import Path
 from werkzeug.security import generate_password_hash
 from core import schema
 from core.app import create_app, data_dir, db, licenses_xlsx, group_map, group_labels, GRADES
@@ -122,6 +123,54 @@ def essay_reread(sid):
     print(f"作文 {sid} 已重新排队（原来是 {row['status']}），会从识别照片开始重新批改")
 
 
+def essay_recalibrate(max_id, dry_run=False):
+    """Moves the line boxes of the photos already graded onto the handwriting, as the worker now does for new ones
+    (core/essay/photo.py). Only where the red pen is drawn changes: no model is called, and the text and the marks
+    stay. The boxes as they were go to essay-boxes-<time>.json in the data directory first (essay-unboxes restores them).
+    max_id: the last photo read before the worker began calibrating; later ones are done already."""
+    from core.essay import image_path, photo
+
+    d = db()
+    rows = d.execute(
+        "SELECT i.id,i.lines,s.text FROM ess_images i JOIN ess_submissions s ON s.id=i.submission_id WHERE i.lines!='' AND i.id<=? ORDER BY i.id", (max_id,)
+    ).fetchall()
+    if not dry_run:
+        backup = data_dir() / f"essay-boxes-{time.strftime('%Y%m%d-%H%M%S')}.json"
+        backup.write_text(json.dumps({row["id"]: row["lines"] for row in rows}))
+        print(f"原来的行框已存到 {backup}")
+    changed = kept = failed = 0
+    for row in rows:
+        spots = json.loads(row["lines"])
+        lines = [{"text": row["text"][s["s"] : s["e"]], "box": s["b"]} for s in spots]
+        try:
+            new, stats = photo.calibrate(image_path(row["id"]).read_bytes(), lines)
+        except (OSError, ValueError) as e:
+            failed += 1
+            print(f"图片 {row['id']} 跳过：{e}")
+            continue
+        boxes = [line["box"] for line in new]
+        if boxes == [s["b"] for s in spots]:
+            kept += 1
+            continue
+        changed += 1
+        print(f"图片 {row['id']}：{stats['moved']}/{stats['lines']} 行，最大移动 {stats['shift']} 行")
+        if not dry_run:
+            # Not if the teacher corrected the text in the meantime: that stored other positions.
+            d.execute("UPDATE ess_images SET lines=? WHERE id=? AND lines=?", (json.dumps([{**s, "b": b} for s, b in zip(spots, boxes)]), row["id"], row["lines"]))
+            d.commit()
+    print(f"{'试算：' if dry_run else ''}共 {len(rows)} 张，校准 {changed} 张，保留原框 {kept} 张，跳过 {failed} 张")
+
+
+def essay_unboxes(path):
+    """Puts back the line boxes saved by essay-recalibrate."""
+    d = db()
+    saved = json.loads(Path(path).read_text())
+    for iid, lines in saved.items():
+        d.execute("UPDATE ess_images SET lines=? WHERE id=?", (lines, int(iid)))
+    d.commit()
+    print(f"已恢复 {len(saved)} 张照片的行框")
+
+
 def essay_drop_para():
     """Removes 分段 marks that sit where the child already began a paragraph, from the AI review and the published
     one (grading now drops them as they come in). Nothing else changes. Safe to run again."""
@@ -180,9 +229,12 @@ def summary(site):
 
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
-    p.add_argument("command", choices=["seed", "export", "backup", "reset-password", "summary", "essay-reread", "essay-drop-para"])
+    p.add_argument("command", choices=["seed", "export", "backup", "reset-password", "summary", "essay-reread", "essay-drop-para", "essay-recalibrate", "essay-unboxes"])
     p.add_argument("--site", choices=sorted(SITES))
     p.add_argument("--id", type=int, help="essay-reread: 作文提交编号")
+    p.add_argument("--dry-run", action="store_true", help="essay-recalibrate: 只算不写")
+    p.add_argument("--max-id", type=int, help="essay-recalibrate: 只处理这个编号及之前的照片")
+    p.add_argument("--file", help="essay-unboxes: essay-recalibrate 存下的文件")
     args = p.parse_args()
     schema.initialize(data_dir() / schema.DB_NAME)
     if args.command == "backup":
@@ -191,6 +243,18 @@ if __name__ == "__main__":
     if args.command == "essay-drop-para":
         with create_app(SITES["teacher"]).app_context():
             essay_drop_para()
+        raise SystemExit
+    if args.command == "essay-recalibrate":
+        if not args.max_id:
+            p.error("essay-recalibrate 需要 --max-id")
+        with create_app(SITES["teacher"]).app_context():
+            essay_recalibrate(args.max_id, args.dry_run)
+        raise SystemExit
+    if args.command == "essay-unboxes":
+        if not args.file:
+            p.error("essay-unboxes 需要 --file")
+        with create_app(SITES["teacher"]).app_context():
+            essay_unboxes(args.file)
         raise SystemExit
     if args.command == "essay-reread":
         if not args.id:

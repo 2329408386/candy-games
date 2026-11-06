@@ -1456,3 +1456,46 @@ def test_photo_miswritten_character_is_marked(models, klass, db):
         assert not [m for m in ai["marks"] if m["type"] == "错别字"]
         db.execute("DELETE FROM ess_submissions WHERE id=?", (sid,))
         db.commit()
+
+
+def test_recalibrate_moves_only_the_boxes_of_old_photos_and_can_be_undone(models, klass, db):
+    import manage, wsgi
+    from PIL import Image, ImageDraw
+    from core.app import data_dir
+
+    t, cid, aid = klass
+    s, _ = student_client(db, cid)
+    sid = upload(s, f"/api/write/{aid}", [photo_bytes()]).get_json()["id"]
+    run_worker()
+    iid = db.execute("SELECT id FROM ess_images WHERE submission_id=?", (sid,)).fetchone()[0]
+    # Rows of writing spreading down the page, and boxes evenly spaced that end up about a row too high.
+    rows = [round(150 + 70 * k + 1.5 * k * k) for k in range(16)]
+    sheet = Image.new("RGB", (1000, 1600), (245, 243, 235))
+    pen = ImageDraw.Draw(sheet)
+    for k, y in enumerate(rows):
+        for x in range(200 if k % 5 == 0 else 80, 500 if k % 5 == 4 else 920, 60):
+            pen.rectangle([x + 8, y - 20, x + 48, y + 20], outline=(25, 25, 25), width=4)
+    sheet.save(essay.image_path(iid), "JPEG", quality=92)
+    text = "字" * 200
+    spots = [
+        {"s": k * 10, "e": k * 10 + 10, "b": [200 if k % 5 == 0 else 80, (150 + 85 * k - 25) * 1000 // 1600, 500 if k % 5 == 4 else 920, (150 + 85 * k + 25) * 1000 // 1600]}
+        for k in range(16)
+    ]
+    db.execute("UPDATE ess_images SET lines=? WHERE id=?", (json.dumps(spots), iid))
+    db.execute("UPDATE ess_submissions SET text=? WHERE id=?", (text, sid))
+    db.commit()
+    stored = lambda: json.loads(db.execute("SELECT lines FROM ess_images WHERE id=?", (iid,)).fetchone()[0])
+    review = db.execute("SELECT ai,final FROM ess_reviews WHERE submission_id=?", (sid,)).fetchone()
+    with wsgi.teacher.app_context():
+        manage.essay_recalibrate(iid, dry_run=True)
+        assert stored() == spots
+        manage.essay_recalibrate(iid - 1)  # later photos are done already
+        assert stored() == spots
+        manage.essay_recalibrate(iid)
+        moved = stored()
+        assert [(l["s"], l["e"]) for l in moved] == [(l["s"], l["e"]) for l in spots]
+        assert all(abs((l["b"][1] + l["b"][3]) / 2 * 1.6 - y) < 20 for l, y in zip(moved, rows))
+        assert tuple(db.execute("SELECT ai,final FROM ess_reviews WHERE submission_id=?", (sid,)).fetchone()) == tuple(review)
+        saved = sorted(data_dir().glob("essay-boxes-*.json"))[-1]
+        manage.essay_unboxes(saved)
+        assert stored() == spots
