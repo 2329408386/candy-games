@@ -192,7 +192,7 @@ def _rows(profile, pitch):
     filled = smooth[smooth > 0]
     if not len(filled):
         return []
-    on = smooth >= 0.12 * np.percentile(filled, 90)  # low: the last line of a paragraph may be a few characters
+    on = smooth >= 0.25 * np.percentile(filled, 90)
     rows, start, gap = [], None, 0
     for y, value in enumerate(on):
         if value:
@@ -218,31 +218,10 @@ def _rows(profile, pitch):
     return [r for r in out if r[1] - r[0] >= 0.3 * pitch]
 
 
-def _extents(mask, rows, left, right):
-    """Where the ink of each row starts and ends: [(x1, x2) or None]."""
-    import numpy as np
-
-    out = []
-    for top, bottom in rows:
-        columns = np.flatnonzero((mask[top:bottom, left:right] > 0).sum(axis=0) >= 2)
-        out.append((left + int(columns[0]), left + int(columns[-1]) + 1) if len(columns) else None)
-    return out
-
-
-def _align(centers, rows, pitch, spans=None, inks=None, across=1.0):
+def _align(centers, rows, pitch):
     """Lines to rows, in order: {line index: row index} with the smallest total distance, and that total. A line may
-    stay without a row (it costs about one line pitch) and a row without a line (the title, a stain) costs little.
-    spans/inks: how far each line and each row reach left and right. Heights alone cannot tell a page from the same
-    page one row off (rows are evenly spaced), but where lines end can: a short line must land on a short row."""
+    stay without a row (it costs about one line pitch) and a row without a line (the title, a stain) costs little."""
     n, m = len(centers), len(rows)
-    weight = pitch / across
-
-    def distance(i, j):
-        d = abs(centers[i] - middle[j])
-        if spans and inks and inks[j]:
-            d += weight * (abs(spans[i][0] - inks[j][0]) + abs(spans[i][1] - inks[j][1]))
-        return d
-
     skip_line, skip_row = 0.9 * pitch, 0.05 * pitch
     cost = [[0.0] * (m + 1) for _ in range(n + 1)]
     for i in range(n - 1, -1, -1):
@@ -252,10 +231,10 @@ def _align(centers, rows, pitch, spans=None, inks=None, across=1.0):
     middle = [(a + b) / 2 for a, b in rows]
     for i in range(n - 1, -1, -1):
         for j in range(m - 1, -1, -1):
-            cost[i][j] = min(cost[i + 1][j] + skip_line, cost[i][j + 1] + skip_row, cost[i + 1][j + 1] + distance(i, j))
+            cost[i][j] = min(cost[i + 1][j] + skip_line, cost[i][j + 1] + skip_row, cost[i + 1][j + 1] + abs(centers[i] - middle[j]))
     pairs, i, j = {}, 0, 0
     while i < n and j < m:
-        if cost[i][j] == cost[i + 1][j + 1] + distance(i, j):
+        if cost[i][j] == cost[i + 1][j + 1] + abs(centers[i] - middle[j]):
             pairs[i] = j
             i, j = i + 1, j + 1
         elif cost[i][j] == cost[i][j + 1] + skip_row:
@@ -296,7 +275,7 @@ def snap_lines(data, lines):
 
     cv2 = _cv()
     boxed = [k for k, line in enumerate(lines) if line.get("box")]
-    stats = {"lines": len(boxed), "matched": 0, "shift": 0, "before": 0.0, "after": 0.0, "ends": 0}
+    stats = {"lines": len(boxed), "matched": 0, "shift": 0, "before": 0.0, "after": 0.0}
     if len(boxed) < 2:
         return lines, stats
     small, _ = _scaled(_decode(data), _SNAP_SIDE)
@@ -321,23 +300,15 @@ def snap_lines(data, lines):
     rows = _rows((area[:, left:right] > 0).sum(axis=1).astype(np.float64), pitch)
     if not rows or _blurred(area, rows, left, right, pitch):
         return lines, stats
-    # The model's boxes are often all off by about the same amount: try the page shifted before aligning, by less than
-    # a row and only when it clearly helps. A page landing one row off would put the red pen on the wrong line.
-    spans = [(b[0], b[2]) for b in boxes]
-    inks = _extents(area, rows, left, right)
-    across = max(1, right - left)
-    offsets = [pitch * k / 4 for k in range(-3, 4)]
-    offset = min(offsets, key=lambda o: _align([c + o for c in centers], rows, pitch, spans, inks, across)[1] + abs(o) * len(centers) * 0.1)
-    pairs, _ = _align([c + offset for c in centers], rows, pitch, spans, inks, across)
+    # The model's boxes are often all off by about the same amount: try the page shifted before aligning.
+    offsets = [pitch * k / 4 for k in range(-8, 9)]
+    offset = min(offsets, key=lambda o: _align([c + o for c in centers], rows, pitch)[1] + abs(o) * 0.01)
+    pairs, _ = _align([c + offset for c in centers], rows, pitch)
     pairs = {i: j for i, j in pairs.items() if abs(centers[i] + offset - sum(rows[j]) / 2) <= 0.75 * pitch}
     stats["matched"] = len(pairs)
     if len(pairs) < _MIN_MATCHED * len(boxed):
         return lines, stats
     shift = statistics.median(sum(rows[j]) / 2 - centers[i] for i, j in pairs.items())
-    # How far the rows chosen end from where the model says the lines end (0–1000 of the width): low when each line
-    # found its own row, high when the page is a row off. Boxes covering the ink cannot show that.
-    ends = [abs(inks[j][1] - boxes[i][2]) for i, j in pairs.items() if inks[j]]
-    stats["ends"] = round(statistics.median(ends) / w * 1000) if ends else 0
     new = []
     for i, b in enumerate(boxes):
         if i not in pairs:
@@ -358,7 +329,7 @@ def snap_lines(data, lines):
     after = _cover(area, new)
     stats["after"] = after
     stats["shift"] = round(shift / h * 1000)
-    if after < stats["before"] - 0.02:  # tight boxes may lose a stray stroke, not more
+    if after < stats["before"]:
         stats["matched"] = 0
         return lines, stats
     out = [dict(line) for line in lines]
@@ -366,28 +337,6 @@ def snap_lines(data, lines):
         x1, y1 = max(0, min(999, round(b[0] / w * 1000))), max(0, min(999, round(b[1] / h * 1000)))
         out[k]["box"] = [x1, y1, max(x1 + 1, min(1000, round(b[2] / w * 1000))), max(y1 + 1, min(1000, round(b[3] / h * 1000)))]
     return out, stats
-
-
-def outside_paper(data, lines):
-    """The share of the line boxes (0–1000 of this photo) that rectify would not keep whole, without calling a model:
-    above 0, cutting would lose writing the model saw."""
-    import numpy as np
-
-    cv2 = _cv()
-    boxes = [line["box"] for line in lines if line.get("box")]
-    img = _decode(data)
-    q = find_paper(img)
-    if q is None or not boxes:
-        return 0.0
-    h, w = img.shape[:2]
-    center = q.mean(axis=0)
-    q = (center + (q - center) * (1 + 2 * _MARGIN)).astype(np.float32).reshape(-1, 1, 2)
-    lost = 0
-    for x1, y1, x2, y2 in boxes:
-        ends = [(x1, (y1 + y2) / 2), (x2, (y1 + y2) / 2)]
-        if any(cv2.pointPolygonTest(q, (x / 1000 * w, y / 1000 * h), False) < 0 for x, y in ends):
-            lost += 1
-    return round(lost / len(boxes), 3)
 
 
 def _cover(mask, boxes):

@@ -60,7 +60,6 @@ def main():
     cut, kept, seconds = 0, 0, []
     snapped, unsnapped, shifts, before, after = 0, 0, [], [], []
     lost, read_pairs = 0, []
-    outside, ends = [], []
     scan = {"pages": 0, "fail": 0, "candidates": 0, "confirmed": 0, "tin": 0, "tout": 0, "seconds": 0.0}
     for img in images:
         data = image_path(img["id"]).read_bytes()
@@ -75,10 +74,6 @@ def main():
         cut, kept = cut + bool(flat), kept + (not flat)
         line = f"{label}: " + (f"裁正为 {flat[1]}×{flat[2]}" if flat else "不裁")
         lines = stored_lines(img)
-        if flat and lines:
-            share = photo.outside_paper(data, lines)
-            outside.append(share)
-            line += f"（行框在裁剪范围外 {share:.0%}）"
         if lines:
             try:
                 _, stats = photo.snap_lines(data, lines)
@@ -87,10 +82,9 @@ def main():
                     shifts.append(abs(stats["shift"]))
                     before.append(stats["before"])
                     after.append(stats["after"])
-                    ends.append(stats["ends"])
                 else:
                     unsnapped += 1
-                line += f"，行框 {stats['matched']}/{stats['lines']} 行对上，平移 {stats['shift']}‰，墨迹覆盖 {stats['before']:.2f}→{stats['after']:.2f}，行尾差 {stats['ends']}‰"
+                line += f"，行框 {stats['matched']}/{stats['lines']} 行对上，平移 {stats['shift']}‰，墨迹覆盖 {stats['before']:.2f}→{stats['after']:.2f}"
             except Exception as e:
                 unsnapped += 1
                 line += f"，校准出错 {e!r}"
@@ -148,11 +142,9 @@ def main():
         print("没有照片")
         return
     print(f"裁正：{len(images)} 张里裁 {cut} 张，不裁 {kept} 张；每张 {statistics.mean(seconds):.2f} 秒")
-    if outside:
-        print(f"  裁正的 {len(outside)} 张里，有行框落在裁剪范围外的 {sum(1 for x in outside if x > 0)} 张（大于 0 说明裁掉了字，先不要打开裁正）")
     print(f"行框校准：{snapped} 张校准，{unsnapped} 张保留原框")
     if shifts:
-        print(f"  平移中位数 {statistics.median(shifts)}‰，最大 {max(shifts)}‰；墨迹覆盖中位数 {statistics.median(before):.2f}→{statistics.median(after):.2f}；行尾差中位数 {statistics.median(ends)}‰，最大 {max(ends)}‰")
+        print(f"  平移中位数 {statistics.median(shifts)}‰，墨迹覆盖中位数 {statistics.median(before):.2f}→{statistics.median(after):.2f}")
     if args.ocr:
         print(f"裁正前后识别：比较 {len(read_pairs)} 张，裁正后少读 10% 以上的 {lost} 张（大于 0 就先不要打开裁正）")
     if args.scan:

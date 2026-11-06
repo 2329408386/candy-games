@@ -109,7 +109,7 @@ def model_lines(spots, w, h, dy=0.0, dx=0.0):
 
 
 @pytest.mark.parametrize("ruled", ["", "lines", "grid"])
-@pytest.mark.parametrize("dy,dx", [(-45, 0), (30, 25), (-70, -30)])
+@pytest.mark.parametrize("dy,dx", [(-45, 0), (30, 25), (-150, -30)])
 def test_boxes_snap_onto_the_rows(ruled, dy, dx):
     page, spots = sheet(ruled=ruled)
     h, w = page.shape[:2]
@@ -120,37 +120,6 @@ def test_boxes_snap_onto_the_rows(ruled, dy, dx):
         assert abs((y1 + y2) / 2 / 1000 * h - (top + bottom) / 2) < 16
         assert abs(x1 / 1000 * w - left) < 25 and abs(x2 / 1000 * w - right) < 80
         assert line["text"] == "字" * 10
-
-
-@pytest.mark.parametrize("dy", [0, -35, 35])
-def test_a_title_above_does_not_put_the_page_one_row_off(dy):
-    """Rows are evenly spaced, so one row off looks just as good by height alone, and the boxes still cover ink."""
-    page, spots = sheet(rows=10)
-    h, w = page.shape[:2]
-    # The first row is the title: written, but not one of the lines. Lines end at different places.
-    title, body = spots[0], spots[1:]
-    page[title[0] - 6 : title[1] + 6] = 240
-    cv2.rectangle(page, (380, title[0]), (620, title[1]), (35, 30, 30), 3)
-    ends = [900, 880, 420, 890, 600, 870, 300, 895, 650]
-    placed = []
-    for (top, bottom, left, _), end in zip(body, ends):
-        page[top - 6 : bottom + 6, end:] = 240
-        placed.append((top, bottom, left, end))
-    lines, stats = photo.snap_lines(encode(page), model_lines(placed, w, h, dy))
-    assert stats["matched"] == len(placed) and stats["ends"] < 40
-    for line, (top, bottom, _, _) in zip(lines, placed):
-        assert abs((line["box"][1] + line["box"][3]) / 2 / 1000 * h - (top + bottom) / 2) < 16
-
-
-def test_outside_paper_counts_what_the_cut_would_lose():
-    page, spots = sheet()
-    img = on_desk(page, CORNERS)
-    h, w = img.shape[:2]
-    inside = {"box": [450, 300, 550, 330]}
-    beyond = {"box": [20, 900, 120, 930]}
-    assert photo.outside_paper(encode(img), [inside]) == 0
-    assert photo.outside_paper(encode(img), [inside, beyond]) == 0.5
-    assert photo.outside_paper(encode(page), [beyond]) == 0  # not cut at all
 
 
 def test_a_line_without_ink_moves_with_the_page():
