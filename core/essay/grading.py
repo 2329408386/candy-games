@@ -9,7 +9,7 @@ Pipeline (run by the worker, core/essay/worker.py):
               is looked at again for each (shape_targets, keep_shapes), and shape_marks adds a 错别字 mark for every one
               confirmed (quote = fix = the right character) once the review is checked.
               Pixels help where switched on (ess_meta, core/essay/photo.py): photo_rectify cuts the sheet out of the
-              picture once the page is read (never through a line that was read), photo_snap moves the line boxes onto the rows of handwriting, shape_scan has the look step
+              picture first, photo_snap moves the line boxes onto the rows of handwriting, shape_scan has the look step
               (llm.look_step) search enlarged lines for more such characters (prompts/shape_scan.md) and confirm each
               against a close-up and the standard form (prompts/shape_verify.md).
   1. grade  — the grade step's model returns dims / marks / summary (one encouraging paragraph) (prompts/grade.md).

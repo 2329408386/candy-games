@@ -80,6 +80,8 @@ def stale_seconds(d):
     from . import MAX_PHOTOS
 
     total = longest["ocr"] * MAX_PHOTOS + longest["grade"] + longest["check"] + 300
+    if flag(d, "photo_rectify"):  # a flattened photo that shows nothing is read again as it was
+        total += longest["ocr"] * MAX_PHOTOS
     if flag(d, "shape_scan"):  # one call per page, and the confirmation
         total += llm.TRIES * sum(r["timeout"] or 120 for r in llm.step_rows(d, llm.look_step(d))) * (MAX_PHOTOS + 1)
     return max(STALE_SECONDS, total)
@@ -123,11 +125,12 @@ def read_photos(d, essay):
     meta = dict(license_id=essay["license_id"], submission_id=essay["id"])
     images = d.execute("SELECT * FROM ess_images WHERE submission_id=? ORDER BY page", (essay["id"],)).fetchall()
 
-    def read(img):
+    def read(img, data=None):
+        data = data if data is not None else image_path(img["id"]).read_bytes()
         page, _ = llm.chat(
             d,
             "ocr",
-            grading.ocr_messages(photo.fit(image_path(img["id"]).read_bytes(), photo.OCR_SIDE)[0], img["page"], len(images)),
+            grading.ocr_messages(photo.fit(data, photo.OCR_SIDE)[0], img["page"], len(images)),
             json_mode=True,
             parse=lambda content: grading.parse_ocr(llm.parse_json(content)),
             **meta,
@@ -137,7 +140,19 @@ def read_photos(d, essay):
     pages, upright = [], []
     rectifying, snapping, scanning = flag(d, "photo_rectify"), flag(d, "photo_snap"), flag(d, "shape_scan")
     for img in images:
-        page = read(img)
+        data = image_path(img["id"]).read_bytes()
+        flat = pixels("rectify", essay["id"], photo.rectify, data) if rectifying else None
+        page = read(img, flat[0]) if flat else None
+        if page is not None and grading.char_count("".join(line["text"] for line in page["lines"])) < 10:
+            log.info("submission %s page %s: nothing read on the flattened photo, using it as it was", essay["id"], img["page"])
+            flat, page = None, None  # the cut went wrong, or this is no essay: judge the photo itself
+        if flat:
+            img = replace_image(d, img, *flat)
+        else:
+            small, w, h = photo.fit(data, photo.STORED_SIDE)
+            if small is not data:
+                img = replace_image(d, img, small, w, h)
+            page = read(img)
         # A photo taken sideways (and no EXIF orientation): turn it upright and read it again, so the text is read
         # properly and the red pen can be drawn on it. At most twice, in case the model misjudged the first time.
         for _ in range(2):
@@ -146,16 +161,6 @@ def read_photos(d, essay):
             log.info("submission %s page %s turned %s°", essay["id"], img["page"], page["rotate"])
             img = rotate_image(d, img, page["rotate"])
             page = read(img)
-        # Upright and read: now the sheet can be cut out, knowing where the writing is (photo.rectify).
-        data = image_path(img["id"]).read_bytes()
-        flat = pixels("rectify", essay["id"], photo.rectify, data, page["lines"]) if rectifying else None
-        if flat:
-            img = replace_image(d, img, *flat[:3])
-            page = {**page, "lines": flat[3]}
-        else:
-            small, w, h = photo.fit(data, photo.STORED_SIDE)
-            if small is not data:
-                img = replace_image(d, img, small, w, h)
         if snapping:
             snapped = pixels("snap", essay["id"], photo.snap_lines, image_path(img["id"]).read_bytes(), page["lines"])
             if snapped:

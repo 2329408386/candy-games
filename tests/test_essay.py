@@ -1521,32 +1521,24 @@ def test_big_photo_is_kept_smaller_and_sent_smaller(models, klass, db):
         assert max(sent.size) == 2000
 
 
-def page_on_the_sheet():
-    """OCR_PAGE with its lines where the sheet of desk_photo() lies (300–800 of the width, 200–860 of the height)."""
-    return {**OCR_PAGE, "lines": [{**l, "box": [300, 220 + k * 60, 780, 260 + k * 60]} for k, l in enumerate(OCR_PAGE["lines"])]}
-
-
-def test_rectified_photo_replaces_the_stored_one_and_the_boxes_follow(models, klass, db):
+def test_rectified_photo_replaces_the_stored_one(models, klass, db):
     t, cid, aid = klass
     switch(db, "photo_rectify")
     models.grade = grade_answer(marks=[])
-    models.ocr = page_on_the_sheet()
     sid = hand_in(t, db, cid, aid, data=desk_photo())
     imgs = db.execute("SELECT * FROM ess_images WHERE submission_id=?", (sid,)).fetchall()
     assert len(imgs) == 1 and imgs[0]["w"] < 1300 and 1.2 < imgs[0]["h"] / imgs[0]["w"] < 1.6
-    assert len(ocr_calls(models)) == 1  # the page is not read twice
-    boxes = [line["b"] for line in json.loads(imgs[0]["lines"])]
-    assert boxes[0] != models.ocr["lines"][0]["box"] and boxes[0][1] < boxes[1][1] < boxes[2][1]
+    assert len(ocr_calls(models)) == 1
 
 
-def test_a_line_outside_the_sheet_keeps_the_photo_whole(models, klass, db):
+def test_nothing_read_on_the_flattened_photo_reads_the_photo_itself(models, klass, db):
     t, cid, aid = klass
     switch(db, "photo_rectify")
     models.grade = grade_answer(marks=[])
-    sid = hand_in(t, db, cid, aid, data=desk_photo())  # OCR_PAGE's lines reach far beyond the sheet
+    models.ocr = [{"title": "", "lines": [], "error": "不是作文"}, OCR_PAGE]
+    sid = hand_in(t, db, cid, aid, data=desk_photo())
     img = db.execute("SELECT * FROM ess_images WHERE submission_id=?", (sid,)).fetchone()
-    assert (img["w"], img["h"]) == (1800, 2400)
-    assert json.loads(img["lines"])[0]["b"] == OCR_PAGE["lines"][0]["box"]
+    assert (img["w"], img["h"]) == (1800, 2400) and len(ocr_calls(models)) == 2
     assert db.execute("SELECT text FROM ess_submissions WHERE id=?", (sid,)).fetchone()[0].startswith("今天是星期天")
 
 
@@ -1662,7 +1654,6 @@ def test_photo_eval_tool_prints_numbers_and_stores_nothing(models, klass, db, mo
 
     t, cid, aid = klass
     models.grade = grade_answer(marks=[])
-    models.ocr = page_on_the_sheet()
     sid = hand_in(t, db, cid, aid, data=desk_photo())
     spec = importlib.util.spec_from_file_location("photo_eval", Path(__file__).resolve().parent.parent / "tools" / "photo_eval.py")
     tool = importlib.util.module_from_spec(spec)
@@ -1671,10 +1662,10 @@ def test_photo_eval_tool_prints_numbers_and_stores_nothing(models, klass, db, mo
     models.verify = {"items": [{"id": 1, "parts": "左子右马", "seen": "×"}]}
     usage = db.execute("SELECT count(*) FROM ess_usage").fetchone()[0]
     text = db.execute("SELECT text FROM ess_submissions WHERE id=?", (sid,)).fetchone()[0]
-    monkeypatch.setattr(sys, "argv", ["photo_eval", "--pages", "1", "--scan"])
+    monkeypatch.setattr(sys, "argv", ["photo_eval", "--pages", "1", "--ocr", "--scan"])
     tool.main()
     out = capsys.readouterr().out
-    assert "1 张里裁 1 张" in out and "可疑 1 个，确认 1 个" in out
+    assert "1 张里裁 1 张" in out and "比较 1 张" in out and "可疑 1 个，确认 1 个" in out
     assert "妈" not in out and "今天" not in out  # numbers only: no student's writing in the output
     assert db.execute("SELECT count(*) FROM ess_usage").fetchone()[0] == usage
     assert db.execute("SELECT text FROM ess_submissions WHERE id=?", (sid,)).fetchone()[0] == text
