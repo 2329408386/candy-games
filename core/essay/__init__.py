@@ -61,7 +61,7 @@ LOCK_SECONDS = 600
 BEIJING = 8 * 3600
 MAX_PHOTOS = 3
 PHOTO_BYTES = 8 * 1024 * 1024
-PHOTO_SIDE = 2000
+PHOTO_SIDE = 2800  # as uploaded; the worker keeps at most photo.STORED_SIDE
 TRIAL_DAILY = 50
 TRIAL_PER_IP = 3
 TRIAL_GAME = "essay-class"  # trials.game of the full trial (the old one-essay trial used "essay")
@@ -440,11 +440,17 @@ def rotate_image(d, row, degrees):
         img = img.rotate(-degrees, expand=True)
         buf = io.BytesIO()
         img.save(buf, "JPEG", quality=90)
+    return replace_image(d, row, buf.getvalue(), img.width, img.height)
+
+
+def replace_image(d, row, data, w, h):
+    """Stores a new picture of a page under a new id (photos are served as immutable, so a new picture needs a new
+    address) and removes the old one; returns the new ess_images row."""
     iid = d.execute(
         "INSERT INTO ess_images(submission_id,page,w,h,created_at) VALUES(?,?,?,?,?)",
-        (row["submission_id"], row["page"], img.width, img.height, row["created_at"]),
+        (row["submission_id"], row["page"], w, h, row["created_at"]),
     ).lastrowid
-    image_path(iid).write_bytes(buf.getvalue())
+    image_path(iid).write_bytes(data)
     d.execute("DELETE FROM ess_images WHERE id=?", (row["id"],))
     d.commit()
     image_path(row["id"]).unlink(missing_ok=True)

@@ -4,7 +4,7 @@ each teacher license's quota (student seats and essays a month). Both need the s
 import json, re, time
 from flask import abort, flash, jsonify, redirect, render_template, request, url_for
 from core.app import admin_only, audit, db, integer_field, license_row
-from . import llm, models_sync, month_start
+from . import llm, models_sync, month_start, photo
 
 AUTO_MODES = {"latest": "自动跟随最新版本", "replace": "只在下线时自动替换", "fixed": "固定，不自动改"}
 from .worker import spent_today, today_start
@@ -159,6 +159,11 @@ def register(app):
                             "INSERT INTO ess_meta VALUES(?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value", (key, str(value))
                         )
                     details = {"daily_budget": budget, "usd_cny": rate, "trial_daily": trials}
+                elif action == "photo_flags":
+                    details = {}
+                    for key in photo.FLAGS:
+                        details[key] = "1" if request.form.get(key) else "0"
+                        d.execute("INSERT INTO ess_meta VALUES(?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value", (key, details[key]))
                 elif action == "models_check":
                     # The worker runs the check within half a minute (model calls do not belong in a web request).
                     d.execute("INSERT INTO ess_meta VALUES('models_checked','0') ON CONFLICT(key) DO UPDATE SET value='0'")
@@ -226,6 +231,10 @@ def register(app):
             budget=float(budget[0]) if budget else 0,
             usd_cny=float(rate[0]) if rate else models_sync.USD_CNY,
             trial_daily=trial_daily(),
+            photo_flags=[
+                (key, name, bool(d.execute("SELECT 1 FROM ess_meta WHERE key=? AND value='1'", (key,)).fetchone()))
+                for key, name in photo.FLAGS.items()
+            ],
             models_checked=int(checked[0]) if checked else 0,
             AUTO_MODES=AUTO_MODES,
             worker_seen=int(seen[0]) if seen else None,

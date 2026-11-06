@@ -58,7 +58,7 @@
   {% for step, step_name in STEPS.items() %}
     <section class="panel" id="step-{{step}}">
       <h2>{{step_name}}</h2>
-      <p class="hint">{{ {'ocr': '把学生作文的照片识别成文字（拍照提交下一期上线）。需要能看图的模型，例如 qwen-vl-ocr。', 'grade': '给作文打分、写评语和标注，质量最关键，建议用旗舰模型。必须支持 JSON 输出。', 'check': '逐条复核批改里的错别字、病句等标注，去掉误判，并独立给出等级。可以用便宜一些的模型。'}[step] }}主模型出错、超时或被限流时，自动改用备用模型。</p>
+      <p class="hint">{{ {'ocr': '把学生作文的照片识别成文字（拍照提交下一期上线）。需要能看图的模型，例如 qwen-vl-ocr。', 'verify': '放大看照片上的字：核对错别字，确认学生写错笔画的字。需要能看图的模型，可以开思考或用更强的模型；不配置就用照片识别的模型。', 'grade': '给作文打分、写评语和标注，质量最关键，建议用旗舰模型。必须支持 JSON 输出。', 'check': '逐条复核批改里的错别字、病句等标注，去掉误判，并独立给出等级。可以用便宜一些的模型。'}[step] }}主模型出错、超时或被限流时，自动改用备用模型。</p>
       {% if first_model[step] %}<p class="hint">现在先用：<strong>{{first_model[step]}}</strong></p>{% endif %}
       <div class="step-slots">
         {% for slot, slot_name in SLOTS.items() %}
@@ -69,7 +69,7 @@
             <h3>{{slot_name}}</h3>
             <div class="fields-row">
               <div class="form-field"><label>服务商</label><select name="provider_id"><option value="">（不使用）</option>{% for p in providers %}<option value="{{p.id}}"{{' selected' if s and s.provider_id == p.id}}>{{p.name}}</option>{% endfor %}</select></div>
-              <div class="form-field"><label>模型名称</label><input name="model" value="{{s.model if s else ''}}" placeholder="{{ {'ocr': 'qwen-vl-ocr', 'grade': 'deepseek-v4-pro', 'check': 'deepseek-flash'}[step] }}"></div>
+              <div class="form-field"><label>模型名称</label><input name="model" value="{{s.model if s else ''}}" placeholder="{{ {'ocr': 'qwen-vl-ocr', 'verify': 'qwen3.8-flash', 'grade': 'deepseek-v4-pro', 'check': 'deepseek-flash'}[step] }}"></div>
             </div>
             <div class="fields-row">
               <div class="form-field"><label>温度</label><input name="temperature" value="{{s.temperature if s and s.temperature is not none else ''}}" placeholder="不填用默认，批改建议 0.3"></div>
@@ -110,6 +110,16 @@
       <div class="form-field"><label>元 / 天（北京时间）</label><input name="daily_budget" value="{{budget or ''}}" placeholder="0 或不填表示不限"><small>今天的花费达到上限后，新的作文先排队，第二天自动继续批改。花费按上面填写的价格折算。</small></div>
       <div class="form-field"><label>美元汇率</label><input name="usd_cny" value="{{usd_cny}}"><small>自动更新单价时，把服务商的美元价格换算成人民币。</small></div>
       <div class="form-field"><label>全站每天免费试用次数</label><input name="trial_daily" value="{{trial_daily}}"><small>没有授权码的老师每台设备每个功能可以试用 1 次；这里限制每个功能全站每天最多试用几次，0 表示暂停试用。</small></div>
+      <div class="form-actions"><button>保存</button></div>
+    </form>
+  </section>
+
+  <section class="panel" id="photo-flags">
+    <h2>照片处理</h2>
+    <p class="hint">对新交的照片作文生效。放大筛查每页多调用一次“字形核对”的模型，会增加费用。</p>
+    <form method="post">
+      <input type="hidden" name="csrf" value="{{csrf()}}"><input type="hidden" name="action" value="photo_flags"><input type="hidden" name="anchor" value="#photo-flags">
+      {% for key, name, on in photo_flags %}<p><label><input type="checkbox" name="{{key}}" value="1" {{'checked' if on}}> {{name}}</label></p>{% endfor %}
       <div class="form-actions"><button>保存</button></div>
     </form>
   </section>

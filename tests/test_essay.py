@@ -64,12 +64,19 @@ class FakeModels:
         self.ocr = OCR_PAGE
         self.verify = None  # what the photo check of 错别字 answers (None: every character unreadable, marks kept)
         self.verified = []
+        self.scan = {"items": []}  # what the shape scan answers (None: the call fails)
+        self.scanned = []
 
     def __call__(self, row, body):
         self.calls.append((row["model"], body))
         if row["model"] in self.fail:
             raise llm.LLMError("HTTP 429: rate limited")
         system = body["messages"][0]["content"]
+        if system.startswith("你在筛查"):
+            self.scanned.append(body)
+            if self.scan is None:
+                raise llm.LLMError("筛查失败", retry=False)
+            return json.dumps(self.scan, ensure_ascii=False), 300, 0, 50
         if system.startswith("你在核对"):
             self.verified.append(body)
             asked = sum(1 for part in body["messages"][1]["content"] if part["type"] == "text" and part["text"].startswith("第 "))
@@ -94,7 +101,7 @@ def models(monkeypatch, db):
         "INSERT INTO ess_steps(step,slot,provider_id,model,price_in,price_cached,price_out) VALUES(?,?,1,?,?,?,?)",
         [("grade", "main", "big", 4.0, 0.2, 12.0), ("check", "main", "small", 1.0, 0.0, 2.0), ("ocr", "main", "eyes", 1.0, 0.0, 2.0)],
     )
-    db.execute("DELETE FROM ess_meta WHERE key='daily_budget'")
+    db.execute("DELETE FROM ess_meta WHERE key IN ('daily_budget','photo_rectify','photo_snap','shape_scan')")
     db.execute("INSERT OR REPLACE INTO ess_meta VALUES('models_checked',?)", (str(int(time.time())),))
     db.commit()
     monkeypatch.setattr(models_sync, "fetch_models", lambda provider: [{"id": "big"}, {"id": "small"}, {"id": "spare"}])
@@ -1454,5 +1461,211 @@ def test_photo_miswritten_character_is_marked(models, klass, db):
         assert sub["shapes"] == "" and "我和妈妈" in sub["text"]
         ai = json.loads(db.execute("SELECT ai FROM ess_reviews WHERE submission_id=?", (sid,)).fetchone()[0])
         assert not [m for m in ai["marks"] if m["type"] == "错别字"]
+        db.execute("DELETE FROM ess_images WHERE submission_id=?", (sid,))  # ids get reused
         db.execute("DELETE FROM ess_submissions WHERE id=?", (sid,))
         db.commit()
+
+
+# ---- what core/essay/photo.py adds to a photo essay ----
+def desk_photo():
+    """A sheet with rows of writing, photographed on a dark desk beside other things."""
+    cv2 = pytest.importorskip("cv2")
+    from test_photo import CORNERS, encode, on_desk, sheet
+
+    assert cv2
+    return encode(on_desk(sheet()[0], CORNERS))
+
+
+def switch(db, *keys):
+    for key in keys:
+        db.execute("INSERT INTO ess_meta VALUES(?,'1') ON CONFLICT(key) DO UPDATE SET value='1'", (key,))
+    db.commit()
+
+
+def hand_in(t, db, cid, aid, name="王小明", data=None):
+    st = students_of(db, cid)[name]
+    sid = upload(t, f"/api/assignments/{aid}/submit_for", [data or photo_bytes()], student_id=str(st["id"])).get_json()["id"]
+    run_worker()
+    return sid
+
+
+def marks_of(db, sid):
+    return json.loads(db.execute("SELECT ai FROM ess_reviews WHERE submission_id=?", (sid,)).fetchone()[0])["marks"]
+
+
+def ocr_calls(models):
+    return [b for m, b in models.calls if "誊抄" in b["messages"][0]["content"][:80]]
+
+
+def test_switches_off_leave_the_photo_alone(models, klass, db):
+    t, cid, aid = klass
+    models.grade = grade_answer(marks=[])
+    sid = hand_in(t, db, cid, aid, data=desk_photo())
+    img = db.execute("SELECT * FROM ess_images WHERE submission_id=?", (sid,)).fetchone()
+    assert (img["w"], img["h"]) == (1800, 2400)
+    assert len(ocr_calls(models)) == 1 and not models.scanned and not models.verified
+    assert json.loads(img["lines"])[0]["b"] == OCR_PAGE["lines"][0]["box"]
+
+
+def test_big_photo_is_kept_smaller_and_sent_smaller(models, klass, db):
+    import base64
+    from PIL import Image
+
+    t, cid, aid = klass
+    models.grade = grade_answer(marks=[])
+    sid = hand_in(t, db, cid, aid, data=photo_bytes(size=(2100, 2800)))
+    img = db.execute("SELECT * FROM ess_images WHERE submission_id=?", (sid,)).fetchone()
+    assert (img["w"], img["h"]) == (1800, 2400)
+    url = ocr_calls(models)[0]["messages"][1]["content"][1]["image_url"]["url"]
+    with Image.open(io.BytesIO(base64.b64decode(url.split(",", 1)[1]))) as sent:
+        assert max(sent.size) == 2000
+
+
+def test_rectified_photo_replaces_the_stored_one(models, klass, db):
+    t, cid, aid = klass
+    switch(db, "photo_rectify")
+    models.grade = grade_answer(marks=[])
+    sid = hand_in(t, db, cid, aid, data=desk_photo())
+    imgs = db.execute("SELECT * FROM ess_images WHERE submission_id=?", (sid,)).fetchall()
+    assert len(imgs) == 1 and imgs[0]["w"] < 1300 and 1.2 < imgs[0]["h"] / imgs[0]["w"] < 1.6
+    assert len(ocr_calls(models)) == 1
+
+
+def test_nothing_read_on_the_flattened_photo_reads_the_photo_itself(models, klass, db):
+    t, cid, aid = klass
+    switch(db, "photo_rectify")
+    models.grade = grade_answer(marks=[])
+    models.ocr = [{"title": "", "lines": [], "error": "不是作文"}, OCR_PAGE]
+    sid = hand_in(t, db, cid, aid, data=desk_photo())
+    img = db.execute("SELECT * FROM ess_images WHERE submission_id=?", (sid,)).fetchone()
+    assert (img["w"], img["h"]) == (1800, 2400) and len(ocr_calls(models)) == 2
+    assert db.execute("SELECT text FROM ess_submissions WHERE id=?", (sid,)).fetchone()[0].startswith("今天是星期天")
+
+
+def test_pixel_steps_failing_do_not_stop_the_grading(models, klass, db, monkeypatch):
+    from core.essay import photo
+
+    t, cid, aid = klass
+    switch(db, "photo_rectify", "photo_snap")
+    models.grade = grade_answer(marks=[])
+
+    def broken(*args):
+        raise RuntimeError("opencv is not there")
+
+    monkeypatch.setattr(photo, "rectify", broken)
+    monkeypatch.setattr(photo, "snap_lines", broken)
+    sid = hand_in(t, db, cid, aid)
+    assert db.execute("SELECT status FROM ess_submissions WHERE id=?", (sid,)).fetchone()[0] in ("published", "review")
+    assert json.loads(db.execute("SELECT lines FROM ess_images WHERE submission_id=?", (sid,)).fetchone()[0])[0]["b"] == OCR_PAGE["lines"][0]["box"]
+
+
+def test_scan_finds_a_character_the_ocr_step_read_as_right(models, klass, db):
+    t, cid, aid = klass
+    switch(db, "shape_scan")
+    models.grade = grade_answer(marks=[])
+    # Line 1, character 10 is 妈 (nth one off: still found); a wrong character and a wrong line are dropped.
+    models.scan = {"items": [
+        {"line": 1, "nth": 11, "char": "妈", "note": "女字旁写成了子字旁"},
+        {"line": 1, "nth": 1, "char": "明", "note": "不是这个字"},
+        {"line": 99, "nth": 1, "char": "今", "note": "没有这一行"},
+        {"line": 2, "nth": 1, "char": "A", "note": "不是汉字"},
+    ]}
+    models.verify = {"items": [{"id": 1, "parts": "左子右马", "seen": "×"}]}
+    sid = hand_in(t, db, cid, aid)
+    text = db.execute("SELECT text FROM ess_submissions WHERE id=?", (sid,)).fetchone()[0]
+    assert text.startswith("今天是星期天，我和妈妈去公园玩。")
+    assert [(x["pos"], x["char"]) for x in json.loads(db.execute("SELECT shapes FROM ess_submissions WHERE id=?", (sid,)).fetchone()[0])] == [(10, "妈")]
+    assert [(m["quote"], m["fix"], m["start"], m["note"]) for m in marks_of(db, sid)] == [("妈", "妈", 10, "“妈”写错了：女字旁写成了子字旁")]
+    assert len(models.scanned) == 1
+    scan = models.scanned[0]["messages"][1]["content"]
+    assert "第 1 行：今天是星期天，我和妈妈去公园玩。" in scan[0]["text"] and scan[1]["type"] == "image_url"
+    # The confirmation: told what the child meant, shown the line, a close-up and the standard form.
+    confirm = models.verified[0]["messages"]
+    assert confirm[0]["content"].startswith("你在核对") and "规范写法" in confirm[0]["content"] and "parts" in confirm[0]["content"]
+    assert "学生想写的是「妈」" in confirm[1]["content"][0]["text"] and "女字旁" not in confirm[1]["content"][0]["text"]
+    assert sum(1 for part in confirm[1]["content"] if part["type"] == "image_url") == 3
+
+
+def test_scan_candidates_must_be_confirmed_and_a_failed_scan_changes_nothing(models, klass, db):
+    t, cid, aid = klass
+    switch(db, "shape_scan")
+    models.grade = grade_answer(marks=[])
+    models.scan = {"items": [{"line": 1, "nth": 10, "char": "妈", "note": "女字旁写成了子字旁"}]}
+    models.verify = {"items": [{"id": 1, "parts": "左女右马", "seen": "妈"}]}
+    sid = hand_in(t, db, cid, aid)
+    assert db.execute("SELECT shapes FROM ess_submissions WHERE id=?", (sid,)).fetchone()[0] == "" and not marks_of(db, sid)
+    # The confirmation fails: nothing marked.
+    models.verify = {"bad": 1}
+    sid = hand_in(t, db, cid, aid, "李华")
+    assert db.execute("SELECT shapes FROM ess_submissions WHERE id=?", (sid,)).fetchone()[0] == "" and not marks_of(db, sid)
+    # The scan fails: what the ocr step found still goes on, and the essay is graded.
+    lines = [dict(l) for l in OCR_PAGE["lines"]]
+    lines[0]["text"] = "今天是星期天，我和〔妈|女字旁写成了子字旁〕妈去公园玩。"
+    models.ocr = {**OCR_PAGE, "lines": lines}
+    models.scan = None
+    models.verify = {"items": [{"id": 1, "seen": "×"}]}
+    sid = hand_in(t, db, cid, aid, "张三")
+    assert [m["start"] for m in marks_of(db, sid)] == [9]
+
+
+def test_scan_and_ocr_naming_the_same_character_are_one(models, klass, db):
+    t, cid, aid = klass
+    switch(db, "shape_scan")
+    models.grade = grade_answer(marks=[])
+    lines = [dict(l) for l in OCR_PAGE["lines"]]
+    lines[0]["text"] = "今天是星期天，我和〔妈|女字旁写成了子字旁〕妈去公园玩。"
+    models.ocr = {**OCR_PAGE, "lines": lines}
+    models.scan = {"items": [{"line": 1, "nth": 10, "char": "妈", "note": "另一种说法"}]}
+    models.verify = {"items": [{"id": 1, "seen": "×"}]}
+    sid = hand_in(t, db, cid, aid)
+    assert [(x["pos"], x["note"]) for x in json.loads(db.execute("SELECT shapes FROM ess_submissions WHERE id=?", (sid,)).fetchone()[0])] == [(9, "女字旁写成了子字旁")]
+
+
+def test_verify_step_has_its_own_model_or_falls_back_to_ocr(models, klass, db):
+    t, cid, aid = klass
+    assert llm.look_step(db) == "ocr"
+    switch(db, "shape_scan")
+    models.grade = grade_answer(marks=[])
+    db.execute("INSERT INTO ess_steps(step,slot,provider_id,model) VALUES('verify','main',1,'sharp')")
+    db.commit()
+    assert llm.look_step(db) == "verify"
+    models.scan = {"items": [{"line": 1, "nth": 10, "char": "妈", "note": "x"}]}
+    models.verify = {"items": [{"id": 1, "seen": "×"}]}
+    sid = hand_in(t, db, cid, aid)
+    used = {m for m, b in models.calls if b["messages"][0]["content"].startswith(("你在筛查", "你在核对"))}
+    assert used == {"sharp"} and marks_of(db, sid)
+    assert db.execute("SELECT count(*) FROM ess_usage WHERE step='verify' AND submission_id=?", (sid,)).fetchone()[0] == 2
+
+
+def test_admin_switches_photo_steps():
+    a = SiteClient("teacher")
+    a.login()
+    assert "照片处理" in a.get("/admin/models").get_data(as_text=True)
+    a.post("/admin/models", {"action": "photo_flags", "photo_snap": "1"})
+    d = worker.connect()
+    assert worker.flag(d, "photo_snap") and not worker.flag(d, "photo_rectify") and not worker.flag(d, "shape_scan")
+    a.post("/admin/models", {"action": "photo_flags"})
+    assert not worker.flag(d, "photo_snap")
+
+
+def test_photo_eval_tool_prints_numbers_and_stores_nothing(models, klass, db, monkeypatch, capsys):
+    import importlib.util, sys
+    from pathlib import Path
+
+    t, cid, aid = klass
+    models.grade = grade_answer(marks=[])
+    sid = hand_in(t, db, cid, aid, data=desk_photo())
+    spec = importlib.util.spec_from_file_location("photo_eval", Path(__file__).resolve().parent.parent / "tools" / "photo_eval.py")
+    tool = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(tool)
+    models.scan = {"items": [{"line": 1, "nth": 10, "char": "妈", "note": "女字旁写成了子字旁"}]}
+    models.verify = {"items": [{"id": 1, "parts": "左子右马", "seen": "×"}]}
+    usage = db.execute("SELECT count(*) FROM ess_usage").fetchone()[0]
+    text = db.execute("SELECT text FROM ess_submissions WHERE id=?", (sid,)).fetchone()[0]
+    monkeypatch.setattr(sys, "argv", ["photo_eval", "--pages", "1", "--ocr", "--scan"])
+    tool.main()
+    out = capsys.readouterr().out
+    assert "1 张里裁 1 张" in out and "比较 1 张" in out and "可疑 1 个，确认 1 个" in out
+    assert "妈" not in out and "今天" not in out  # numbers only: no student's writing in the output
+    assert db.execute("SELECT count(*) FROM ess_usage").fetchone()[0] == usage
+    assert db.execute("SELECT text FROM ess_submissions WHERE id=?", (sid,)).fetchone()[0] == text

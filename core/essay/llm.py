@@ -18,7 +18,7 @@ Every call, successful or not, is written to ess_usage with its tokens, the cost
 import base64, hashlib, json, re, socket, threading, time, urllib.error, urllib.request
 from cryptography.fernet import Fernet, InvalidToken
 
-STEPS = {"ocr": "照片识别（OCR）", "grade": "作文批改", "check": "批改复核"}
+STEPS = {"ocr": "照片识别（OCR）", "verify": "字形核对", "grade": "作文批改", "check": "批改复核"}
 SLOTS = {"main": "主模型", "backup": "备用模型"}
 BEIJING = 8 * 3600
 USER_AGENT = "candy-games-essay/1.0 (+http://39.106.16.99/teacher/)"
@@ -114,6 +114,11 @@ def valid_use_hours(spec):
 
 def configured(d, step):
     return bool(step_rows(d, step))
+
+
+def look_step(d):
+    """The step that looks at characters on a photo again: its own when it has a model, else the ocr step's."""
+    return "verify" if configured(d, "verify") else "ocr"
 
 
 def in_peak(spec, now=None):
