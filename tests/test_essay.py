@@ -1314,6 +1314,37 @@ def test_pdf_link_upload_and_download(db, klass):
     assert pdf_upload(s).status_code == 200
 
 
+def test_login_slips_temporary_link(models, klass, db):
+    import os
+    import time
+    from core.essay import PDF_LINK_SECONDS
+
+    t, cid, _ = klass
+    link = f"/teacher/classes/{cid}/slips-link"
+    anonymous = SiteClient("teacher")
+    assert anonymous.post(link, {}).status_code == 403
+    assert teacher_client(TEACHER2_KEY).post(link, {}).status_code == 404
+    url = t.post(link, {}).get_json()["url"]
+    assert url.startswith("/workspace/chinese/slips/")
+    path = url.removeprefix("/workspace/chinese")
+    got = anonymous.get(path)  # no sign-in: it may open in another browser
+    assert got.status_code == 200 and got.mimetype == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    assert got.headers["Cache-Control"] == "no-store" and got.headers["X-Content-Type-Options"] == "nosniff"
+    disposition = got.headers["Content-Disposition"]
+    assert disposition.startswith('attachment; filename="login-slips.xlsx"; filename*=UTF-8\'\'') and "%E7%99%BB%E5%BD%95%E6%9D%A1.xlsx" in disposition
+    with zipfile.ZipFile(io.BytesIO(got.data)) as z:
+        strings = z.read("xl/sharedStrings.xml").decode()
+    for name, st in students_of(db, cid).items():
+        assert name in strings and st["pin"] in strings
+    token = path.rsplit("/", 1)[1]
+    assert anonymous.get("/pdf/" + token).status_code == 404  # each route serves its own kind of file
+    assert anonymous.get("/slips/nope").status_code == 404
+    old = time.time() - PDF_LINK_SECONDS - 1
+    file = pdf_files() / (token + ".xlsx")
+    os.utime(file, (old, old))
+    assert anonymous.get(path).status_code == 404 and not file.exists()
+
+
 def test_pdf_link_names_tokens_and_expiry(db, klass):
     import os
     from core.essay import PDF_LINK_SECONDS, pdf_link_name

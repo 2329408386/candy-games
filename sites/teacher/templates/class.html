@@ -50,7 +50,7 @@
   <section class="wb-section">
     <div class="wb-section-head">
       <h2>学生（{{students|length}} 人）</h2>
-      {% if students %}<a class="button secondary small" href="{{url_for('class_slips', cid=klass.id)}}">导出登录条（Excel）</a>{% endif %}
+      {% if students %}<a class="button secondary small" id="slips-export" href="{{url_for('class_slips', cid=klass.id)}}">导出登录条（Excel）</a>{% endif %}
     </div>
     {% if students %}
       <table class="wb-table roster">
@@ -85,5 +85,22 @@
   <script>
     WB.form('#class-edit', {{url_for('class_edit', cid=klass.id)|tojson}}, () => location.reload());
     WB.form('#students-add', {{url_for('students_add', cid=klass.id)|tojson}}, () => location.reload());
+    document.getElementById('slips-export')?.addEventListener('click', async (e) => {
+      if (!WB.androidWeChat()) return; // everywhere else the plain link downloads the file
+      e.preventDefault();
+      const button = e.currentTarget, old = button.textContent;
+      if (button.dataset.busy) return;
+      button.dataset.busy = '1';
+      button.textContent = '正在生成…';
+      try {
+        const answer = await WB.post({{url_for('class_slips_link', cid=klass.id)|tojson}});
+        WB.linkDialog([new URL(answer.url, location.href).href], { title: '登录条已生成', open: '打开 Excel', warn: '里面有全班学生的口令，请不要转发到群里。' });
+      } catch (err) {
+        alert(err instanceof TypeError ? '生成失败，请检查网络后重试' : err.message);
+      } finally {
+        delete button.dataset.busy;
+        button.textContent = old;
+      }
+    });
   </script>
 {% endblock %}

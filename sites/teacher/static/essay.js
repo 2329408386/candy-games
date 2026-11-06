@@ -50,6 +50,58 @@
     return answer;
   };
 
+  WB.androidWeChat = () => /MicroMessenger/i.test(navigator.userAgent) && /Android/i.test(navigator.userAgent);
+
+  async function copyText(text, box) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch (e) {}
+    const area = document.createElement('textarea');
+    area.value = text;
+    box.appendChild(area); // inside the dialog: nothing outside a modal dialog can be selected
+    area.select();
+    let copied = false;
+    try {
+      copied = document.execCommand('copy');
+    } catch (e) {}
+    area.remove();
+    return copied;
+  }
+
+  /* Android WeChat cannot save downloads: shows the temporary link(s) to open or copy into a browser. */
+  WB.linkDialog = function (links, { title, open, note, warn }) {
+    const dialog = document.createElement('dialog');
+    dialog.className = 'wb-dialog pdf-link-dialog';
+    const add = (parent, tag, cls, text) => {
+      const el = document.createElement(tag);
+      if (cls) el.className = cls;
+      if (text) el.textContent = text;
+      parent.appendChild(el);
+      return el;
+    };
+    add(dialog, 'h2', '', title);
+    if (note) add(dialog, 'p', 'hint', note);
+    links.forEach((url, k) => {
+      const row = add(dialog, 'p', 'pdf-link-row');
+      const link = add(row, 'a', 'button small', links.length > 1 ? `打开第 ${k + 1} 份` : open);
+      link.href = url;
+      const copy = add(row, 'button', 'secondary small', '复制链接');
+      copy.type = 'button';
+      copy.addEventListener('click', async () => {
+        copy.textContent = (await copyText(url, dialog)) ? '已复制' : '复制失败，请长按「打开」';
+      });
+    });
+    if (links.length > 1) add(dialog, 'p', 'hint', '文件比较大，分成了 ' + links.length + ' 份。');
+    add(dialog, 'p', 'hint', '打不开的话，点右上角 ··· 选「在浏览器打开」，或者复制链接到浏览器，不用重新登录。链接 1 小时内有效，' + warn);
+    const close = add(add(dialog, 'p', 'form-actions'), 'button', 'secondary', '关闭');
+    close.type = 'button';
+    close.addEventListener('click', () => dialog.close());
+    dialog.addEventListener('close', () => dialog.remove());
+    document.body.appendChild(dialog);
+    dialog.showModal();
+  };
+
   /* A photo, upright and at most `side` px, as a JPEG blob; `square` crops the middle (avatars). */
   WB.shrink = async function (file, side, quality, square) {
     let source;

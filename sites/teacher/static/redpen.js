@@ -841,7 +841,6 @@
     setTimeout(() => URL.revokeObjectURL(url), 60000);
   }
 
-  const androidWeChat = () => /MicroMessenger/i.test(navigator.userAgent) && /Android/i.test(navigator.userAgent);
   const LINK_PART_BYTES = 25 * 1024 * 1024; // the server takes 30 MB at most
 
   function splitPages(pages) {
@@ -858,58 +857,9 @@
     return parts;
   }
 
-  async function copyText(text, box) {
-    try {
-      await navigator.clipboard.writeText(text);
-      return true;
-    } catch (e) {}
-    const area = document.createElement('textarea');
-    area.value = text;
-    box.appendChild(area); // inside the dialog: nothing outside a modal dialog can be selected
-    area.select();
-    let copied = false;
-    try {
-      copied = document.execCommand('copy');
-    } catch (e) {}
-    area.remove();
-    return copied;
-  }
-
-  function linkDialog(links, note) {
-    const dialog = document.createElement('dialog');
-    dialog.className = 'wb-dialog pdf-link-dialog';
-    const add = (parent, tag, cls, text) => {
-      const el = document.createElement(tag);
-      if (cls) el.className = cls;
-      if (text) el.textContent = text;
-      parent.appendChild(el);
-      return el;
-    };
-    add(dialog, 'h2', '', 'PDF 已生成');
-    if (note) add(dialog, 'p', 'hint', note);
-    links.forEach((url, k) => {
-      const row = add(dialog, 'p', 'pdf-link-row');
-      const open = add(row, 'a', 'button small', links.length > 1 ? `打开第 ${k + 1} 份` : '打开 PDF');
-      open.href = url;
-      const copy = add(row, 'button', 'secondary small', '复制链接');
-      copy.type = 'button';
-      copy.addEventListener('click', async () => {
-        copy.textContent = (await copyText(url, dialog)) ? '已复制' : '复制失败，请长按「打开」';
-      });
-    });
-    if (links.length > 1) add(dialog, 'p', 'hint', '文件比较大，分成了 ' + links.length + ' 份。');
-    add(dialog, 'p', 'hint', '打不开的话，点右上角 ··· 选「在浏览器打开」，或者复制链接到浏览器，不用重新登录。链接 1 小时内有效，请不要转发给别人。');
-    const close = add(add(dialog, 'p', 'form-actions'), 'button', 'secondary', '关闭');
-    close.type = 'button';
-    close.addEventListener('click', () => dialog.close());
-    dialog.addEventListener('close', () => dialog.remove());
-    document.body.appendChild(dialog);
-    dialog.showModal();
-  }
-
   /* Hands the pages over as a file: a download, or on Android WeChat a link from the server. */
   async function deliver(pages, name, button, note) {
-    if (!androidWeChat()) {
+    if (!WB.androidWeChat()) {
       const blob = makePdf(pages);
       download(blob, name);
       return { link: false, blob };
@@ -923,7 +873,7 @@
       });
       links.push(new URL(answer.url, location.href).href);
     }
-    linkDialog(links, note);
+    WB.linkDialog(links, { title: 'PDF 已生成', open: '打开 PDF', note, warn: '请不要转发给别人。' });
     return { link: true };
   }
 

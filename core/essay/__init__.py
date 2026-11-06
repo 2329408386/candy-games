@@ -44,7 +44,7 @@ features.py, admin.py (模型设置, quotas and feature expiry in the back offic
 import calendar, io, json, re, secrets, time
 from urllib.parse import quote
 from flask import Response, abort, g, jsonify, redirect, render_template, request, send_file, session, url_for
-from core.app import KEY_ALPHABET, csrf, current, data_dir, db, device_hash, limited, new_xlsx, site, xlsx_download
+from core.app import KEY_ALPHABET, XLSX_MIME, csrf, current, data_dir, db, device_hash, limited, new_xlsx, site, xlsx_download
 from . import features, grading
 
 DEFAULT_STUDENTS = 70
@@ -633,10 +633,34 @@ def sweep_pdf_links(folder):
     return kept
 
 
-def pdf_link_name(raw):
+def pdf_link_name(raw, ext=".pdf", fallback="批改"):
     name = re.sub(r'[\\/:*?"<>|\x00-\x1f\x7f]', "", raw or "").strip()
-    name = re.sub(r"\.pdf$", "", name, flags=re.I).strip(". ")[:80]
-    return (name or "批改") + ".pdf"
+    if name.lower().endswith(ext):
+        name = name[: -len(ext)]
+    name = name.strip(". ")[:80]
+    return (name or fallback) + ext
+
+
+def serve_link_file(token, ext, mimetype, plain_name):
+    """A temporary link's file; no sign-in, the token is the key. plain_name is for downloaders that do not read filename*."""
+    gone = Response("这个链接已经失效了，请回到工作台重新导出。", 404, mimetype="text/plain; charset=utf-8")
+    if not PDF_LINK_TOKEN.fullmatch(token):
+        return gone
+    folder = pdf_link_dir()
+    path, name = folder / (token + ext), folder / (token + ".name")
+    try:
+        if pdf_link_expired(path):
+            path.unlink(missing_ok=True)
+            name.unlink(missing_ok=True)
+            return gone
+        filename = name.read_text(encoding="utf-8")
+    except FileNotFoundError:
+        return gone
+    r = send_file(path, mimetype=mimetype)
+    r.headers["Content-Disposition"] = f"attachment; filename=\"{plain_name}\"; filename*=UTF-8''{quote(filename)}"
+    r.headers["Cache-Control"] = "no-store"
+    r.headers["X-Content-Type-Options"] = "nosniff"
+    return r
 
 
 def register_pdf_links(app):
@@ -671,25 +695,44 @@ def register_pdf_links(app):
 
     @app.get("/pdf/<token>")
     def pdf_link_open(token):
-        gone = Response("这个链接已经失效了，请回到工作台重新导出。", 404, mimetype="text/plain; charset=utf-8")
-        if not PDF_LINK_TOKEN.fullmatch(token):
-            return gone
-        folder = pdf_link_dir()
-        path, name = folder / (token + ".pdf"), folder / (token + ".name")
-        try:
-            if pdf_link_expired(path):
-                path.unlink(missing_ok=True)
-                name.unlink(missing_ok=True)
-                return gone
-            filename = name.read_text(encoding="utf-8")
-        except FileNotFoundError:
-            return gone
-        r = send_file(path, mimetype="application/pdf")
-        # A plain name first for downloaders that do not read filename* (the automatic one is just "--.pdf").
-        r.headers["Content-Disposition"] = f"attachment; filename=\"essay.pdf\"; filename*=UTF-8''{quote(filename)}"
-        r.headers["Cache-Control"] = "no-store"
-        r.headers["X-Content-Type-Options"] = "nosniff"
-        return r
+        return serve_link_file(token, ".pdf", "application/pdf", "essay.pdf")
+
+
+def slips_workbook(klass):
+    """登录条 as an Excel sheet: the 网址 and 班级码 once at the top, then one bordered row per student to print and cut."""
+    students = db().execute("SELECT * FROM ess_students WHERE class_id=? AND removed_at IS NULL ORDER BY id", (klass["id"],)).fetchall()
+    url = request.host_url.rstrip("/") + url_for("student_home")
+    out, book = new_xlsx()
+    ws = book.add_worksheet("登录条")
+    title = book.add_format({"bold": True, "font_size": 16, "valign": "vcenter"})
+    info = book.add_format({"font_size": 14, "valign": "vcenter"})
+    head = book.add_format({"bold": True, "font_size": 14, "border": 1, "align": "center", "valign": "vcenter", "bg_color": "#EEEEEE"})
+    cell = book.add_format({"font_size": 16, "border": 1, "align": "center", "valign": "vcenter"})
+    name = book.add_format({"font_size": 16, "border": 1, "bold": True, "align": "center", "valign": "vcenter"})
+    ws.set_column(0, 0, 8)
+    ws.set_column(1, 1, 18)
+    ws.set_column(2, 3, 16)
+    ws.merge_range(0, 0, 0, 3, klass["name"] + " 登录条", title)
+    ws.merge_range(1, 0, 1, 3, "学生登录网址：" + url, info)
+    ws.merge_range(2, 0, 2, 3, "班级码：" + klass["code"] + "　　（登录时填 班级码 + 姓名 + 口令）", info)
+    ws.set_row(0, 30)
+    ws.set_row(1, 24)
+    ws.set_row(2, 24)
+    ws.write_row(4, 0, ["序号", "姓名", "班级码", "口令"], head)
+    for i, s in enumerate(students, 1):
+        ws.set_row(4 + i, 32)
+        ws.write_number(4 + i, 0, i, cell)
+        ws.write_string(4 + i, 1, s["name"], name)
+        ws.write_string(4 + i, 2, klass["code"], cell)
+        ws.write_string(4 + i, 3, s["pin"], cell)
+    ws.freeze_panes(5, 0)
+    ws.set_paper(9)  # A4
+    ws.fit_to_pages(1, 0)
+    ws.center_horizontally()
+    ws.repeat_rows(4)
+    ws.set_header("&L&12" + url.replace("&", "&&"))
+    book.close()
+    return out.getvalue()
 
 
 # ---- pages ----
@@ -885,44 +928,38 @@ def register_pages(app):
 
     @app.get("/teacher/classes/<int:cid>/slips.xlsx")
     def class_slips(cid):
-        """登录条 as an Excel sheet: the 网址 and 班级码 once at the top, then one bordered row per student to print and cut."""
         row = teacher()
         if not row:
             return redirect(url_for("teacher_home"))
         klass = own_class(cid, row["id"])
-        students = db().execute("SELECT * FROM ess_students WHERE class_id=? AND removed_at IS NULL ORDER BY id", (cid,)).fetchall()
-        url = request.host_url.rstrip("/") + url_for("student_home")
-        out, book = new_xlsx()
-        ws = book.add_worksheet("登录条")
-        title = book.add_format({"bold": True, "font_size": 16, "valign": "vcenter"})
-        info = book.add_format({"font_size": 14, "valign": "vcenter"})
-        head = book.add_format({"bold": True, "font_size": 14, "border": 1, "align": "center", "valign": "vcenter", "bg_color": "#EEEEEE"})
-        cell = book.add_format({"font_size": 16, "border": 1, "align": "center", "valign": "vcenter"})
-        name = book.add_format({"font_size": 16, "border": 1, "bold": True, "align": "center", "valign": "vcenter"})
-        ws.set_column(0, 0, 8)
-        ws.set_column(1, 1, 18)
-        ws.set_column(2, 3, 16)
-        ws.merge_range(0, 0, 0, 3, klass["name"] + " 登录条", title)
-        ws.merge_range(1, 0, 1, 3, "学生登录网址：" + url, info)
-        ws.merge_range(2, 0, 2, 3, "班级码：" + klass["code"] + "　　（登录时填 班级码 + 姓名 + 口令）", info)
-        ws.set_row(0, 30)
-        ws.set_row(1, 24)
-        ws.set_row(2, 24)
-        ws.write_row(4, 0, ["序号", "姓名", "班级码", "口令"], head)
-        for i, s in enumerate(students, 1):
-            ws.set_row(4 + i, 32)
-            ws.write_number(4 + i, 0, i, cell)
-            ws.write_string(4 + i, 1, s["name"], name)
-            ws.write_string(4 + i, 2, klass["code"], cell)
-            ws.write_string(4 + i, 3, s["pin"], cell)
-        ws.freeze_panes(5, 0)
-        ws.set_paper(9)  # A4
-        ws.fit_to_pages(1, 0)
-        ws.center_horizontally()
-        ws.repeat_rows(4)
-        ws.set_header("&L&12" + url.replace("&", "&&"))
-        book.close()
-        return xlsx_download(out.getvalue(), klass["name"] + " 登录条.xlsx")
+        return xlsx_download(slips_workbook(klass), klass["name"] + " 登录条.xlsx")
+
+    @app.post("/teacher/classes/<int:cid>/slips-link")
+    def class_slips_link(cid):
+        """Android WeChat cannot save a signed-in download, so it gets a temporary link instead, as with the PDFs."""
+        row = teacher()
+        if not row:
+            return error("请先登录", 403)
+        klass = own_class(cid, row["id"])
+        if limited("pdf_link", 200, 3600):
+            return error("导出太频繁了，请稍后再试", 429)
+        data = slips_workbook(klass)
+        folder = pdf_link_dir()
+        if sweep_pdf_links(folder) + len(data) > PDF_LINK_TOTAL_BYTES:
+            return error("现在导出的人比较多，请过一会儿再试", 503)
+        token = secrets.token_urlsafe(32)
+        partial = folder / (token + ".tmp")
+        try:
+            partial.write_bytes(data)
+            (folder / (token + ".name")).write_text(pdf_link_name(klass["name"] + " 登录条", ".xlsx", "登录条"), encoding="utf-8")
+            partial.rename(folder / (token + ".xlsx"))
+        finally:
+            partial.unlink(missing_ok=True)
+        return jsonify(url=url_for("slips_link_open", token=token))
+
+    @app.get("/slips/<token>")
+    def slips_link_open(token):
+        return serve_link_file(token, ".xlsx", XLSX_MIME, "login-slips.xlsx")
 
     @app.get("/teacher/essay/assignments/<int:aid>")
     def assignment_page(aid):
