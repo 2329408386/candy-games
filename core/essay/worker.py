@@ -3,8 +3,9 @@
     python -m core.essay.worker          run forever (THREADS threads, each polling ess_jobs)
     python -m core.essay.worker --once   process the queue until empty, then exit (tests, debugging)
 
-An essay sent as photos has no text yet: the job first runs the ocr step on each photo (read_photos), stores the
-text and where each line is on its photo, then grades as usual; a retry does not read the photos again.
+An essay sent as photos has no text yet: the job first runs the ocr step on each photo (read_photos), moves the line
+boxes onto the handwriting (photo.py), stores the text and where each line is on its photo, then grades as usual; a
+retry does not read the photos again.
 Web requests only insert a row into ess_jobs and set the submission to 'queued'; pages poll the submission's status.
 A job is claimed under a write lock, so several threads (or a second process during a deploy) never run it twice.
 Failures that may pass (timeouts, rate limits, malformed answers) are retried after RETRY_DELAYS; when those run
@@ -97,6 +98,20 @@ def hold(d, job, submission_id, reason):
     d.commit()
 
 
+def calibrated(img, page):
+    """The page with its line boxes moved onto the handwriting. Only the red pen's position depends on it, so whatever
+    goes wrong here the essay is still graded, with the model's boxes."""
+    from . import image_path, photo
+
+    try:
+        lines, stats = photo.calibrate(image_path(img["id"]).read_bytes(), page["lines"])
+    except Exception:
+        log.exception("image %s: line boxes not calibrated", img["id"])
+        return page
+    log.info("image %s line boxes: %s", img["id"], stats)
+    return {**page, "lines": lines}
+
+
 def read_photos(d, essay):
     """OCR of every photo of a submission → essay dict with the text (and title when the student gave none).
     Raises llm.LLMError."""
@@ -127,7 +142,7 @@ def read_photos(d, essay):
             log.info("submission %s page %s turned %s°", essay["id"], img["page"], page["rotate"])
             img = rotate_image(d, img, page["rotate"])
             page = read(img)
-        pages.append(page)
+        pages.append(calibrated(img, page))
         upright.append(img)
     images = upright
     title, text, spots, shapes = grading.assemble(pages)

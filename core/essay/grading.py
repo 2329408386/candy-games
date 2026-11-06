@@ -2,7 +2,8 @@
 
 Pipeline (run by the worker, core/essay/worker.py):
   0. ocr    — photos only: the ocr step's vision model copies each page line by line, with each line's box on the
-              photo (prompts/ocr.md); assemble() joins the lines into the essay text and keeps where every line is,
+              photo (prompts/ocr.md); the worker moves the boxes onto the handwriting (photo.py); assemble() joins the
+              lines into the essay text and keeps where every line is,
               so the result page can draw the marks on the photo in red pen. A character the child wrote wrong so that
               it is no character at all (wrong 偏旁, a stroke too many) cannot be copied: the ocr step writes it as
               〔暖|日字旁写成了目字旁〕; parse_ocr puts the intended character in the text and keeps the note, the photo
