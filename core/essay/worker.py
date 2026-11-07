@@ -112,6 +112,25 @@ def calibrated(img, page):
     return {**page, "lines": lines}
 
 
+def split_spread(d, img, page):
+    """A photo of two pages side by side as two photos, each with its own lines: [(image row, page)]. Whatever goes
+    wrong here the photo stays whole; the essay is still graded, only with smaller writing to draw on."""
+    from . import image_path, photo, split_image
+
+    try:
+        cut = photo.gutter(image_path(img["id"]).read_bytes(), page["lines"])
+        if cut is None:
+            return [(img, page)]
+        sides = grading.split_page(page, cut)
+        rows = split_image(d, img, cut)
+    except Exception:
+        log.exception("image %s: two pages not cut apart", img["id"])
+        d.rollback()
+        return [(img, page)]
+    log.info("image %s: two pages on one photo, cut at %s", img["id"], cut)
+    return list(zip(rows, sides))
+
+
 def read_photos(d, essay):
     """OCR of every photo of a submission → essay dict with the text (and title when the student gave none).
     Raises llm.LLMError."""
@@ -120,11 +139,11 @@ def read_photos(d, essay):
     meta = dict(license_id=essay["license_id"], submission_id=essay["id"])
     images = d.execute("SELECT * FROM ess_images WHERE submission_id=? ORDER BY page", (essay["id"],)).fetchall()
 
-    def read(img):
+    def read(img, both_sides=False):
         page, _ = llm.chat(
             d,
             "ocr",
-            grading.ocr_messages(image_path(img["id"]).read_bytes(), img["page"], len(images)),
+            grading.ocr_messages(image_path(img["id"]).read_bytes(), img["page"], len(images), both_sides),
             json_mode=True,
             parse=lambda content: grading.parse_ocr(llm.parse_json(content)),
             **meta,
@@ -133,6 +152,8 @@ def read_photos(d, essay):
 
     pages, upright = [], []
     for img in images:
+        # Read afresh: cutting an earlier photo in two moves the ones after it a page on.
+        img = d.execute("SELECT * FROM ess_images WHERE id=?", (img["id"],)).fetchone()
         page = read(img)
         # A photo taken sideways (and no EXIF orientation): turn it upright and read it again, so the text is read
         # properly and the red pen can be drawn on it. At most twice, in case the model misjudged the first time.
@@ -142,8 +163,15 @@ def read_photos(d, essay):
             log.info("submission %s page %s turned %s°", essay["id"], img["page"], page["rotate"])
             img = rotate_image(d, img, page["rotate"])
             page = read(img)
-        pages.append(calibrated(img, page))
-        upright.append(img)
+        if grading.reads_one_side(page, img["w"], img["h"]):
+            # The right page may have been left out. A second reading that finds no more keeps the first.
+            again = read(img, both_sides=True)
+            if not grading.reads_one_side(again, img["w"], img["h"]):
+                log.info("submission %s page %s: read again, now both sides", essay["id"], img["page"])
+                page = again
+        for row, side in split_spread(d, img, page):
+            pages.append(calibrated(row, side))
+            upright.append(row)
     images = upright
     title, text, spots, shapes = grading.assemble(pages)
     writing = grading.worst_writing(pages)

@@ -87,6 +87,49 @@ def test_two_pages_on_one_photo_are_fitted_apart():
     assert photo._columns(lines) == [[0, 1, 2, 3], [4, 5, 6]]
 
 
+def spread(width=1600, height=1000, note=False):
+    """Two pages side by side: blocks of writing in two columns, a blank strip between them, and optionally a note in
+    the left page's margin."""
+    img = Image.new("RGB", (width, height), (245, 243, 235))
+    pen = ImageDraw.Draw(img)
+    for x0, x1 in ((80, 640), (960, 1520)):
+        for y in range(120, 800, 80):
+            for x in range(x0, x1, 60):
+                pen.rectangle([x + 8, y - 20, x + 48, y + 20], outline=(25, 25, 25), width=4)
+    if note:
+        for y in (300, 340, 380):
+            pen.rectangle([680, y - 12, 730, y + 12], outline=(25, 25, 25), width=4)
+    buf = io.BytesIO()
+    img.save(buf, "JPEG", quality=92)
+    return buf.getvalue()
+
+
+def spread_lines(width=1600, height=1000):
+    return [
+        {"text": "字", "box": [x0 * 1000 // width, (y - 25) * 1000 // height, x1 * 1000 // width, (y + 25) * 1000 // height]}
+        for x0, x1 in ((80, 640), (960, 1520))
+        for y in range(120, 800, 80)
+    ]
+
+
+def test_gutter_is_the_widest_blank_between_two_columns():
+    cut = photo.gutter(spread(), spread_lines())
+    assert 400 < cut < 600
+    # A note in the margin stays on the left page: the blank beside it is narrower than the one between the pages.
+    assert photo.gutter(spread(note=True), spread_lines()) * 1600 / 1000 > 730
+
+
+def test_gutter_keeps_other_photos_whole():
+    data = spread()
+    lines = spread_lines()
+    assert photo.gutter(data, lines[:9]) is None  # one column
+    assert photo.gutter(data, lines[:9] + lines[9:11]) is None  # a corner of the next page: too few lines
+    overlapping = [{**l, "box": [100, l["box"][1], 900, l["box"][3]]} for l in lines]
+    assert photo.gutter(data, overlapping) is None
+    # A portrait photo is one page, however the lines were read.
+    assert photo.gutter(page(SPREADING), lines) is None
+
+
 def test_a_failed_calibration_keeps_the_page(monkeypatch, tmp_path):
     import core.essay as essay
 

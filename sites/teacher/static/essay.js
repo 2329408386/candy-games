@@ -162,7 +162,7 @@
       const dialog = document.createElement('dialog');
       dialog.className = 'crop-dialog';
       dialog.innerHTML =
-        '<h2></h2><p class="hint">拖动边框，只留下作文纸</p>' +
+        '<h2></h2><p class="hint">拖动边框，只留下这一页作文纸（一页拍一张）</p>' +
         '<div class="crop-stage"><div class="crop-sheet"><img alt="" draggable="false"><div class="crop-shade"><div class="crop-hole"></div></div>' +
         '<div class="crop-box" data-drag="move">' +
         ['nw', 'n', 'ne', 'e', 'se', 's', 'sw', 'w'].map((d) => '<i class="crop-handle crop-' + d + '" data-drag="' + d + '"></i>').join('') +

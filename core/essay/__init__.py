@@ -452,6 +452,34 @@ def rotate_image(d, row, degrees):
     return d.execute("SELECT * FROM ess_images WHERE id=?", (iid,)).fetchone()
 
 
+def split_image(d, row, cut):
+    """Cuts a stored photo of two pages at cut (0–1000 of its width) into two photos of their own, in its place in the
+    order; returns their ess_images rows (left, right). The photos after it move one page on."""
+    from PIL import Image
+
+    with Image.open(image_path(row["id"])) as img:
+        x = round(img.width * cut / 1000)
+        parts = [img.crop((0, 0, x, img.height)), img.crop((x, 0, img.width, img.height))]
+        datas = []
+        for part in parts:
+            buf = io.BytesIO()
+            part.save(buf, "JPEG", quality=90)
+            datas.append(buf.getvalue())
+    d.execute("UPDATE ess_images SET page=page+1 WHERE submission_id=? AND page>?", (row["submission_id"], row["page"]))
+    ids = []
+    for k, (part, data) in enumerate(zip(parts, datas)):
+        iid = d.execute(
+            "INSERT INTO ess_images(submission_id,page,w,h,created_at) VALUES(?,?,?,?,?)",
+            (row["submission_id"], row["page"] + k, part.width, part.height, row["created_at"]),
+        ).lastrowid
+        image_path(iid).write_bytes(data)
+        ids.append(iid)
+    d.execute("DELETE FROM ess_images WHERE id=?", (row["id"],))
+    d.commit()
+    image_path(row["id"]).unlink(missing_ok=True)
+    return [d.execute("SELECT * FROM ess_images WHERE id=?", (iid,)).fetchone() for iid in ids]
+
+
 def crop_line(iid, box):
     """One line of a stored photo as JPEG bytes: box is [x1, y1, x2, y2] in 0–1000 of the photo's width and height
     (the ocr step's line box), widened a little since the model's boxes are rough, and enlarged when small so every

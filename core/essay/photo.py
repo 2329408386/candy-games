@@ -20,6 +20,7 @@ ENDS_SLACK = 0.01  # the lines' ends may agree this much less with the ink than 
 NEAR = (0.35, 0.7, 1.1)  # rows: the best fit moving at most this far is also tried
 CLOSE = 0.02  # the smallest move wins among fits scoring within this of the best
 PUNCTUATION = set("，。、；：？！…—”’）》,.;:?!)")
+GUTTER_SMOOTH = 9  # pixels: the ink between two pages is compared over a strip this wide
 
 
 def _decode(data):
@@ -205,6 +206,32 @@ def _columns(lines):
             current = []
         current.append(k)
     return groups + [current] if current else groups
+
+
+def gutter(data, lines):
+    """Where to cut a photo of two pages side by side, in 0–1000 of its width, or None to keep it whole. Decided by
+    where the lines were read, not by what the model says about pages: a landscape photo with exactly two columns of
+    at least MIN_LINES lines that do not overlap. The cut is the emptiest place between them, so a note the child
+    wrote in the margin stays with its page. Raises ValueError when the photo cannot be decoded."""
+    columns = [group for group in _columns(lines)]
+    if len(columns) != 2 or any(len(group) < MIN_LINES for group in columns):
+        return None
+    left = max(lines[k]["box"][2] for k in columns[0])
+    right = min(lines[k]["box"][0] for k in columns[1])
+    if left >= right:
+        return None
+    gray = cv2.cvtColor(_decode(data), cv2.COLOR_BGR2GRAY)
+    h, w = gray.shape
+    if w <= h:
+        return None
+    a, b = int(left / 1000 * w), int(right / 1000 * w)
+    ink = ink_mask(gray).sum(axis=0).astype(float)
+    ink = np.convolve(ink, np.ones(GUTTER_SMOOTH) / GUTTER_SMOOTH, mode="same")[a : b + 1]
+    # The middle of the widest blank strip: the blank beside a margin note is narrower than the one between the pages.
+    empty = np.flatnonzero(ink <= ink.min() + 0.5)
+    strips = np.split(empty, np.flatnonzero(np.diff(empty) > 1) + 1)
+    widest = max(strips, key=len)
+    return round((a + float(widest[len(widest) // 2])) / w * 1000)
 
 
 def calibrate(data, lines):

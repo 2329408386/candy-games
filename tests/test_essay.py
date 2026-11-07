@@ -891,6 +891,69 @@ def test_sideways_photo_is_turned_upright_and_read_again(models, klass, db):
     assert db.execute("SELECT writing FROM ess_submissions WHERE id=?", (sid,)).fetchone()[0] == "工整"
 
 
+def two_pages_photo():
+    from PIL import Image, ImageDraw
+
+    img = Image.new("RGB", (1600, 1000), (245, 243, 235))
+    pen = ImageDraw.Draw(img)
+    for x0, x1 in ((80, 640), (960, 1520)):
+        for y in range(120, 800, 80):
+            for x in range(x0, x1, 60):
+                pen.rectangle([x + 8, y - 20, x + 48, y + 20], outline=(25, 25, 25), width=4)
+    buf = io.BytesIO()
+    img.save(buf, "JPEG", quality=92)
+    return buf.getvalue()
+
+
+def two_pages_ocr(sides=2):
+    lines = []
+    for side, (x1, x2) in enumerate(((50, 400), (600, 950))[:sides]):
+        for k, y in enumerate(range(120, 800, 80)):
+            lines.append({"text": f"第{side + 1}页第{k + 1}行写了一些字。", "box": [x1, y - 25, x2, y + 25], "para": k == 0})
+    return {"rotate": 0, "writing": "工整", "title": "题目", "lines": lines}
+
+
+def test_two_pages_on_one_photo_become_two_photos(models, klass, db):
+    t, cid, aid = klass
+    s, _ = student_client(db, cid, "李华")
+    models.ocr = two_pages_ocr()
+    sid = upload(s, f"/api/write/{aid}", [two_pages_photo(), photo_bytes()]).get_json()["id"]
+    run_worker()
+    images = db.execute("SELECT * FROM ess_images WHERE submission_id=? ORDER BY page", (sid,)).fetchall()
+    assert [i["page"] for i in images] == [1, 2, 3]
+    assert images[0]["w"] + images[1]["w"] == 1600 and images[0]["h"] == 1000
+    from core.essay import image_path
+
+    assert all(image_path(i["id"]).exists() for i in images)
+    text = db.execute("SELECT text FROM ess_submissions WHERE id=?", (sid,)).fetchone()[0]
+    left, right = json.loads(images[0]["lines"]), json.loads(images[1]["lines"])
+    assert len(left) == 9 and len(right) == 9
+    assert all(text[l["s"] : l["e"]].startswith("第1页") for l in left)
+    assert all(text[l["s"] : l["e"]].startswith("第2页") for l in right)
+    # The boxes are on their own half now, on the writing and not squeezed into one side of it.
+    assert max(l["b"][2] for l in left) > 700 and min(l["b"][0] for l in right) < 300
+    ocr_calls = [b for m, b in models.calls if "誊抄" in b["messages"][0]["content"][:80]]
+    assert len(ocr_calls) == 2  # one reading per photo handed in: the halves are not read again
+
+
+def test_left_side_only_is_read_again_and_a_blank_right_page_stays_whole(models, klass, db):
+    t, cid, aid = klass
+    s, _ = student_client(db, cid, "李华")
+    models.ocr = [two_pages_ocr(1), two_pages_ocr()]
+    sid = upload(s, f"/api/write/{aid}", [two_pages_photo()]).get_json()["id"]
+    run_worker()
+    assert db.execute("SELECT count(*) FROM ess_images WHERE submission_id=?", (sid,)).fetchone()[0] == 2
+    prompts = [b["messages"][1]["content"][0]["text"] for m, b in models.calls if "誊抄" in b["messages"][0]["content"][:80]]
+    assert len(prompts) == 2 and "两页都要抄" in prompts[1] and "两页都要抄" not in prompts[0]
+    # The right page really is blank: the first reading stands, and the photo is not cut.
+    models.calls.clear()
+    models.ocr = [two_pages_ocr(1), two_pages_ocr(1)]
+    s2, _ = student_client(db, cid, "张三")
+    sid = upload(s2, f"/api/write/{aid}", [two_pages_photo()]).get_json()["id"]
+    run_worker()
+    assert db.execute("SELECT count(*) FROM ess_images WHERE submission_id=?", (sid,)).fetchone()[0] == 1
+
+
 def test_jobs_cut_off_by_a_restart_resume_at_once(models, klass, db):
     t, cid, aid = klass
     s, _ = student_client(db, cid, "李华")

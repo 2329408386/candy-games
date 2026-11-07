@@ -4,7 +4,8 @@ Pipeline (run by the worker, core/essay/worker.py):
   0. ocr    — photos only: the ocr step's vision model copies each page line by line, with each line's box on the
               photo (prompts/ocr.md); the worker moves the boxes onto the handwriting (photo.py); assemble() joins the
               lines into the essay text and keeps where every line is,
-              so the result page can draw the marks on the photo in red pen. A character the child wrote wrong so that
+              so the result page can draw the marks on the photo in red pen. A photo of two pages side by side
+              (photo.gutter) is cut in two without reading it again (split_page). A character the child wrote wrong so that
               it is no character at all (wrong 偏旁, a stroke too many) cannot be copied: the ocr step writes it as
               〔暖|日字旁写成了目字旁〕; parse_ocr puts the intended character in the text and keeps the note, the photo
               is looked at again for each (shape_targets, keep_shapes), and shape_marks adds a 错别字 mark for every one
@@ -51,6 +52,7 @@ MAX_MARKS = 40
 # Marks kept per kind: the review is careful (every real problem is pointed out); long notes go in the page margins.
 MARK_LIMITS = {"error": 25, "好词好句": 6, "修改建议": 8, "分段": 3}
 NOTE_MAX = 40
+ONE_SIDE = 600  # all the lines of a landscape photo end left of this (0–1000): the right page may not have been read
 SUMMARY_MAX = 200
 
 
@@ -410,11 +412,14 @@ def clean_final(edit, review, text, band_max):
 
 
 # ---- photos ----
-def ocr_messages(image_bytes, page, pages):
+def ocr_messages(image_bytes, page, pages, both_sides=False):
+    """both_sides: the first reading stopped at the left side of a landscape photo (reads_one_side)."""
     import base64
 
     url = "data:image/jpeg;base64," + base64.b64encode(image_bytes).decode()
     note = f"这是作文的第 {page} 页，共 {pages} 页。" + ("" if page == 1 else "这一页通常没有题目，title 留空。")
+    if both_sides:
+        note += "照片右边如果还有一页作文，两页都要抄，先左后右。"
     return [
         {"role": "system", "content": OCR_PROMPT},
         {"role": "user", "content": [{"type": "text", "text": note + "请誊抄这张照片。"}, {"type": "image_url", "image_url": {"url": url}}]},
@@ -534,6 +539,28 @@ def parse_ocr(raw):
     rotate = raw.get("rotate") if raw.get("rotate") in (0, 90, 180, 270) else 0
     title = unshape(raw.get("title"))[0] if isinstance(raw.get("title"), str) else ""
     return {"title": _str(title, 40), "lines": out, "writing": writing, "rotate": rotate}
+
+
+def split_page(page, cut):
+    """A page from parse_ocr that is two pages side by side, cut at x = cut (0–1000) → (left page, right page): each
+    line goes to the side its middle is on, its box in that side's coordinates. Nothing is read again, so the text
+    stays as it was. The title stays on the left; a line with no box follows the line before it."""
+    sides, side = ([], []), 0
+    for line in page["lines"]:
+        box = line["box"]
+        if box:
+            side = 0 if (box[0] + box[2]) / 2 < cut else 1
+            x1, x2 = (box[0], box[2]) if side == 0 else (box[0] - cut, box[2] - cut)
+            scale = 1000 / (cut if side == 0 else 1000 - cut)
+            box = [max(0, round(x1 * scale)), box[1], min(1000, round(x2 * scale)), box[3]]
+        sides[side].append({**line, "box": box})
+    return {**page, "lines": sides[0]}, {**page, "title": "", "lines": sides[1]}
+
+
+def reads_one_side(page, width, height):
+    """Whether a landscape photo was read on its left side only: the right page may have been left out."""
+    boxes = [line["box"] for line in page["lines"] if line["box"]]
+    return width > height and len(boxes) >= 5 and max(b[2] for b in boxes) < ONE_SIDE
 
 
 SHAPE = re.compile(r"〔\s*([\u4e00-\u9fff])\s*[|｜]\s*([^〔〕]{0,40}?)\s*〕")
