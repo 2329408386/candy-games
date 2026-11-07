@@ -17,6 +17,7 @@
           {% if s.status == 'published' %}<a href="{{url_for('result_page', sid=s.id)}}">看老师的批改</a>
           {% elif s.status in BUSY %}<span data-poll="{{url_for('submission_state', sid=s.id, **{'as': 'student'})}}"><span data-label>{{STUDENT_STATUS[s.status]}}</span></span>
           {% elif s.status == 'review' %}已经批好，老师正在看，看完就能看到批改
+          {% elif s.fail in FAILS %}<span class="fail-reason">{{FAILS[s.fail][2]}}</span>
           {% else %}批改出了问题，可以重新交一次{% endif %}
         </div>
       {% endfor %}
@@ -46,8 +47,10 @@
     <p class="notice">老师的作文批改暂时不能用了，先不用交。</p>
   {% elif assignment.closed_at and not attempts %}
     <p class="notice">这次作业已经停止提交了。</p>
-  {% elif attempts|length >= max_attempts and last.status in ('published', 'failed') %}
+  {% elif used >= max_attempts and last.status in ('published', 'failed') %}
     <p class="notice">这次作业已经交满 {{max_attempts}} 次了。</p>
+  {% elif attempts|length >= max_submissions and last.status == 'failed' %}
+    <p class="notice">交了好几次照片都没认出作文，请找老师帮忙。</p>
   {% endif %}
 {% endblock %}
 {% block scripts %}

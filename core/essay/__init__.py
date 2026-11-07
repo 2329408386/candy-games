@@ -74,6 +74,33 @@ TRIAL_ASSIGNMENTS = 1
 BUSY = ("queued", "grading")
 STATUS = {"queued": "排队批改中", "grading": "AI 批改中", "review": "等老师审核", "published": "已发布", "failed": "批改失败"}
 STUDENT_STATUS = {"queued": "老师批改中", "grading": "老师批改中", "review": "老师正在看", "published": "老师批好了", "failed": "老师还没批完，可以重新交一次"}
+# Why a submission failed (ess_submissions.fail, set by the worker) → (short, teacher's words, student's words).
+# These are photo problems: the student takes the photo again, and the failed one is not counted (counted()).
+# 系统 / '' (a model or system failure, or failed before reasons were kept) keep the general wording.
+FAILS = {
+    "印刷": (
+        "拍的是书上印的字",
+        "照片拍的是书上或打印出来的字，不是学生手写的作文。请让学生拍自己写的作文纸重新提交，这次不算提交次数。",
+        "你交的照片是书上印的字，不是你自己写的作文。请拍你写的作文纸，一页拍一张，再交一次。这次不算次数。",
+    ),
+    "模糊": (
+        "照片看不清",
+        "照片太暗、太远或没对上焦，看不清写的字。请让学生在亮处把手机对正作文纸，拍清楚整页重新提交，这次不算提交次数。",
+        "照片太暗或太模糊，看不清你写的字。请在亮的地方把手机对正作文纸，拍清楚整页，再交一次。这次不算次数。",
+    ),
+    "不是作文": (
+        "照片里没有作文",
+        "照片里拍到的不是作文。请让学生拍自己写的作文纸重新提交，这次不算提交次数。",
+        "照片里没有找到你写的作文。请拍你写的作文纸，一页拍一张，再交一次。这次不算次数。",
+    ),
+    "太短": (
+        "只认出很少几个字",
+        "照片里只认出很少几个字，可能没拍全或看不清。请让学生把整页作文拍全、拍清楚重新提交，这次不算提交次数。",
+        "照片里只认出很少几个字，可能没拍全。请把整页作文都拍进去，再交一次。这次不算次数。",
+    ),
+}
+# A student may hand in this many times in all, counted or not: photos that keep failing end with 请找老师.
+MAX_SUBMISSIONS = MAX_ATTEMPTS + 3
 SELF_REMOVALS = 3
 SELF_REMOVAL_DAYS = 30
 # 统编版 习作 / 写话 per grade and term (tools/units.py builds it): 布置作文 fills in 主题, 文体 and 要求 from it.
@@ -109,11 +136,14 @@ def students_used(lid):
 
 
 def monthly_used(lid):
-    """Essays handed in this month (a trial: since it started, its quota is for the whole trial)."""
+    """Essays handed in this month (a trial: since it started, its quota is for the whole trial). One that failed on a
+    photo problem (FAILS) is not counted, as it is not an attempt either."""
+    marks = ",".join("?" * len(FAILS))
     return db().execute(
         "SELECT count(*) FROM ess_submissions s JOIN ess_assignments a ON a.id=s.assignment_id"
-        " JOIN ess_classes c ON c.id=a.class_id WHERE c.license_id=? AND s.created_at>=?",
-        (lid, 0 if is_trial(lid) else month_start()),
+        " JOIN ess_classes c ON c.id=a.class_id WHERE c.license_id=? AND s.created_at>=?"
+        f" AND NOT (s.status='failed' AND s.fail IN ({marks}))",
+        (lid, 0 if is_trial(lid) else month_start(), *FAILS),
     ).fetchone()[0]
 
 
@@ -466,7 +496,7 @@ def grade_corrected(sub, text):
                 d.execute("UPDATE ess_images SET lines=? WHERE id=?", (json.dumps(lines), p["id"]))
     shapes = grading.remap_shapes(sub["text"], text, json.loads(sub["shapes"])) if sub["shapes"] and sub["text"] else []
     d.execute(
-        "UPDATE ess_submissions SET text=?,shapes=?,status='queued',hold='' WHERE id=?",
+        "UPDATE ess_submissions SET text=?,shapes=?,status='queued',hold='',fail='' WHERE id=?",
         (text, json.dumps(shapes, ensure_ascii=False) if shapes else "", sid),
     )
     enqueue(sid)
@@ -539,15 +569,19 @@ def create_submission(assignment, student_id, title, text, source, photos=None, 
             raise ValueError("作文太短了，至少写 20 个字")
         if len(text) > grading.MAX_TEXT:
             raise ValueError(f"作文太长了，最多 {grading.MAX_TEXT} 个字")
-    previous = d.execute(
-        "SELECT attempt,status FROM ess_submissions WHERE assignment_id=? AND student_id=? ORDER BY attempt DESC LIMIT 1",
+    rows = d.execute(
+        "SELECT attempt,status,fail FROM ess_submissions WHERE assignment_id=? AND student_id=? ORDER BY attempt",
         (assignment["id"], student_id),
-    ).fetchone()
+    ).fetchall()
+    previous = rows[-1] if rows else None
     if previous and previous["status"] not in ("published", "failed"):
         raise ValueError("上一次交的作文还在批改或等老师审核，发布以后才能再交")
+    # The attempt number goes on even past a failed photo that is not counted: (assignment, student, attempt) is unique.
     attempt = previous["attempt"] + 1 if previous else 1
-    if attempt > MAX_ATTEMPTS:
+    if counted(rows) >= MAX_ATTEMPTS:
         raise ValueError(f"这次作业最多交 {MAX_ATTEMPTS} 次")
+    if len(rows) >= MAX_SUBMISSIONS:
+        raise ValueError("这次作业交了好几次照片都没认出作文，请找老师帮忙")
     if check_quota:
         lid = d.execute("SELECT license_id FROM ess_classes WHERE id=?", (assignment["class_id"],)).fetchone()[0]
         if monthly_used(lid) >= quota(lid)["monthly"]:
@@ -564,9 +598,11 @@ def create_submission(assignment, student_id, title, text, source, photos=None, 
 
 
 def state_payload(row, for_student=False):
+    fail = FAILS.get(row["fail"]) if row["status"] == "failed" else None
     if for_student:
-        return {"status": row["status"], "label": STUDENT_STATUS.get(row["status"], ""), "hold": ""}
-    return {"status": row["status"], "label": STATUS.get(row["status"], row["status"]), "hold": HOLDS.get(row["hold"], "")}
+        return {"status": row["status"], "label": fail[2] if fail else STUDENT_STATUS.get(row["status"], ""), "hold": ""}
+    label = STATUS.get(row["status"], row["status"]) + (f"：{fail[0]}" if fail else "")
+    return {"status": row["status"], "label": label, "hold": HOLDS.get(row["hold"], "")}
 
 
 def redpen_data(sub, review, show_score=True):
@@ -602,6 +638,7 @@ def register_essay(app):
         STATUS=STATUS,
         STUDENT_STATUS=STUDENT_STATUS,
         HOLDS=HOLDS,
+        FAILS=FAILS,
         BUSY=BUSY,
         DIMS=grading.DIMS,
         FLAGS=grading.FLAGS,
@@ -1034,6 +1071,9 @@ def register_pages(app):
             "SELECT * FROM ess_students WHERE class_id=? AND removed_at IS NULL ORDER BY id", (assignment["class_id"],)
         ).fetchall()
         latest = latest_submissions(aid)
+        used = {}  # student id → attempts counted (a failed photo is not)
+        for r in db().execute("SELECT student_id,status,fail FROM ess_submissions WHERE assignment_id=?", (aid,)):
+            used[r["student_id"]] = used.get(r["student_id"], 0) + (0 if uncounted(r) else 1)
         scores = {}
         for sid in [r["id"] for r in latest.values() if r["status"] in ("review", "published")]:
             review = review_of(sid)
@@ -1045,6 +1085,7 @@ def register_pages(app):
             assignment=assignment,
             students=students,
             latest=latest,
+            used=used,
             scores=scores,
             max_attempts=MAX_ATTEMPTS,
             essay_open=features.active(db(), row["id"], "essay"),
@@ -1086,7 +1127,7 @@ def register_pages(app):
         sub = own_submission(sid, row["id"])
         review = review_of(sid)
         others = db().execute(
-            "SELECT id,attempt,status FROM ess_submissions WHERE assignment_id=? AND student_id=? ORDER BY attempt",
+            "SELECT id,attempt,status,fail FROM ess_submissions WHERE assignment_id=? AND student_id=? ORDER BY attempt",
             (sub["assignment_id"], sub["student_id"]),
         ).fetchall()
         queue = [
@@ -1098,7 +1139,7 @@ def register_pages(app):
         ]
         band = grading.BANDS[grading.band_of(sub["grade"])]
         next_id = next((q for q in queue if q != sid), None)
-        can_recheck = sub["status"] == "published" and others[-1]["id"] == sid and sub["attempt"] < MAX_ATTEMPTS
+        can_recheck = sub["status"] == "published" and others[-1]["id"] == sid and attempts_left(others)
         current_review = review and (review["final"] or review["ai"])
         return render_template(
             "review.html",
@@ -1146,10 +1187,12 @@ def register_pages(app):
         assignments = db().execute(
             "SELECT a.*,(SELECT s.status FROM ess_submissions s WHERE s.assignment_id=a.id AND s.student_id=?"
             " ORDER BY s.attempt DESC LIMIT 1) my_status,"
+            " (SELECT s.fail FROM ess_submissions s WHERE s.assignment_id=a.id AND s.student_id=?"
+            " ORDER BY s.attempt DESC LIMIT 1) my_fail,"
             " (SELECT s.id FROM ess_submissions s WHERE s.assignment_id=a.id AND s.student_id=? AND s.status='published'"
             " ORDER BY s.attempt DESC LIMIT 1) my_result"
             " FROM ess_assignments a WHERE a.class_id=? AND a.deleted_at IS NULL ORDER BY a.id DESC",
-            (me["id"], me["id"], me["class_id"]),
+            (me["id"], me["id"], me["id"], me["class_id"]),
         ).fetchall()
         return render_template("student_home.html", me=me, assignments=assignments)
 
@@ -1177,7 +1220,9 @@ def register_pages(app):
             last=last,
             can_submit=can_submit,
             essay_open=essay_open,
+            used=counted(attempts),
             max_attempts=MAX_ATTEMPTS,
+            max_submissions=MAX_SUBMISSIONS,
             max_photos=MAX_PHOTOS,
             draft_text=last["text"] if last and last["source"] != "photo" else "",
             draft_title=last["title"] if last else "",
@@ -1230,12 +1275,27 @@ def trial_owns(iid):
     return bool(db().execute("SELECT 1 FROM ess_images WHERE id=? AND submission_id=?", (iid, sid)).fetchone())
 
 
+def uncounted(sub):
+    """A submission that failed on a photo problem (FAILS): it does not use up one of the MAX_ATTEMPTS."""
+    return sub["status"] == "failed" and sub["fail"] in FAILS
+
+
+def counted(attempts):
+    """How many of a student's submissions of one assignment use up one of the MAX_ATTEMPTS."""
+    return sum(1 for s in attempts if not uncounted(s))
+
+
+def attempts_left(attempts):
+    """Whether one more submission may be made after these (rows with status and fail), finished or not."""
+    return counted(attempts) < MAX_ATTEMPTS and len(attempts) < MAX_SUBMISSIONS
+
+
 def may_submit(assignment, attempts):
     """Whether the student may hand in (again) now, the feature being active: the assignment is open, attempts are
     left and the last one is finished."""
     return (
         not assignment["closed_at"]
-        and len(attempts) < MAX_ATTEMPTS
+        and attempts_left(attempts)
         and (not attempts or attempts[-1]["status"] in ("published", "failed"))
     )
 
@@ -1243,7 +1303,7 @@ def may_submit(assignment, attempts):
 def resubmit_open(aid, student_id, license_id):
     assignment = db().execute("SELECT * FROM ess_assignments WHERE id=? AND deleted_at IS NULL", (aid,)).fetchone()
     attempts = db().execute(
-        "SELECT attempt,status FROM ess_submissions WHERE assignment_id=? AND student_id=? ORDER BY attempt", (aid, student_id)
+        "SELECT attempt,status,fail FROM ess_submissions WHERE assignment_id=? AND student_id=? ORDER BY attempt", (aid, student_id)
     ).fetchall()
     return bool(assignment and attempts and may_submit(assignment, attempts) and features.active(db(), license_id, "essay"))
 
@@ -1599,7 +1659,7 @@ def register_teacher_api(app):
     def regrade(row, sid):
         sub = own_submission(sid, row["id"])
         regrade_check(sub)
-        db().execute("UPDATE ess_submissions SET status='queued',hold='' WHERE id=?", (sid,))
+        db().execute("UPDATE ess_submissions SET status='queued',hold='',fail='' WHERE id=?", (sid,))
         enqueue(sid)
         return jsonify(ok=True)
 
@@ -1612,12 +1672,13 @@ def register_teacher_api(app):
         if sub["status"] != "published":
             raise ValueError("只有已发布的作文可以再次检视")
         d = db()
-        latest = d.execute(
-            "SELECT max(attempt) FROM ess_submissions WHERE assignment_id=? AND student_id=?", (sub["assignment_id"], sub["student_id"])
-        ).fetchone()[0]
-        if latest != sub["attempt"]:
+        rows = d.execute(
+            "SELECT attempt,status,fail FROM ess_submissions WHERE assignment_id=? AND student_id=? ORDER BY attempt",
+            (sub["assignment_id"], sub["student_id"]),
+        ).fetchall()
+        if rows[-1]["attempt"] != sub["attempt"]:
             raise ValueError("这名学生已经有更新的一次了，请在最新的一次上再次检视")
-        if sub["attempt"] >= MAX_ATTEMPTS:
+        if not attempts_left(rows):
             raise ValueError(f"这次作业已经用满 {MAX_ATTEMPTS} 次（学生提交和再次检视合计），不能再检视")
         features.require(d, sub["license_id"], "essay")
         if monthly_used(sub["license_id"]) >= quota(sub["license_id"])["monthly"]:

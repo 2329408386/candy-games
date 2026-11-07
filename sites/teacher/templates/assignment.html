@@ -53,8 +53,8 @@
         <tr data-order="{{loop.index}}" data-score="{{r.total if r else ''}}" data-submitted="{{sub.created_at if sub else ''}}" data-graded="{{sub.graded_at or '' if sub else ''}}">
           <td>{{s.name}}</td>
           {% if sub %}
-            <td><span class="status status-{{sub.status}}">{{STATUS[sub.status]}}</span>{% if sub.hold %}<br><small class="muted">{{HOLDS.get(sub.hold, '')}}</small>{% endif %}{% if assignment.due_at and sub.created_at > assignment.due_at %} <span class="tag off">迟交</span>{% endif %}</td>
-            <td>{{sub.attempt}} / {{max_attempts}}{% if sub.recheck_of %}<br><small class="muted">再次检视</small>{% endif %}</td>
+            <td><span class="status status-{{sub.status}}">{{STATUS[sub.status]}}</span>{% if sub.hold %}<br><small class="muted">{{HOLDS.get(sub.hold, '')}}</small>{% endif %}{% if sub.status == 'failed' and sub.fail in FAILS %}<br><small class="muted">{{FAILS[sub.fail][0]}}，请学生重拍（不算次数）</small>{% endif %}{% if assignment.due_at and sub.created_at > assignment.due_at %} <span class="tag off">迟交</span>{% endif %}</td>
+            <td>{{used.get(s.id, 0)}} / {{max_attempts}}{% if sub.recheck_of %}<br><small class="muted">再次检视</small>{% endif %}</td>
             <td>{{r.level if r else ''}}</td>
             <td>{{r.total if r else ''}}</td>
             <td class="col-time">{{sub.created_at|moment}}</td>

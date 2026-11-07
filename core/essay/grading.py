@@ -144,6 +144,7 @@ def intro_of(essay):
 
 
 WRITINGS = ("工整", "一般", "凌乱")  # how neat the handwriting is (ocr step), best first
+OCR_ERRORS = ("印刷", "模糊", "不是作文")  # why the ocr step found no handwritten essay on a photo (prompts/ocr.md)
 
 
 def writing_line(essay):
@@ -553,8 +554,9 @@ def _off_scale(line):
 
 
 def parse_ocr(raw):
-    """One page of the ocr step's JSON → {"title", "lines": [{"text", "box" or None, "para"}], "writing", "rotate"}
-    (writing: one of WRITINGS or ""; rotate: degrees clockwise that would make the photo upright). Raises ValueError."""
+    """One page of the ocr step's JSON → {"title", "lines": [{"text", "box" or None, "para"}], "writing", "rotate", "error"}
+    (writing: one of WRITINGS or ""; rotate: degrees clockwise that would make the photo upright; error: one of
+    OCR_ERRORS when the model saw no handwritten essay, else ""). Raises ValueError."""
     lines = raw.get("lines")
     if not isinstance(lines, list):
         raise ValueError("识别结果缺少 lines")
@@ -573,7 +575,8 @@ def parse_ocr(raw):
     writing = raw.get("writing") if raw.get("writing") in WRITINGS else ""
     rotate = raw.get("rotate") if raw.get("rotate") in (0, 90, 180, 270) else 0
     title = unshape(raw.get("title"))[0] if isinstance(raw.get("title"), str) else ""
-    return {"title": _str(title, 40), "lines": out, "writing": writing, "rotate": rotate}
+    error = raw.get("error") if raw.get("error") in OCR_ERRORS else ""
+    return {"title": _str(title, 40), "lines": out, "writing": writing, "rotate": rotate, "error": error}
 
 
 def split_page(page, cut):

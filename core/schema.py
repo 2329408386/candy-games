@@ -126,6 +126,10 @@ def initialize(path):
             # Characters a photo essay has written wrong so that they are no character at all (grading.unshape):
             # JSON [{"pos", "char", "note"}] confirmed on the photo; '' for none.
             d.execute("ALTER TABLE ess_submissions ADD COLUMN shapes TEXT NOT NULL DEFAULT ''")
+        if "fail" not in {r[1] for r in d.execute("PRAGMA table_info(ess_submissions)")}:
+            # Why a failed submission failed (core/essay FAILS): a photo problem (印刷/模糊/不是作文/太短, not counted
+            # as an attempt) or 系统; '' for not failed or failed before this was kept.
+            d.execute("ALTER TABLE ess_submissions ADD COLUMN fail TEXT NOT NULL DEFAULT ''")
         migrate(d)
     path.chmod(0o600)
 
@@ -230,6 +234,10 @@ def migrate(d):
         # The default became 70 students: every license already handed out gets 70 too. Later changes in the admin stay.
         d.execute("UPDATE ess_quota SET students=70")
         d.execute("INSERT INTO migrations VALUES('essay_students_70',?)", (int(time.time()),))
+    if "essay_fail_148" not in done:
+        # Submission 148 failed on a photo of a printed book page before failures kept their reason.
+        d.execute("UPDATE ess_submissions SET fail='印刷' WHERE id=148 AND status='failed' AND text=''")
+        d.execute("INSERT INTO migrations VALUES('essay_fail_148',?)", (int(time.time()),))
 
 
 BEIJING = 8 * 3600

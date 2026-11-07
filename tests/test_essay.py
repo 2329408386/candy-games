@@ -1150,7 +1150,58 @@ def test_unreadable_photo_fails_without_retries(models, klass, db):
     models.ocr = {"title": "", "lines": [], "error": "不是作文"}
     sid = upload(s, f"/api/write/{aid}", [photo_bytes()]).get_json()["id"]
     run_worker()
-    assert db.execute("SELECT status FROM ess_submissions WHERE id=?", (sid,)).fetchone()[0] == "failed"
+    assert tuple(db.execute("SELECT status,fail FROM ess_submissions WHERE id=?", (sid,)).fetchone()) == ("failed", "不是作文")
+
+
+def test_photo_problem_is_explained_and_not_counted(models, klass, db):
+    import wsgi
+
+    t, cid, aid = klass
+    s, _ = student_client(db, cid, "李华")
+    lid = db.execute("SELECT license_id FROM ess_classes WHERE id=?", (cid,)).fetchone()[0]
+    with wsgi.teacher.app_context():
+        before = essay.monthly_used(lid)
+    models.ocr = {"title": "", "lines": [], "error": "印刷"}
+    sid = upload(s, f"/api/write/{aid}", [photo_bytes()]).get_json()["id"]
+    run_worker()
+    assert tuple(db.execute("SELECT status,fail FROM ess_submissions WHERE id=?", (sid,)).fetchone()) == ("failed", "印刷")
+    page = s.get(f"/student/essay/{aid}").get_data(as_text=True)
+    assert "书上印的字" in page and "AI" not in page and "write-form" in page
+    assert "请重新拍照提交" in s.get("/student/").get_data(as_text=True)
+    assert "书上印的字" in s.get(f"/api/submissions/{sid}/state?as=student").get_json()["label"]
+    assert "不是学生手写的作文" in t.get(f"/teacher/essay/submissions/{sid}").get_data(as_text=True)
+    listing = t.get(f"/teacher/essay/assignments/{aid}").get_data(as_text=True)
+    assert "拍的是书上印的字" in listing and "0 / 2" in listing
+    # Not counted: both attempts are still there, and the month's quota is not used either.
+    with wsgi.teacher.app_context():
+        assert essay.monthly_used(lid) == before
+    models.ocr = OCR_PAGE
+    for _ in range(2):
+        sid = upload(s, f"/api/write/{aid}", [photo_bytes()]).get_json()["id"]
+        run_worker()
+        db.execute("UPDATE ess_submissions SET status='published' WHERE id=?", (sid,))
+        db.commit()
+    r = upload(s, f"/api/write/{aid}", [photo_bytes()])
+    assert r.status_code == 400 and "最多交 2 次" in r.get_json()["error"]
+
+
+def test_photo_problems_end_at_a_limit(models, klass, db):
+    t, cid, aid = klass
+    s, _ = student_client(db, cid, "李华")
+    models.ocr = {"title": "", "lines": [], "error": "模糊"}
+    for _ in range(essay.MAX_SUBMISSIONS):
+        assert upload(s, f"/api/write/{aid}", [photo_bytes()]).status_code == 200
+        run_worker()
+    r = upload(s, f"/api/write/{aid}", [photo_bytes()])
+    assert r.status_code == 400 and "请找老师" in r.get_json()["error"]
+    assert "请找老师帮忙" in s.get(f"/student/essay/{aid}").get_data(as_text=True)
+
+
+def test_ocr_error_codes():
+    assert grading.parse_ocr({"lines": [], "error": "印刷"})["error"] == "印刷"
+    assert grading.parse_ocr({"lines": [], "error": "照片里是一本书"})["error"] == ""
+    assert worker.photo_problem([{"error": ""}], "三个字") == "太短"
+    assert worker.photo_problem([{"error": ""}], "") == "模糊"
 
 
 def test_photo_waits_until_ocr_is_configured(models, klass, db):

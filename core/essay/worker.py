@@ -132,6 +132,24 @@ def split_spread(d, img, page):
     return list(zip(rows, sides))
 
 
+class PhotoProblem(llm.LLMError):
+    """The photos hold no handwritten essay to grade; code is one of grading.OCR_ERRORS or 太短 (core/essay FAILS).
+    Not retried: reading the same photos again finds the same."""
+
+    def __init__(self, code):
+        super().__init__(f"照片里没有认出作文（{code}）", retry=False)
+        self.code = code
+
+
+def photo_problem(pages, text):
+    """Why photos read as these pages (with this joined text, under 10 characters) cannot be graded: what the ocr step
+    said, else 太短 when some characters were read, else 模糊."""
+    for page in pages:
+        if page.get("error"):
+            return page["error"]
+    return "太短" if grading.char_count(text) else "模糊"
+
+
 def read_page(d, img, pages, meta, both_sides=False, slot=None):
     """The ocr step on one photo of a submission of that many pages → a page from grading.parse_ocr."""
     from . import image_path
@@ -212,7 +230,7 @@ def read_photos(d, essay):
     title, text, spots, shapes = grading.assemble(pages)
     writing = grading.worst_writing(pages)
     if grading.char_count(text) < 10:
-        raise llm.LLMError("照片里没有认出作文，请拍清楚整页作文再交", retry=False)
+        raise PhotoProblem(photo_problem(pages, text))
     text = text[: grading.MAX_TEXT]
     spots = [[l for l in lines if l["e"] <= len(text)] for lines in spots]
     for img, lines in zip(images, spots):
@@ -357,7 +375,8 @@ def run_job(d, job):
             d.execute("UPDATE ess_submissions SET status='queued' WHERE id=?", (essay["id"],))
         else:
             d.execute("UPDATE ess_jobs SET status='failed',attempts=?,error=? WHERE id=?", (attempts, str(e)[:500], job["id"]))
-            d.execute("UPDATE ess_submissions SET status='failed' WHERE id=?", (essay["id"],))
+            fail = e.code if isinstance(e, PhotoProblem) else "系统"
+            d.execute("UPDATE ess_submissions SET status='failed',fail=? WHERE id=?", (fail, essay["id"]))
         d.commit()
         log.warning("grading submission %s failed: %s", essay["id"], e)
         return

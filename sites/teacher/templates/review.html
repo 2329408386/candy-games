@@ -25,7 +25,11 @@
     {% if sub.text %}<section class="wb-card"><div class="essay-text plain">{{sub.text}}</div></section>{% endif %}
     {% for ph in photos %}<img class="photo-plain" src="{{url_for('essay_image', iid=ph.id)}}" alt="第 {{ph.page}} 页">{% endfor %}
   {% elif sub.status == 'failed' %}
+    {% if sub.fail in FAILS %}
+    <p class="notice error">没能批改：{{FAILS[sub.fail][1]}}{% if photos %}也可以在下面把正文打进来再批改。{% endif %}</p>
+    {% else %}
     <p class="notice error">AI 批改失败了。可以点「重新批改」再试一次；一直失败的话，请管理员检查模型设置。{% if photos and not sub.text %}拍照的作文也可能是照片不清楚，可以在下面把正文打进来再批改。{% endif %}</p>
+    {% endif %}
     {% if sub.text %}<section class="wb-card"><div class="essay-text plain">{{sub.text}}</div></section>{% endif %}
     {% for ph in photos %}<img class="photo-plain" src="{{url_for('essay_image', iid=ph.id)}}" alt="第 {{ph.page}} 页">{% endfor %}
     {% if photos %}{% include 'correct_text.html' %}{% endif %}
