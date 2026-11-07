@@ -954,6 +954,26 @@ def test_left_side_only_is_read_again_and_a_blank_right_page_stays_whole(models,
     assert db.execute("SELECT count(*) FROM ess_images WHERE submission_id=?", (sid,)).fetchone()[0] == 1
 
 
+def test_page_with_unusable_boxes_is_read_again(models, klass, db):
+    t, cid, aid = klass
+    s, _ = student_client(db, cid, "李华")
+    off_scale = two_pages_ocr()
+    off_scale["lines"][-1] = {**off_scale["lines"][-1], "box": [600, 1020, 950, 1090]}
+    assert all(line["box"] is None for line in grading.parse_ocr(off_scale)["lines"])
+    models.ocr = [off_scale, two_pages_ocr()]
+    sid = upload(s, f"/api/write/{aid}", [two_pages_photo()]).get_json()["id"]
+    run_worker()
+    images = db.execute("SELECT * FROM ess_images WHERE submission_id=? ORDER BY page", (sid,)).fetchall()
+    assert len(images) == 2 and all(json.loads(i["lines"]) for i in images)
+    # Still no boxes the second time: the text is graded all the same, on the whole photo.
+    models.ocr = [off_scale, off_scale]
+    s2, _ = student_client(db, cid, "张三")
+    sid = upload(s2, f"/api/write/{aid}", [two_pages_photo()]).get_json()["id"]
+    run_worker()
+    assert db.execute("SELECT count(*) FROM ess_images WHERE submission_id=?", (sid,)).fetchone()[0] == 1
+    assert db.execute("SELECT status FROM ess_submissions WHERE id=?", (sid,)).fetchone()[0] in ("review", "published")
+
+
 def test_jobs_cut_off_by_a_restart_resume_at_once(models, klass, db):
     t, cid, aid = klass
     s, _ = student_client(db, cid, "李华")

@@ -519,6 +519,11 @@ def _box(value):
     return [x1, y1, x2, y2] if x1 < x2 and y1 < y2 and y2 - y1 <= 250 else None
 
 
+def _off_scale(line):
+    box = line.get("box")
+    return isinstance(box, list) and any(isinstance(v, (int, float)) and v > 1000 for v in box)
+
+
 def parse_ocr(raw):
     """One page of the ocr step's JSON → {"title", "lines": [{"text", "box" or None, "para"}], "writing", "rotate"}
     (writing: one of WRITINGS or ""; rotate: degrees clockwise that would make the photo upright). Raises ValueError."""
@@ -532,8 +537,10 @@ def parse_ocr(raw):
         text, shapes = unshape("".join(c for c in line["text"] if c.isprintable()).strip())
         if text:
             out.append({"text": text, "box": _box(line.get("box")), "para": line.get("para") is True, "shapes": shapes})
-    if out and sum(1 for line in out if line["box"]) < 0.7 * len(out):
-        for line in out:  # too few usable boxes: show the page without drawing on it
+    # A coordinate beyond the 0–1000 scale means the model used another scale for the page, so its other boxes are off
+    # too. Like too few usable boxes: the page is shown without drawing on it.
+    if out and (sum(1 for line in out if line["box"]) < 0.7 * len(out) or any(_off_scale(line) for line in lines if isinstance(line, dict))):
+        for line in out:
             line["box"] = None
     writing = raw.get("writing") if raw.get("writing") in WRITINGS else ""
     rotate = raw.get("rotate") if raw.get("rotate") in (0, 90, 180, 270) else 0
@@ -555,6 +562,11 @@ def split_page(page, cut):
             box = [max(0, round(x1 * scale)), box[1], min(1000, round(x2 * scale)), box[3]]
         sides[side].append({**line, "box": box})
     return {**page, "lines": sides[0]}, {**page, "title": "", "lines": sides[1]}
+
+
+def missing_boxes(page):
+    """How many lines of a page from parse_ocr have no usable box: they get no red pen, and the page cannot be cut."""
+    return sum(1 for line in page["lines"] if not line["box"])
 
 
 def reads_one_side(page, width, height):

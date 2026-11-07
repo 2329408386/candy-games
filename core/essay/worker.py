@@ -163,6 +163,12 @@ def read_photos(d, essay):
             log.info("submission %s page %s turned %s°", essay["id"], img["page"], page["rotate"])
             img = rotate_image(d, img, page["rotate"])
             page = read(img)
+        if grading.missing_boxes(page):
+            # Lines without a usable box get no red pen. Such a reply is often a one-off: the better of two readings.
+            again = read(img)
+            if grading.missing_boxes(again) < grading.missing_boxes(page):
+                log.info("submission %s page %s: read again for the line boxes", essay["id"], img["page"])
+                page = again
         if grading.reads_one_side(page, img["w"], img["h"]):
             # The right page may have been left out. A second reading that finds no more keeps the first.
             again = read(img, both_sides=True)
