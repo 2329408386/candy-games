@@ -1613,13 +1613,18 @@ def test_typo_verify_helpers():
         grading.parse_verify({"items": [{"id": 1, "seen": "没"}]}, 2)
     seen = grading.parse_verify({"items": [{"id": 1, "seen": "没"}, {"id": 2, "seen": "心"}]}, 2)
     new, fixed, dropped = grading.apply_verify(review, text, targets, seen)
-    # 没 was written correctly: that mark goes and the text is corrected; 高心 really is wrong and stays.
+    # 没 was seen: not called wrong, the text is corrected; 高心 is confirmed and stays a 错别字.
     assert fixed == "我没有\n去公园，我高心极了。" and [m["quote"] for m in dropped] == ["设有"]
-    assert [m["quote"] for m in new["marks"]] == ["高心", "我没有"]
-    # Unreadable or another character: nothing changes.
-    for answer in ("□", "设", "汉"):
-        assert grading.apply_verify(review, text, targets, {1: answer, 2: "心"})[2] == []
-    # A mark changing two characters goes only when both are confirmed.
+    assert [(m["type"], m["quote"]) for m in new["marks"]] == [(grading.SOFT, "没有"), ("错别字", "高心"), ("病句", "我没有")]
+    assert "标准写法是“没有”" in new["marks"][0]["note"] and "错" not in new["marks"][0]["note"]
+    assert grading.error_mark_count(new) == 2
+    # Confirmed as read: nothing changes.
+    assert grading.apply_verify(review, text, targets, {1: "设", 2: "心"})[2] == []
+    # Unreadable or another character: a reminder too, and the text stays as it was.
+    for answer in ("□", "汉"):
+        new, fixed, dropped = grading.apply_verify(review, text, targets, {1: answer, 2: "心"})
+        assert fixed == text and [m["quote"] for m in dropped] == ["设有"] and new["marks"][0]["type"] == grading.SOFT
+    # A mark changing two characters stays a 错别字 when any of them is confirmed, and is corrected only when all were seen.
     two = {"marks": [{"type": "错别字", "start": 9, "end": 11, "quote": "高心", "fix": "开兴", "note": ""}]}
     t2 = grading.typo_targets(two, text, pages)
     assert len(t2) == 2
@@ -1641,7 +1646,13 @@ def test_photo_typo_misread_is_dropped_and_text_corrected(models, klass, db):
     assert "我高兴极了。" in sub["text"] and "高心" not in sub["text"]
     ai = json.loads(db.execute("SELECT ai FROM ess_reviews WHERE submission_id=?", (sid,)).fetchone()[0])
     assert not [m for m in ai["marks"] if m["type"] == "错别字"]
+    assert [m["fix"] for m in ai["marks"] if m["type"] == grading.SOFT] == ["高兴"]
     assert any(m["quote"] == "高心" and "识别" in m["reason"] for m in ai["rejected"])
+    # A teacher's edit may keep the reminder; the grade step may not write one.
+    assert grading.clean_final({"dims": {k: {"score": 1} for k in grading.DIMS}, "marks": [m for m in ai["marks"] if m["type"] == grading.SOFT]}, ai, sub["text"], {k: 9 for k in grading.DIMS})["marks"]
+    essay_row = {"grade": 3, "text": "我很高兴。"}
+    raw = {"dims": {k: {"score": 1} for k in grading.DIMS}, "marks": [{"quote": "高兴", "type": grading.SOFT, "fix": "高兴", "note": ""}]}
+    assert grading.clean_review(raw, essay_row)["marks"] == []
     # The photo really shows the wrong character: the mark stays; a failing check call keeps it too.
     for verify in ({"items": [{"id": 1, "seen": "心"}]}, {"bad": 1}):
         r = upload(t, f"/api/assignments/{aid}/submit_for", [photo_bytes()], student_id=str(students_of(db, cid)["李华"]["id"]))

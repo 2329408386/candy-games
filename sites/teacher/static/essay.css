@@ -95,6 +95,7 @@ mark.mk{background:none}
 .mk-punct{background:#e9e1f4 !important;box-shadow:inset 0 -2px 0 var(--purple)}
 .mk-good{background:#dcefd7 !important;box-shadow:inset 0 -2px 0 var(--green)}
 .mk-tip{background:#dfeaf5 !important;box-shadow:inset 0 -2px 0 var(--blue)}
+.mk-soft{background:#f3efe6 !important;box-shadow:inset 0 -1px 0 var(--muted)}
 .mk-para{background:#efe6f7 !important;box-shadow:inset 0 -2px 0 #8a5cb8}
 .mk.active{outline:2px solid var(--ink);outline-offset:1px}
 .mk sup{font-size:11px;color:var(--muted);margin-left:1px}
@@ -265,7 +266,7 @@ mark.mk{background:none}
 .typed-alt>summary{cursor:pointer;color:var(--green);font-size:14px;margin:4px 0}
 .photo-plain{display:block;max-width:100%;border-radius:12px;border:1px solid var(--line);margin:0 auto 14px}
 
-/* red pen (static/redpen.js?v=7ddf24f3) */
+/* red pen (static/redpen.js?v=99edac8f) */
 @font-face{font-family:RedPen;src:url(redpen-font.0924cd57.woff2) format('woff2');font-display:swap}
 .redpen{position:relative;max-width:1040px;margin:0 auto}
 .rp-page{position:relative;width:100%;margin:0 0 16px;border-radius:6px;overflow:hidden;box-shadow:0 6px 24px #344b3818;background:#fff}

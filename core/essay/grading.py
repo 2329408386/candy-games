@@ -22,9 +22,10 @@ Pipeline (run by the worker, core/essay/worker.py):
               example sentence, and gives its own level; marks it finds wrong are dropped (skipped ones stay), and a level two steps
               away from ours is flagged for the teacher. If the check step is not configured or fails, the marks stay,
               the review is flagged "unchecked" and goes to the teacher instead of being published (worker.py).
-  4. verify — photos only: each character a 错别字 mark changes is cut out of the photo (its line) and the ocr step's
-              model says which character is really written there (prompts/verify.md). Where the photo shows the
-              correct one, the ocr step misread it: the mark is dropped and the text corrected (apply_verify).
+  4. verify — photos only: each character a 错别字 mark changes is cut out of the photo (its line) and the verify step's
+              model says which character is really written there (prompts/verify.md), without being told the fix.
+              Unless it confirms what was read, the mark becomes a 书写提醒, which does not call the character wrong
+              and gives the right form; if it saw the fix the text is corrected too (apply_verify).
 
 Prompts live in sites/teacher/prompts/; PROMPT_VERSION is a hash of those files and is stored with each review.
 Anchor essays (teacher-scored examples that calibrate the scale) go in prompts/anchors/<band>.json.
@@ -36,7 +37,9 @@ from pathlib import Path
 PROMPTS = Path(__file__).resolve().parent.parent.parent / "sites" / "teacher" / "prompts"
 DIMS = {"content": "内容", "structure": "结构", "language": "语言", "norms": "规范"}
 ERROR_TYPES = ("错别字", "用词不当", "病句", "标点")
-MARK_TYPES = ERROR_TYPES + ("好词好句", "修改建议", "分段")
+MODEL_TYPES = ERROR_TYPES + ("好词好句", "修改建议", "分段")  # what the grade step may write
+SOFT = "书写提醒"  # the photo and the reading disagree about a character: not called wrong, the right form is given
+MARK_TYPES = MODEL_TYPES + (SOFT,)
 LEVELS = ("待提高", "及格", "良", "优")
 TOTAL = 25  # every band's maxima add up to this (prompts/bands.json)
 FLAGS = {
@@ -236,7 +239,7 @@ def clean_review(raw, essay):
     total = sum(d["score"] for d in dims.values())
     marks, taken, kinds = [], set(), {}
     for m in raw.get("marks") if isinstance(raw.get("marks"), list) else []:
-        if not isinstance(m, dict) or m.get("type") not in MARK_TYPES:
+        if not isinstance(m, dict) or m.get("type") not in MODEL_TYPES:
             continue
         kind = "error" if m["type"] in ERROR_TYPES else m["type"]
         if kinds.get(kind, 0) >= MARK_LIMITS[kind]:
@@ -493,24 +496,31 @@ def parse_verify(raw, count):
 
 
 def apply_verify(review, text, targets, seen):
-    """Drops the 错别字 marks whose every changed character the photo shows written correctly (the ocr step misread
-    it) and corrects those characters in the text; same length, so no offsets move. Returns (review, text, dropped)."""
+    """Sorts the 错别字 marks by what the photo shows (seen). A character seen as read: the child wrote it wrong and the
+    mark stays. Otherwise photo and reading disagree, and whichever is right the child is not told it is wrong: the
+    mark becomes a 书写提醒 giving the right form. Where every changed character was seen as the fix, the ocr step
+    probably misread it, so the text is corrected too; same length, so no offsets move.
+    Returns (review, text, the marks changed as they were)."""
     by_mark = {}
     for t in targets:
         by_mark.setdefault(t["mark"], []).append(t)
-    misread = {k for k, ts in by_mark.items() if all(seen.get(t["id"]) == t["right"] for t in ts)}
-    if not misread:
+    unsure = {k for k, ts in by_mark.items() if not any(seen.get(t["id"]) == t["wrong"] for t in ts)}
+    if not unsure:
         return review, text, []
     chars = list(text)
-    for k in misread:
-        for t in by_mark[k]:
-            chars[t["pos"]] = t["right"]
+    for k in unsure:
+        if all(seen.get(t["id"]) == t["right"] for t in by_mark[k]):
+            for t in by_mark[k]:
+                chars[t["pos"]] = t["right"]
     text = "".join(chars)
-    dropped = [m for k, m in enumerate(review["marks"]) if k in misread]
-    marks = [m for k, m in enumerate(review["marks"]) if k not in misread]
-    # Other marks quoting a corrected character follow the new text.
+    changed = [m for k, m in enumerate(review["marks"]) if k in unsure]
+    marks = [
+        {**m, "type": SOFT, "note": f"这里写得不太规范，标准写法是“{m['fix']}”，记一记。"} if k in unsure else m
+        for k, m in enumerate(review["marks"])
+    ]
+    # Marks quoting a corrected character follow the new text.
     marks = [{**m, "quote": text[m["start"] : m["end"]]} for m in marks]
-    return {**review, "marks": marks}, text, dropped
+    return {**review, "marks": marks}, text, changed
 
 
 def _box(value):
@@ -640,13 +650,13 @@ def keep_shapes(shapes, targets, seen):
 
 def shape_marks(review, text, shapes):
     """Adds a 错别字 mark for each confirmed shape (quote = fix = the right character; note says what was wrong),
-    unless a 错别字 mark already covers that character."""
+    unless a 错别字 or 书写提醒 already covers that character."""
     marks = list(review["marks"])
     for x in shapes:
         pos = x["pos"]
         if pos >= len(text) or text[pos] != x["char"]:
             continue
-        if any(m["type"] == "错别字" and m["start"] <= pos < m["end"] for m in marks):
+        if any(m["type"] in ("错别字", SOFT) and m["start"] <= pos < m["end"] for m in marks):
             continue
         note = f"“{x['char']}”写错了" + (f"：{x['note']}" if x["note"] else "")
         marks.append({"type": "错别字", "start": pos, "end": pos + 1, "quote": x["char"], "fix": x["char"], "note": note[:60], "shape": True})

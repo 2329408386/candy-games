@@ -32,7 +32,7 @@
   const PEN_FONT = "RedPen, 'Kaiti SC', STKaiti, KaiTi, serif";
   const TYPED_FONT = "'Kaiti SC', STKaiti, KaiTi, serif";
   const NS = 'http://www.w3.org/2000/svg';
-  const KIND = { 好词好句: 'good', 错别字: 'typo', 用词不当: 'word', 病句: 'line', 标点: 'line', 修改建议: 'tip', 分段: 'para' };
+  const KIND = { 好词好句: 'good', 错别字: 'typo', 用词不当: 'word', 病句: 'line', 标点: 'line', 修改建议: 'tip', 分段: 'para', 书写提醒: 'soft' };
   const INLINE_CHARS = 8; // notes longer than this go in the margin
   const FIX_INLINE = 6; // corrections longer than this are written out in the margin
   const COLS = 20;
@@ -340,6 +340,8 @@
       } else if (kind === 'tip') {
         segs.forEach((seg, k) => draw(bracket(seg, k === 0, k === segs.length - 1, rand)));
         if (m.fix) long = (note ? note + '　' : '') + '可以写成：' + m.fix;
+      } else if (kind === 'soft') {
+        for (const seg of segs) draw(underline(seg, rand)); // not called wrong: no correction marks, the note says it
       } else if (kind === 'para') {
         draw(paraMark(first, rand));
         note = note || '另起一段';
@@ -960,7 +962,7 @@
       const n = Number(g.dataset.n || 0);
       pop.innerHTML =
         '<strong>' + (n ? esc(CIRCLED[n - 1] || n) + ' ' : '') + esc(m.type) + '</strong><q>' + esc(quote) + '</q>' +
-        (m.fix && m.type !== '好词好句' ? '<p>' + (m.type === '修改建议' ? '可以写成' : m.fix === quote ? '正确写法' : '改成') + '：<b>' + esc(m.fix) + '</b></p>' : '') +
+        (m.fix && m.type !== '好词好句' && m.type !== '书写提醒' ? '<p>' + (m.type === '修改建议' ? '可以写成' : m.fix === quote ? '正确写法' : '改成') + '：<b>' + esc(m.fix) + '</b></p>' : '') +
         (m.note ? '<p>' + esc(m.note) + '</p>' : '');
       pop.hidden = false;
       const r = container.getBoundingClientRect(), gr = g.getBoundingClientRect();

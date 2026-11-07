@@ -552,7 +552,7 @@
   };
 
   function typeClass(type) {
-    return { 错别字: 'typo', 用词不当: 'word', 病句: 'sentence', 标点: 'punct', 好词好句: 'good', 修改建议: 'tip', 分段: 'para' }[type] || 'tip';
+    return { 错别字: 'typo', 用词不当: 'word', 病句: 'sentence', 标点: 'punct', 好词好句: 'good', 修改建议: 'tip', 分段: 'para', 书写提醒: 'soft' }[type] || 'tip';
   }
   WB.typeClass = typeClass;
 

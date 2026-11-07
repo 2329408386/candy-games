@@ -268,9 +268,9 @@ def grade(d, essay):
 
 
 def verify_typos(d, essay, review):
-    """Looks at the photo again for every 错别字 mark (grading.typo_targets): a mark the ocr step caused by misreading
-    a correctly written character is dropped (kept in review["rejected"] for the teacher) and the stored text
-    corrected. A failed call leaves the review as it is."""
+    """Looks at the photo again for every 错别字 mark (grading.typo_targets): one the photo does not confirm becomes a
+    书写提醒 (the original kept in review["rejected"] for the teacher), and the stored text is corrected where the
+    photo shows the fix. A failed call leaves the review as it is."""
     from . import crop_line
 
     images = d.execute("SELECT id,lines FROM ess_images WHERE submission_id=? ORDER BY page", (essay["id"],)).fetchall()
@@ -294,10 +294,10 @@ def verify_typos(d, essay, review):
         return review
     review, text, dropped = grading.apply_verify(review, essay["text"], targets, seen)
     if dropped:
-        log.info("submission %s: %s 错别字 mark(s) were misread on the photo", essay["id"], len(dropped))
+        log.info("submission %s: %s 错别字 mark(s) not confirmed on the photo", essay["id"], len(dropped))
         d.execute("UPDATE ess_submissions SET text=? WHERE id=?", (text, essay["id"]))
         d.commit()
-        reason = "照片上其实写对了（是照片识别看错了字）"
+        reason = "看图复核和识别结果对不上，已改成书写提醒，不算错别字"
         review = {**review, "rejected": review.get("rejected", []) + [{**m, "reason": reason} for m in dropped]}
     return review
 
