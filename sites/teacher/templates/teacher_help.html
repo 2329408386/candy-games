@@ -3,7 +3,7 @@
 {% block header_actions %}<a class="header-link" href="{{url_for('teacher_home')}}">返回工作台</a>{% endblock %}
 {% block content %}
   <div class="help-doc">
-    <div class="wb-heading"><div><h1>老师端使用帮助</h1><p class="muted">从建班到讲评，按下面的顺序做就可以。图里红框是要点的地方，名字都是示例。</p></div></div>
+    <div class="wb-heading"><div><h1>老师端使用帮助</h1><p class="muted">从建班到讲评，按下面的顺序做就可以。图里红框是要点的地方，名字都是示例。想知道学生那边怎么操作，可以看<a href="{{url_for('teacher_student_help')}}">学生端帮助</a>。</p></div></div>
     <section class="wb-card">
       <h2>使用步骤</h2>
       <ol>
@@ -32,6 +32,8 @@
         <dd>在还能登录的设备上，点右上角头像，进入「我的设备」移除不用的设备，再用授权码登录新设备。</dd>
         <dt>功能到期了怎么办？</dt>
         <dd>请联系管理员续期，以前批改过的作文还可以查看。</dd>
+        <dt>怎么把工作台推荐给其他老师？</dt>
+        <dd>点右上角头像，进入「我的推荐码」，把推荐码发给对方。对方第一次激活授权码时填上，你多用 62 天，对方多用 31 天。试用账号转正后才有推荐码。</dd>
       </dl>
     </section>
     <p class="hint center"><a href="{{url_for('teacher_home')}}">返回工作台 →</a></p>

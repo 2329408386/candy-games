@@ -6,6 +6,9 @@
 .header-avatar .av{--av:34px}
 .header-avatar span.name{overflow:hidden;text-overflow:ellipsis}
 .header-avatar:hover{border-color:#cfdac6}
+.fb-dot{display:inline-block;flex:none;width:8px;height:8px;border-radius:50%;background:#d9534f;vertical-align:middle}
+.me-feedback{text-align:center;margin:18px 0 6px;font-size:13px}
+.me-feedback a{color:var(--muted)}
 @media(max-width:600px){.header-avatar{padding:2px}.header-avatar span.name{display:none}}
 .header-rank{position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:6px 16px;border-radius:999px;font-size:15px;font-weight:800;white-space:nowrap;color:#fff;transition:transform .15s,box-shadow .15s}
 .header-rank:hover{transform:translateY(-2px)}

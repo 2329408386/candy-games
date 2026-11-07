@@ -10,6 +10,8 @@ DB_NAME = "games.sqlite3"
 # ess_*: 语文老师工作台 (site 'teacher' only, so no site column), see core/essay/__init__.py. ess_images: photos of
 # handwritten essays (files in <data>/essay-images/<id>.jpg). ws_entitlements: which workbench features a teacher
 # license has and until when (core/essay/features.py); the clock starts when the teacher activates the code.
+# ws_referral_codes/ws_referrals/ws_notices: teachers recommending the workbench (core/essay/referral.py).
+# feedback: 改进建议 from licensed users of every site, answered on the workbench's back office (core/feedback.py).
 # migrations: one-off data changes already applied (see initialize).
 # trials records the one free round each browser (session device token) may play per game.
 # profiles/classes/scores/rounds: see core/social.py (one license = one user, in at most one class); pk_rooms/pk_seats: core/rooms.py (rooms/room_players are the unused, license-keyed predecessors).
@@ -68,6 +70,14 @@ CREATE INDEX IF NOT EXISTS ess_images_submission ON ess_images(submission_id,pag
 CREATE TABLE IF NOT EXISTS ws_entitlements(license_id INTEGER NOT NULL,feature TEXT NOT NULL,days INTEGER NOT NULL,starts_at INTEGER,expires_at INTEGER,PRIMARY KEY(license_id,feature));
 CREATE TABLE IF NOT EXISTS ess_trials(license_id INTEGER PRIMARY KEY,device_hash TEXT NOT NULL,created_at INTEGER NOT NULL);
 CREATE INDEX IF NOT EXISTS ess_trials_device ON ess_trials(device_hash);
+CREATE TABLE IF NOT EXISTS ws_referral_codes(license_id INTEGER PRIMARY KEY,code TEXT NOT NULL UNIQUE,created_at INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS ws_referrals(referee_id INTEGER PRIMARY KEY,referrer_id INTEGER NOT NULL,created_at INTEGER NOT NULL);
+CREATE INDEX IF NOT EXISTS ws_referrals_referrer ON ws_referrals(referrer_id);
+CREATE TABLE IF NOT EXISTS ws_notices(id INTEGER PRIMARY KEY,license_id INTEGER NOT NULL,body TEXT NOT NULL,created_at INTEGER NOT NULL,seen_at INTEGER);
+CREATE INDEX IF NOT EXISTS ws_notices_unseen ON ws_notices(license_id,seen_at);
+CREATE TABLE IF NOT EXISTS feedback(id INTEGER PRIMARY KEY,site TEXT NOT NULL,license_id INTEGER NOT NULL,content TEXT NOT NULL,created_at INTEGER NOT NULL,reply TEXT,replied_at INTEGER,reply_seen_at INTEGER);
+CREATE INDEX IF NOT EXISTS feedback_author ON feedback(site,license_id,created_at);
+CREATE INDEX IF NOT EXISTS feedback_queue ON feedback(replied_at,created_at);
 """
 
 

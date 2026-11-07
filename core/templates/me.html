@@ -56,6 +56,7 @@
       <ol class="rank-list" id="rank-list"></ol>
       <p class="hint">单人练习和联网PK按游戏得分的十分之一计入排行（230 分记 23 分），联网PK前三名另有名次奖励；错题重练每改对一道 +1 分。本周榜每周一 0 点清零。</p>
     </section>
+    <p class="me-feedback"><a href="{{url_for('feedback_page')}}">有什么想法，告诉我们{% if header_profile().feedback_unread %} <span class="fb-dot" role="img" aria-label="有新回复"></span>{% endif %}</a></p>
   </div>
   <script id="me-config" type="application/json">{{ {
     "csrf": csrf(),

@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block title %}改进建议{% endblock %}
+{% block content %}
+  <style>
+    .fb-page{max-width:680px;margin:0 auto 24px}
+    .fb-head{display:flex;justify-content:space-between;align-items:baseline;gap:16px;margin:4px 0 18px}
+    .fb-head h1{font-size:26px;line-height:1.4;margin:0}
+    .fb-head a{white-space:nowrap;font-size:14px}
+    .fb-card{background:var(--white,#fffefa);border:1px solid var(--line,#e7e9df);border-radius:16px;padding:20px;margin-bottom:14px}
+    .fb-intro{color:var(--muted,#5f685c);margin:0 0 14px;line-height:1.8}
+    .fb-card textarea{display:block;box-sizing:border-box;width:100%;min-height:150px;padding:12px;font:inherit;line-height:1.7;color:var(--ink,#2f4438);background:#fffefa;border:1px solid #dde3d7;border-radius:10px;resize:vertical}
+    .fb-actions{display:flex;align-items:center;gap:14px;margin-top:12px;flex-wrap:wrap}
+    .fb-error{color:#a74f45;margin:0;font-size:14px}
+    .fb-list-title{font-size:17px;margin:26px 0 12px}
+    .fb-text{white-space:pre-wrap;overflow-wrap:anywhere;margin:0;line-height:1.8}
+    .fb-when{display:block;color:var(--muted,#5f685c);font-size:13px;margin-bottom:6px}
+    .fb-reply{margin-top:14px;padding:12px 14px;border-radius:10px;background:#eef4e9}
+    .fb-reply.new{box-shadow:inset 3px 0 0 #d9534f}
+    .fb-waiting{margin:12px 0 0;color:var(--muted,#5f685c);font-size:14px}
+  </style>
+  <div class="fb-page">
+    <div class="fb-head"><h1>改进建议</h1><a href="{{back}}">返回</a></div>
+    <section class="fb-card">
+      <p class="fb-intro">想到什么都可以告诉我们。每一条我们都会认真读，回复会出现在这里。</p>
+      <form id="fb-form">
+        <textarea id="fb-content" maxlength="{{max_content}}" required aria-label="你的建议"></textarea>
+        <div class="fb-actions"><button>发送</button><p class="fb-error" id="fb-error" role="alert"></p></div>
+      </form>
+    </section>
+    {% if items %}
+      <h2 class="fb-list-title">我提过的</h2>
+      {% for x in items %}
+        <section class="fb-card">
+          <small class="fb-when">{{x.when}}</small>
+          <p class="fb-text">{{x.content}}</p>
+          {% if x.reply %}
+            <div class="fb-reply{{' new' if x.new}}">
+              <small class="fb-when">我们的回复 · {{x.replied}}</small>
+              <p class="fb-text">{{x.reply}}</p>
+            </div>
+          {% else %}
+            <p class="fb-waiting">已经收到，我们读过后会在这里回复你。</p>
+          {% endif %}
+        </section>
+      {% endfor %}
+    {% endif %}
+  </div>
+  <script>
+    (() => {
+      const form = document.getElementById('fb-form');
+      const error = document.getElementById('fb-error');
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const button = form.querySelector('button');
+        button.disabled = true;
+        error.textContent = '';
+        try {
+          const r = await fetch({{url_for('feedback_submit')|tojson}}, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': {{csrf()|tojson}} },
+            body: JSON.stringify({ content: document.getElementById('fb-content').value }),
+          });
+          const data = await r.json().catch(() => ({}));
+          if (!r.ok) throw new Error(data.error || '没有发送成功，请稍后再试');
+          location.reload();
+        } catch (err) {
+          // What was written stays in the box, so nothing has to be typed again.
+          error.textContent = err instanceof TypeError ? '网络连接失败，请稍后再试' : err.message;
+          button.disabled = false;
+        }
+      });
+    })();
+  </script>
+{% endblock %}

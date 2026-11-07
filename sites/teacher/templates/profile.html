@@ -41,6 +41,14 @@
     </ul>
     <p class="hint">{% if removals_left %}换了新手机或电脑？可以把不用的设备移除，空出名额（{{removal_days}} 天内还能自己移除 {{removals_left}} 次）。{% else %}{{removal_days}} 天内自己移除的次数已经用完，需要换设备请联系管理员。{% endif %}</p>
   </section>
+  {% if referral_code %}
+    <section class="wb-card" id="referral">
+      <h2>我的推荐码</h2>
+      <p><span class="referral-code">{{referral_code}}</span><button type="button" class="link-button" data-copy="{{referral_code}}">复制</button></p>
+      <p class="muted">把推荐码发给其他老师，对方第一次激活授权码时填上，你多用 {{referrer_days}} 天，对方多用 {{referee_days}} 天。推荐几位就加几次。</p>
+      <p class="hint">你已经推荐了 {{referred}} 位老师。推荐码不是授权码，发给别人不会影响你的账号。</p>
+    </section>
+  {% endif %}
 {% endblock %}
 {% block scripts %}
   <script>

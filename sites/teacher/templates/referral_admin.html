@@ -1,0 +1,8 @@
+{% if not essay_is_trial(row.id) %}{% set info = referral_info(row.id) %}
+<section class="panel">
+  <h2>推荐码</h2>
+  <p>这位老师的推荐码：{% if info.code %}<code>{{info.code}}</code>{% else %}<span class="muted">老师打开个人设置后才生成</span>{% endif %}</p>
+  <p>推荐人：{% if info.referrer %}<a href="{{url_for('detail', lid=info.referrer)}}">授权 #{{info.referrer}}</a>{% else %}<span class="muted">没有</span>{% endif %}</p>
+  <p style="margin-bottom:0">已推荐 {{info.count}} 位老师{% for lid in info.referred %}{{'：' if loop.first else '、'}}<a href="{{url_for('detail', lid=lid)}}">#{{lid}}</a>{% endfor %}</p>
+</section>
+{% endif %}

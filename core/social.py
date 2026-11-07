@@ -10,7 +10,7 @@ counts towards the user's 段位 (core/ranks.py). The site-wide leaderboard (top
 import io, secrets, time
 from flask import Response, abort, jsonify, redirect, render_template, request, url_for
 from PIL import Image, ImageOps, UnidentifiedImageError
-from . import ranks
+from . import feedback, ranks
 from .app import current, db, limited, site
 
 AVATAR_SIZE = 96
@@ -97,6 +97,7 @@ def header_profile():
         display(row["id"], p["nickname"] if p else "", p["avatar_ver"] if p else 0),
         in_class=bool(p and p["class_id"]),
         tier=ranks.badge(p["rank_stars"] if p else 0),
+        feedback_unread=feedback.unread(row["id"]),
     )
 
 

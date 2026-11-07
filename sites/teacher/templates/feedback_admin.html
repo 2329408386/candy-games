@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}用户建议 · 语文老师工作台{% endblock %}
+{% block content %}
+  <style>
+    .fb-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+    .fb-tabs a{border:1px solid var(--line);background:var(--white);border-radius:999px;padding:6px 16px;font-size:13px;color:var(--muted)}
+    .fb-tabs a.on{background:var(--green);border-color:var(--green);color:#fff}
+    .fb-who{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;font-size:13px;color:var(--muted);margin-bottom:10px}
+    .fb-who strong{color:var(--ink);font-size:14px}
+    .fb-text{white-space:pre-wrap;overflow-wrap:anywhere;margin:0 0 14px;line-height:1.8}
+    .fb-reply{background:#f3f6ee;border-radius:10px;padding:10px 14px;margin:0 0 12px;font-size:14px}
+    .fb-reply small{display:block;color:var(--muted);margin-bottom:4px}
+    .panel textarea{display:block;box-sizing:border-box;width:100%;min-height:90px;padding:10px 12px;font:inherit;line-height:1.7;color:var(--ink);background:#fffefa;border:1px solid #dde3d7;border-radius:9px;resize:vertical;margin-bottom:10px}
+  </style>
+  <div class="page-heading"><div><h1>用户建议</h1><p>四个站点已授权用户提的改进建议。回复后，对方头像上会出现小红点，打开「改进建议」就能看到。</p></div></div>
+  <nav class="fb-tabs" aria-label="筛选">
+    {% for key, label in views.items() %}<a class="{{'on' if key == view}}" href="{{url_for('feedback_admin', view=key)}}">{{label}}</a>{% endfor %}
+  </nav>
+  {% for x in rows %}
+    {% set owner = all_sites.get(x.site) %}
+    <section class="panel">
+      <div class="fb-who">
+        <strong>{{x.nickname or '未设置昵称'}}</strong>
+        <span class="tag">{{owner.title if owner else x.site}}</span>
+        {% if owner %}<a href="{{owner.url.rstrip('/')}}/admin/licenses/{{x.license_id}}">授权 #{{x.license_id}}</a>{% else %}<span>授权 #{{x.license_id}}</span>{% endif %}
+        {% if x.buyer %}<span>{{x.buyer}}</span>{% endif %}
+        {% if not x.enabled or x.archived_at %}<span class="tag off">授权已停用</span>{% endif %}
+        <span>{{x.created_at|moment}}</span>
+      </div>
+      <p class="fb-text">{{x.content}}</p>
+      {% if x.reply %}
+        <div class="fb-reply"><small>我的回复 · {{x.replied_at|moment}} · {{'对方已读' if x.reply_seen_at else '对方还没看'}}</small><span class="fb-text" style="margin:0;display:block">{{x.reply}}</span></div>
+      {% endif %}
+      <form method="post" action="{{url_for('feedback_reply', fid=x.id)}}">
+        <input type="hidden" name="csrf" value="{{csrf()}}">
+        <input type="hidden" name="view" value="{{view}}">
+        <textarea name="reply" maxlength="{{max_reply}}" required aria-label="回复内容" placeholder="{{'改一下回复（对方会重新收到提醒）' if x.reply else '写给对方的回复'}}"></textarea>
+        <button>{{'修改回复' if x.reply else '回复'}}</button>
+      </form>
+    </section>
+  {% else %}
+    <section class="panel"><p class="empty">{{'没有待回复的建议' if view == 'pending' else '还没有建议'}}</p></section>
+  {% endfor %}
+  {% if pages > 1 %}
+    <div class="pagination">
+      <span>共 {{total}} 条</span>
+      <nav aria-label="分页">
+        {% if page>1 %}<a href="{{url_for('feedback_admin', view=view, page=page-1)}}">← 上一页</a>{% endif %}<span>{{page}} / {{pages}}</span>{% if page<pages %}<a href="{{url_for('feedback_admin', view=view, page=page+1)}}">下一页 →</a>{% endif %}
+      </nav>
+    </div>
+  {% endif %}
+{% endblock %}

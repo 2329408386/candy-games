@@ -29,7 +29,7 @@
       <a class="brand" href="{{brand_url}}"><span class="brand-icon"><svg><use href="#i-pen"/></svg></span><span>语文老师工作台<small>{{'管理工作台' if is_admin else '老师端' if side == 'teacher' else '学生端' if side == 'student' else '小学语文'}}</small></span></a>
       {% if is_admin %}
         <nav aria-label="管理导航">
-          <a href="{{url_for('home')}}">工作台首页 <span aria-hidden="true">↗</span></a>{% if session.get('admin_version') %}<a href="{{url_for('dashboard')}}">授权管理</a><a href="{{url_for('models_page')}}">模型设置</a><a href="{{url_for('password')}}">修改密码</a>
+          <a href="{{url_for('home')}}">工作台首页 <span aria-hidden="true">↗</span></a>{% if session.get('admin_version') %}<a href="{{url_for('dashboard')}}">授权管理</a><a href="{{url_for('models_page')}}">模型设置</a>{% set waiting = feedback_pending() %}<a href="{{url_for('feedback_admin')}}">用户建议{% if waiting %} <span class="tag">{{waiting}}</span>{% endif %}</a><a href="{{url_for('password')}}">修改密码</a>
           <form method="post" action="{{url_for('admin_logout')}}">
             <input type="hidden" name="csrf" value="{{csrf()}}"><button class="text-button">退出后台</button>
           </form>
@@ -41,7 +41,7 @@
           {% if side == 'teacher' and me_teacher %}
             <a class="header-chip" href="{{url_for('classes_page')}}" title="我的班级：学生名单和各班统计"><svg><use href="#i-grid"/></svg><span>班级</span>{% if me_teacher.classes %}<small>{{me_teacher.classes}}</small>{% endif %}</a>
           {% endif %}
-          {% if side and not project and request.endpoint not in ('teacher_help', 'student_help') %}
+          {% if side and not project and request.endpoint not in ('teacher_help', 'student_help', 'teacher_student_help') %}
             <a class="header-link help-link" href="{{url_for('teacher_help' if side == 'teacher' else 'student_help')}}" aria-label="使用帮助"><span>使用</span>帮助</a>
           {% endif %}
           {% if side == 'teacher' and me_teacher %}
@@ -49,12 +49,17 @@
               <summary aria-label="我的账号">
                 {% if me_teacher.avatar %}<img class="me-avatar" src="{{me_teacher.avatar}}" alt="" width="34" height="34">{% else %}<span class="me-avatar letter">{{me_teacher.initial}}</span>{% endif %}
                 <span class="me-name">{{me_teacher.name}}</span>
+                {% if me_teacher.feedback_unread %}<span class="fb-dot" role="img" aria-label="有新回复"></span>{% endif %}
               </summary>
               <div class="me-pop">
                 <a href="{{url_for('teacher_home')}}">我的功能</a>
                 <a href="{{url_for('classes_page')}}">我的班级</a>
                 <a href="{{url_for('profile_page')}}">修改名字和头像</a>
                 <a href="{{url_for('profile_page')}}#devices">我的设备（{{me_teacher.devices}}/{{me_teacher.device_limit}}）</a>
+                {% if not me_teacher.trial %}
+                  <a href="{{url_for('profile_page')}}#referral">我的推荐码</a>
+                  <a href="{{url_for('feedback_page')}}">提改进建议{% if me_teacher.feedback_unread %} <span class="fb-dot" role="img" aria-label="有新回复"></span>{% endif %}</a>
+                {% endif %}
                 <button type="button" data-post="{{url_for('logout')}}" data-confirm="{{'退出后，可以在「免费试用」页面回到试用账号。确定退出？' if me_teacher.trial else '退出后，这台设备需要重新输入授权码。确定退出？'}}">退出登录</button>
               </div>
             </details>
@@ -82,6 +87,13 @@
       {% block content %}
       {% endblock %}
     </main>
+    {% if side == 'teacher' and me_teacher and me_teacher.notices %}
+      <dialog id="wb-notices" class="wb-dialog notice-dialog" data-url="{{url_for('notices_seen')}}" data-ids='{{me_teacher.notices|map(attribute="id")|list|tojson}}'>
+        <h2>好消息</h2>
+        {% for n in me_teacher.notices %}<p>{{n.body}}</p>{% endfor %}
+        <form method="dialog"><button>知道了</button></form>
+      </dialog>
+    {% endif %}
     <footer class="site-footer">
       语文老师工作台 <span>·</span> {{'用心管理，让学习更简单' if is_admin else '腹有诗书气自华 · 让每个孩子爱上语文'}}{% if not is_admin %}{% include 'cross_sites.html' %}{% endif %}
     </footer>

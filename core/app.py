@@ -554,6 +554,9 @@ def create_app(site_config):
 
     register_api(app)
     register_admin(app)
+    from .feedback import register_feedback
+
+    register_feedback(app)
     if site_config.kind == "workbench":
         from .essay import register_essay  # 语文老师工作台: its own home, teacher and student pages
 
@@ -728,9 +731,15 @@ def register_api(app):
                 (now, s, row["id"], digest(token)),
             )
         if site().kind == "workbench":
-            from .essay import features  # the workbench's features start counting their days now
+            from .essay import features, referral  # the workbench's features start counting their days now
 
+            first = referral.first_activation(d, row["id"])
             features.activate(d, row["id"], now)
+            try:
+                referral.on_activation(d, row["id"], payload.get("referral"), first, now)
+            except ValueError as e:  # nothing is used up: the teacher corrects the code and tries again
+                d.rollback()
+                return jsonify(error=str(e)), 400
         d.commit()
         session.update(license=row["id"], device=token)
         session.permanent = True

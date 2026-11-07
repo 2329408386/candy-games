@@ -1474,7 +1474,15 @@ def test_help_pages(db, klass):
     assert 'href="/workspace/chinese/teacher/help"' in anonymous.get("/teacher/").get_data(as_text=True)
     assert 'href="/workspace/chinese/student/help"' in anonymous.get("/student/").get_data(as_text=True)
     assert "help-link" not in words
-    for page in (teacher_doc, student_doc):  # the screenshots exist
+    # A teacher reads the students' page from the teacher side: it links back there, not to the student sign-in.
+    assert 'href="/workspace/chinese/teacher/help/student"' in teacher_doc.get_data(as_text=True)
+    for_teacher = anonymous.get("/teacher/help/student")
+    assert for_teacher.status_code == 200
+    teacher_view = for_teacher.get_data(as_text=True)
+    assert "学生端使用帮助" in teacher_view and "返回老师端帮助" in teacher_view and "老师端" in teacher_view
+    assert 'href="/workspace/chinese/student/' not in teacher_view and "help-link" not in teacher_view
+    assert not any(w in teacher_view for w in ("AI", "智能", "模型", "识别"))
+    for page in (teacher_doc, student_doc, for_teacher):  # the screenshots exist
         shots = re.findall(r'<img src="/workspace/chinese(/static/help/[^"]+)"', page.get_data(as_text=True))
         assert len(shots) == 4
         for shot in shots:

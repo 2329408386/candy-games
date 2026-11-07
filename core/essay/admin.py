@@ -3,6 +3,7 @@ each teacher license's quota (student seats and essays a month). Both need the s
 
 import json, re, time
 from flask import abort, flash, jsonify, redirect, render_template, request, url_for
+from core import feedback as user_feedback
 from core.app import admin_only, audit, db, integer_field, license_row
 from . import llm, models_sync, month_start
 
@@ -94,7 +95,68 @@ def _step_form():
     }
 
 
+FEEDBACK_VIEWS = {"pending": "待回复", "replied": "已回复", "all": "全部"}
+FEEDBACK_WHERE = {"pending": " WHERE f.replied_at IS NULL", "replied": " WHERE f.replied_at IS NOT NULL", "all": ""}
+FEEDBACK_PAGE = 30
+
+
+def feedback_pending():
+    return db().execute("SELECT count(*) FROM feedback WHERE replied_at IS NULL").fetchone()[0]
+
+
 def register(app):
+    app.jinja_env.globals["feedback_pending"] = feedback_pending
+
+    @app.get("/admin/feedback")
+    @admin_only
+    def feedback_admin():
+        view = request.args.get("view")
+        view = view if view in FEEDBACK_VIEWS else "pending"
+        d = db()
+        where = FEEDBACK_WHERE[view]
+        total = d.execute("SELECT count(*) FROM feedback f" + where).fetchone()[0]
+        pages = max(1, (total + FEEDBACK_PAGE - 1) // FEEDBACK_PAGE)
+        page = max(1, min(request.args.get("page", 1, type=int), pages))
+        rows = d.execute(
+            "SELECT f.*,p.nickname,l.buyer,l.enabled,l.archived_at FROM feedback f"
+            " LEFT JOIN profiles p ON p.site=f.site AND p.license_id=f.license_id"
+            " LEFT JOIN licenses l ON l.site=f.site AND l.id=f.license_id"
+            + where
+            + " ORDER BY f.created_at DESC,f.id DESC LIMIT ? OFFSET ?",
+            (FEEDBACK_PAGE, (page - 1) * FEEDBACK_PAGE),
+        ).fetchall()
+        return render_template(
+            "feedback_admin.html",
+            rows=rows,
+            view=view,
+            views=FEEDBACK_VIEWS,
+            total=total,
+            page=page,
+            pages=pages,
+            max_reply=user_feedback.MAX_REPLY,
+        )
+
+    @app.post("/admin/feedback/<int:fid>/reply")
+    @admin_only
+    def feedback_reply(fid):
+        view = request.form.get("view")
+        back = url_for("feedback_admin", view=view if view in FEEDBACK_VIEWS else "pending")
+        reply = request.form.get("reply", "").strip()
+        if not 1 <= len(reply) <= user_feedback.MAX_REPLY:
+            flash(f"回复要写 1—{user_feedback.MAX_REPLY} 个字", "error")
+            return redirect(back)
+        d = db()
+        row = d.execute("SELECT site,license_id,replied_at FROM feedback WHERE id=?", (fid,)).fetchone()
+        if not row:
+            abort(404)
+        # Changing an answer counts as a new one: the user is told again.
+        d.execute("UPDATE feedback SET reply=?,replied_at=?,reply_seen_at=NULL WHERE id=?", (reply, int(time.time()), fid))
+        # Not filed under license_id: the audit is this site's, and the suggestion may come from another site's license.
+        audit("feedback_edit_reply" if row["replied_at"] else "feedback_reply", None, f"回复建议 #{fid}（{row['site']} 授权 #{row['license_id']}）")
+        d.commit()
+        flash("回复已发出，对方打开「改进建议」就能看到", "success")
+        return redirect(back)
+
     @app.route("/admin/models", methods=["GET", "POST"])
     @admin_only
     def models_page():
@@ -294,7 +356,7 @@ def register(app):
         """Turns a free-trial account into a paid one in place: its class, students and essays stay."""
         from core.schema import end_of_day
 
-        from . import features, is_trial
+        from . import features, is_trial, referral
 
         row = license_row(lid)
         if not row or row["archived_at"] is not None or not is_trial(lid):
@@ -325,6 +387,14 @@ def register(app):
             (lid, students, monthly),
         )
         features.set_expiry(d, lid, "essay", end_of_day(now + days * features.DAY), now=now)
+        code = request.form.get("referral", "")
+        if referral.normalize(code):  # a trial never meets the activation form: the admin enters the teacher's code
+            try:
+                referral.apply(d, lid, code, now)
+            except ValueError as e:
+                d.rollback()
+                flash(f"没有转为正式：{e}", "error")
+                return redirect(url_for("detail", lid=lid))
         audit("trial_convert", lid, f"试用转为正式：{buyer}；作文批改 {days} 天，学生 {students} 人，每月 {monthly} 篇，设备 {limit} 台")
         d.commit()
         flash("已转为正式授权，试用里的班级和作文都保留", "success")

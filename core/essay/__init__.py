@@ -44,8 +44,9 @@ features.py, admin.py (模型设置, quotas and feature expiry in the back offic
 import calendar, io, json, re, secrets, time
 from urllib.parse import quote
 from flask import Response, abort, g, jsonify, redirect, render_template, request, send_file, session, url_for
+from core import feedback as user_feedback
 from core.app import KEY_ALPHABET, XLSX_MIME, csrf, current, data_dir, db, device_hash, limited, new_xlsx, site, xlsx_download
-from . import features, grading
+from . import features, grading, referral
 
 DEFAULT_STUDENTS = 70
 DEFAULT_MONTHLY = 300
@@ -615,6 +616,7 @@ def register_essay(app):
         essay_default_monthly=DEFAULT_MONTHLY,
         workbench_features=lambda lid: features.overview(db(), lid),
         workbench_feature_list=features.FEATURES,
+        referral_info=lambda lid: referral.admin_info(db(), lid),
         device_name=device_name,
     )
     app.jinja_env.filters["mark_class"] = lambda t: MARK_CLASS.get(t, "tip")
@@ -635,6 +637,8 @@ def register_essay(app):
             me["devices"] = db().execute("SELECT count(*) FROM devices WHERE site='teacher' AND license_id=?", (row["id"],)).fetchone()[0]
             me["device_limit"] = row["device_limit"]
             me["trial"] = dict(trial_info(row["id"]), id=row["id"]) if is_trial(row["id"]) else None
+            me["notices"] = referral.pending_notices(db(), row["id"])
+            me["feedback_unread"] = 0 if me["trial"] else user_feedback.unread(row["id"])
         return {
             "side": side,
             "me_teacher": me if row else None,
@@ -831,11 +835,19 @@ def register_pages(app):
     def student_help():
         return render_template("student_help.html")
 
+    @app.get("/teacher/help/student")
+    def teacher_student_help():
+        # The students' page seen from the teacher side: its links lead back here, not to the student sign-in.
+        return render_template("student_help.html", for_teacher=True)
+
     @app.get("/teacher/profile")
     def profile_page():
         row = teacher()
         if not row:
             return redirect(url_for("teacher_home"))
+        d = db()
+        referral_code = referral.code_for(d, row["id"])
+        d.commit()
         return render_template(
             "profile.html",
             name_max=TEACHER_NAME_MAX,
@@ -843,6 +855,10 @@ def register_pages(app):
             device_limit=row["device_limit"],
             removals_left=max(0, SELF_REMOVALS - self_removals(row["id"])),
             removal_days=SELF_REMOVAL_DAYS,
+            referral_code=referral_code,
+            referred=referral.count_referred(d, row["id"]),
+            referrer_days=referral.REFERRER_DAYS,
+            referee_days=referral.REFEREE_DAYS,
         )
 
     @app.get("/teacher/classes/")
@@ -1337,6 +1353,12 @@ def submission_photos():
 
 
 def register_teacher_api(app):
+    @app.post("/api/teacher/notices/seen")
+    @teacher_api
+    def notices_seen(row):
+        referral.mark_seen(db(), row["id"], payload().get("ids"), int(time.time()))
+        return jsonify(ok=True)
+
     @app.post("/api/me/name")
     @teacher_api
     def teacher_name(row):
