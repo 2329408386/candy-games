@@ -998,6 +998,19 @@ def test_essay_retext_grades_corrected_text_without_reading_the_photos(models, k
     assert all(new[l["s"] : l["e"]].startswith("第1页") for l in json.loads(first))
 
 
+def test_verify_step_has_its_own_model(models, klass, db):
+    t, cid, aid = klass
+    s, _ = student_client(db, cid, "李华")
+    db.execute("INSERT INTO ess_steps(step,slot,provider_id,model) VALUES('verify','main',1,'looker')")
+    db.commit()
+    sid = upload(s, f"/api/write/{aid}", [photo_bytes()]).get_json()["id"]
+    run_worker()
+    assert db.execute("SELECT status FROM ess_submissions WHERE id=?", (sid,)).fetchone()[0] in ("review", "published")
+    used = [m for m, b in models.calls if b["messages"][0]["content"].startswith("你在核对")]
+    assert used and set(used) == {"looker"}
+    assert "eyes" in [m for m, b in models.calls if "誊抄" in b["messages"][0]["content"][:80]]
+
+
 def test_jobs_cut_off_by_a_restart_resume_at_once(models, klass, db):
     t, cid, aid = klass
     s, _ = student_client(db, cid, "李华")

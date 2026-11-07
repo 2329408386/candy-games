@@ -18,7 +18,7 @@ Every call, successful or not, is written to ess_usage with its tokens, the cost
 import base64, hashlib, json, re, socket, threading, time, urllib.error, urllib.request
 from cryptography.fernet import Fernet, InvalidToken
 
-STEPS = {"ocr": "照片识别（OCR）", "grade": "作文批改", "check": "批改复核"}
+STEPS = {"ocr": "照片识别（OCR）", "grade": "作文批改", "check": "批改复核", "verify": "看图复核"}
 SLOTS = {"main": "主模型", "backup": "备用模型"}
 BEIJING = 8 * 3600
 USER_AGENT = "candy-games-essay/1.0 (+http://39.106.16.99/teacher/)"

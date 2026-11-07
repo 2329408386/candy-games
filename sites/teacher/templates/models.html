@@ -58,7 +58,7 @@
   {% for step, step_name in STEPS.items() %}
     <section class="panel" id="step-{{step}}">
       <h2>{{step_name}}</h2>
-      <p class="hint">{{ {'ocr': '把学生作文的照片识别成文字（拍照提交下一期上线）。需要能看图的模型，例如 qwen-vl-ocr。', 'grade': '给作文打分、写评语和标注，质量最关键，建议用旗舰模型。必须支持 JSON 输出。', 'check': '逐条复核批改里的错别字、病句等标注，去掉误判，并独立给出等级。可以用便宜一些的模型。'}[step] }}主模型出错、超时或被限流时，自动改用备用模型。</p>
+      <p class="hint">{{ {'ocr': '把学生作文的照片识别成文字（拍照提交下一期上线）。需要能看图的模型，例如 qwen-vl-ocr。', 'grade': '给作文打分、写评语和标注，质量最关键，建议用旗舰模型。必须支持 JSON 输出。', 'check': '逐条复核批改里的错别字、病句等标注，去掉误判，并独立给出等级。可以用便宜一些的模型。', 'verify': '放大照片再看一次被标成错别字的字，确认是学生写错的还是识别看错的。需要能看图的模型。没有配置时用照片识别的模型。'}[step] }}主模型出错、超时或被限流时，自动改用备用模型。</p>
       {% if first_model[step] %}<p class="hint">现在先用：<strong>{{first_model[step]}}</strong></p>{% endif %}
       <div class="step-slots">
         {% for slot, slot_name in SLOTS.items() %}
@@ -69,7 +69,7 @@
             <h3>{{slot_name}}</h3>
             <div class="fields-row">
               <div class="form-field"><label>服务商</label><select name="provider_id"><option value="">（不使用）</option>{% for p in providers %}<option value="{{p.id}}"{{' selected' if s and s.provider_id == p.id}}>{{p.name}}</option>{% endfor %}</select></div>
-              <div class="form-field"><label>模型名称</label><input name="model" value="{{s.model if s else ''}}" placeholder="{{ {'ocr': 'qwen-vl-ocr', 'grade': 'deepseek-v4-pro', 'check': 'deepseek-flash'}[step] }}"></div>
+              <div class="form-field"><label>模型名称</label><input name="model" value="{{s.model if s else ''}}" placeholder="{{ {'ocr': 'qwen-vl-ocr', 'grade': 'deepseek-v4-pro', 'check': 'deepseek-flash', 'verify': 'qwen-vl-ocr'}[step] }}"></div>
             </div>
             <div class="fields-row">
               <div class="form-field"><label>温度</label><input name="temperature" value="{{s.temperature if s and s.temperature is not none else ''}}" placeholder="不填用默认，批改建议 0.3"></div>

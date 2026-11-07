@@ -61,11 +61,11 @@ def stale_seconds(d):
     timeouts (every model of a step timing out llm.TRIES times; every photo read that way), plus a margin.
     Shorter would run a slow job a second time while the first is still going."""
     longest = {
-        step: llm.TRIES * sum(r["timeout"] or 120 for r in llm.step_rows(d, step)) for step in ("ocr", "grade", "check")
+        step: llm.TRIES * sum(r["timeout"] or 120 for r in llm.step_rows(d, step)) for step in ("ocr", "grade", "check", "verify")
     }
     from . import MAX_PHOTOS
 
-    return max(STALE_SECONDS, longest["ocr"] * MAX_PHOTOS + longest["grade"] + longest["check"] + 300)
+    return max(STALE_SECONDS, longest["ocr"] * MAX_PHOTOS + longest["grade"] + longest["check"] + 2 * longest["verify"] + 300)
 
 
 def claim(d):
@@ -197,6 +197,11 @@ def read_photos(d, essay):
     return {**essay, "text": text, "title": essay["title"] or title, "writing": writing, "shapes": json.dumps(shapes, ensure_ascii=False) if shapes else ""}
 
 
+def verify_step(d):
+    """Who looks at the photo again: the verify step, or the ocr step's models while that has none."""
+    return "verify" if llm.configured(d, "verify") else "ocr"
+
+
 def verify_shapes(d, essay, shapes, text, pages):
     """The characters the ocr step says were written wrong (no character at all), looked at again on the photo:
     only the ones the photo check confirms are kept. A failed call keeps none (better miss one than mark a right one)."""
@@ -211,7 +216,7 @@ def verify_shapes(d, essay, shapes, text, pages):
         crops = [crop_line(t["iid"], t["box"]) for t in targets]
         seen, _ = llm.chat(
             d,
-            "ocr",
+            verify_step(d),
             grading.verify_messages(targets, crops),
             json_mode=True,
             parse=lambda content: grading.parse_verify(llm.parse_json(content), len(targets)),
@@ -271,13 +276,13 @@ def verify_typos(d, essay, review):
     images = d.execute("SELECT id,lines FROM ess_images WHERE submission_id=? ORDER BY page", (essay["id"],)).fetchall()
     pages = [(img["id"], json.loads(img["lines"]) if img["lines"] else []) for img in images]
     targets = grading.typo_targets(review, essay["text"], pages)
-    if not targets or not llm.configured(d, "ocr"):
+    if not targets or not llm.configured(d, verify_step(d)):
         return review
     try:
         crops = [crop_line(t["iid"], t["box"]) for t in targets]
         seen, _ = llm.chat(
             d,
-            "ocr",
+            verify_step(d),
             grading.verify_messages(targets, crops),
             json_mode=True,
             parse=lambda content: grading.parse_verify(llm.parse_json(content), len(targets)),
