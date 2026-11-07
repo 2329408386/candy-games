@@ -1608,7 +1608,7 @@ def test_typo_verify_helpers():
     # A line without a box is not looked at.
     assert [t["mark"] for t in grading.typo_targets(review, text, [(7, pages[0][1][:1])])] == [0]
     msgs = grading.verify_messages(targets, [b"a", b"b"])
-    assert "第 2 个字（识别成了「设」，批改认为应该是「没」）" in msgs[1]["content"][0]["text"]
+    assert "第 2 个字（识别成了「设」）" in msgs[1]["content"][0]["text"]
     with pytest.raises(ValueError):
         grading.parse_verify({"items": [{"id": 1, "seen": "没"}]}, 2)
     seen = grading.parse_verify({"items": [{"id": 1, "seen": "没"}, {"id": 2, "seen": "心"}]}, 2)
