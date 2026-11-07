@@ -470,7 +470,8 @@ def verify_messages(targets, crops):
         if "char" in t:  # shape_targets: was it really written wrong?
             ask = f"（识别时认为学生想写「{t['char']}」，但写错了：{t['note'] or '写成了字典里没有的字'}）。这个字真的写错了吗？"
         else:
-            ask = f"（识别成了「{t['wrong']}」，批改认为应该是「{t['right']}」）。"
+            # Not told what the grader wants there: told, the model tends to see that character, and a real typo is lost.
+            ask = f"（识别成了「{t['wrong']}」）。"
         content.append({"type": "text", "text": f"第 {t['id']} 项：这一行识别为「{t['line']}」，请看其中第 {t['nth']} 个字{ask}"})
         content.append({"type": "image_url", "image_url": {"url": "data:image/jpeg;base64," + base64.b64encode(data).decode()}})
     content.append({"type": "text", "text": "请逐项回答纸上写的是哪个字。"})

@@ -998,6 +998,12 @@ def test_essay_retext_grades_corrected_text_without_reading_the_photos(models, k
     assert all(new[l["s"] : l["e"]].startswith("第1页") for l in json.loads(first))
 
 
+def test_photo_check_is_not_told_the_graders_answer():
+    target = {"id": 1, "line": "玩暴了", "nth": 2, "wrong": "暴", "right": "累"}
+    text = json.dumps(grading.verify_messages([target], [b"x"]), ensure_ascii=False)
+    assert "暴" in text and "累" not in text
+
+
 def test_verify_step_has_its_own_model(models, klass, db):
     t, cid, aid = klass
     s, _ = student_client(db, cid, "李华")
