@@ -452,6 +452,25 @@ def rotate_image(d, row, degrees):
     return d.execute("SELECT * FROM ess_images WHERE id=?", (iid,)).fetchone()
 
 
+def grade_corrected(sub, text):
+    """Grades a submission again on corrected text, without reading its photos again: the red pen's line positions and
+    the miswritten characters follow the edit."""
+    d = db()
+    sid = sub["id"]
+    photos = d.execute("SELECT * FROM ess_images WHERE submission_id=? ORDER BY page", (sid,)).fetchall()
+    if sub["text"] and photos:
+        spots = grading.remap(sub["text"], text, [json.loads(p["lines"]) if p["lines"] else [] for p in photos])
+        for p, lines in zip(photos, spots):
+            if p["lines"]:
+                d.execute("UPDATE ess_images SET lines=? WHERE id=?", (json.dumps(lines), p["id"]))
+    shapes = grading.remap_shapes(sub["text"], text, json.loads(sub["shapes"])) if sub["shapes"] and sub["text"] else []
+    d.execute(
+        "UPDATE ess_submissions SET text=?,shapes=?,status='queued',hold='' WHERE id=?",
+        (text, json.dumps(shapes, ensure_ascii=False) if shapes else "", sid),
+    )
+    enqueue(sid)
+
+
 def split_image(d, row, cut):
     """Cuts a stored photo of two pages at cut (0–1000 of its width) into two photos of their own, in its place in the
     order; returns their ess_images rows (left, right). The photos after it move one page on."""
@@ -1607,19 +1626,7 @@ def register_teacher_api(app):
             raise ValueError("作文太短了，至少 20 个字")
         if len(text) > grading.MAX_TEXT:
             raise ValueError(f"作文太长了，最多 {grading.MAX_TEXT} 个字")
-        d = db()
-        photos = images_of(sid)
-        if sub["text"] and photos:
-            spots = grading.remap(sub["text"], text, [json.loads(p["lines"]) if p["lines"] else [] for p in photos])
-            for p, lines in zip(photos, spots):
-                if p["lines"]:
-                    d.execute("UPDATE ess_images SET lines=? WHERE id=?", (json.dumps(lines), p["id"]))
-        shapes = grading.remap_shapes(sub["text"], text, json.loads(sub["shapes"])) if sub["shapes"] and sub["text"] else []
-        d.execute(
-            "UPDATE ess_submissions SET text=?,shapes=?,status='queued',hold='' WHERE id=?",
-            (text, json.dumps(shapes, ensure_ascii=False) if shapes else "", sid),
-        )
-        enqueue(sid)
+        grade_corrected(sub, text)
         return jsonify(ok=True)
 
     @app.get("/api/submissions/<int:sid>/state")

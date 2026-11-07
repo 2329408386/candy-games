@@ -974,6 +974,30 @@ def test_page_with_unusable_boxes_is_read_again(models, klass, db):
     assert db.execute("SELECT status FROM ess_submissions WHERE id=?", (sid,)).fetchone()[0] in ("review", "published")
 
 
+def test_essay_retext_grades_corrected_text_without_reading_the_photos(models, klass, db, tmp_path):
+    import manage, wsgi
+
+    t, cid, aid = klass
+    s, _ = student_client(db, cid, "李华")
+    models.ocr = two_pages_ocr()
+    sid = upload(s, f"/api/write/{aid}", [two_pages_photo()]).get_json()["id"]
+    run_worker()
+    assert db.execute("SELECT status FROM ess_submissions WHERE id=?", (sid,)).fetchone()[0] in ("review", "published")
+    old = db.execute("SELECT text FROM ess_submissions WHERE id=?", (sid,)).fetchone()[0]
+    new = old.replace("第1页第1行写了一些字。", "第1页第1行写字。")
+    path = tmp_path / "text.txt"
+    path.write_text(new, encoding="utf-8")
+    models.calls.clear()
+    with wsgi.teacher.app_context():
+        manage.essay_retext(sid, str(path))
+    run_worker()
+    sub = db.execute("SELECT text,status FROM ess_submissions WHERE id=?", (sid,)).fetchone()
+    assert sub["text"] == new and sub["status"] in ("review", "published")
+    assert not [b for m, b in models.calls if "誊抄" in b["messages"][0]["content"][:80]]
+    first = db.execute("SELECT lines FROM ess_images WHERE submission_id=? ORDER BY page", (sid,)).fetchone()[0]
+    assert all(new[l["s"] : l["e"]].startswith("第1页") for l in json.loads(first))
+
+
 def test_jobs_cut_off_by_a_restart_resume_at_once(models, klass, db):
     t, cid, aid = klass
     s, _ = student_client(db, cid, "李华")

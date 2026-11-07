@@ -123,6 +123,23 @@ def essay_reread(sid):
     print(f"作文 {sid} 已重新排队（原来是 {row['status']}），会从识别照片开始重新批改")
 
 
+def essay_retext(sid, path):
+    """Grades an essay again on corrected text from a file, without reading its photos again; also for one already
+    published (the teacher's correction only takes essays waiting for review). What the student saw is replaced."""
+    from core.essay import grade_corrected, grading
+
+    d = db()
+    row = d.execute("SELECT * FROM ess_submissions WHERE id=?", (sid,)).fetchone()
+    if not row:
+        raise SystemExit(f"没有编号为 {sid} 的作文")
+    text = grading.clean_text(open(path, encoding="utf-8").read())
+    if grading.char_count(text) < 20 or len(text) > grading.MAX_TEXT:
+        raise SystemExit("作文太短或太长")
+    grade_corrected(row, text)
+    d.commit()
+    print(f"作文 {sid} 已改好文字并重新排队（原来是 {row['status']}）")
+
+
 def essay_recalibrate(max_id, dry_run=False):
     """Moves the line boxes of the photos already graded onto the handwriting, as the worker now does for new ones
     (core/essay/photo.py). Only where the red pen is drawn changes: no model is called, and the text and the marks
@@ -229,12 +246,12 @@ def summary(site):
 
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
-    p.add_argument("command", choices=["seed", "export", "backup", "reset-password", "summary", "essay-reread", "essay-drop-para", "essay-recalibrate", "essay-unboxes"])
+    p.add_argument("command", choices=["seed", "export", "backup", "reset-password", "summary", "essay-reread", "essay-retext", "essay-drop-para", "essay-recalibrate", "essay-unboxes"])
     p.add_argument("--site", choices=sorted(SITES))
     p.add_argument("--id", type=int, help="essay-reread: 作文提交编号")
     p.add_argument("--dry-run", action="store_true", help="essay-recalibrate: 只算不写")
     p.add_argument("--max-id", type=int, help="essay-recalibrate: 只处理这个编号及之前的照片")
-    p.add_argument("--file", help="essay-unboxes: essay-recalibrate 存下的文件")
+    p.add_argument("--file", help="essay-unboxes: essay-recalibrate 存下的文件；essay-retext: 改好的作文文字")
     args = p.parse_args()
     schema.initialize(data_dir() / schema.DB_NAME)
     if args.command == "backup":
@@ -255,6 +272,12 @@ if __name__ == "__main__":
             p.error("essay-unboxes 需要 --file")
         with create_app(SITES["teacher"]).app_context():
             essay_unboxes(args.file)
+        raise SystemExit
+    if args.command == "essay-retext":
+        if not args.id or not args.file:
+            p.error("essay-retext 需要 --id 和 --file")
+        with create_app(SITES["teacher"]).app_context():
+            essay_retext(args.id, args.file)
         raise SystemExit
     if args.command == "essay-reread":
         if not args.id:
