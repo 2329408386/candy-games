@@ -24,6 +24,7 @@ STALE_SECONDS = 900  # at least this long 'running' means the job was interrupte
 IDLE_SECONDS = 2
 HOLD_SECONDS = 60
 BEIJING = 8 * 3600
+BOX_READS = (None, None, "backup")  # read_for_boxes: the model slot of each further reading (None: as usual)
 log = logging.getLogger("essay-worker")
 
 
@@ -131,24 +132,58 @@ def split_spread(d, img, page):
     return list(zip(rows, sides))
 
 
+def read_page(d, img, pages, meta, both_sides=False, slot=None):
+    """The ocr step on one photo of a submission of that many pages → a page from grading.parse_ocr."""
+    from . import image_path
+
+    def parse(content):
+        raw = llm.parse_json(content)
+        page = grading.parse_ocr(raw)
+        if grading.missing_boxes(page):
+            log.warning("submission %s image %s: %s", meta["submission_id"], img["id"], grading.box_report(raw))
+        return page
+
+    page, _ = llm.chat(
+        d,
+        "ocr",
+        grading.ocr_messages(image_path(img["id"]).read_bytes(), img["page"], pages, both_sides),
+        json_mode=True,
+        parse=parse,
+        slot=slot,
+        **meta,
+    )
+    return page
+
+
+def read_for_boxes(read, img, page):
+    """A page with lines lacking a usable box, read again: such a reply is often a one-off. Lines without a box get no
+    red pen; a page with no box at all takes the red pen off the photos of the whole essay, so that one gets further
+    readings, the last by the backup model (BOX_READS). The best reading is kept; a failed one only costs the red pen."""
+    for k, slot in enumerate(BOX_READS):
+        missing = grading.missing_boxes(page)
+        if not missing or (k and missing < len(page["lines"])):
+            break
+        try:
+            again = read(img, slot=slot)
+        except llm.LLMError as e:
+            log.warning("image %s not read again for its line boxes: %s", img["id"], e)
+            continue
+        if grading.better_boxes(again, page):
+            log.info("image %s: read again for the line boxes", img["id"])
+            page = again
+    return page
+
+
 def read_photos(d, essay):
     """OCR of every photo of a submission → essay dict with the text (and title when the student gave none).
     Raises llm.LLMError."""
-    from . import image_path, rotate_image
+    from . import rotate_image
 
     meta = dict(license_id=essay["license_id"], submission_id=essay["id"])
     images = d.execute("SELECT * FROM ess_images WHERE submission_id=? ORDER BY page", (essay["id"],)).fetchall()
 
-    def read(img, both_sides=False):
-        page, _ = llm.chat(
-            d,
-            "ocr",
-            grading.ocr_messages(image_path(img["id"]).read_bytes(), img["page"], len(images), both_sides),
-            json_mode=True,
-            parse=lambda content: grading.parse_ocr(llm.parse_json(content)),
-            **meta,
-        )
-        return page
+    def read(img, both_sides=False, slot=None):
+        return read_page(d, img, len(images), meta, both_sides, slot)
 
     pages, upright = [], []
     for img in images:
@@ -163,12 +198,7 @@ def read_photos(d, essay):
             log.info("submission %s page %s turned %s°", essay["id"], img["page"], page["rotate"])
             img = rotate_image(d, img, page["rotate"])
             page = read(img)
-        if grading.missing_boxes(page):
-            # Lines without a usable box get no red pen. Such a reply is often a one-off: the better of two readings.
-            again = read(img)
-            if grading.missing_boxes(again) < grading.missing_boxes(page):
-                log.info("submission %s page %s: read again for the line boxes", essay["id"], img["page"])
-                page = again
+        page = read_for_boxes(read, img, page)
         if grading.reads_one_side(page, img["w"], img["h"]):
             # The right page may have been left out. A second reading that finds no more keeps the first.
             again = read(img, both_sides=True)

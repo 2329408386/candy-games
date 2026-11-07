@@ -178,6 +178,48 @@ def essay_recalibrate(max_id, dry_run=False):
     print(f"{'试算：' if dry_run else ''}共 {len(rows)} 张，校准 {changed} 张，保留原框 {kept} 张，跳过 {failed} 张")
 
 
+def essay_fill_boxes(sid, dry_run=False):
+    """Reads the one photo of an essay that has no line boxes again, for its boxes only, so the red pen can be drawn on
+    the photos. The text, the marks and the score stay; the ocr step's model is called, not charged to the teacher."""
+    from core.essay import grading, worker
+
+    d = db()
+    row = d.execute("SELECT text FROM ess_submissions WHERE id=?", (sid,)).fetchone()
+    if not row:
+        raise SystemExit(f"没有编号为 {sid} 的作文")
+    images = d.execute("SELECT * FROM ess_images WHERE submission_id=? ORDER BY page", (sid,)).fetchall()
+    spots = [json.loads(i["lines"] or "[]") for i in images]
+    empty = [k for k, lines in enumerate(spots) if not lines]
+    if len(empty) != 1:
+        raise SystemExit(f"作文 {sid} 有 {len(empty)} 张照片缺行框，只处理正好缺一张的")
+    k, text = empty[0], row["text"]
+    img = images[k]
+    start = spots[k - 1][-1]["e"] if k else 0
+    end = spots[k + 1][0]["s"] if k + 1 < len(images) else len(text)
+    meta = dict(license_id=0, submission_id=sid)
+    read = lambda img, both_sides=False, slot=None: worker.read_page(d, img, len(images), meta, both_sides, slot)
+    page = worker.read_for_boxes(read, img, read(img))
+    if page["rotate"] or grading.missing_boxes(page) == len(page["lines"]):
+        raise SystemExit(f"作文 {sid} 图片 {img['id']}：没有拿到能用的行框，没有改动")
+    page = worker.calibrated(img, page)
+    placed = grading.place_lines(text, start, end, page["lines"])
+    if not placed:
+        raise SystemExit(f"作文 {sid} 图片 {img['id']}：重读的文字和存着的对不上，没有改动")
+    for s in placed:
+        print(s["b"], text[s["s"] : s["e"]])
+    if not dry_run:
+        # Not if the teacher corrected the text in the meantime: that stored other positions.
+        done = d.execute(
+            "UPDATE ess_images SET lines=? WHERE id=? AND coalesce(lines,'') IN ('','[]')"
+            " AND EXISTS(SELECT 1 FROM ess_submissions WHERE id=? AND text=?)",
+            (json.dumps(placed), img["id"], sid, text),
+        ).rowcount
+        d.commit()
+        if not done:
+            raise SystemExit(f"作文 {sid} 在这期间改动过，没有写入")
+    print(f"{'试算：' if dry_run else ''}作文 {sid} 图片 {img['id']}：{len(placed)} 行")
+
+
 def essay_unboxes(path):
     """Puts back the line boxes saved by essay-recalibrate."""
     d = db()
@@ -246,10 +288,10 @@ def summary(site):
 
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
-    p.add_argument("command", choices=["seed", "export", "backup", "reset-password", "summary", "essay-reread", "essay-retext", "essay-drop-para", "essay-recalibrate", "essay-unboxes"])
+    p.add_argument("command", choices=["seed", "export", "backup", "reset-password", "summary", "essay-reread", "essay-retext", "essay-fill-boxes", "essay-drop-para", "essay-recalibrate", "essay-unboxes"])
     p.add_argument("--site", choices=sorted(SITES))
     p.add_argument("--id", type=int, help="essay-reread: 作文提交编号")
-    p.add_argument("--dry-run", action="store_true", help="essay-recalibrate: 只算不写")
+    p.add_argument("--dry-run", action="store_true", help="essay-recalibrate、essay-fill-boxes: 只算不写")
     p.add_argument("--max-id", type=int, help="essay-recalibrate: 只处理这个编号及之前的照片")
     p.add_argument("--file", help="essay-unboxes: essay-recalibrate 存下的文件；essay-retext: 改好的作文文字")
     args = p.parse_args()
@@ -278,6 +320,12 @@ if __name__ == "__main__":
             p.error("essay-retext 需要 --id 和 --file")
         with create_app(SITES["teacher"]).app_context():
             essay_retext(args.id, args.file)
+        raise SystemExit
+    if args.command == "essay-fill-boxes":
+        if not args.id:
+            p.error("essay-fill-boxes 需要 --id")
+        with create_app(SITES["teacher"]).app_context():
+            essay_fill_boxes(args.id, args.dry_run)
         raise SystemExit
     if args.command == "essay-reread":
         if not args.id:

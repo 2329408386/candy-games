@@ -249,13 +249,13 @@ def log_usage(d, row, license_id, submission_id, step, tokens, ok, error="", sta
 TRIES = 2  # each model is asked this many times before the next one (a failure that may pass is often gone at once)
 
 
-def chat(d, step, messages, *, json_mode=False, license_id=0, submission_id=None, parse=None):
+def chat(d, step, messages, *, json_mode=False, license_id=0, submission_id=None, parse=None, slot=None):
     """Runs a step on its main model, falling back to the backup. A failure that may pass (timeout, rate limit,
     server error, an answer that is not usable JSON) is tried again on the same model first, up to TRIES times;
     one that cannot (bad key, wrong model name) goes straight to the next model. parse(content) may raise ValueError
     to reject an answer (e.g. JSON that does not fit the schema): that counts as a failure of that model.
-    Returns (parsed or content, model label)."""
-    rows = step_rows(d, step)
+    slot: only that slot's model. Returns (parsed or content, model label)."""
+    rows = [r for r in step_rows(d, step) if slot in (None, r["slot"])]
     if not rows:
         raise NotConfigured(step)
     errors, retry = [], False

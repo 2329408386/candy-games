@@ -31,11 +31,12 @@ Prompts live in sites/teacher/prompts/; PROMPT_VERSION is a hash of those files 
 Anchor essays (teacher-scored examples that calibrate the scale) go in prompts/anchors/<band>.json.
 """
 
-import hashlib, json, re
+import difflib, hashlib, json, re
 from pathlib import Path
 
 PROMPTS = Path(__file__).resolve().parent.parent.parent / "sites" / "teacher" / "prompts"
 DIMS = {"content": "内容", "structure": "结构", "language": "语言", "norms": "规范"}
+PLACE_MIN_RATIO = 0.8  # place_lines: how alike two readings of a page must be
 ERROR_TYPES = ("错别字", "用词不当", "病句", "标点")
 MODEL_TYPES = ERROR_TYPES + ("好词好句", "修改建议", "分段")  # what the grade step may write
 SOFT = "书写提醒"  # the photo and the reading disagree about a character: not called wrong, the right form is given
@@ -578,6 +579,50 @@ def split_page(page, cut):
 def missing_boxes(page):
     """How many lines of a page from parse_ocr have no usable box: they get no red pen, and the page cannot be cut."""
     return sum(1 for line in page["lines"] if not line["box"])
+
+
+def better_boxes(again, page):
+    """Whether a second reading of a page has fewer lines without a box, without having lost part of the text."""
+    size = lambda p: sum(len(line["text"]) for line in p["lines"])
+    return missing_boxes(again) < missing_boxes(page) and size(again) >= 0.8 * size(page)
+
+
+def box_report(raw):
+    """What a reading with unusable boxes answered, for the log: the boxes but not the child's words."""
+    lines = [line for line in raw.get("lines") or [] if isinstance(line, dict)]
+    return f"{len(lines)} lines, boxes like {[line.get('box') for line in lines[:3]]}, off scale: {sum(1 for line in lines if _off_scale(line))}"
+
+
+def place_lines(text, start, end, lines):
+    """Lines read again from a page whose part of the stored text is text[start:end] → [{"s", "e", "b"}…] in the
+    stored text. The two readings may differ here and there, so each line is placed by what they share and the lines
+    together cover the part. None when they are too different to tell."""
+    part = text[start:end]
+    read = [line["text"] for line in lines]
+    matcher = difflib.SequenceMatcher(None, "".join(read), part, autojunk=False)
+    if not part or matcher.ratio() < PLACE_MIN_RATIO:
+        return None
+    blocks = matcher.get_matching_blocks()
+
+    def in_part(a):
+        block = next((b for b in blocks if a < b.a + b.size), None)
+        return block.b + max(0, a - block.a) if block else len(part)
+
+    spots, s, a = [], 0, 0
+    for k, line in enumerate(lines):
+        a += len(line["text"])
+        e = len(part) if k == len(lines) - 1 else max(s, in_part(a))
+        while s < e and part[s] == "\n":
+            s += 1
+        stop = e
+        while s < stop and part[stop - 1] == "\n":
+            stop -= 1
+        if "\n" in part[s:stop]:
+            return None  # a paragraph starts on a new line, so a line cannot hold one
+        if line["box"] and s < stop:
+            spots.append({"s": start + s, "e": start + stop, "b": line["box"]})
+        s = e
+    return spots
 
 
 def reads_one_side(page, width, height):

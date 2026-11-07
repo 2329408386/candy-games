@@ -965,13 +965,95 @@ def test_page_with_unusable_boxes_is_read_again(models, klass, db):
     run_worker()
     images = db.execute("SELECT * FROM ess_images WHERE submission_id=? ORDER BY page", (sid,)).fetchall()
     assert len(images) == 2 and all(json.loads(i["lines"]) for i in images)
-    # Still no boxes the second time: the text is graded all the same, on the whole photo.
-    models.ocr = [off_scale, off_scale]
+    # No boxes twice: read a third time, then by the backup model, whose boxes are taken.
+    models.calls.clear()
+    db.execute("INSERT INTO ess_steps(step,slot,provider_id,model,price_in,price_cached,price_out) VALUES('ocr','backup',1,'spare',1,0,2)")
+    db.commit()
+    models.ocr = [off_scale, off_scale, off_scale, two_pages_ocr()]
+    s3, _ = student_client(db, cid, "王小明")
+    sid = upload(s3, f"/api/write/{aid}", [two_pages_photo()]).get_json()["id"]
+    run_worker()
+    assert [m for m, b in models.calls if "誊抄" in b["messages"][0]["content"][:80]] == ["eyes", "eyes", "eyes", "spare"]
+    assert db.execute("SELECT count(*) FROM ess_images WHERE submission_id=?", (sid,)).fetchone()[0] == 2
+    db.execute("DELETE FROM ess_steps WHERE step='ocr' AND slot='backup'")
+    db.commit()
+    # Never any boxes: the text is graded all the same, on the whole photo; no backup model is no failure.
+    models.ocr = [off_scale, off_scale, off_scale]
     s2, _ = student_client(db, cid, "张三")
     sid = upload(s2, f"/api/write/{aid}", [two_pages_photo()]).get_json()["id"]
     run_worker()
     assert db.execute("SELECT count(*) FROM ess_images WHERE submission_id=?", (sid,)).fetchone()[0] == 1
     assert db.execute("SELECT status FROM ess_submissions WHERE id=?", (sid,)).fetchone()[0] in ("review", "published")
+
+
+def test_read_for_boxes_stops_early_and_keeps_the_text():
+    box, none = [10, 10, 900, 50], None
+    page = lambda *boxes, text="今天天气真好": {"lines": [{"text": text, "box": b} for b in boxes], "rotate": 0}
+    calls = []
+
+    def reader(*answers):
+        answers = list(answers)
+        calls.clear()
+
+        def read(img, both_sides=False, slot=None):
+            calls.append(slot)
+            answer = answers.pop(0)
+            if isinstance(answer, Exception):
+                raise answer
+            return answer
+
+        return read
+
+    img = {"id": 1}
+    # All boxes: not read again.
+    good = page(box, box)
+    assert worker.read_for_boxes(reader(), img, good) is good and calls == []
+    # One line missing costs one mark at most: one more reading, even if that does not help.
+    partial = page(box, none)
+    assert worker.read_for_boxes(reader(partial), img, partial) is partial and calls == [None]
+    # A reading that lost most of the text is not better, though it has no missing box; a failed reading costs nothing.
+    empty = page(none, none, none)
+    short = page(box, text="今")
+    failed = llm.LLMError("x")
+    assert worker.read_for_boxes(reader(short, failed, empty), img, empty) is empty and calls == [None, None, "backup"]
+
+
+def test_place_lines_on_stored_text():
+    text = "第一页的字。\n小金鱼在水里游来游去。\n它累了就睡觉，真可爱。后面"
+    start, end = text.index("小"), text.index("后")
+    box = [10, 10, 900, 50]
+    lines = [{"text": "小金鱼在水里游", "box": box}, {"text": "来游去。", "box": box}, {"text": "它累了就唾觉，", "box": None}, {"text": "真可爱。", "box": box}]
+    spots = grading.place_lines(text, start, end, lines)
+    assert [text[s["s"] : s["e"]] for s in spots] == ["小金鱼在水里游", "来游去。", "真可爱。"]  # 唾 misread; no box, no spot
+    assert grading.place_lines(text, start, end, [{"text": "完全不一样的另外一段文字内容", "box": box}]) is None
+    assert grading.place_lines(text, 3, 3, lines) is None
+    # One line that would hold a new paragraph: not a line of this text.
+    assert grading.place_lines(text, start, end, [{"text": "小金鱼在水里游来游去。它累了就睡觉，真可爱。", "box": box}]) is None
+
+
+def test_essay_fill_boxes_only_writes_the_missing_page(models, klass, db):
+    import manage, wsgi
+
+    t, cid, aid = klass
+    s, _ = student_client(db, cid, "李华")
+    models.ocr = OCR_PAGE
+    sid = upload(s, f"/api/write/{aid}", [photo_bytes(), photo_bytes()]).get_json()["id"]
+    run_worker()
+    first, second = db.execute("SELECT * FROM ess_images WHERE submission_id=? ORDER BY page", (sid,)).fetchall()
+    before = db.execute("SELECT text,status FROM ess_submissions WHERE id=?", (sid,)).fetchone()
+    review = db.execute("SELECT * FROM ess_reviews WHERE submission_id=?", (sid,)).fetchall()
+    db.execute("UPDATE ess_images SET lines='' WHERE id=?", (second["id"],))
+    db.commit()
+    with wsgi.teacher.app_context():
+        manage.essay_fill_boxes(sid, dry_run=True)
+        assert not db.execute("SELECT lines FROM ess_images WHERE id=?", (second["id"],)).fetchone()[0]
+        manage.essay_fill_boxes(sid)
+        with pytest.raises(SystemExit):  # nothing missing now
+            manage.essay_fill_boxes(sid)
+    spots = json.loads(db.execute("SELECT lines FROM ess_images WHERE id=?", (second["id"],)).fetchone()[0])
+    assert spots[0]["s"] == json.loads(first["lines"])[-1]["e"] + 1 and spots[-1]["e"] == len(before["text"])
+    assert tuple(db.execute("SELECT text,status FROM ess_submissions WHERE id=?", (sid,)).fetchone()) == tuple(before)
+    assert [tuple(r) for r in db.execute("SELECT * FROM ess_reviews WHERE submission_id=?", (sid,)).fetchall()] == [tuple(r) for r in review]
 
 
 def test_essay_retext_grades_corrected_text_without_reading_the_photos(models, klass, db, tmp_path):
