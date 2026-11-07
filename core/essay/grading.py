@@ -263,7 +263,7 @@ def clean_review(raw, essay):
         taken.add(span)
         kinds[kind] = kinds.get(kind, 0) + 1
         if is_pinyin_mark(m["type"], written, fix):
-            marks.append({"type": SOFT, "start": span[0], "end": span[1], "quote": written, "fix": fix, "note": f"用拼音不算错，汉字写作“{fix}”，记一记。", "pinyin": True})
+            marks.append({"type": SOFT, "start": span[0], "end": span[1], "quote": written, "fix": fix, "note": f"要写成“{fix}”，记一记。", "pinyin": True})
             continue
         marks.append(
             {"type": m["type"], "start": span[0], "end": span[1], "quote": written, "fix": fix, "note": _str(m.get("note"), NOTE_MAX)}

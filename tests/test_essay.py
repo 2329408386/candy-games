@@ -1271,7 +1271,7 @@ def test_pinyin_is_written_as_characters():
     review = grading.clean_review({"dims": dims, "marks": marks}, essay)
     assert [(m["type"], m["quote"], m["fix"]) for m in review["marks"]] == [(grading.SOFT, "gāo xìng", "高兴"), (grading.SOFT, "去hua园", "去花园")]
     assert grading.error_mark_count(review) == 0
-    assert "错别字" not in review["marks"][1]["note"] and "去花园" in review["marks"][1]["note"]
+    assert "错别字" not in review["marks"][1]["note"] and "不算错" not in review["marks"][1]["note"] and "去花园" in review["marks"][1]["note"]
     # Not called wrong in any grade, but a wrong 汉字 is still stopped by the checker.
     assert len(grading.checked_marks(review["marks"])) == 2
     wrong = grading.apply_check(review, {1: (True, ""), 2: (False, "读音不对")}, None)
