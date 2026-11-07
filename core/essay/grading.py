@@ -39,7 +39,8 @@ DIMS = {"content": "内容", "structure": "结构", "language": "语言", "norms
 PLACE_MIN_RATIO = 0.8  # place_lines: how alike two readings of a page must be
 ERROR_TYPES = ("错别字", "用词不当", "病句", "标点")
 MODEL_TYPES = ERROR_TYPES + ("好词好句", "修改建议", "分段")  # what the grade step may write
-SOFT = "书写提醒"  # the photo and the reading disagree about a character: not called wrong, the right form is given
+SOFT = "书写提醒"  # not called wrong, the right form is given: the photo and the reading disagree, or the child wrote pinyin
+PINYIN_TYPE = "拼音"  # what the grade step calls pinyin written for a character; stored as a SOFT mark with pinyin=True
 MARK_TYPES = MODEL_TYPES + (SOFT,)
 LEVELS = ("待提高", "及格", "良", "优")
 TOTAL = 25  # every band's maxima add up to this (prompts/bands.json)
@@ -240,9 +241,9 @@ def clean_review(raw, essay):
     total = sum(d["score"] for d in dims.values())
     marks, taken, kinds = [], set(), {}
     for m in raw.get("marks") if isinstance(raw.get("marks"), list) else []:
-        if not isinstance(m, dict) or m.get("type") not in MODEL_TYPES:
+        if not isinstance(m, dict) or m.get("type") not in MODEL_TYPES + (PINYIN_TYPE,):
             continue
-        kind = "error" if m["type"] in ERROR_TYPES else m["type"]
+        kind = "error" if m["type"] in ERROR_TYPES + (PINYIN_TYPE,) else m["type"]
         if kinds.get(kind, 0) >= MARK_LIMITS[kind]:
             continue
         quote = m.get("quote") if isinstance(m.get("quote"), str) else ""
@@ -252,14 +253,20 @@ def clean_review(raw, essay):
         fix = _str(m.get("fix"), 120)
         if m["type"] in ERROR_TYPES and (not fix or fix == text[span[0] : span[1]]):
             continue  # an error with no correction (or the same text) is not actionable
-        if not plausible_fix(m["type"], text[span[0] : span[1]], fix):
+        written = text[span[0] : span[1]]
+        if m["type"] == PINYIN_TYPE and not (is_pinyin_fix(written, fix) and plausible_fix("错别字", written, fix)):
+            continue
+        if not plausible_fix(m["type"], written, fix):
             continue
         if m["type"] == "分段" and para_start(text, span[0]):
             continue  # the child already began a new paragraph here
         taken.add(span)
         kinds[kind] = kinds.get(kind, 0) + 1
+        if is_pinyin_mark(m["type"], written, fix):
+            marks.append({"type": SOFT, "start": span[0], "end": span[1], "quote": written, "fix": fix, "note": f"用拼音不算错，汉字写作“{fix}”，记一记。", "pinyin": True})
+            continue
         marks.append(
-            {"type": m["type"], "start": span[0], "end": span[1], "quote": text[span[0] : span[1]], "fix": fix, "note": _str(m.get("note"), NOTE_MAX)}
+            {"type": m["type"], "start": span[0], "end": span[1], "quote": written, "fix": fix, "note": _str(m.get("note"), NOTE_MAX)}
         )
     marks.sort(key=lambda m: m["start"])
     example = raw.get("example") if isinstance(raw.get("example"), dict) else {}
@@ -311,6 +318,15 @@ def pinyin_fix(a, b):
     return b.startswith(head) and b.endswith(tail) and bool(HAN.fullmatch(middle))
 
 
+def is_pinyin_fix(quote, fix):
+    return pinyin_fix(re.sub(r"\s+", "", quote), re.sub(r"\s+", "", fix))
+
+
+def is_pinyin_mark(kind, quote, fix):
+    """Whether a mark only writes a child's pinyin as 汉字: not an error in any grade, whatever type the model gave it."""
+    return kind == PINYIN_TYPE or (kind in ERROR_TYPES and is_pinyin_fix(quote, fix))
+
+
 def plausible_fix(kind, quote, fix):
     """Rules no correct correction breaks, so a wrong one never reaches a child: nothing is corrected where the
     photo could not be read (□); a 错别字 fix swaps one or two characters and keeps the length, or writes the pinyin
@@ -333,8 +349,8 @@ def plausible_fix(kind, quote, fix):
 
 def checked_marks(marks):
     """The marks the checker judges, in text order (numbered 1, 2, … by check_messages and apply_check): every
-    error, and every 修改建议 with an example sentence (the child is told to write it that way, so it must be right)."""
-    return [m for m in marks if m["type"] in ERROR_TYPES or (m["type"] == "修改建议" and m.get("fix"))]
+    error, every pinyin reminder, and every 修改建议 with an example sentence (the child is told to write it that way, so it must be right)."""
+    return [m for m in marks if m["type"] in ERROR_TYPES or m.get("pinyin") or (m["type"] == "修改建议" and m.get("fix"))]
 
 
 def parse_check(raw):

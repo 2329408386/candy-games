@@ -1262,13 +1262,24 @@ def test_pinyin_is_written_as_characters():
     essay = {"grade": 1, "genre": "", "requirement": "", "min_chars": 0, "title": "", "text": "我很gāo xìng。小鸟在fēi。我们去hua园。"}
     dims = {k: {"score": 3} for k in grading.DIMS}
     marks = [
-        {"quote": "gāo xìng", "type": "错别字", "fix": "高兴", "note": ""},  # kept
-        {"quote": "在fēi", "type": "错别字", "fix": "在fei飞", "note": ""},  # fix still has pinyin: dropped
-        {"quote": "去hua园", "type": "错别字", "fix": "到花园", "note": ""},  # changes a character around it: dropped
+        {"quote": "gāo xìng", "type": "拼音", "fix": "高兴", "note": ""},  # kept
+        {"quote": "在fēi", "type": "拼音", "fix": "在fei飞", "note": ""},  # fix still has pinyin: dropped
+        {"quote": "去hua园", "type": "错别字", "fix": "去花园", "note": "这是错别字"},  # the model's old label: not an error either
+        {"quote": "我们", "type": "拼音", "fix": "我们", "note": ""},  # no pinyin here: dropped
+        {"quote": "小鸟", "type": "拼音", "fix": "小乌", "note": ""},  # no pinyin here: dropped
     ]
-    kept = [(m["quote"], m["fix"]) for m in grading.clean_review({"dims": dims, "marks": marks}, essay)["marks"]]
-    assert kept == [("gāo xìng", "高兴")]
-    assert grading.plausible_fix("错别字", "去hua园", "去花园")
+    review = grading.clean_review({"dims": dims, "marks": marks}, essay)
+    assert [(m["type"], m["quote"], m["fix"]) for m in review["marks"]] == [(grading.SOFT, "gāo xìng", "高兴"), (grading.SOFT, "去hua园", "去花园")]
+    assert grading.error_mark_count(review) == 0
+    assert "错别字" not in review["marks"][1]["note"] and "去花园" in review["marks"][1]["note"]
+    # Not called wrong in any grade, but a wrong 汉字 is still stopped by the checker.
+    assert len(grading.checked_marks(review["marks"])) == 2
+    wrong = grading.apply_check(review, {1: (True, ""), 2: (False, "读音不对")}, None)
+    assert [m["quote"] for m in wrong["marks"]] == ["gāo xìng"] and wrong["rejected"][0]["quote"] == "去hua园"
+    high = grading.clean_review({"dims": dims, "marks": [{"quote": "我很gāo xìng", "type": "错别字", "fix": "我很高兴", "note": ""}]}, {**essay, "grade": 6})
+    assert [m["type"] for m in high["marks"]] == [grading.SOFT]
+    # A wrong 错别字 fix around pinyin is still dropped, not turned into a reminder.
+    assert not grading.clean_review({"dims": dims, "marks": [{"quote": "去hua园", "type": "错别字", "fix": "到花园", "note": ""}]}, essay)["marks"]
 
 
 def test_check_covers_tips_and_keeps_skipped(models, klass, db):
