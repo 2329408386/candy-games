@@ -1,0 +1,2225 @@
+{
+ "type": "modes",
+ "meta": {"notes": ["题目依据北师大版三年级上册知识点总结自编，非教材原题。"]},
+ "draw": {"by": ["category"], "counts": {"cart": 5, "enough": 4, "most": 4, "price": 3, "formula": 2, "deal": 2}},
+ "ui": {},
+ "questions": [
+  {
+   "category": "cart",
+   "mode": "cart",
+   "prompt": "第1号订单：买 6 个铅笔盒 和 2 盒彩笔。把东西放进购物车，再算一共多少元。",
+   "items": [
+    {"emoji": "✏️", "name": "铅笔盒", "unit": "个", "price": 15},
+    {"emoji": "🏀", "name": "篮球", "unit": "个", "price": 125},
+    {"emoji": "🖍️", "name": "彩笔", "unit": "盒", "price": 12},
+    {"emoji": "🏸", "name": "羽毛球拍", "unit": "副", "price": 42}
+   ],
+   "order": [{"item": 0, "count": 6}, {"item": 2, "count": 2}],
+   "total": "114",
+   "calcText": "15×6＋12×2＝114（元）",
+   "explanation": "先分别算每种东西的总价，再加起来：15×6＋12×2＝114（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "需要多少钱",
+    "point": "总价＝单价×数量，再求和",
+    "type": "依据教材总结自编",
+    "label": "乘法·购物车",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·需要多少钱：总价＝单价×数量，再求和（自编）"
+   },
+   "id": "shop-001"
+  },
+  {
+   "category": "cart",
+   "mode": "cart",
+   "prompt": "第2号订单：买 5 盒牛奶 和 2 个篮球。把东西放进购物车，再算一共多少元。",
+   "items": [
+    {"emoji": "🥛", "name": "牛奶", "unit": "盒", "price": 5},
+    {"emoji": "🎒", "name": "书包", "unit": "个", "price": 86},
+    {"emoji": "🏀", "name": "篮球", "unit": "个", "price": 125},
+    {"emoji": "📏", "name": "尺子", "unit": "把", "price": 4}
+   ],
+   "order": [{"item": 0, "count": 5}, {"item": 2, "count": 2}],
+   "total": "275",
+   "calcText": "5×5＋125×2＝275（元）",
+   "explanation": "先分别算每种东西的总价，再加起来：5×5＋125×2＝275（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第六单元·乘法",
+    "lesson": "需要多少钱",
+    "point": "总价＝单价×数量，再求和",
+    "type": "依据教材总结自编",
+    "label": "乘法·购物车",
+    "detailTitle": "查看知识点来源",
+    "detail": "第六单元·乘法·需要多少钱：总价＝单价×数量，再求和（自编）"
+   },
+   "id": "shop-002"
+  },
+  {
+   "category": "cart",
+   "mode": "cart",
+   "prompt": "第3号订单：买 6 盒彩笔 和 3 把雨伞。把东西放进购物车，再算一共多少元。",
+   "items": [
+    {"emoji": "☂️", "name": "雨伞", "unit": "把", "price": 26},
+    {"emoji": "🖍️", "name": "彩笔", "unit": "盒", "price": 12},
+    {"emoji": "🥤", "name": "水杯", "unit": "个", "price": 24},
+    {"emoji": "🧃", "name": "果汁", "unit": "瓶", "price": 8}
+   ],
+   "order": [{"item": 1, "count": 6}, {"item": 0, "count": 3}],
+   "total": "150",
+   "calcText": "12×6＋26×3＝150（元）",
+   "explanation": "先分别算每种东西的总价，再加起来：12×6＋26×3＝150（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "需要多少钱",
+    "point": "总价＝单价×数量，再求和",
+    "type": "依据教材总结自编",
+    "label": "乘法·购物车",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·需要多少钱：总价＝单价×数量，再求和（自编）"
+   },
+   "id": "shop-003"
+  },
+  {
+   "category": "cart",
+   "mode": "cart",
+   "prompt": "第4号订单：买 6 辆玩具车 和 6 盒拼图。把东西放进购物车，再算一共多少元。",
+   "items": [
+    {"emoji": "🍞", "name": "面包", "unit": "个", "price": 7},
+    {"emoji": "🧩", "name": "拼图", "unit": "盒", "price": 28},
+    {"emoji": "🚗", "name": "玩具车", "unit": "辆", "price": 32},
+    {"emoji": "📓", "name": "笔记本", "unit": "本", "price": 6}
+   ],
+   "order": [{"item": 2, "count": 6}, {"item": 1, "count": 6}],
+   "total": "360",
+   "calcText": "32×6＋28×6＝360（元）",
+   "explanation": "先分别算每种东西的总价，再加起来：32×6＋28×6＝360（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "需要多少钱",
+    "point": "总价＝单价×数量，再求和",
+    "type": "依据教材总结自编",
+    "label": "乘法·购物车",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·需要多少钱：总价＝单价×数量，再求和（自编）"
+   },
+   "id": "shop-004"
+  },
+  {
+   "category": "cart",
+   "mode": "cart",
+   "prompt": "第5号订单：买 5 个足球 和 5 个铅笔盒。把东西放进购物车，再算一共多少元。",
+   "items": [
+    {"emoji": "⚽", "name": "足球", "unit": "个", "price": 48},
+    {"emoji": "✏️", "name": "铅笔盒", "unit": "个", "price": 15},
+    {"emoji": "📓", "name": "笔记本", "unit": "本", "price": 6},
+    {"emoji": "🚗", "name": "玩具车", "unit": "辆", "price": 32}
+   ],
+   "order": [{"item": 0, "count": 5}, {"item": 1, "count": 5}],
+   "total": "315",
+   "calcText": "48×5＋15×5＝315（元）",
+   "explanation": "先分别算每种东西的总价，再加起来：48×5＋15×5＝315（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "需要多少钱",
+    "point": "总价＝单价×数量，再求和",
+    "type": "依据教材总结自编",
+    "label": "乘法·购物车",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·需要多少钱：总价＝单价×数量，再求和（自编）"
+   },
+   "id": "shop-005"
+  },
+  {
+   "category": "cart",
+   "mode": "cart",
+   "prompt": "第6号订单：买 3 瓶果汁 和 4 把雨伞。把东西放进购物车，再算一共多少元。",
+   "items": [
+    {"emoji": "🧃", "name": "果汁", "unit": "瓶", "price": 8},
+    {"emoji": "🥤", "name": "水杯", "unit": "个", "price": 24},
+    {"emoji": "☂️", "name": "雨伞", "unit": "把", "price": 26},
+    {"emoji": "🏀", "name": "篮球", "unit": "个", "price": 125}
+   ],
+   "order": [{"item": 0, "count": 3}, {"item": 2, "count": 4}],
+   "total": "128",
+   "calcText": "8×3＋26×4＝128（元）",
+   "explanation": "先分别算每种东西的总价，再加起来：8×3＋26×4＝128（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "需要多少钱",
+    "point": "总价＝单价×数量，再求和",
+    "type": "依据教材总结自编",
+    "label": "乘法·购物车",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·需要多少钱：总价＝单价×数量，再求和（自编）"
+   },
+   "id": "shop-006"
+  },
+  {
+   "category": "cart",
+   "mode": "cart",
+   "prompt": "第7号订单：买 3 盒牛奶 和 5 个西瓜。把东西放进购物车，再算一共多少元。",
+   "items": [
+    {"emoji": "🖍️", "name": "彩笔", "unit": "盒", "price": 12},
+    {"emoji": "🏸", "name": "羽毛球拍", "unit": "副", "price": 42},
+    {"emoji": "🥛", "name": "牛奶", "unit": "盒", "price": 5},
+    {"emoji": "🍉", "name": "西瓜", "unit": "个", "price": 18}
+   ],
+   "order": [{"item": 2, "count": 3}, {"item": 3, "count": 5}],
+   "total": "105",
+   "calcText": "5×3＋18×5＝105（元）",
+   "explanation": "先分别算每种东西的总价，再加起来：5×3＋18×5＝105（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "需要多少钱",
+    "point": "总价＝单价×数量，再求和",
+    "type": "依据教材总结自编",
+    "label": "乘法·购物车",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·需要多少钱：总价＝单价×数量，再求和（自编）"
+   },
+   "id": "shop-007"
+  },
+  {
+   "category": "cart",
+   "mode": "cart",
+   "prompt": "第8号订单：买 6 本故事书 和 4 顶帽子。把东西放进购物车，再算一共多少元。",
+   "items": [
+    {"emoji": "⚽", "name": "足球", "unit": "个", "price": 48},
+    {"emoji": "🧢", "name": "帽子", "unit": "顶", "price": 35},
+    {"emoji": "📖", "name": "故事书", "unit": "本", "price": 23},
+    {"emoji": "🧩", "name": "拼图", "unit": "盒", "price": 28}
+   ],
+   "order": [{"item": 2, "count": 6}, {"item": 1, "count": 4}],
+   "total": "278",
+   "calcText": "23×6＋35×4＝278（元）",
+   "explanation": "先分别算每种东西的总价，再加起来：23×6＋35×4＝278（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "需要多少钱",
+    "point": "总价＝单价×数量，再求和",
+    "type": "依据教材总结自编",
+    "label": "乘法·购物车",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·需要多少钱：总价＝单价×数量，再求和（自编）"
+   },
+   "id": "shop-008"
+  },
+  {
+   "category": "cart",
+   "mode": "cart",
+   "prompt": "第9号订单：买 5 本笔记本 和 2 个足球。把东西放进购物车，再算一共多少元。",
+   "items": [
+    {"emoji": "⚽", "name": "足球", "unit": "个", "price": 48},
+    {"emoji": "🏸", "name": "羽毛球拍", "unit": "副", "price": 42},
+    {"emoji": "📓", "name": "笔记本", "unit": "本", "price": 6},
+    {"emoji": "🎒", "name": "书包", "unit": "个", "price": 86}
+   ],
+   "order": [{"item": 2, "count": 5}, {"item": 0, "count": 2}],
+   "total": "126",
+   "calcText": "6×5＋48×2＝126（元）",
+   "explanation": "先分别算每种东西的总价，再加起来：6×5＋48×2＝126（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "需要多少钱",
+    "point": "总价＝单价×数量，再求和",
+    "type": "依据教材总结自编",
+    "label": "乘法·购物车",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·需要多少钱：总价＝单价×数量，再求和（自编）"
+   },
+   "id": "shop-009"
+  },
+  {
+   "category": "cart",
+   "mode": "cart",
+   "prompt": "第10号订单：买 2 把尺子 和 4 把雨伞。把东西放进购物车，再算一共多少元。",
+   "items": [
+    {"emoji": "🧦", "name": "袜子", "unit": "双", "price": 9},
+    {"emoji": "🧩", "name": "拼图", "unit": "盒", "price": 28},
+    {"emoji": "📏", "name": "尺子", "unit": "把", "price": 4},
+    {"emoji": "☂️", "name": "雨伞", "unit": "把", "price": 26}
+   ],
+   "order": [{"item": 2, "count": 2}, {"item": 3, "count": 4}],
+   "total": "112",
+   "calcText": "4×2＋26×4＝112（元）",
+   "explanation": "先分别算每种东西的总价，再加起来：4×2＋26×4＝112（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "需要多少钱",
+    "point": "总价＝单价×数量，再求和",
+    "type": "依据教材总结自编",
+    "label": "乘法·购物车",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·需要多少钱：总价＝单价×数量，再求和（自编）"
+   },
+   "id": "shop-010"
+  },
+  {
+   "category": "cart",
+   "mode": "cart",
+   "prompt": "第11号订单：买 2 个面包 和 3 盒颜料。把东西放进购物车，再算一共多少元。",
+   "items": [
+    {"emoji": "☂️", "name": "雨伞", "unit": "把", "price": 26},
+    {"emoji": "🍞", "name": "面包", "unit": "个", "price": 7},
+    {"emoji": "🧩", "name": "拼图", "unit": "盒", "price": 28},
+    {"emoji": "🎨", "name": "颜料", "unit": "盒", "price": 16}
+   ],
+   "order": [{"item": 1, "count": 2}, {"item": 3, "count": 3}],
+   "total": "62",
+   "calcText": "7×2＋16×3＝62（元）",
+   "explanation": "先分别算每种东西的总价，再加起来：7×2＋16×3＝62（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "需要多少钱",
+    "point": "总价＝单价×数量，再求和",
+    "type": "依据教材总结自编",
+    "label": "乘法·购物车",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·需要多少钱：总价＝单价×数量，再求和（自编）"
+   },
+   "id": "shop-011"
+  },
+  {
+   "category": "cart",
+   "mode": "cart",
+   "prompt": "第12号订单：买 2 把雨伞 和 4 个铅笔盒。把东西放进购物车，再算一共多少元。",
+   "items": [
+    {"emoji": "🎨", "name": "颜料", "unit": "盒", "price": 16},
+    {"emoji": "✏️", "name": "铅笔盒", "unit": "个", "price": 15},
+    {"emoji": "☂️", "name": "雨伞", "unit": "把", "price": 26},
+    {"emoji": "🧃", "name": "果汁", "unit": "瓶", "price": 8}
+   ],
+   "order": [{"item": 2, "count": 2}, {"item": 1, "count": 4}],
+   "total": "112",
+   "calcText": "26×2＋15×4＝112（元）",
+   "explanation": "先分别算每种东西的总价，再加起来：26×2＋15×4＝112（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "需要多少钱",
+    "point": "总价＝单价×数量，再求和",
+    "type": "依据教材总结自编",
+    "label": "乘法·购物车",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·需要多少钱：总价＝单价×数量，再求和（自编）"
+   },
+   "id": "shop-012"
+  },
+  {
+   "category": "cart",
+   "mode": "cart",
+   "prompt": "第13号订单：买 3 盒拼图 和 4 本故事书。把东西放进购物车，再算一共多少元。",
+   "items": [
+    {"emoji": "📏", "name": "尺子", "unit": "把", "price": 4},
+    {"emoji": "🧩", "name": "拼图", "unit": "盒", "price": 28},
+    {"emoji": "🎒", "name": "书包", "unit": "个", "price": 86},
+    {"emoji": "📖", "name": "故事书", "unit": "本", "price": 23}
+   ],
+   "order": [{"item": 1, "count": 3}, {"item": 3, "count": 4}],
+   "total": "176",
+   "calcText": "28×3＋23×4＝176（元）",
+   "explanation": "先分别算每种东西的总价，再加起来：28×3＋23×4＝176（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "需要多少钱",
+    "point": "总价＝单价×数量，再求和",
+    "type": "依据教材总结自编",
+    "label": "乘法·购物车",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·需要多少钱：总价＝单价×数量，再求和（自编）"
+   },
+   "id": "shop-013"
+  },
+  {
+   "category": "cart",
+   "mode": "cart",
+   "prompt": "第14号订单：买 3 双袜子 和 5 个铅笔盒。把东西放进购物车，再算一共多少元。",
+   "items": [
+    {"emoji": "🧦", "name": "袜子", "unit": "双", "price": 9},
+    {"emoji": "⚽", "name": "足球", "unit": "个", "price": 48},
+    {"emoji": "🧩", "name": "拼图", "unit": "盒", "price": 28},
+    {"emoji": "✏️", "name": "铅笔盒", "unit": "个", "price": 15}
+   ],
+   "order": [{"item": 0, "count": 3}, {"item": 3, "count": 5}],
+   "total": "102",
+   "calcText": "9×3＋15×5＝102（元）",
+   "explanation": "先分别算每种东西的总价，再加起来：9×3＋15×5＝102（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "需要多少钱",
+    "point": "总价＝单价×数量，再求和",
+    "type": "依据教材总结自编",
+    "label": "乘法·购物车",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·需要多少钱：总价＝单价×数量，再求和（自编）"
+   },
+   "id": "shop-014"
+  },
+  {
+   "category": "cart",
+   "mode": "cart",
+   "prompt": "第15号订单：买 2 把尺子 和 6 盒拼图。把东西放进购物车，再算一共多少元。",
+   "items": [
+    {"emoji": "🎒", "name": "书包", "unit": "个", "price": 86},
+    {"emoji": "🏸", "name": "羽毛球拍", "unit": "副", "price": 42},
+    {"emoji": "🧩", "name": "拼图", "unit": "盒", "price": 28},
+    {"emoji": "📏", "name": "尺子", "unit": "把", "price": 4}
+   ],
+   "order": [{"item": 3, "count": 2}, {"item": 2, "count": 6}],
+   "total": "176",
+   "calcText": "4×2＋28×6＝176（元）",
+   "explanation": "先分别算每种东西的总价，再加起来：4×2＋28×6＝176（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "需要多少钱",
+    "point": "总价＝单价×数量，再求和",
+    "type": "依据教材总结自编",
+    "label": "乘法·购物车",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·需要多少钱：总价＝单价×数量，再求和（自编）"
+   },
+   "id": "shop-015"
+  },
+  {
+   "category": "cart",
+   "mode": "cart",
+   "prompt": "第16号订单：买 6 副羽毛球拍 和 5 顶帽子。把东西放进购物车，再算一共多少元。",
+   "items": [
+    {"emoji": "🧢", "name": "帽子", "unit": "顶", "price": 35},
+    {"emoji": "🧦", "name": "袜子", "unit": "双", "price": 9},
+    {"emoji": "🎨", "name": "颜料", "unit": "盒", "price": 16},
+    {"emoji": "🏸", "name": "羽毛球拍", "unit": "副", "price": 42}
+   ],
+   "order": [{"item": 3, "count": 6}, {"item": 0, "count": 5}],
+   "total": "427",
+   "calcText": "42×6＋35×5＝427（元）",
+   "explanation": "先分别算每种东西的总价，再加起来：42×6＋35×5＝427（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "需要多少钱",
+    "point": "总价＝单价×数量，再求和",
+    "type": "依据教材总结自编",
+    "label": "乘法·购物车",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·需要多少钱：总价＝单价×数量，再求和（自编）"
+   },
+   "id": "shop-016"
+  },
+  {
+   "category": "cart",
+   "mode": "cart",
+   "prompt": "第17号订单：买 4 个铅笔盒 和 6 辆玩具车。把东西放进购物车，再算一共多少元。",
+   "items": [
+    {"emoji": "🧩", "name": "拼图", "unit": "盒", "price": 28},
+    {"emoji": "🚗", "name": "玩具车", "unit": "辆", "price": 32},
+    {"emoji": "🍉", "name": "西瓜", "unit": "个", "price": 18},
+    {"emoji": "✏️", "name": "铅笔盒", "unit": "个", "price": 15}
+   ],
+   "order": [{"item": 3, "count": 4}, {"item": 1, "count": 6}],
+   "total": "252",
+   "calcText": "15×4＋32×6＝252（元）",
+   "explanation": "先分别算每种东西的总价，再加起来：15×4＋32×6＝252（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "需要多少钱",
+    "point": "总价＝单价×数量，再求和",
+    "type": "依据教材总结自编",
+    "label": "乘法·购物车",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·需要多少钱：总价＝单价×数量，再求和（自编）"
+   },
+   "id": "shop-017"
+  },
+  {
+   "category": "cart",
+   "mode": "cart",
+   "prompt": "第18号订单：买 6 把尺子 和 2 个西瓜。把东西放进购物车，再算一共多少元。",
+   "items": [
+    {"emoji": "📏", "name": "尺子", "unit": "把", "price": 4},
+    {"emoji": "📓", "name": "笔记本", "unit": "本", "price": 6},
+    {"emoji": "🧩", "name": "拼图", "unit": "盒", "price": 28},
+    {"emoji": "🍉", "name": "西瓜", "unit": "个", "price": 18}
+   ],
+   "order": [{"item": 0, "count": 6}, {"item": 3, "count": 2}],
+   "total": "60",
+   "calcText": "4×6＋18×2＝60（元）",
+   "explanation": "先分别算每种东西的总价，再加起来：4×6＋18×2＝60（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "需要多少钱",
+    "point": "总价＝单价×数量，再求和",
+    "type": "依据教材总结自编",
+    "label": "乘法·购物车",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·需要多少钱：总价＝单价×数量，再求和（自编）"
+   },
+   "id": "shop-018"
+  },
+  {
+   "category": "cart",
+   "mode": "cart",
+   "prompt": "第19号订单：买 6 双袜子 和 6 个面包。把东西放进购物车，再算一共多少元。",
+   "items": [
+    {"emoji": "🧦", "name": "袜子", "unit": "双", "price": 9},
+    {"emoji": "🖍️", "name": "彩笔", "unit": "盒", "price": 12},
+    {"emoji": "⚽", "name": "足球", "unit": "个", "price": 48},
+    {"emoji": "🍞", "name": "面包", "unit": "个", "price": 7}
+   ],
+   "order": [{"item": 0, "count": 6}, {"item": 3, "count": 6}],
+   "total": "96",
+   "calcText": "9×6＋7×6＝96（元）",
+   "explanation": "先分别算每种东西的总价，再加起来：9×6＋7×6＝96（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "需要多少钱",
+    "point": "总价＝单价×数量，再求和",
+    "type": "依据教材总结自编",
+    "label": "乘法·购物车",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·需要多少钱：总价＝单价×数量，再求和（自编）"
+   },
+   "id": "shop-019"
+  },
+  {
+   "category": "cart",
+   "mode": "cart",
+   "prompt": "第20号订单：买 3 本笔记本 和 4 盒彩笔。把东西放进购物车，再算一共多少元。",
+   "items": [
+    {"emoji": "📓", "name": "笔记本", "unit": "本", "price": 6},
+    {"emoji": "🎒", "name": "书包", "unit": "个", "price": 86},
+    {"emoji": "🖍️", "name": "彩笔", "unit": "盒", "price": 12},
+    {"emoji": "📖", "name": "故事书", "unit": "本", "price": 23}
+   ],
+   "order": [{"item": 0, "count": 3}, {"item": 2, "count": 4}],
+   "total": "66",
+   "calcText": "6×3＋12×4＝66（元）",
+   "explanation": "先分别算每种东西的总价，再加起来：6×3＋12×4＝66（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "需要多少钱",
+    "point": "总价＝单价×数量，再求和",
+    "type": "依据教材总结自编",
+    "label": "乘法·购物车",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·需要多少钱：总价＝单价×数量，再求和（自编）"
+   },
+   "id": "shop-020"
+  },
+  {
+   "category": "cart",
+   "mode": "cart",
+   "prompt": "第21号订单：买 2 盒拼图 和 2 本笔记本。把东西放进购物车，再算一共多少元。",
+   "items": [
+    {"emoji": "📓", "name": "笔记本", "unit": "本", "price": 6},
+    {"emoji": "📏", "name": "尺子", "unit": "把", "price": 4},
+    {"emoji": "🧦", "name": "袜子", "unit": "双", "price": 9},
+    {"emoji": "🧩", "name": "拼图", "unit": "盒", "price": 28}
+   ],
+   "order": [{"item": 3, "count": 2}, {"item": 0, "count": 2}],
+   "total": "68",
+   "calcText": "28×2＋6×2＝68（元）",
+   "explanation": "先分别算每种东西的总价，再加起来：28×2＋6×2＝68（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "需要多少钱",
+    "point": "总价＝单价×数量，再求和",
+    "type": "依据教材总结自编",
+    "label": "乘法·购物车",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·需要多少钱：总价＝单价×数量，再求和（自编）"
+   },
+   "id": "shop-021"
+  },
+  {
+   "category": "cart",
+   "mode": "cart",
+   "prompt": "第22号订单：买 6 盒彩笔 和 5 个足球。把东西放进购物车，再算一共多少元。",
+   "items": [
+    {"emoji": "🧦", "name": "袜子", "unit": "双", "price": 9},
+    {"emoji": "🖍️", "name": "彩笔", "unit": "盒", "price": 12},
+    {"emoji": "🧢", "name": "帽子", "unit": "顶", "price": 35},
+    {"emoji": "⚽", "name": "足球", "unit": "个", "price": 48}
+   ],
+   "order": [{"item": 1, "count": 6}, {"item": 3, "count": 5}],
+   "total": "312",
+   "calcText": "12×6＋48×5＝312（元）",
+   "explanation": "先分别算每种东西的总价，再加起来：12×6＋48×5＝312（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "需要多少钱",
+    "point": "总价＝单价×数量，再求和",
+    "type": "依据教材总结自编",
+    "label": "乘法·购物车",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·需要多少钱：总价＝单价×数量，再求和（自编）"
+   },
+   "id": "shop-022"
+  },
+  {
+   "category": "cart",
+   "mode": "cart",
+   "prompt": "第23号订单：买 5 个书包 和 6 盒彩笔。把东西放进购物车，再算一共多少元。",
+   "items": [
+    {"emoji": "🖍️", "name": "彩笔", "unit": "盒", "price": 12},
+    {"emoji": "🚗", "name": "玩具车", "unit": "辆", "price": 32},
+    {"emoji": "🎒", "name": "书包", "unit": "个", "price": 86},
+    {"emoji": "🧦", "name": "袜子", "unit": "双", "price": 9}
+   ],
+   "order": [{"item": 2, "count": 5}, {"item": 0, "count": 6}],
+   "total": "502",
+   "calcText": "86×5＋12×6＝502（元）",
+   "explanation": "先分别算每种东西的总价，再加起来：86×5＋12×6＝502（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "需要多少钱",
+    "point": "总价＝单价×数量，再求和",
+    "type": "依据教材总结自编",
+    "label": "乘法·购物车",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·需要多少钱：总价＝单价×数量，再求和（自编）"
+   },
+   "id": "shop-023"
+  },
+  {
+   "category": "cart",
+   "mode": "cart",
+   "prompt": "第24号订单：买 5 盒拼图 和 6 瓶果汁。把东西放进购物车，再算一共多少元。",
+   "items": [
+    {"emoji": "🎨", "name": "颜料", "unit": "盒", "price": 16},
+    {"emoji": "🍉", "name": "西瓜", "unit": "个", "price": 18},
+    {"emoji": "🧃", "name": "果汁", "unit": "瓶", "price": 8},
+    {"emoji": "🧩", "name": "拼图", "unit": "盒", "price": 28}
+   ],
+   "order": [{"item": 3, "count": 5}, {"item": 2, "count": 6}],
+   "total": "188",
+   "calcText": "28×5＋8×6＝188（元）",
+   "explanation": "先分别算每种东西的总价，再加起来：28×5＋8×6＝188（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "需要多少钱",
+    "point": "总价＝单价×数量，再求和",
+    "type": "依据教材总结自编",
+    "label": "乘法·购物车",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·需要多少钱：总价＝单价×数量，再求和（自编）"
+   },
+   "id": "shop-024"
+  },
+  {
+   "category": "cart",
+   "mode": "cart",
+   "prompt": "第25号订单：买 3 盒拼图 和 6 盒颜料。把东西放进购物车，再算一共多少元。",
+   "items": [
+    {"emoji": "🍉", "name": "西瓜", "unit": "个", "price": 18},
+    {"emoji": "🧩", "name": "拼图", "unit": "盒", "price": 28},
+    {"emoji": "📓", "name": "笔记本", "unit": "本", "price": 6},
+    {"emoji": "🎨", "name": "颜料", "unit": "盒", "price": 16}
+   ],
+   "order": [{"item": 1, "count": 3}, {"item": 3, "count": 6}],
+   "total": "180",
+   "calcText": "28×3＋16×6＝180（元）",
+   "explanation": "先分别算每种东西的总价，再加起来：28×3＋16×6＝180（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "需要多少钱",
+    "point": "总价＝单价×数量，再求和",
+    "type": "依据教材总结自编",
+    "label": "乘法·购物车",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·需要多少钱：总价＝单价×数量，再求和（自编）"
+   },
+   "id": "shop-025"
+  },
+  {
+   "category": "enough",
+   "prompt": "要买 3 个西瓜，钱够吗？",
+   "figure": "shop-shelf",
+   "items": [{"emoji": "🍉", "name": "西瓜", "unit": "个", "price": 18}],
+   "wallet": 22,
+   "calc": {"price": 18, "count": 3, "wallet": 22},
+   "answer": "不够",
+   "options": ["够", "不够"],
+   "explanation": "18×3＝54（元）。22 ＜ 54，所以不够。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "需要多少钱",
+    "point": "比较总价和带的钱",
+    "type": "依据教材总结自编",
+    "label": "乘与除·够不够",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·需要多少钱：比较总价和带的钱（自编）"
+   },
+   "id": "shop-026"
+  },
+  {
+   "category": "enough",
+   "prompt": "要买 3 顶帽子，钱够吗？",
+   "figure": "shop-shelf",
+   "items": [{"emoji": "🧢", "name": "帽子", "unit": "顶", "price": 35}],
+   "wallet": 125,
+   "calc": {"price": 35, "count": 3, "wallet": 125},
+   "answer": "够",
+   "options": ["够", "不够"],
+   "explanation": "35×3＝105（元）。125 ＞ 105，所以够。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "需要多少钱",
+    "point": "比较总价和带的钱",
+    "type": "依据教材总结自编",
+    "label": "乘与除·够不够",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·需要多少钱：比较总价和带的钱（自编）"
+   },
+   "id": "shop-027"
+  },
+  {
+   "category": "enough",
+   "prompt": "要买 6 盒牛奶，钱够吗？",
+   "figure": "shop-shelf",
+   "items": [{"emoji": "🥛", "name": "牛奶", "unit": "盒", "price": 5}],
+   "wallet": 19,
+   "calc": {"price": 5, "count": 6, "wallet": 19},
+   "answer": "不够",
+   "options": ["够", "不够"],
+   "explanation": "5×6＝30（元）。19 ＜ 30，所以不够。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "需要多少钱",
+    "point": "比较总价和带的钱",
+    "type": "依据教材总结自编",
+    "label": "乘与除·够不够",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·需要多少钱：比较总价和带的钱（自编）"
+   },
+   "id": "shop-028"
+  },
+  {
+   "category": "enough",
+   "prompt": "要买 7 个水杯，钱够吗？",
+   "figure": "shop-shelf",
+   "items": [{"emoji": "🥤", "name": "水杯", "unit": "个", "price": 24}],
+   "wallet": 179,
+   "calc": {"price": 24, "count": 7, "wallet": 179},
+   "answer": "够",
+   "options": ["够", "不够"],
+   "explanation": "24×7＝168（元）。179 ＞ 168，所以够。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "需要多少钱",
+    "point": "比较总价和带的钱",
+    "type": "依据教材总结自编",
+    "label": "乘与除·够不够",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·需要多少钱：比较总价和带的钱（自编）"
+   },
+   "id": "shop-029"
+  },
+  {
+   "category": "enough",
+   "prompt": "要买 2 盒拼图，钱够吗？",
+   "figure": "shop-shelf",
+   "items": [{"emoji": "🧩", "name": "拼图", "unit": "盒", "price": 28}],
+   "wallet": 39,
+   "calc": {"price": 28, "count": 2, "wallet": 39},
+   "answer": "不够",
+   "options": ["够", "不够"],
+   "explanation": "28×2＝56（元）。39 ＜ 56，所以不够。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "需要多少钱",
+    "point": "比较总价和带的钱",
+    "type": "依据教材总结自编",
+    "label": "乘与除·够不够",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·需要多少钱：比较总价和带的钱（自编）"
+   },
+   "id": "shop-030"
+  },
+  {
+   "category": "enough",
+   "prompt": "要买 6 个面包，钱够吗？",
+   "figure": "shop-shelf",
+   "items": [{"emoji": "🍞", "name": "面包", "unit": "个", "price": 7}],
+   "wallet": 75,
+   "calc": {"price": 7, "count": 6, "wallet": 75},
+   "answer": "够",
+   "options": ["够", "不够"],
+   "explanation": "7×6＝42（元）。75 ＞ 42，所以够。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "需要多少钱",
+    "point": "比较总价和带的钱",
+    "type": "依据教材总结自编",
+    "label": "乘与除·够不够",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·需要多少钱：比较总价和带的钱（自编）"
+   },
+   "id": "shop-031"
+  },
+  {
+   "category": "enough",
+   "prompt": "要买 3 把雨伞，钱够吗？",
+   "figure": "shop-shelf",
+   "items": [{"emoji": "☂️", "name": "雨伞", "unit": "把", "price": 26}],
+   "wallet": 44,
+   "calc": {"price": 26, "count": 3, "wallet": 44},
+   "answer": "不够",
+   "options": ["够", "不够"],
+   "explanation": "26×3＝78（元）。44 ＜ 78，所以不够。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "需要多少钱",
+    "point": "比较总价和带的钱",
+    "type": "依据教材总结自编",
+    "label": "乘与除·够不够",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·需要多少钱：比较总价和带的钱（自编）"
+   },
+   "id": "shop-032"
+  },
+  {
+   "category": "enough",
+   "prompt": "要买 4 本故事书，钱够吗？",
+   "figure": "shop-shelf",
+   "items": [{"emoji": "📖", "name": "故事书", "unit": "本", "price": 23}],
+   "wallet": 109,
+   "calc": {"price": 23, "count": 4, "wallet": 109},
+   "answer": "够",
+   "options": ["够", "不够"],
+   "explanation": "23×4＝92（元）。109 ＞ 92，所以够。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "需要多少钱",
+    "point": "比较总价和带的钱",
+    "type": "依据教材总结自编",
+    "label": "乘与除·够不够",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·需要多少钱：比较总价和带的钱（自编）"
+   },
+   "id": "shop-033"
+  },
+  {
+   "category": "enough",
+   "prompt": "要买 3 个铅笔盒，钱够吗？",
+   "figure": "shop-shelf",
+   "items": [{"emoji": "✏️", "name": "铅笔盒", "unit": "个", "price": 15}],
+   "wallet": 37,
+   "calc": {"price": 15, "count": 3, "wallet": 37},
+   "answer": "不够",
+   "options": ["够", "不够"],
+   "explanation": "15×3＝45（元）。37 ＜ 45，所以不够。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "需要多少钱",
+    "point": "比较总价和带的钱",
+    "type": "依据教材总结自编",
+    "label": "乘与除·够不够",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·需要多少钱：比较总价和带的钱（自编）"
+   },
+   "id": "shop-034"
+  },
+  {
+   "category": "enough",
+   "prompt": "要买 7 个篮球，钱够吗？",
+   "figure": "shop-shelf",
+   "items": [{"emoji": "🏀", "name": "篮球", "unit": "个", "price": 125}],
+   "wallet": 912,
+   "calc": {"price": 125, "count": 7, "wallet": 912},
+   "answer": "够",
+   "options": ["够", "不够"],
+   "explanation": "125×7＝875（元）。912 ＞ 875，所以够。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "需要多少钱",
+    "point": "比较总价和带的钱",
+    "type": "依据教材总结自编",
+    "label": "乘与除·够不够",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·需要多少钱：比较总价和带的钱（自编）"
+   },
+   "id": "shop-035"
+  },
+  {
+   "category": "enough",
+   "mode": "fill",
+   "prompt": "买 6 瓶果汁，付了 100 元，应该找回多少元？",
+   "figure": "shop-shelf",
+   "items": [{"emoji": "🧃", "name": "果汁", "unit": "瓶", "price": 8}],
+   "wallet": 100,
+   "calc": {"price": 8, "count": 6, "wallet": 100},
+   "fields": [{"answer": "52", "unit": "元"}],
+   "explanation": "8×6＝48（元），100－48＝52（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "需要多少钱",
+    "point": "先算总价，再求找零或差额",
+    "type": "依据教材总结自编",
+    "label": "乘与除·找零",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·需要多少钱：先算总价，再求找零或差额（自编）"
+   },
+   "id": "shop-036"
+  },
+  {
+   "category": "enough",
+   "mode": "fill",
+   "prompt": "买 3 个书包，钱包里只有 230 元，还差多少元？",
+   "figure": "shop-shelf",
+   "items": [{"emoji": "🎒", "name": "书包", "unit": "个", "price": 86}],
+   "wallet": 230,
+   "calc": {"price": 86, "count": 3, "wallet": 230},
+   "fields": [{"answer": "28", "unit": "元"}],
+   "explanation": "86×3＝258（元），258－230＝28（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "需要多少钱",
+    "point": "先算总价，再求找零或差额",
+    "type": "依据教材总结自编",
+    "label": "乘与除·找零",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·需要多少钱：先算总价，再求找零或差额（自编）"
+   },
+   "id": "shop-037"
+  },
+  {
+   "category": "enough",
+   "mode": "fill",
+   "prompt": "买 4 本笔记本，付了 100 元，应该找回多少元？",
+   "figure": "shop-shelf",
+   "items": [{"emoji": "📓", "name": "笔记本", "unit": "本", "price": 6}],
+   "wallet": 100,
+   "calc": {"price": 6, "count": 4, "wallet": 100},
+   "fields": [{"answer": "76", "unit": "元"}],
+   "explanation": "6×4＝24（元），100－24＝76（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "需要多少钱",
+    "point": "先算总价，再求找零或差额",
+    "type": "依据教材总结自编",
+    "label": "乘与除·找零",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·需要多少钱：先算总价，再求找零或差额（自编）"
+   },
+   "id": "shop-038"
+  },
+  {
+   "category": "enough",
+   "mode": "fill",
+   "prompt": "买 2 把尺子，钱包里只有 1 元，还差多少元？",
+   "figure": "shop-shelf",
+   "items": [{"emoji": "📏", "name": "尺子", "unit": "把", "price": 4}],
+   "wallet": 1,
+   "calc": {"price": 4, "count": 2, "wallet": 1},
+   "fields": [{"answer": "7", "unit": "元"}],
+   "explanation": "4×2＝8（元），8－1＝7（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "需要多少钱",
+    "point": "先算总价，再求找零或差额",
+    "type": "依据教材总结自编",
+    "label": "乘与除·找零",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·需要多少钱：先算总价，再求找零或差额（自编）"
+   },
+   "id": "shop-039"
+  },
+  {
+   "category": "enough",
+   "mode": "fill",
+   "prompt": "买 3 辆玩具车，付了 100 元，应该找回多少元？",
+   "figure": "shop-shelf",
+   "items": [{"emoji": "🚗", "name": "玩具车", "unit": "辆", "price": 32}],
+   "wallet": 100,
+   "calc": {"price": 32, "count": 3, "wallet": 100},
+   "fields": [{"answer": "4", "unit": "元"}],
+   "explanation": "32×3＝96（元），100－96＝4（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "需要多少钱",
+    "point": "先算总价，再求找零或差额",
+    "type": "依据教材总结自编",
+    "label": "乘与除·找零",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·需要多少钱：先算总价，再求找零或差额（自编）"
+   },
+   "id": "shop-040"
+  },
+  {
+   "category": "enough",
+   "mode": "fill",
+   "prompt": "买 6 盒彩笔，钱包里只有 50 元，还差多少元？",
+   "figure": "shop-shelf",
+   "items": [{"emoji": "🖍️", "name": "彩笔", "unit": "盒", "price": 12}],
+   "wallet": 50,
+   "calc": {"price": 12, "count": 6, "wallet": 50},
+   "fields": [{"answer": "22", "unit": "元"}],
+   "explanation": "12×6＝72（元），72－50＝22（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "需要多少钱",
+    "point": "先算总价，再求找零或差额",
+    "type": "依据教材总结自编",
+    "label": "乘与除·找零",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·需要多少钱：先算总价，再求找零或差额（自编）"
+   },
+   "id": "shop-041"
+  },
+  {
+   "category": "enough",
+   "mode": "fill",
+   "prompt": "买 6 双袜子，付了 100 元，应该找回多少元？",
+   "figure": "shop-shelf",
+   "items": [{"emoji": "🧦", "name": "袜子", "unit": "双", "price": 9}],
+   "wallet": 100,
+   "calc": {"price": 9, "count": 6, "wallet": 100},
+   "fields": [{"answer": "46", "unit": "元"}],
+   "explanation": "9×6＝54（元），100－54＝46（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "需要多少钱",
+    "point": "先算总价，再求找零或差额",
+    "type": "依据教材总结自编",
+    "label": "乘与除·找零",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·需要多少钱：先算总价，再求找零或差额（自编）"
+   },
+   "id": "shop-042"
+  },
+  {
+   "category": "enough",
+   "mode": "fill",
+   "prompt": "买 3 个足球，钱包里只有 130 元，还差多少元？",
+   "figure": "shop-shelf",
+   "items": [{"emoji": "⚽", "name": "足球", "unit": "个", "price": 48}],
+   "wallet": 130,
+   "calc": {"price": 48, "count": 3, "wallet": 130},
+   "fields": [{"answer": "14", "unit": "元"}],
+   "explanation": "48×3＝144（元），144－130＝14（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "需要多少钱",
+    "point": "先算总价，再求找零或差额",
+    "type": "依据教材总结自编",
+    "label": "乘与除·找零",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·需要多少钱：先算总价，再求找零或差额（自编）"
+   },
+   "id": "shop-043"
+  },
+  {
+   "category": "enough",
+   "mode": "fill",
+   "prompt": "买 4 盒颜料，付了 100 元，应该找回多少元？",
+   "figure": "shop-shelf",
+   "items": [{"emoji": "🎨", "name": "颜料", "unit": "盒", "price": 16}],
+   "wallet": 100,
+   "calc": {"price": 16, "count": 4, "wallet": 100},
+   "fields": [{"answer": "36", "unit": "元"}],
+   "explanation": "16×4＝64（元），100－64＝36（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "需要多少钱",
+    "point": "先算总价，再求找零或差额",
+    "type": "依据教材总结自编",
+    "label": "乘与除·找零",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·需要多少钱：先算总价，再求找零或差额（自编）"
+   },
+   "id": "shop-044"
+  },
+  {
+   "category": "enough",
+   "mode": "fill",
+   "prompt": "买 5 副羽毛球拍，钱包里只有 180 元，还差多少元？",
+   "figure": "shop-shelf",
+   "items": [{"emoji": "🏸", "name": "羽毛球拍", "unit": "副", "price": 42}],
+   "wallet": 180,
+   "calc": {"price": 42, "count": 5, "wallet": 180},
+   "fields": [{"answer": "30", "unit": "元"}],
+   "explanation": "42×5＝210（元），210－180＝30（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "需要多少钱",
+    "point": "先算总价，再求找零或差额",
+    "type": "依据教材总结自编",
+    "label": "乘与除·找零",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·需要多少钱：先算总价，再求找零或差额（自编）"
+   },
+   "id": "shop-045"
+  },
+  {
+   "category": "most",
+   "mode": "fill",
+   "prompt": "有 51 元，全用来买笔记本，每本 6 元。最多能买几本？还剩几元？",
+   "figure": "shop-shelf",
+   "items": [{"emoji": "📓", "name": "笔记本", "unit": "本", "price": 6}],
+   "calc": {"wallet": 51, "price": 6},
+   "fields": [{"before": "最多买", "answer": "8", "unit": "本"}, {"before": "还剩", "answer": "3", "unit": "元"}],
+   "explanation": "51÷6＝8……3。能买 8 本，余下的 3 元不够再买一本。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "复习·有余数的除法",
+    "lesson": "买东西",
+    "point": "数量＝总价÷单价，余数是剩下的钱",
+    "type": "依据教材总结自编",
+    "label": "乘与除·最多买几个",
+    "detailTitle": "查看知识点来源",
+    "detail": "复习·有余数的除法·买东西：数量＝总价÷单价，余数是剩下的钱（自编）"
+   },
+   "id": "shop-046"
+  },
+  {
+   "category": "most",
+   "mode": "fill",
+   "prompt": "有 11 元，全用来买香蕉，每根 2 元。最多能买几根？还剩几元？",
+   "figure": "shop-shelf",
+   "items": [{"emoji": "🍌", "name": "香蕉", "unit": "根", "price": 2}],
+   "calc": {"wallet": 11, "price": 2},
+   "fields": [{"before": "最多买", "answer": "5", "unit": "根"}, {"before": "还剩", "answer": "1", "unit": "元"}],
+   "explanation": "11÷2＝5……1。能买 5 根，余下的 1 元不够再买一根。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "复习·有余数的除法",
+    "lesson": "买东西",
+    "point": "数量＝总价÷单价，余数是剩下的钱",
+    "type": "依据教材总结自编",
+    "label": "乘与除·最多买几个",
+    "detailTitle": "查看知识点来源",
+    "detail": "复习·有余数的除法·买东西：数量＝总价÷单价，余数是剩下的钱（自编）"
+   },
+   "id": "shop-047"
+  },
+  {
+   "category": "most",
+   "mode": "fill",
+   "prompt": "有 59 元，全用来买果汁，每瓶 8 元。最多能买几瓶？还剩几元？",
+   "figure": "shop-shelf",
+   "items": [{"emoji": "🧃", "name": "果汁", "unit": "瓶", "price": 8}],
+   "calc": {"wallet": 59, "price": 8},
+   "fields": [{"before": "最多买", "answer": "7", "unit": "瓶"}, {"before": "还剩", "answer": "3", "unit": "元"}],
+   "explanation": "59÷8＝7……3。能买 7 瓶，余下的 3 元不够再买一瓶。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "复习·有余数的除法",
+    "lesson": "买东西",
+    "point": "数量＝总价÷单价，余数是剩下的钱",
+    "type": "依据教材总结自编",
+    "label": "乘与除·最多买几个",
+    "detailTitle": "查看知识点来源",
+    "detail": "复习·有余数的除法·买东西：数量＝总价÷单价，余数是剩下的钱（自编）"
+   },
+   "id": "shop-048"
+  },
+  {
+   "category": "most",
+   "mode": "fill",
+   "prompt": "有 19 元，全用来买尺子，每把 4 元。最多能买几把？还剩几元？",
+   "figure": "shop-shelf",
+   "items": [{"emoji": "📏", "name": "尺子", "unit": "把", "price": 4}],
+   "calc": {"wallet": 19, "price": 4},
+   "fields": [{"before": "最多买", "answer": "4", "unit": "把"}, {"before": "还剩", "answer": "3", "unit": "元"}],
+   "explanation": "19÷4＝4……3。能买 4 把，余下的 3 元不够再买一把。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "复习·有余数的除法",
+    "lesson": "买东西",
+    "point": "数量＝总价÷单价，余数是剩下的钱",
+    "type": "依据教材总结自编",
+    "label": "乘与除·最多买几个",
+    "detailTitle": "查看知识点来源",
+    "detail": "复习·有余数的除法·买东西：数量＝总价÷单价，余数是剩下的钱（自编）"
+   },
+   "id": "shop-049"
+  },
+  {
+   "category": "most",
+   "mode": "fill",
+   "prompt": "有 38 元，全用来买袜子，每双 9 元。最多能买几双？还剩几元？",
+   "figure": "shop-shelf",
+   "items": [{"emoji": "🧦", "name": "袜子", "unit": "双", "price": 9}],
+   "calc": {"wallet": 38, "price": 9},
+   "fields": [{"before": "最多买", "answer": "4", "unit": "双"}, {"before": "还剩", "answer": "2", "unit": "元"}],
+   "explanation": "38÷9＝4……2。能买 4 双，余下的 2 元不够再买一双。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "复习·有余数的除法",
+    "lesson": "买东西",
+    "point": "数量＝总价÷单价，余数是剩下的钱",
+    "type": "依据教材总结自编",
+    "label": "乘与除·最多买几个",
+    "detailTitle": "查看知识点来源",
+    "detail": "复习·有余数的除法·买东西：数量＝总价÷单价，余数是剩下的钱（自编）"
+   },
+   "id": "shop-050"
+  },
+  {
+   "category": "most",
+   "mode": "fill",
+   "prompt": "有 38 元，全用来买果汁，每瓶 8 元。最多能买几瓶？还剩几元？",
+   "figure": "shop-shelf",
+   "items": [{"emoji": "🧃", "name": "果汁", "unit": "瓶", "price": 8}],
+   "calc": {"wallet": 38, "price": 8},
+   "fields": [{"before": "最多买", "answer": "4", "unit": "瓶"}, {"before": "还剩", "answer": "6", "unit": "元"}],
+   "explanation": "38÷8＝4……6。能买 4 瓶，余下的 6 元不够再买一瓶。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "复习·有余数的除法",
+    "lesson": "买东西",
+    "point": "数量＝总价÷单价，余数是剩下的钱",
+    "type": "依据教材总结自编",
+    "label": "乘与除·最多买几个",
+    "detailTitle": "查看知识点来源",
+    "detail": "复习·有余数的除法·买东西：数量＝总价÷单价，余数是剩下的钱（自编）"
+   },
+   "id": "shop-051"
+  },
+  {
+   "category": "most",
+   "mode": "fill",
+   "prompt": "有 73 元，全用来买果汁，每瓶 8 元。最多能买几瓶？还剩几元？",
+   "figure": "shop-shelf",
+   "items": [{"emoji": "🧃", "name": "果汁", "unit": "瓶", "price": 8}],
+   "calc": {"wallet": 73, "price": 8},
+   "fields": [{"before": "最多买", "answer": "9", "unit": "瓶"}, {"before": "还剩", "answer": "1", "unit": "元"}],
+   "explanation": "73÷8＝9……1。能买 9 瓶，余下的 1 元不够再买一瓶。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "复习·有余数的除法",
+    "lesson": "买东西",
+    "point": "数量＝总价÷单价，余数是剩下的钱",
+    "type": "依据教材总结自编",
+    "label": "乘与除·最多买几个",
+    "detailTitle": "查看知识点来源",
+    "detail": "复习·有余数的除法·买东西：数量＝总价÷单价，余数是剩下的钱（自编）"
+   },
+   "id": "shop-052"
+  },
+  {
+   "category": "most",
+   "mode": "fill",
+   "prompt": "有 23 元，全用来买笔记本，每本 6 元。最多能买几本？还剩几元？",
+   "figure": "shop-shelf",
+   "items": [{"emoji": "📓", "name": "笔记本", "unit": "本", "price": 6}],
+   "calc": {"wallet": 23, "price": 6},
+   "fields": [{"before": "最多买", "answer": "3", "unit": "本"}, {"before": "还剩", "answer": "5", "unit": "元"}],
+   "explanation": "23÷6＝3……5。能买 3 本，余下的 5 元不够再买一本。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "复习·有余数的除法",
+    "lesson": "买东西",
+    "point": "数量＝总价÷单价，余数是剩下的钱",
+    "type": "依据教材总结自编",
+    "label": "乘与除·最多买几个",
+    "detailTitle": "查看知识点来源",
+    "detail": "复习·有余数的除法·买东西：数量＝总价÷单价，余数是剩下的钱（自编）"
+   },
+   "id": "shop-053"
+  },
+  {
+   "category": "most",
+   "mode": "fill",
+   "prompt": "有 15 元，全用来买矿泉水，每瓶 2 元。最多能买几瓶？还剩几元？",
+   "figure": "shop-shelf",
+   "items": [{"emoji": "💧", "name": "矿泉水", "unit": "瓶", "price": 2}],
+   "calc": {"wallet": 15, "price": 2},
+   "fields": [{"before": "最多买", "answer": "7", "unit": "瓶"}, {"before": "还剩", "answer": "1", "unit": "元"}],
+   "explanation": "15÷2＝7……1。能买 7 瓶，余下的 1 元不够再买一瓶。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "复习·有余数的除法",
+    "lesson": "买东西",
+    "point": "数量＝总价÷单价，余数是剩下的钱",
+    "type": "依据教材总结自编",
+    "label": "乘与除·最多买几个",
+    "detailTitle": "查看知识点来源",
+    "detail": "复习·有余数的除法·买东西：数量＝总价÷单价，余数是剩下的钱（自编）"
+   },
+   "id": "shop-054"
+  },
+  {
+   "category": "most",
+   "mode": "fill",
+   "prompt": "有 11 元，全用来买苹果，每个 3 元。最多能买几个？还剩几元？",
+   "figure": "shop-shelf",
+   "items": [{"emoji": "🍎", "name": "苹果", "unit": "个", "price": 3}],
+   "calc": {"wallet": 11, "price": 3},
+   "fields": [{"before": "最多买", "answer": "3", "unit": "个"}, {"before": "还剩", "answer": "2", "unit": "元"}],
+   "explanation": "11÷3＝3……2。能买 3 个，余下的 2 元不够再买一个。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "复习·有余数的除法",
+    "lesson": "买东西",
+    "point": "数量＝总价÷单价，余数是剩下的钱",
+    "type": "依据教材总结自编",
+    "label": "乘与除·最多买几个",
+    "detailTitle": "查看知识点来源",
+    "detail": "复习·有余数的除法·买东西：数量＝总价÷单价，余数是剩下的钱（自编）"
+   },
+   "id": "shop-055"
+  },
+  {
+   "category": "most",
+   "mode": "fill",
+   "prompt": "有 23 元，全用来买牛奶，每盒 5 元。最多能买几盒？还剩几元？",
+   "figure": "shop-shelf",
+   "items": [{"emoji": "🥛", "name": "牛奶", "unit": "盒", "price": 5}],
+   "calc": {"wallet": 23, "price": 5},
+   "fields": [{"before": "最多买", "answer": "4", "unit": "盒"}, {"before": "还剩", "answer": "3", "unit": "元"}],
+   "explanation": "23÷5＝4……3。能买 4 盒，余下的 3 元不够再买一盒。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "复习·有余数的除法",
+    "lesson": "买东西",
+    "point": "数量＝总价÷单价，余数是剩下的钱",
+    "type": "依据教材总结自编",
+    "label": "乘与除·最多买几个",
+    "detailTitle": "查看知识点来源",
+    "detail": "复习·有余数的除法·买东西：数量＝总价÷单价，余数是剩下的钱（自编）"
+   },
+   "id": "shop-056"
+  },
+  {
+   "category": "most",
+   "mode": "fill",
+   "prompt": "有 57 元，全用来买面包，每个 7 元。最多能买几个？还剩几元？",
+   "figure": "shop-shelf",
+   "items": [{"emoji": "🍞", "name": "面包", "unit": "个", "price": 7}],
+   "calc": {"wallet": 57, "price": 7},
+   "fields": [{"before": "最多买", "answer": "8", "unit": "个"}, {"before": "还剩", "answer": "1", "unit": "元"}],
+   "explanation": "57÷7＝8……1。能买 8 个，余下的 1 元不够再买一个。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "复习·有余数的除法",
+    "lesson": "买东西",
+    "point": "数量＝总价÷单价，余数是剩下的钱",
+    "type": "依据教材总结自编",
+    "label": "乘与除·最多买几个",
+    "detailTitle": "查看知识点来源",
+    "detail": "复习·有余数的除法·买东西：数量＝总价÷单价，余数是剩下的钱（自编）"
+   },
+   "id": "shop-057"
+  },
+  {
+   "category": "most",
+   "mode": "fill",
+   "prompt": "有 40 元，全用来买笔记本，每本 6 元。最多能买几本？还剩几元？",
+   "figure": "shop-shelf",
+   "items": [{"emoji": "📓", "name": "笔记本", "unit": "本", "price": 6}],
+   "calc": {"wallet": 40, "price": 6},
+   "fields": [{"before": "最多买", "answer": "6", "unit": "本"}, {"before": "还剩", "answer": "4", "unit": "元"}],
+   "explanation": "40÷6＝6……4。能买 6 本，余下的 4 元不够再买一本。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "复习·有余数的除法",
+    "lesson": "买东西",
+    "point": "数量＝总价÷单价，余数是剩下的钱",
+    "type": "依据教材总结自编",
+    "label": "乘与除·最多买几个",
+    "detailTitle": "查看知识点来源",
+    "detail": "复习·有余数的除法·买东西：数量＝总价÷单价，余数是剩下的钱（自编）"
+   },
+   "id": "shop-058"
+  },
+  {
+   "category": "most",
+   "mode": "fill",
+   "prompt": "有 69 元，全用来买面包，每个 7 元。最多能买几个？还剩几元？",
+   "figure": "shop-shelf",
+   "items": [{"emoji": "🍞", "name": "面包", "unit": "个", "price": 7}],
+   "calc": {"wallet": 69, "price": 7},
+   "fields": [{"before": "最多买", "answer": "9", "unit": "个"}, {"before": "还剩", "answer": "6", "unit": "元"}],
+   "explanation": "69÷7＝9……6。能买 9 个，余下的 6 元不够再买一个。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "复习·有余数的除法",
+    "lesson": "买东西",
+    "point": "数量＝总价÷单价，余数是剩下的钱",
+    "type": "依据教材总结自编",
+    "label": "乘与除·最多买几个",
+    "detailTitle": "查看知识点来源",
+    "detail": "复习·有余数的除法·买东西：数量＝总价÷单价，余数是剩下的钱（自编）"
+   },
+   "id": "shop-059"
+  },
+  {
+   "category": "most",
+   "mode": "fill",
+   "prompt": "有 13 元，全用来买尺子，每把 4 元。最多能买几把？还剩几元？",
+   "figure": "shop-shelf",
+   "items": [{"emoji": "📏", "name": "尺子", "unit": "把", "price": 4}],
+   "calc": {"wallet": 13, "price": 4},
+   "fields": [{"before": "最多买", "answer": "3", "unit": "把"}, {"before": "还剩", "answer": "1", "unit": "元"}],
+   "explanation": "13÷4＝3……1。能买 3 把，余下的 1 元不够再买一把。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "复习·有余数的除法",
+    "lesson": "买东西",
+    "point": "数量＝总价÷单价，余数是剩下的钱",
+    "type": "依据教材总结自编",
+    "label": "乘与除·最多买几个",
+    "detailTitle": "查看知识点来源",
+    "detail": "复习·有余数的除法·买东西：数量＝总价÷单价，余数是剩下的钱（自编）"
+   },
+   "id": "shop-060"
+  },
+  {
+   "category": "most",
+   "mode": "fill",
+   "prompt": "有 11 元，全用来买矿泉水，每瓶 2 元。最多能买几瓶？还剩几元？",
+   "figure": "shop-shelf",
+   "items": [{"emoji": "💧", "name": "矿泉水", "unit": "瓶", "price": 2}],
+   "calc": {"wallet": 11, "price": 2},
+   "fields": [{"before": "最多买", "answer": "5", "unit": "瓶"}, {"before": "还剩", "answer": "1", "unit": "元"}],
+   "explanation": "11÷2＝5……1。能买 5 瓶，余下的 1 元不够再买一瓶。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "复习·有余数的除法",
+    "lesson": "买东西",
+    "point": "数量＝总价÷单价，余数是剩下的钱",
+    "type": "依据教材总结自编",
+    "label": "乘与除·最多买几个",
+    "detailTitle": "查看知识点来源",
+    "detail": "复习·有余数的除法·买东西：数量＝总价÷单价，余数是剩下的钱（自编）"
+   },
+   "id": "shop-061"
+  },
+  {
+   "category": "most",
+   "mode": "fill",
+   "prompt": "有 38 元，全用来买尺子，每把 4 元。最多能买几把？还剩几元？",
+   "figure": "shop-shelf",
+   "items": [{"emoji": "📏", "name": "尺子", "unit": "把", "price": 4}],
+   "calc": {"wallet": 38, "price": 4},
+   "fields": [{"before": "最多买", "answer": "9", "unit": "把"}, {"before": "还剩", "answer": "2", "unit": "元"}],
+   "explanation": "38÷4＝9……2。能买 9 把，余下的 2 元不够再买一把。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "复习·有余数的除法",
+    "lesson": "买东西",
+    "point": "数量＝总价÷单价，余数是剩下的钱",
+    "type": "依据教材总结自编",
+    "label": "乘与除·最多买几个",
+    "detailTitle": "查看知识点来源",
+    "detail": "复习·有余数的除法·买东西：数量＝总价÷单价，余数是剩下的钱（自编）"
+   },
+   "id": "shop-062"
+  },
+  {
+   "category": "most",
+   "mode": "fill",
+   "prompt": "有 62 元，全用来买果汁，每瓶 8 元。最多能买几瓶？还剩几元？",
+   "figure": "shop-shelf",
+   "items": [{"emoji": "🧃", "name": "果汁", "unit": "瓶", "price": 8}],
+   "calc": {"wallet": 62, "price": 8},
+   "fields": [{"before": "最多买", "answer": "7", "unit": "瓶"}, {"before": "还剩", "answer": "6", "unit": "元"}],
+   "explanation": "62÷8＝7……6。能买 7 瓶，余下的 6 元不够再买一瓶。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "复习·有余数的除法",
+    "lesson": "买东西",
+    "point": "数量＝总价÷单价，余数是剩下的钱",
+    "type": "依据教材总结自编",
+    "label": "乘与除·最多买几个",
+    "detailTitle": "查看知识点来源",
+    "detail": "复习·有余数的除法·买东西：数量＝总价÷单价，余数是剩下的钱（自编）"
+   },
+   "id": "shop-063"
+  },
+  {
+   "category": "most",
+   "mode": "fill",
+   "prompt": "有 7 元，全用来买香蕉，每根 2 元。最多能买几根？还剩几元？",
+   "figure": "shop-shelf",
+   "items": [{"emoji": "🍌", "name": "香蕉", "unit": "根", "price": 2}],
+   "calc": {"wallet": 7, "price": 2},
+   "fields": [{"before": "最多买", "answer": "3", "unit": "根"}, {"before": "还剩", "answer": "1", "unit": "元"}],
+   "explanation": "7÷2＝3……1。能买 3 根，余下的 1 元不够再买一根。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "复习·有余数的除法",
+    "lesson": "买东西",
+    "point": "数量＝总价÷单价，余数是剩下的钱",
+    "type": "依据教材总结自编",
+    "label": "乘与除·最多买几个",
+    "detailTitle": "查看知识点来源",
+    "detail": "复习·有余数的除法·买东西：数量＝总价÷单价，余数是剩下的钱（自编）"
+   },
+   "id": "shop-064"
+  },
+  {
+   "category": "most",
+   "mode": "fill",
+   "prompt": "有 9 元，全用来买矿泉水，每瓶 2 元。最多能买几瓶？还剩几元？",
+   "figure": "shop-shelf",
+   "items": [{"emoji": "💧", "name": "矿泉水", "unit": "瓶", "price": 2}],
+   "calc": {"wallet": 9, "price": 2},
+   "fields": [{"before": "最多买", "answer": "4", "unit": "瓶"}, {"before": "还剩", "answer": "1", "unit": "元"}],
+   "explanation": "9÷2＝4……1。能买 4 瓶，余下的 1 元不够再买一瓶。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "复习·有余数的除法",
+    "lesson": "买东西",
+    "point": "数量＝总价÷单价，余数是剩下的钱",
+    "type": "依据教材总结自编",
+    "label": "乘与除·最多买几个",
+    "detailTitle": "查看知识点来源",
+    "detail": "复习·有余数的除法·买东西：数量＝总价÷单价，余数是剩下的钱（自编）"
+   },
+   "id": "shop-065"
+  },
+  {
+   "category": "price",
+   "mode": "fill",
+   "prompt": "3 盒彩笔一共 36 元，每盒多少元？",
+   "calc": {"total": 36, "count": 3},
+   "fields": [{"answer": "12", "unit": "元"}],
+   "explanation": "单价＝总价÷数量：36÷3＝12（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "丰收了",
+    "point": "口算除法求单价",
+    "type": "依据教材总结自编",
+    "label": "乘与除·求单价",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·丰收了：口算除法求单价（自编）"
+   },
+   "id": "shop-066"
+  },
+  {
+   "category": "price",
+   "mode": "fill",
+   "prompt": "4 瓶果汁一共 48 元，每瓶多少元？",
+   "calc": {"total": 48, "count": 4},
+   "fields": [{"answer": "12", "unit": "元"}],
+   "explanation": "单价＝总价÷数量：48÷4＝12（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "丰收了",
+    "point": "口算除法求单价",
+    "type": "依据教材总结自编",
+    "label": "乘与除·求单价",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·丰收了：口算除法求单价（自编）"
+   },
+   "id": "shop-067"
+  },
+  {
+   "category": "price",
+   "mode": "fill",
+   "prompt": "4 个水杯一共 84 元，每个多少元？",
+   "calc": {"total": 84, "count": 4},
+   "fields": [{"answer": "21", "unit": "元"}],
+   "explanation": "单价＝总价÷数量：84÷4＝21（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "丰收了",
+    "point": "口算除法求单价",
+    "type": "依据教材总结自编",
+    "label": "乘与除·求单价",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·丰收了：口算除法求单价（自编）"
+   },
+   "id": "shop-068"
+  },
+  {
+   "category": "price",
+   "mode": "fill",
+   "prompt": "3 本故事书一共 69 元，每本多少元？",
+   "calc": {"total": 69, "count": 3},
+   "fields": [{"answer": "23", "unit": "元"}],
+   "explanation": "单价＝总价÷数量：69÷3＝23（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "丰收了",
+    "point": "口算除法求单价",
+    "type": "依据教材总结自编",
+    "label": "乘与除·求单价",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·丰收了：口算除法求单价（自编）"
+   },
+   "id": "shop-069"
+  },
+  {
+   "category": "price",
+   "mode": "fill",
+   "prompt": "3 个铅笔盒一共 66 元，每个多少元？",
+   "calc": {"total": 66, "count": 3},
+   "fields": [{"answer": "22", "unit": "元"}],
+   "explanation": "单价＝总价÷数量：66÷3＝22（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "丰收了",
+    "point": "口算除法求单价",
+    "type": "依据教材总结自编",
+    "label": "乘与除·求单价",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·丰收了：口算除法求单价（自编）"
+   },
+   "id": "shop-070"
+  },
+  {
+   "category": "price",
+   "mode": "fill",
+   "prompt": "4 把雨伞一共 88 元，每把多少元？",
+   "calc": {"total": 88, "count": 4},
+   "fields": [{"answer": "22", "unit": "元"}],
+   "explanation": "单价＝总价÷数量：88÷4＝22（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "丰收了",
+    "point": "口算除法求单价",
+    "type": "依据教材总结自编",
+    "label": "乘与除·求单价",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·丰收了：口算除法求单价（自编）"
+   },
+   "id": "shop-071"
+  },
+  {
+   "category": "price",
+   "mode": "fill",
+   "prompt": "3 副手套一共 93 元，每副多少元？",
+   "calc": {"total": 93, "count": 3},
+   "fields": [{"answer": "31", "unit": "元"}],
+   "explanation": "单价＝总价÷数量：93÷3＝31（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "丰收了",
+    "point": "口算除法求单价",
+    "type": "依据教材总结自编",
+    "label": "乘与除·求单价",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·丰收了：口算除法求单价（自编）"
+   },
+   "id": "shop-072"
+  },
+  {
+   "category": "price",
+   "mode": "fill",
+   "prompt": "2 个篮子一共 42 元，每个多少元？",
+   "calc": {"total": 42, "count": 2},
+   "fields": [{"answer": "21", "unit": "元"}],
+   "explanation": "单价＝总价÷数量：42÷2＝21（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "丰收了",
+    "point": "口算除法求单价",
+    "type": "依据教材总结自编",
+    "label": "乘与除·求单价",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·丰收了：口算除法求单价（自编）"
+   },
+   "id": "shop-073"
+  },
+  {
+   "category": "price",
+   "mode": "fill",
+   "prompt": "2 个玩具熊一共 64 元，每个多少元？",
+   "calc": {"total": 64, "count": 2},
+   "fields": [{"answer": "32", "unit": "元"}],
+   "explanation": "单价＝总价÷数量：64÷2＝32（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "丰收了",
+    "point": "口算除法求单价",
+    "type": "依据教材总结自编",
+    "label": "乘与除·求单价",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·丰收了：口算除法求单价（自编）"
+   },
+   "id": "shop-074"
+  },
+  {
+   "category": "price",
+   "mode": "fill",
+   "prompt": "3 个书包一共 240 元，每个多少元？",
+   "calc": {"total": 240, "count": 3},
+   "fields": [{"answer": "80", "unit": "元"}],
+   "explanation": "单价＝总价÷数量：240÷3＝80（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "丰收了",
+    "point": "口算除法求单价",
+    "type": "依据教材总结自编",
+    "label": "乘与除·求单价",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·丰收了：口算除法求单价（自编）"
+   },
+   "id": "shop-075"
+  },
+  {
+   "category": "price",
+   "mode": "fill",
+   "prompt": "4 个足球一共 120 元，每个多少元？",
+   "calc": {"total": 120, "count": 4},
+   "fields": [{"answer": "30", "unit": "元"}],
+   "explanation": "单价＝总价÷数量：120÷4＝30（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "丰收了",
+    "point": "口算除法求单价",
+    "type": "依据教材总结自编",
+    "label": "乘与除·求单价",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·丰收了：口算除法求单价（自编）"
+   },
+   "id": "shop-076"
+  },
+  {
+   "category": "price",
+   "mode": "fill",
+   "prompt": "6 双运动鞋一共 180 元，每双多少元？",
+   "calc": {"total": 180, "count": 6},
+   "fields": [{"answer": "30", "unit": "元"}],
+   "explanation": "单价＝总价÷数量：180÷6＝30（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "丰收了",
+    "point": "口算除法求单价",
+    "type": "依据教材总结自编",
+    "label": "乘与除·求单价",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·丰收了：口算除法求单价（自编）"
+   },
+   "id": "shop-077"
+  },
+  {
+   "category": "price",
+   "mode": "fill",
+   "prompt": "5 个篮球一共 350 元，每个多少元？",
+   "calc": {"total": 350, "count": 5},
+   "fields": [{"answer": "70", "unit": "元"}],
+   "explanation": "单价＝总价÷数量：350÷5＝70（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "丰收了",
+    "point": "口算除法求单价",
+    "type": "依据教材总结自编",
+    "label": "乘与除·求单价",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·丰收了：口算除法求单价（自编）"
+   },
+   "id": "shop-078"
+  },
+  {
+   "category": "price",
+   "mode": "fill",
+   "prompt": "8 件外套一共 480 元，每件多少元？",
+   "calc": {"total": 480, "count": 8},
+   "fields": [{"answer": "60", "unit": "元"}],
+   "explanation": "单价＝总价÷数量：480÷8＝60（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "丰收了",
+    "point": "口算除法求单价",
+    "type": "依据教材总结自编",
+    "label": "乘与除·求单价",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·丰收了：口算除法求单价（自编）"
+   },
+   "id": "shop-079"
+  },
+  {
+   "category": "price",
+   "mode": "fill",
+   "prompt": "9 副羽毛球拍一共 720 元，每副多少元？",
+   "calc": {"total": 720, "count": 9},
+   "fields": [{"answer": "80", "unit": "元"}],
+   "explanation": "单价＝总价÷数量：720÷9＝80（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "丰收了",
+    "point": "口算除法求单价",
+    "type": "依据教材总结自编",
+    "label": "乘与除·求单价",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·丰收了：口算除法求单价（自编）"
+   },
+   "id": "shop-080"
+  },
+  {
+   "category": "formula",
+   "prompt": "买 3 个面包，每个 4 元，再买 1 瓶 5 元的水，一共多少元？",
+   "answer": "3×4＋5",
+   "result": 17,
+   "options": ["3×4＋5", "3＋4×5", "3×(4＋5)", "4＋5"],
+   "explanation": "先算面包的钱 3×4，再加水的 5 元。3×4＋5＝17。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第一单元·混合运算",
+    "lesson": "买文具",
+    "point": "先乘除后加减，有括号先算括号",
+    "type": "依据教材总结自编",
+    "label": "混合运算·列式",
+    "detailTitle": "查看知识点来源",
+    "detail": "第一单元·混合运算·买文具：先乘除后加减，有括号先算括号（自编）"
+   },
+   "id": "shop-081"
+  },
+  {
+   "category": "formula",
+   "prompt": "有 50 元，买了 6 个 7 元的书夹，还剩多少元？",
+   "answer": "50－6×7",
+   "result": 8,
+   "options": ["50－6×7", "(50－6)×7", "50－6－7", "50－7"],
+   "explanation": "先算花掉的 6×7，再从 50 里减去。50－6×7＝8。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第一单元·混合运算",
+    "lesson": "买文具",
+    "point": "先乘除后加减，有括号先算括号",
+    "type": "依据教材总结自编",
+    "label": "混合运算·列式",
+    "detailTitle": "查看知识点来源",
+    "detail": "第一单元·混合运算·买文具：先乘除后加减，有括号先算括号（自编）"
+   },
+   "id": "shop-082"
+  },
+  {
+   "category": "formula",
+   "prompt": "买笔和本子各 3 件，笔 5 元一支，本子 7 元一本，一共多少元？",
+   "answer": "(5＋7)×3",
+   "result": 36,
+   "options": ["(5＋7)×3", "5＋7×3", "5×7×3", "5＋7＋3"],
+   "explanation": "一支笔和一本本子是一份，先算括号里的一份钱，再乘 3。(5＋7)×3＝36。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第一单元·混合运算",
+    "lesson": "买文具",
+    "point": "先乘除后加减，有括号先算括号",
+    "type": "依据教材总结自编",
+    "label": "混合运算·列式",
+    "detailTitle": "查看知识点来源",
+    "detail": "第一单元·混合运算·买文具：先乘除后加减，有括号先算括号（自编）"
+   },
+   "id": "shop-083"
+  },
+  {
+   "category": "formula",
+   "prompt": "书 25 元，笔 15 元，这些钱由 4 人平分，每人出多少元？",
+   "answer": "(25＋15)÷4",
+   "result": 10,
+   "options": ["(25＋15)÷4", "25＋15÷4", "25÷4＋15", "25－15÷4"],
+   "explanation": "先把总钱数加起来，所以要加括号，再除以 4。(25＋15)÷4＝10。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第一单元·混合运算",
+    "lesson": "买文具",
+    "point": "先乘除后加减，有括号先算括号",
+    "type": "依据教材总结自编",
+    "label": "混合运算·列式",
+    "detailTitle": "查看知识点来源",
+    "detail": "第一单元·混合运算·买文具：先乘除后加减，有括号先算括号（自编）"
+   },
+   "id": "shop-084"
+  },
+  {
+   "category": "formula",
+   "prompt": "买 5 盒牛奶，每盒 3 元，付了 20 元，找回多少元？",
+   "answer": "20－5×3",
+   "result": 5,
+   "options": ["20－5×3", "(20－5)×3", "20÷5×3", "20－5－3"],
+   "explanation": "先算总价 5×3，再用 20 减。20－5×3＝5。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第一单元·混合运算",
+    "lesson": "买文具",
+    "point": "先乘除后加减，有括号先算括号",
+    "type": "依据教材总结自编",
+    "label": "混合运算·列式",
+    "detailTitle": "查看知识点来源",
+    "detail": "第一单元·混合运算·买文具：先乘除后加减，有括号先算括号（自编）"
+   },
+   "id": "shop-085"
+  },
+  {
+   "category": "formula",
+   "prompt": "9 元能买 3 块橡皮，再买 1 把 4 元的尺子。买 1 块橡皮和 1 把尺子要多少元？",
+   "answer": "9÷3＋4",
+   "result": 7,
+   "options": ["9÷3＋4", "9÷(3＋4)", "9＋3＋4", "9×3＋4"],
+   "explanation": "先求 1 块橡皮 9÷3，再加尺子的钱。9÷3＋4＝7。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第一单元·混合运算",
+    "lesson": "买文具",
+    "point": "先乘除后加减，有括号先算括号",
+    "type": "依据教材总结自编",
+    "label": "混合运算·列式",
+    "detailTitle": "查看知识点来源",
+    "detail": "第一单元·混合运算·买文具：先乘除后加减，有括号先算括号（自编）"
+   },
+   "id": "shop-086"
+  },
+  {
+   "category": "formula",
+   "prompt": "小店上午卖了 8 箱果汁，每箱 6 元，下午卖了 12 元。一天卖了多少元？",
+   "answer": "8×6＋12",
+   "result": 60,
+   "options": ["8×6＋12", "8＋6×12", "8×(6＋12)", "8＋6＋12"],
+   "explanation": "先算上午 8×6，再加下午 12 元。8×6＋12＝60。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第一单元·混合运算",
+    "lesson": "买文具",
+    "point": "先乘除后加减，有括号先算括号",
+    "type": "依据教材总结自编",
+    "label": "混合运算·列式",
+    "detailTitle": "查看知识点来源",
+    "detail": "第一单元·混合运算·买文具：先乘除后加减，有括号先算括号（自编）"
+   },
+   "id": "shop-087"
+  },
+  {
+   "category": "formula",
+   "prompt": "3 张同样的贴纸一共 30 元，每张再加 2 元包装费。每张一共多少元？",
+   "answer": "30÷3＋2",
+   "result": 12,
+   "options": ["30÷3＋2", "30÷(3＋2)", "30＋3＋2", "30×3＋2"],
+   "explanation": "先算每张的价钱 30÷3，再加 2 元。30÷3＋2＝12。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第一单元·混合运算",
+    "lesson": "买文具",
+    "point": "先乘除后加减，有括号先算括号",
+    "type": "依据教材总结自编",
+    "label": "混合运算·列式",
+    "detailTitle": "查看知识点来源",
+    "detail": "第一单元·混合运算·买文具：先乘除后加减，有括号先算括号（自编）"
+   },
+   "id": "shop-088"
+  },
+  {
+   "category": "formula",
+   "prompt": "每盒彩笔 9 元，买 2 盒，优惠后少付 3 元，一共付多少元？",
+   "answer": "9×2－3",
+   "result": 15,
+   "options": ["9×2－3", "(9－3)×2", "9＋2－3", "9×3－2"],
+   "explanation": "先算 2 盒 9×2，再减优惠的 3 元。9×2－3＝15。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第一单元·混合运算",
+    "lesson": "买文具",
+    "point": "先乘除后加减，有括号先算括号",
+    "type": "依据教材总结自编",
+    "label": "混合运算·列式",
+    "detailTitle": "查看知识点来源",
+    "detail": "第一单元·混合运算·买文具：先乘除后加减，有括号先算括号（自编）"
+   },
+   "id": "shop-089"
+  },
+  {
+   "category": "formula",
+   "prompt": "买 2 个书包，每个 40 元，又买 1 个 10 元的水杯。付 100 元还剩多少元？",
+   "answer": "100－40×2－10",
+   "result": 10,
+   "options": ["100－40×2－10", "100－40－10", "100－(40＋10)", "(100－40)×2－10"],
+   "explanation": "书包要算 40×2，再连着减去。100－40×2－10＝10。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第一单元·混合运算",
+    "lesson": "买文具",
+    "point": "先乘除后加减，有括号先算括号",
+    "type": "依据教材总结自编",
+    "label": "混合运算·列式",
+    "detailTitle": "查看知识点来源",
+    "detail": "第一单元·混合运算·买文具：先乘除后加减，有括号先算括号（自编）"
+   },
+   "id": "shop-090"
+  },
+  {
+   "category": "deal",
+   "prompt": "同样的彩笔，哪家店更便宜？",
+   "figure": "shop-deal",
+   "emoji": "🖍️",
+   "unit": "支",
+   "stores": [{"name": "甲店", "count": 3, "total": 24}, {"name": "乙店", "count": 2, "total": 18}],
+   "answer": "甲店",
+   "options": ["甲店", "乙店"],
+   "explanation": "先算每支多少钱：甲店每支 24÷3＝8（元）；乙店每支 18÷2＝9（元）。甲店最便宜。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "买矿泉水",
+    "point": "货比三家：先算单价再比较",
+    "type": "依据教材总结自编",
+    "label": "乘与除·比价钱",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·买矿泉水：货比三家：先算单价再比较（自编）"
+   },
+   "id": "shop-091"
+  },
+  {
+   "category": "deal",
+   "prompt": "同样的牛奶，哪家店更便宜？",
+   "figure": "shop-deal",
+   "emoji": "🥛",
+   "unit": "盒",
+   "stores": [{"name": "甲店", "count": 4, "total": 12}, {"name": "乙店", "count": 3, "total": 12}],
+   "answer": "甲店",
+   "options": ["甲店", "乙店"],
+   "explanation": "先算每盒多少钱：甲店每盒 12÷4＝3（元）；乙店每盒 12÷3＝4（元）。甲店最便宜。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "买矿泉水",
+    "point": "货比三家：先算单价再比较",
+    "type": "依据教材总结自编",
+    "label": "乘与除·比价钱",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·买矿泉水：货比三家：先算单价再比较（自编）"
+   },
+   "id": "shop-092"
+  },
+  {
+   "category": "deal",
+   "prompt": "同样的苹果，哪家店更便宜？",
+   "figure": "shop-deal",
+   "emoji": "🍎",
+   "unit": "个",
+   "stores": [{"name": "东店", "count": 2, "total": 6}, {"name": "西店", "count": 3, "total": 6}],
+   "answer": "西店",
+   "options": ["东店", "西店"],
+   "explanation": "先算每个多少钱：东店每个 6÷2＝3（元）；西店每个 6÷3＝2（元）。西店最便宜。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "买矿泉水",
+    "point": "货比三家：先算单价再比较",
+    "type": "依据教材总结自编",
+    "label": "乘与除·比价钱",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·买矿泉水：货比三家：先算单价再比较（自编）"
+   },
+   "id": "shop-093"
+  },
+  {
+   "category": "deal",
+   "prompt": "同样的笔记本，哪家店更便宜？",
+   "figure": "shop-deal",
+   "emoji": "📓",
+   "unit": "本",
+   "stores": [{"name": "甲店", "count": 4, "total": 24}, {"name": "乙店", "count": 2, "total": 10}],
+   "answer": "乙店",
+   "options": ["甲店", "乙店"],
+   "explanation": "先算每本多少钱：甲店每本 24÷4＝6（元）；乙店每本 10÷2＝5（元）。乙店最便宜。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "买矿泉水",
+    "point": "货比三家：先算单价再比较",
+    "type": "依据教材总结自编",
+    "label": "乘与除·比价钱",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·买矿泉水：货比三家：先算单价再比较（自编）"
+   },
+   "id": "shop-094"
+  },
+  {
+   "category": "deal",
+   "prompt": "同样的袜子，哪家店更便宜？",
+   "figure": "shop-deal",
+   "emoji": "🧦",
+   "unit": "双",
+   "stores": [{"name": "甲店", "count": 3, "total": 24}, {"name": "乙店", "count": 4, "total": 36}],
+   "answer": "甲店",
+   "options": ["甲店", "乙店"],
+   "explanation": "先算每双多少钱：甲店每双 24÷3＝8（元）；乙店每双 36÷4＝9（元）。甲店最便宜。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "买矿泉水",
+    "point": "货比三家：先算单价再比较",
+    "type": "依据教材总结自编",
+    "label": "乘与除·比价钱",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·买矿泉水：货比三家：先算单价再比较（自编）"
+   },
+   "id": "shop-095"
+  },
+  {
+   "category": "deal",
+   "prompt": "同样的果汁，哪家店更便宜？",
+   "figure": "shop-deal",
+   "emoji": "🧃",
+   "unit": "瓶",
+   "stores": [
+    {"name": "东店", "count": 2, "total": 12},
+    {"name": "西店", "count": 3, "total": 15},
+    {"name": "南店", "count": 4, "total": 28}
+   ],
+   "answer": "西店",
+   "options": ["东店", "西店", "南店"],
+   "explanation": "先算每瓶多少钱：东店每瓶 12÷2＝6（元）；西店每瓶 15÷3＝5（元）；南店每瓶 28÷4＝7（元）。西店最便宜。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "买矿泉水",
+    "point": "货比三家：先算单价再比较",
+    "type": "依据教材总结自编",
+    "label": "乘与除·比价钱",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·买矿泉水：货比三家：先算单价再比较（自编）"
+   },
+   "id": "shop-096"
+  },
+  {
+   "category": "deal",
+   "prompt": "同样的铅笔，哪家店更便宜？",
+   "figure": "shop-deal",
+   "emoji": "✏️",
+   "unit": "支",
+   "stores": [
+    {"name": "甲店", "count": 4, "total": 8},
+    {"name": "乙店", "count": 3, "total": 9},
+    {"name": "丙店", "count": 2, "total": 8}
+   ],
+   "answer": "甲店",
+   "options": ["甲店", "乙店", "丙店"],
+   "explanation": "先算每支多少钱：甲店每支 8÷4＝2（元）；乙店每支 9÷3＝3（元）；丙店每支 8÷2＝4（元）。甲店最便宜。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "买矿泉水",
+    "point": "货比三家：先算单价再比较",
+    "type": "依据教材总结自编",
+    "label": "乘与除·比价钱",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·买矿泉水：货比三家：先算单价再比较（自编）"
+   },
+   "id": "shop-097"
+  },
+  {
+   "category": "deal",
+   "prompt": "同样的香蕉，哪家店更便宜？",
+   "figure": "shop-deal",
+   "emoji": "🍌",
+   "unit": "根",
+   "stores": [
+    {"name": "东店", "count": 3, "total": 6},
+    {"name": "西店", "count": 2, "total": 6},
+    {"name": "南店", "count": 4, "total": 12}
+   ],
+   "answer": "东店",
+   "options": ["东店", "西店", "南店"],
+   "explanation": "先算每根多少钱：东店每根 6÷3＝2（元）；西店每根 6÷2＝3（元）；南店每根 12÷4＝3（元）。东店最便宜。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "买矿泉水",
+    "point": "货比三家：先算单价再比较",
+    "type": "依据教材总结自编",
+    "label": "乘与除·比价钱",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·买矿泉水：货比三家：先算单价再比较（自编）"
+   },
+   "id": "shop-098"
+  },
+  {
+   "category": "deal",
+   "prompt": "同样的橡皮，哪家店更便宜？",
+   "figure": "shop-deal",
+   "emoji": "🧽",
+   "unit": "块",
+   "stores": [{"name": "甲店", "count": 2, "total": 8}, {"name": "乙店", "count": 4, "total": 12}],
+   "answer": "乙店",
+   "options": ["甲店", "乙店"],
+   "explanation": "先算每块多少钱：甲店每块 8÷2＝4（元）；乙店每块 12÷4＝3（元）。乙店最便宜。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "买矿泉水",
+    "point": "货比三家：先算单价再比较",
+    "type": "依据教材总结自编",
+    "label": "乘与除·比价钱",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·买矿泉水：货比三家：先算单价再比较（自编）"
+   },
+   "id": "shop-099"
+  },
+  {
+   "category": "deal",
+   "prompt": "同样的尺子，哪家店更便宜？",
+   "figure": "shop-deal",
+   "emoji": "📏",
+   "unit": "把",
+   "stores": [{"name": "甲店", "count": 2, "total": 6}, {"name": "乙店", "count": 3, "total": 12}],
+   "answer": "甲店",
+   "options": ["甲店", "乙店"],
+   "explanation": "先算每把多少钱：甲店每把 6÷2＝3（元）；乙店每把 12÷3＝4（元）。甲店最便宜。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第四单元·乘与除",
+    "lesson": "买矿泉水",
+    "point": "货比三家：先算单价再比较",
+    "type": "依据教材总结自编",
+    "label": "乘与除·比价钱",
+    "detailTitle": "查看知识点来源",
+    "detail": "第四单元·乘与除·买矿泉水：货比三家：先算单价再比较（自编）"
+   },
+   "id": "shop-100"
+  }
+ ]
+}

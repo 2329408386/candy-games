@@ -89,11 +89,11 @@
             {% set name=games[id] %}
             <article class="game-card">
               <div class="game-top">
-                <span class="game-icon math-icon" aria-hidden="true">{% if id=='conversion' %}⇄{% elif id=='mental' %}<svg><use href="#i-calc"/></svg>{% elif id=='measure' %}<svg><use href="#i-ruler"/></svg>{% elif id=='units' %}dm{% else %}<svg><use href="#i-compass"/></svg>{% endif %}</span><span class="game-number">{{'%02d'|format(grade_games.index(id)+1)}}</span>
+                <span class="game-icon math-icon" aria-hidden="true">{% if id=='conversion' %}⇄{% elif id=='mental' %}<svg><use href="#i-calc"/></svg>{% elif id=='measure' %}<svg><use href="#i-ruler"/></svg>{% elif id=='units' %}dm{% elif id=='outfit' %}👕{% elif id=='angles' %}∠{% elif id=='odometer' %}🚗{% elif id=='shop' %}🛒{% elif id=='decimals' %}0.1{% else %}<svg><use href="#i-compass"/></svg>{% endif %}</span><span class="game-number">{{'%02d'|format(grade_games.index(id)+1)}}</span>
               </div>
               <h3>{{name}}</h3>
               <p>
-                {{ {'conversion':'毫米、厘米、分米、米、千米，换算小达人就是你。','mental':'1000以内的加减法，比一比谁算得又快又准。','measure':'看清起点和终点，练习厘米、毫米等复合长度。','units':'给生活中的物体，填上合适的长度单位。','directions':'八个方向、几点钟方向，一起记录美丽校园。'}[id] }}
+                {{ {'conversion':'毫米、厘米、分米、米、千米，换算小达人就是你。','mental':'1000以内的加减法，比一比谁算得又快又准。','measure':'看清起点和终点，练习厘米、毫米等复合长度。','units':'给生活中的物体，填上合适的长度单位。','directions':'八个方向、几点钟方向，一起记录美丽校园。','outfit':'上衣配裤子，一件一件试穿。不重复、不遗漏，一共几种穿法你来算！','angles':'转一转、找一找、数一数，认准直角、锐角、钝角，识破角的小陷阱。','odometer':'开着小车跑长途，看懂里程表，算出两地路程和今天跑了多远。','shop':'算总价、比价钱、看够不够，把乘除法用到商店里。','decimals':'元角分和米分米变小数，数钱付款、尺上找点，还要算货车能不能通过。'}[id] }}
               </p>
               <div class="card-bottom">
                 {% if license and id in unlocked %}<a class="game-link" href="{{url_for('game_page',game=id)}}">开始游戏<svg aria-hidden="true"><use href="#i-arrow"/></svg></a>{% elif id not in trials_used %}<a class="game-link trial-link" href="{{url_for('game_page',game=id)}}">免费试玩一局<svg aria-hidden="true"><use href="#i-arrow"/></svg></a>{% else %}<span class="locked"><svg aria-hidden="true"><use href="#i-lock"/></svg>试玩已结束</span><button type="button" class="text-button inline-link" data-contact>获取授权码</button>{% endif %}

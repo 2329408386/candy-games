@@ -1,0 +1,101 @@
+/* Pieces of the hands-on math games (types/modes.js and its modes). Sizes in rem, so 投屏 scales them with the page. */
+.pk-player svg text { font-family: inherit; }
+.muted { overflow-wrap: anywhere; }
+
+/* number boxes */
+.fill-area { margin-top: 0.75rem; }
+.fill-row { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.75rem; }
+.fill-group { display: inline-flex; align-items: center; gap: 0.375rem; white-space: nowrap; }
+.fill-text { font-size: 1.25rem; }
+.fill-box { min-width: 5.5rem; min-height: 3.125rem; padding: 0 0.625rem; border: 1px solid #cfdac5; border-radius: 10px; background: white; font-size: 1.5rem; font-weight: 700; color: #1f4f7a; }
+.fill-box.active { border: 2px solid var(--green); background: #f7faf2; }
+.fill-box.right { border: 2px solid var(--right-line); background: var(--right); opacity: 1; }
+.fill-box.wrong { border: 2px solid var(--wrong-line); background: var(--wrong); opacity: 1; }
+
+/* 小小搭配师 */
+.dress-stage { display: flex; gap: 0.75rem; align-items: flex-start; }
+.dress-doll { flex: 0 0 8rem; background: #f2f7f5; border: 1px solid #dfe9e3; border-radius: 14px; padding: 0.375rem; }
+.dress-doll svg, .wear-pic svg, .turn-pic svg, .pick-pic svg, .angle-pic svg, .route-line svg, .route-map svg, .stick-pic svg, .gate-pic svg { display: block; width: 100%; height: auto; }
+.dress-shelf { flex: 1 1 0; min-width: 0; }
+.wardrobe-title { margin: 0.25rem 0; font-size: 0.9375rem; font-weight: 700; color: #53635b; }
+.wardrobe-row { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.wear { display: flex; flex-direction: column; align-items: center; flex: 0 1 5.5rem; min-width: 4.75rem; padding: 0.375rem; border: 1px solid #d4dec9; border-radius: 12px; background: #f7f9f2; line-height: 1.25; }
+.wear.selected { background: var(--gold-soft); border: 2px solid var(--gold); padding: 0.3125rem; }
+.wear.still { background: #fbfcf8; }
+.wear-pic { width: 3.25rem; }
+.wear-name { font-size: 0.8125rem; text-align: center; }
+.wear-emoji { font-size: 2rem; line-height: 1.3; }
+.dress-record { display: block; width: 100%; margin: 0.75rem 0 0.5rem; min-height: 3.25rem; border: 2px solid var(--gold); border-radius: 12px; background: var(--gold-soft); font-size: 1.125rem; font-weight: 700; }
+.dress-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr)); gap: 0.125rem 1.5rem; margin: 0.25rem 0; padding-left: 1.5rem; font-size: 0.9375rem; }
+.dress-list.record { padding: 0.5rem 0.5rem 0.5rem 2rem; background: #fffbe9; border: 1px solid #efe4bd; border-radius: 10px; }
+.dress-grid { width: 100%; margin-top: 0.75rem; border-collapse: collapse; font-size: 0.875rem; }
+.dress-grid th, .dress-grid td { padding: 0.25rem 0.375rem; border: 1px solid #d4dec9; text-align: center; }
+.dress-grid td.found { background: var(--right); }
+.dress-grid td.lost { background: var(--wrong); color: #9c3f2a; font-weight: 700; }
+.item-rows { margin: 0 0 0.5rem; }
+.route-map { max-width: 28rem; margin: 0 auto; }
+
+/* 角的小侦探 */
+.turn-pic { max-width: 22rem; margin: 0 auto; background: #fbfcf8; border: 1px solid #e5eadc; border-radius: 14px; }
+.turn-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.625rem; }
+.turn-key { min-height: 3.25rem; font-size: 1.125rem; }
+.turn-tool { grid-column: 1 / -1; background: #eaf3f8; border-color: #bdd4e3; }
+.pick-pic { max-width: 20rem; margin: 0 auto; background: #fbfcf8; border: 1px solid #e5eadc; border-radius: 14px; }
+.pick-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; margin-top: 0.625rem; }
+.pick-key { flex: 1 1 4.5rem; min-width: 4.5rem; max-width: 7rem; }
+.angle-pic { max-width: 17rem; margin: 0 auto; }
+.angle-pic.small { max-width: none; }
+.angle-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+.angle-card { background: #fbfcf8; border: 1px solid #e5eadc; border-radius: 12px; padding: 0.25rem; text-align: center; }
+
+/* 里程表小司机 */
+.route-line { max-width: 34rem; margin: 0 auto; }
+.mileage { margin: 0.25rem 0 0.5rem; }
+.mileage-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(5rem, 1fr)); gap: 0.375rem; }
+.mileage-cell { display: flex; flex-direction: column; align-items: center; padding: 0.25rem; background: white; border: 1px solid #d4dec9; border-radius: 8px; font-size: 0.9375rem; line-height: 1.35; }
+.mileage-cell b { color: #a2542a; }
+.drove .car-move { animation: drive-in 0.9s ease-out; }
+@keyframes drive-in { from { transform: translateX(var(--drive, 0)); } }
+.dash { display: grid; gap: 0.5rem; padding: 0.75rem 0.875rem; background: #27332f; border-radius: 16px; color: #f6f3e9; }
+.dash-row { display: flex; align-items: center; justify-content: space-between; gap: 0.625rem; flex-wrap: wrap; }
+.dash-label { font-size: 1rem; }
+.rollers { display: inline-flex; align-items: center; gap: 0.1875rem; }
+.roller { display: inline-block; min-width: 1.75rem; padding: 0.125rem 0; border-radius: 5px; background: linear-gradient(#fff, #d8dcd6 45%, #fff); color: #1f2a26; font: 700 1.5rem/1.3 ui-monospace, Menlo, Consolas, monospace; text-align: center; animation: roller-in 0.5s ease-out; }
+.roller-unit { margin-left: 0.25rem; font-size: 0.875rem; font-style: normal; color: #cfd8d2; }
+@keyframes roller-in { from { transform: translateY(-40%); opacity: 0.2; } }
+
+/* 小当家大采购 */
+.shelf { display: grid; grid-template-columns: repeat(auto-fit, minmax(6.5rem, 1fr)); gap: 0.5rem; padding: 0.5rem; background: #f5ecd8; border-bottom: 6px solid #c9a56e; border-radius: 12px 12px 4px 4px; }
+.goods { display: flex; flex-direction: column; align-items: center; gap: 0.0625rem; padding: 0.375rem; background: white; border-radius: 10px; line-height: 1.3; }
+.goods-emoji { font-size: 2rem; line-height: 1.25; }
+.goods-name { font-size: 0.9375rem; font-weight: 600; text-align: center; }
+.goods-price { padding: 0 0.375rem; border-radius: 6px; background: #ffe7b0; font-size: 0.9375rem; font-weight: 700; color: #7f4d10; white-space: nowrap; }
+.goods-keys { display: flex; align-items: center; gap: 0.25rem; margin-top: 0.25rem; }
+.goods-key { width: 2.25rem; height: 2.25rem; border: 1px solid #cfdac5; border-radius: 8px; background: #f3f6eb; font-size: 1.125rem; line-height: 1; }
+.goods-count { min-width: 1.25rem; text-align: center; font-size: 1.125rem; }
+.basket { min-height: 2.5rem; margin: 0.5rem 0 0; padding: 0.25rem 0.625rem; background: #f2f6f9; border-radius: 10px; font-size: 1.125rem; overflow-wrap: anywhere; }
+.wallet { margin: 0.5rem 0 0; font-size: 1.125rem; font-weight: 700; text-align: center; }
+.deal-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr)); gap: 0.5rem; }
+.deal-card { display: flex; flex-direction: column; align-items: center; padding: 0.5rem; background: #fbfcf8; border: 1px solid #e0d6b8; border-radius: 12px; }
+.deal-tag { padding: 0 0.5rem; border-radius: 6px; background: #ffe7b0; font-weight: 700; color: #7f4d10; white-space: nowrap; }
+
+/* 小数变变变 */
+.pay-tag { display: flex; justify-content: center; align-items: center; gap: 0.625rem; font-size: 1.5rem; }
+.pay-tray { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.3125rem; min-height: 4.5rem; margin: 0.5rem 0; padding: 0.5rem; background: #eef4e6; border: 2px dashed #b7c9a6; border-radius: 14px; }
+.pay-bank { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; }
+.money { border: 1px solid #836a3a; font-weight: 700; line-height: 1; }
+.money.note { width: 4.5rem; height: 2.75rem; border-radius: 6px; background: repeating-linear-gradient(135deg, #e6efd3 0 6px, #d7e5bd 6px 12px); font-size: 1.0625rem; }
+.money.coin { width: 3.125rem; height: 3.125rem; border-radius: 50%; background: radial-gradient(#fff4c7, #e9c561); font-size: 1rem; }
+.money.cent { width: 2.75rem; height: 2.75rem; border-radius: 50%; background: radial-gradient(#f3f4f0, #bcc2b8); font-size: 0.9375rem; }
+.money:disabled { opacity: 1; }
+.stick-pic, .gate-pic { max-width: 34rem; margin: 0 auto; }
+.stick-pic { padding: 0.25rem; background: #fbfcf8; border: 1px solid #e5eadc; border-radius: 12px; }
+.stick-nudge { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.5rem; }
+
+@media (max-width: 420px) {
+  .fill-box { min-width: 4.25rem; }
+  .dress-doll { flex-basis: 5.5rem; }
+  .wear { min-width: 4rem; }
+  .wear-pic { width: 2.75rem; }
+}
+@media (prefers-reduced-motion: reduce) { .drove .car-move, .roller { animation: none; } }

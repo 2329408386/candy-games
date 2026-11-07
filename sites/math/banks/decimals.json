@@ -1,0 +1,1998 @@
+{
+ "type": "modes",
+ "meta": {"notes": ["题目依据北师大版三年级上册知识点总结自编，非教材原题。"]},
+ "draw": {"by": ["category"], "counts": {"pay": 5, "length": 4, "write": 3, "read": 2, "compare": 3, "calc": 3}},
+ "ui": {},
+ "questions": [
+  {
+   "category": "pay",
+   "mode": "pay",
+   "prompt": "买铅笔要付 4.5元。放上正好的钱！",
+   "emoji": "✏️",
+   "priceText": "4.5元",
+   "fen": 450,
+   "explanation": "小数点左边是元，右边第一位是角，第二位是分：4.5元＝4元5角。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "文具店",
+    "point": "用元角分理解小数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·付款",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·文具店：用元角分理解小数（自编）"
+   },
+   "id": "decimals-001"
+  },
+  {
+   "category": "pay",
+   "mode": "pay",
+   "prompt": "买作业本要付 12.8元。放上正好的钱！",
+   "emoji": "📓",
+   "priceText": "12.8元",
+   "fen": 1280,
+   "explanation": "小数点左边是元，右边第一位是角，第二位是分：12.8元＝12元8角。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "文具店",
+    "point": "用元角分理解小数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·付款",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·文具店：用元角分理解小数（自编）"
+   },
+   "id": "decimals-002"
+  },
+  {
+   "category": "pay",
+   "mode": "pay",
+   "prompt": "买橡皮要付 6.3元。放上正好的钱！",
+   "emoji": "🧽",
+   "priceText": "6.3元",
+   "fen": 630,
+   "explanation": "小数点左边是元，右边第一位是角，第二位是分：6.3元＝6元3角。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "文具店",
+    "point": "用元角分理解小数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·付款",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·文具店：用元角分理解小数（自编）"
+   },
+   "id": "decimals-003"
+  },
+  {
+   "category": "pay",
+   "mode": "pay",
+   "prompt": "买蜡笔要付 18.5元。放上正好的钱！",
+   "emoji": "🖍️",
+   "priceText": "18.5元",
+   "fen": 1850,
+   "explanation": "小数点左边是元，右边第一位是角，第二位是分：18.5元＝18元5角。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "文具店",
+    "point": "用元角分理解小数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·付款",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·文具店：用元角分理解小数（自编）"
+   },
+   "id": "decimals-004"
+  },
+  {
+   "category": "pay",
+   "mode": "pay",
+   "prompt": "买尺子要付 2.7元。放上正好的钱！",
+   "emoji": "📏",
+   "priceText": "2.7元",
+   "fen": 270,
+   "explanation": "小数点左边是元，右边第一位是角，第二位是分：2.7元＝2元7角。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "文具店",
+    "point": "用元角分理解小数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·付款",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·文具店：用元角分理解小数（自编）"
+   },
+   "id": "decimals-005"
+  },
+  {
+   "category": "pay",
+   "mode": "pay",
+   "prompt": "买故事书要付 9.9元。放上正好的钱！",
+   "emoji": "📖",
+   "priceText": "9.9元",
+   "fen": 990,
+   "explanation": "小数点左边是元，右边第一位是角，第二位是分：9.9元＝9元9角。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "文具店",
+    "point": "用元角分理解小数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·付款",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·文具店：用元角分理解小数（自编）"
+   },
+   "id": "decimals-006"
+  },
+  {
+   "category": "pay",
+   "mode": "pay",
+   "prompt": "买面包要付 15.6元。放上正好的钱！",
+   "emoji": "🍞",
+   "priceText": "15.6元",
+   "fen": 1560,
+   "explanation": "小数点左边是元，右边第一位是角，第二位是分：15.6元＝15元6角。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "文具店",
+    "point": "用元角分理解小数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·付款",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·文具店：用元角分理解小数（自编）"
+   },
+   "id": "decimals-007"
+  },
+  {
+   "category": "pay",
+   "mode": "pay",
+   "prompt": "买牛奶要付 7.2元。放上正好的钱！",
+   "emoji": "🥛",
+   "priceText": "7.2元",
+   "fen": 720,
+   "explanation": "小数点左边是元，右边第一位是角，第二位是分：7.2元＝7元2角。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "文具店",
+    "point": "用元角分理解小数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·付款",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·文具店：用元角分理解小数（自编）"
+   },
+   "id": "decimals-008"
+  },
+  {
+   "category": "pay",
+   "mode": "pay",
+   "prompt": "买苹果要付 23.4元。放上正好的钱！",
+   "emoji": "🍎",
+   "priceText": "23.4元",
+   "fen": 2340,
+   "explanation": "小数点左边是元，右边第一位是角，第二位是分：23.4元＝23元4角。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "文具店",
+    "point": "用元角分理解小数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·付款",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·文具店：用元角分理解小数（自编）"
+   },
+   "id": "decimals-009"
+  },
+  {
+   "category": "pay",
+   "mode": "pay",
+   "prompt": "买果汁要付 3.8元。放上正好的钱！",
+   "emoji": "🧃",
+   "priceText": "3.8元",
+   "fen": 380,
+   "explanation": "小数点左边是元，右边第一位是角，第二位是分：3.8元＝3元8角。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "文具店",
+    "point": "用元角分理解小数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·付款",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·文具店：用元角分理解小数（自编）"
+   },
+   "id": "decimals-010"
+  },
+  {
+   "category": "pay",
+   "mode": "pay",
+   "prompt": "买拼图要付 8.6元。放上正好的钱！",
+   "emoji": "🧩",
+   "priceText": "8.6元",
+   "fen": 860,
+   "explanation": "小数点左边是元，右边第一位是角，第二位是分：8.6元＝8元6角。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "文具店",
+    "point": "用元角分理解小数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·付款",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·文具店：用元角分理解小数（自编）"
+   },
+   "id": "decimals-011"
+  },
+  {
+   "category": "pay",
+   "mode": "pay",
+   "prompt": "买气球要付 1.1元。放上正好的钱！",
+   "emoji": "🎈",
+   "priceText": "1.1元",
+   "fen": 110,
+   "explanation": "小数点左边是元，右边第一位是角，第二位是分：1.1元＝1元1角。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "文具店",
+    "point": "用元角分理解小数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·付款",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·文具店：用元角分理解小数（自编）"
+   },
+   "id": "decimals-012"
+  },
+  {
+   "category": "pay",
+   "mode": "pay",
+   "prompt": "买饼干要付 10.4元。放上正好的钱！",
+   "emoji": "🍪",
+   "priceText": "10.4元",
+   "fen": 1040,
+   "explanation": "小数点左边是元，右边第一位是角，第二位是分：10.4元＝10元4角。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "文具店",
+    "point": "用元角分理解小数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·付款",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·文具店：用元角分理解小数（自编）"
+   },
+   "id": "decimals-013"
+  },
+  {
+   "category": "pay",
+   "mode": "pay",
+   "prompt": "买糖果要付 25元。放上正好的钱！",
+   "emoji": "🍬",
+   "priceText": "25元",
+   "fen": 2500,
+   "explanation": "小数点左边是元，右边第一位是角，第二位是分：25元＝25元。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "文具店",
+    "point": "用元角分理解小数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·付款",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·文具店：用元角分理解小数（自编）"
+   },
+   "id": "decimals-014"
+  },
+  {
+   "category": "pay",
+   "mode": "pay",
+   "prompt": "买铅笔要付 5.9元。放上正好的钱！",
+   "emoji": "✏️",
+   "priceText": "5.9元",
+   "fen": 590,
+   "explanation": "小数点左边是元，右边第一位是角，第二位是分：5.9元＝5元9角。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "文具店",
+    "point": "用元角分理解小数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·付款",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·文具店：用元角分理解小数（自编）"
+   },
+   "id": "decimals-015"
+  },
+  {
+   "category": "pay",
+   "mode": "pay",
+   "prompt": "买作业本要付 3.05元。放上正好的钱！",
+   "emoji": "📓",
+   "priceText": "3.05元",
+   "fen": 305,
+   "explanation": "小数点左边是元，右边第一位是角，第二位是分：3.05元＝3元5分。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "文具店",
+    "point": "用元角分理解小数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·付款",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·文具店：用元角分理解小数（自编）"
+   },
+   "id": "decimals-016"
+  },
+  {
+   "category": "pay",
+   "mode": "pay",
+   "prompt": "买橡皮要付 1.05元。放上正好的钱！",
+   "emoji": "🧽",
+   "priceText": "1.05元",
+   "fen": 105,
+   "explanation": "小数点左边是元，右边第一位是角，第二位是分：1.05元＝1元5分。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "文具店",
+    "point": "用元角分理解小数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·付款",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·文具店：用元角分理解小数（自编）"
+   },
+   "id": "decimals-017"
+  },
+  {
+   "category": "pay",
+   "mode": "pay",
+   "prompt": "买蜡笔要付 6.85元。放上正好的钱！",
+   "emoji": "🖍️",
+   "priceText": "6.85元",
+   "fen": 685,
+   "explanation": "小数点左边是元，右边第一位是角，第二位是分：6.85元＝6元8角5分。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "文具店",
+    "point": "用元角分理解小数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·付款",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·文具店：用元角分理解小数（自编）"
+   },
+   "id": "decimals-018"
+  },
+  {
+   "category": "pay",
+   "mode": "pay",
+   "prompt": "买尺子要付 2.03元。放上正好的钱！",
+   "emoji": "📏",
+   "priceText": "2.03元",
+   "fen": 203,
+   "explanation": "小数点左边是元，右边第一位是角，第二位是分：2.03元＝2元3分。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "文具店",
+    "point": "用元角分理解小数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·付款",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·文具店：用元角分理解小数（自编）"
+   },
+   "id": "decimals-019"
+  },
+  {
+   "category": "pay",
+   "mode": "pay",
+   "prompt": "买故事书要付 0.75元。放上正好的钱！",
+   "emoji": "📖",
+   "priceText": "0.75元",
+   "fen": 75,
+   "explanation": "小数点左边是元，右边第一位是角，第二位是分：0.75元＝7角5分。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "文具店",
+    "point": "用元角分理解小数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·付款",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·文具店：用元角分理解小数（自编）"
+   },
+   "id": "decimals-020"
+  },
+  {
+   "category": "pay",
+   "mode": "pay",
+   "prompt": "买面包要付 10.08元。放上正好的钱！",
+   "emoji": "🍞",
+   "priceText": "10.08元",
+   "fen": 1008,
+   "explanation": "小数点左边是元，右边第一位是角，第二位是分：10.08元＝10元8分。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "文具店",
+    "point": "用元角分理解小数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·付款",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·文具店：用元角分理解小数（自编）"
+   },
+   "id": "decimals-021"
+  },
+  {
+   "category": "pay",
+   "mode": "pay",
+   "prompt": "买牛奶要付 5.2元。放上正好的钱！",
+   "emoji": "🥛",
+   "priceText": "5.2元",
+   "fen": 520,
+   "explanation": "小数点左边是元，右边第一位是角，第二位是分：5.2元＝5元2角。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "文具店",
+    "point": "用元角分理解小数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·付款",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·文具店：用元角分理解小数（自编）"
+   },
+   "id": "decimals-022"
+  },
+  {
+   "category": "pay",
+   "mode": "pay",
+   "prompt": "买苹果要付 12.5元。放上正好的钱！",
+   "emoji": "🍎",
+   "priceText": "12.5元",
+   "fen": 1250,
+   "explanation": "小数点左边是元，右边第一位是角，第二位是分：12.5元＝12元5角。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "文具店",
+    "point": "用元角分理解小数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·付款",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·文具店：用元角分理解小数（自编）"
+   },
+   "id": "decimals-023"
+  },
+  {
+   "category": "pay",
+   "mode": "pay",
+   "prompt": "买果汁要付 15.02元。放上正好的钱！",
+   "emoji": "🧃",
+   "priceText": "15.02元",
+   "fen": 1502,
+   "explanation": "小数点左边是元，右边第一位是角，第二位是分：15.02元＝15元2分。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "文具店",
+    "point": "用元角分理解小数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·付款",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·文具店：用元角分理解小数（自编）"
+   },
+   "id": "decimals-024"
+  },
+  {
+   "category": "pay",
+   "mode": "pay",
+   "prompt": "买拼图要付 0.36元。放上正好的钱！",
+   "emoji": "🧩",
+   "priceText": "0.36元",
+   "fen": 36,
+   "explanation": "小数点左边是元，右边第一位是角，第二位是分：0.36元＝3角6分。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "文具店",
+    "point": "用元角分理解小数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·付款",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·文具店：用元角分理解小数（自编）"
+   },
+   "id": "decimals-025"
+  },
+  {
+   "category": "length",
+   "mode": "stick",
+   "prompt": "把小旗插到 0.3 米的地方。",
+   "metres": 1,
+   "answer": 3,
+   "calc": {"metres": "0.3"},
+   "explanation": "1 分米＝0.1 米，0.3 米就是 3 个 0.1 米，从 0 往右数 3 小格。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "能通过吗",
+    "point": "在米尺上认识小数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·米尺",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·能通过吗：在米尺上认识小数（自编）"
+   },
+   "id": "decimals-026"
+  },
+  {
+   "category": "length",
+   "mode": "stick",
+   "prompt": "把小旗插到 0.7 米的地方。",
+   "metres": 1,
+   "answer": 7,
+   "calc": {"metres": "0.7"},
+   "explanation": "1 分米＝0.1 米，0.7 米就是 7 个 0.1 米，从 0 往右数 7 小格。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "能通过吗",
+    "point": "在米尺上认识小数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·米尺",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·能通过吗：在米尺上认识小数（自编）"
+   },
+   "id": "decimals-027"
+  },
+  {
+   "category": "length",
+   "mode": "stick",
+   "prompt": "把小旗插到 0.5 米的地方。",
+   "metres": 1,
+   "answer": 5,
+   "calc": {"metres": "0.5"},
+   "explanation": "1 分米＝0.1 米，0.5 米就是 5 个 0.1 米，从 0 往右数 5 小格。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "能通过吗",
+    "point": "在米尺上认识小数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·米尺",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·能通过吗：在米尺上认识小数（自编）"
+   },
+   "id": "decimals-028"
+  },
+  {
+   "category": "length",
+   "mode": "stick",
+   "prompt": "把小旗插到 0.9 米的地方。",
+   "metres": 1,
+   "answer": 9,
+   "calc": {"metres": "0.9"},
+   "explanation": "1 分米＝0.1 米，0.9 米就是 9 个 0.1 米，从 0 往右数 9 小格。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "能通过吗",
+    "point": "在米尺上认识小数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·米尺",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·能通过吗：在米尺上认识小数（自编）"
+   },
+   "id": "decimals-029"
+  },
+  {
+   "category": "length",
+   "mode": "stick",
+   "prompt": "把小旗插到 0.2 米的地方。",
+   "metres": 1,
+   "answer": 2,
+   "calc": {"metres": "0.2"},
+   "explanation": "1 分米＝0.1 米，0.2 米就是 2 个 0.1 米，从 0 往右数 2 小格。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "能通过吗",
+    "point": "在米尺上认识小数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·米尺",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·能通过吗：在米尺上认识小数（自编）"
+   },
+   "id": "decimals-030"
+  },
+  {
+   "category": "length",
+   "mode": "stick",
+   "prompt": "把小旗插到 0.6 米的地方。",
+   "metres": 1,
+   "answer": 6,
+   "calc": {"metres": "0.6"},
+   "explanation": "1 分米＝0.1 米，0.6 米就是 6 个 0.1 米，从 0 往右数 6 小格。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "能通过吗",
+    "point": "在米尺上认识小数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·米尺",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·能通过吗：在米尺上认识小数（自编）"
+   },
+   "id": "decimals-031"
+  },
+  {
+   "category": "length",
+   "mode": "stick",
+   "prompt": "把小旗插到 0.8 米的地方。",
+   "metres": 1,
+   "answer": 8,
+   "calc": {"metres": "0.8"},
+   "explanation": "1 分米＝0.1 米，0.8 米就是 8 个 0.1 米，从 0 往右数 8 小格。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "能通过吗",
+    "point": "在米尺上认识小数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·米尺",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·能通过吗：在米尺上认识小数（自编）"
+   },
+   "id": "decimals-032"
+  },
+  {
+   "category": "length",
+   "mode": "stick",
+   "prompt": "把小旗插到 0.4 米的地方。",
+   "metres": 1,
+   "answer": 4,
+   "calc": {"metres": "0.4"},
+   "explanation": "1 分米＝0.1 米，0.4 米就是 4 个 0.1 米，从 0 往右数 4 小格。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "能通过吗",
+    "point": "在米尺上认识小数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·米尺",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·能通过吗：在米尺上认识小数（自编）"
+   },
+   "id": "decimals-033"
+  },
+  {
+   "category": "length",
+   "mode": "stick",
+   "prompt": "把小旗插到 1.3 米的地方。",
+   "metres": 2,
+   "answer": 13,
+   "calc": {"metres": "1.3"},
+   "explanation": "1 分米＝0.1 米，1.3 米就是 13 个 0.1 米，从 0 往右数 13 小格。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "能通过吗",
+    "point": "在米尺上认识小数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·米尺",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·能通过吗：在米尺上认识小数（自编）"
+   },
+   "id": "decimals-034"
+  },
+  {
+   "category": "length",
+   "mode": "stick",
+   "prompt": "把小旗插到 1.6 米的地方。",
+   "metres": 2,
+   "answer": 16,
+   "calc": {"metres": "1.6"},
+   "explanation": "1 分米＝0.1 米，1.6 米就是 16 个 0.1 米，从 0 往右数 16 小格。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "能通过吗",
+    "point": "在米尺上认识小数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·米尺",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·能通过吗：在米尺上认识小数（自编）"
+   },
+   "id": "decimals-035"
+  },
+  {
+   "category": "length",
+   "mode": "stick",
+   "prompt": "把小旗插到 0.8 米的地方。",
+   "metres": 2,
+   "answer": 8,
+   "calc": {"metres": "0.8"},
+   "explanation": "1 分米＝0.1 米，0.8 米就是 8 个 0.1 米，从 0 往右数 8 小格。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "能通过吗",
+    "point": "在米尺上认识小数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·米尺",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·能通过吗：在米尺上认识小数（自编）"
+   },
+   "id": "decimals-036"
+  },
+  {
+   "category": "length",
+   "mode": "stick",
+   "prompt": "把小旗插到 1.9 米的地方。",
+   "metres": 2,
+   "answer": 19,
+   "calc": {"metres": "1.9"},
+   "explanation": "1 分米＝0.1 米，1.9 米就是 19 个 0.1 米，从 0 往右数 19 小格。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "能通过吗",
+    "point": "在米尺上认识小数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·米尺",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·能通过吗：在米尺上认识小数（自编）"
+   },
+   "id": "decimals-037"
+  },
+  {
+   "category": "length",
+   "mode": "fill",
+   "decimal": true,
+   "prompt": "小瓢虫停在尺子上。它停在几米的地方？（每小格是 1 分米）",
+   "figure": "stick-bug",
+   "metres": 1,
+   "dm": 4,
+   "calc": {"kind": "bug"},
+   "fields": [{"answer": "0.4", "unit": "米"}],
+   "explanation": "小瓢虫在第 4 小格，就是 4 分米，4 分米＝0.4 米。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "能通过吗",
+    "point": "分米改写成米",
+    "type": "依据教材总结自编",
+    "label": "认识小数·米尺",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·能通过吗：分米改写成米（自编）"
+   },
+   "id": "decimals-038"
+  },
+  {
+   "category": "length",
+   "mode": "fill",
+   "decimal": true,
+   "prompt": "小瓢虫停在尺子上。它停在几米的地方？（每小格是 1 分米）",
+   "figure": "stick-bug",
+   "metres": 1,
+   "dm": 7,
+   "calc": {"kind": "bug"},
+   "fields": [{"answer": "0.7", "unit": "米"}],
+   "explanation": "小瓢虫在第 7 小格，就是 7 分米，7 分米＝0.7 米。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "能通过吗",
+    "point": "分米改写成米",
+    "type": "依据教材总结自编",
+    "label": "认识小数·米尺",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·能通过吗：分米改写成米（自编）"
+   },
+   "id": "decimals-039"
+  },
+  {
+   "category": "length",
+   "mode": "fill",
+   "decimal": true,
+   "prompt": "小瓢虫停在尺子上。它停在几米的地方？（每小格是 1 分米）",
+   "figure": "stick-bug",
+   "metres": 1,
+   "dm": 9,
+   "calc": {"kind": "bug"},
+   "fields": [{"answer": "0.9", "unit": "米"}],
+   "explanation": "小瓢虫在第 9 小格，就是 9 分米，9 分米＝0.9 米。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "能通过吗",
+    "point": "分米改写成米",
+    "type": "依据教材总结自编",
+    "label": "认识小数·米尺",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·能通过吗：分米改写成米（自编）"
+   },
+   "id": "decimals-040"
+  },
+  {
+   "category": "length",
+   "mode": "fill",
+   "decimal": true,
+   "prompt": "小瓢虫停在尺子上。它停在几米的地方？（每小格是 1 分米）",
+   "figure": "stick-bug",
+   "metres": 2,
+   "dm": 12,
+   "calc": {"kind": "bug"},
+   "fields": [{"answer": "1.2", "unit": "米"}],
+   "explanation": "小瓢虫在第 12 小格，就是 12 分米，12 分米＝1.2 米。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "能通过吗",
+    "point": "分米改写成米",
+    "type": "依据教材总结自编",
+    "label": "认识小数·米尺",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·能通过吗：分米改写成米（自编）"
+   },
+   "id": "decimals-041"
+  },
+  {
+   "category": "length",
+   "mode": "fill",
+   "decimal": true,
+   "prompt": "小瓢虫停在尺子上。它停在几米的地方？（每小格是 1 分米）",
+   "figure": "stick-bug",
+   "metres": 2,
+   "dm": 15,
+   "calc": {"kind": "bug"},
+   "fields": [{"answer": "1.5", "unit": "米"}],
+   "explanation": "小瓢虫在第 15 小格，就是 15 分米，15 分米＝1.5 米。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "能通过吗",
+    "point": "分米改写成米",
+    "type": "依据教材总结自编",
+    "label": "认识小数·米尺",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·能通过吗：分米改写成米（自编）"
+   },
+   "id": "decimals-042"
+  },
+  {
+   "category": "length",
+   "mode": "fill",
+   "decimal": true,
+   "prompt": "小瓢虫停在尺子上。它停在几米的地方？（每小格是 1 分米）",
+   "figure": "stick-bug",
+   "metres": 1,
+   "dm": 2,
+   "calc": {"kind": "bug"},
+   "fields": [{"answer": "0.2", "unit": "米"}],
+   "explanation": "小瓢虫在第 2 小格，就是 2 分米，2 分米＝0.2 米。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "能通过吗",
+    "point": "分米改写成米",
+    "type": "依据教材总结自编",
+    "label": "认识小数·米尺",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·能通过吗：分米改写成米（自编）"
+   },
+   "id": "decimals-043"
+  },
+  {
+   "category": "length",
+   "mode": "fill",
+   "decimal": true,
+   "prompt": "小瓢虫停在尺子上。它停在几米的地方？（每小格是 1 分米）",
+   "figure": "stick-bug",
+   "metres": 2,
+   "dm": 18,
+   "calc": {"kind": "bug"},
+   "fields": [{"answer": "1.8", "unit": "米"}],
+   "explanation": "小瓢虫在第 18 小格，就是 18 分米，18 分米＝1.8 米。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "能通过吗",
+    "point": "分米改写成米",
+    "type": "依据教材总结自编",
+    "label": "认识小数·米尺",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·能通过吗：分米改写成米（自编）"
+   },
+   "id": "decimals-044"
+  },
+  {
+   "category": "length",
+   "mode": "fill",
+   "decimal": true,
+   "prompt": "小瓢虫停在尺子上。它停在几米的地方？（每小格是 1 分米）",
+   "figure": "stick-bug",
+   "metres": 1,
+   "dm": 6,
+   "calc": {"kind": "bug"},
+   "fields": [{"answer": "0.6", "unit": "米"}],
+   "explanation": "小瓢虫在第 6 小格，就是 6 分米，6 分米＝0.6 米。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "能通过吗",
+    "point": "分米改写成米",
+    "type": "依据教材总结自编",
+    "label": "认识小数·米尺",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·能通过吗：分米改写成米（自编）"
+   },
+   "id": "decimals-045"
+  },
+  {
+   "category": "write",
+   "mode": "fill",
+   "prompt": "14.8元＝几元几角？",
+   "calc": {"kind": "convert", "value": 1480, "weights": [100, 10]},
+   "fields": [{"answer": "14", "unit": "元"}, {"answer": "8", "unit": "角"}],
+   "explanation": "小数点左边是元，右边第一位是角，第二位是分：14.8元＝14元8角。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "文具店",
+    "point": "小数改写成元角分",
+    "type": "依据教材总结自编",
+    "label": "认识小数·改写",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·文具店：小数改写成元角分（自编）"
+   },
+   "id": "decimals-046"
+  },
+  {
+   "category": "write",
+   "mode": "fill",
+   "prompt": "3.5元＝几元几角？",
+   "calc": {"kind": "convert", "value": 350, "weights": [100, 10]},
+   "fields": [{"answer": "3", "unit": "元"}, {"answer": "5", "unit": "角"}],
+   "explanation": "小数点左边是元，右边第一位是角，第二位是分：3.5元＝3元5角。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "文具店",
+    "point": "小数改写成元角分",
+    "type": "依据教材总结自编",
+    "label": "认识小数·改写",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·文具店：小数改写成元角分（自编）"
+   },
+   "id": "decimals-047"
+  },
+  {
+   "category": "write",
+   "mode": "fill",
+   "prompt": "6.05元＝几元几角几分？",
+   "calc": {"kind": "convert", "value": 605, "weights": [100, 10, 1]},
+   "fields": [{"answer": "6", "unit": "元"}, {"answer": "0", "unit": "角"}, {"answer": "5", "unit": "分"}],
+   "explanation": "小数点左边是元，右边第一位是角，第二位是分：6.05元＝6元5分。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "文具店",
+    "point": "小数改写成元角分",
+    "type": "依据教材总结自编",
+    "label": "认识小数·改写",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·文具店：小数改写成元角分（自编）"
+   },
+   "id": "decimals-048"
+  },
+  {
+   "category": "write",
+   "mode": "fill",
+   "prompt": "9.25元＝几元几角几分？",
+   "calc": {"kind": "convert", "value": 925, "weights": [100, 10, 1]},
+   "fields": [{"answer": "9", "unit": "元"}, {"answer": "2", "unit": "角"}, {"answer": "5", "unit": "分"}],
+   "explanation": "小数点左边是元，右边第一位是角，第二位是分：9.25元＝9元2角5分。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "文具店",
+    "point": "小数改写成元角分",
+    "type": "依据教材总结自编",
+    "label": "认识小数·改写",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·文具店：小数改写成元角分（自编）"
+   },
+   "id": "decimals-049"
+  },
+  {
+   "category": "write",
+   "mode": "fill",
+   "decimal": true,
+   "prompt": "2元5分＝多少元？写成小数。",
+   "calc": {"kind": "convert", "value": 205, "weights": [100]},
+   "fields": [{"answer": "2.05", "unit": "元"}],
+   "explanation": "2元5分 写成小数是 2.05 元。没有的那一位要写 0 占位。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "文具店",
+    "point": "元角分改写成小数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·改写",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·文具店：元角分改写成小数（自编）"
+   },
+   "id": "decimals-050"
+  },
+  {
+   "category": "write",
+   "mode": "fill",
+   "decimal": true,
+   "prompt": "3元4角5分＝多少元？写成小数。",
+   "calc": {"kind": "convert", "value": 345, "weights": [100]},
+   "fields": [{"answer": "3.45", "unit": "元"}],
+   "explanation": "3元4角5分 写成小数是 3.45 元。没有的那一位要写 0 占位。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "文具店",
+    "point": "元角分改写成小数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·改写",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·文具店：元角分改写成小数（自编）"
+   },
+   "id": "decimals-051"
+  },
+  {
+   "category": "write",
+   "mode": "fill",
+   "decimal": true,
+   "prompt": "30元5分＝多少元？写成小数。",
+   "calc": {"kind": "convert", "value": 3005, "weights": [100]},
+   "fields": [{"answer": "30.05", "unit": "元"}],
+   "explanation": "30元5分 写成小数是 30.05 元。没有的那一位要写 0 占位。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "文具店",
+    "point": "元角分改写成小数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·改写",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·文具店：元角分改写成小数（自编）"
+   },
+   "id": "decimals-052"
+  },
+  {
+   "category": "write",
+   "mode": "fill",
+   "decimal": true,
+   "prompt": "8角＝多少元？写成小数。",
+   "calc": {"kind": "convert", "value": 80, "weights": [100]},
+   "fields": [{"answer": "0.8", "unit": "元"}],
+   "explanation": "8角 写成小数是 0.8 元。没有的那一位要写 0 占位。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "文具店",
+    "point": "元角分改写成小数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·改写",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·文具店：元角分改写成小数（自编）"
+   },
+   "id": "decimals-053"
+  },
+  {
+   "category": "write",
+   "mode": "fill",
+   "decimal": true,
+   "prompt": "5分＝多少元？写成小数。",
+   "calc": {"kind": "convert", "value": 5, "weights": [100]},
+   "fields": [{"answer": "0.05", "unit": "元"}],
+   "explanation": "5分 写成小数是 0.05 元。没有的那一位要写 0 占位。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "文具店",
+    "point": "元角分改写成小数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·改写",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·文具店：元角分改写成小数（自编）"
+   },
+   "id": "decimals-054"
+  },
+  {
+   "category": "write",
+   "mode": "fill",
+   "decimal": true,
+   "prompt": "12元3角＝多少元？写成小数。",
+   "calc": {"kind": "convert", "value": 1230, "weights": [100]},
+   "fields": [{"answer": "12.3", "unit": "元"}],
+   "explanation": "12元3角 写成小数是 12.3 元。没有的那一位要写 0 占位。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "文具店",
+    "point": "元角分改写成小数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·改写",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·文具店：元角分改写成小数（自编）"
+   },
+   "id": "decimals-055"
+  },
+  {
+   "category": "write",
+   "mode": "fill",
+   "decimal": true,
+   "prompt": "1米3分米＝多少米？写成小数。",
+   "calc": {"kind": "convert", "value": 130, "weights": [100]},
+   "fields": [{"answer": "1.3", "unit": "米"}],
+   "explanation": "1分米＝0.1米，1厘米＝0.01米，所以 1米3分米＝1.3 米。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "能通过吗",
+    "point": "长度改写成小数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·改写",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·能通过吗：长度改写成小数（自编）"
+   },
+   "id": "decimals-056"
+  },
+  {
+   "category": "write",
+   "mode": "fill",
+   "decimal": true,
+   "prompt": "2米4厘米＝多少米？写成小数。",
+   "calc": {"kind": "convert", "value": 204, "weights": [100]},
+   "fields": [{"answer": "2.04", "unit": "米"}],
+   "explanation": "1分米＝0.1米，1厘米＝0.01米，所以 2米4厘米＝2.04 米。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "能通过吗",
+    "point": "长度改写成小数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·改写",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·能通过吗：长度改写成小数（自编）"
+   },
+   "id": "decimals-057"
+  },
+  {
+   "category": "write",
+   "mode": "fill",
+   "decimal": true,
+   "prompt": "8分米＝多少米？写成小数。",
+   "calc": {"kind": "convert", "value": 80, "weights": [100]},
+   "fields": [{"answer": "0.8", "unit": "米"}],
+   "explanation": "1分米＝0.1米，1厘米＝0.01米，所以 8分米＝0.8 米。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "能通过吗",
+    "point": "长度改写成小数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·改写",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·能通过吗：长度改写成小数（自编）"
+   },
+   "id": "decimals-058"
+  },
+  {
+   "category": "write",
+   "mode": "fill",
+   "decimal": true,
+   "prompt": "6厘米＝多少米？写成小数。",
+   "calc": {"kind": "convert", "value": 6, "weights": [100]},
+   "fields": [{"answer": "0.06", "unit": "米"}],
+   "explanation": "1分米＝0.1米，1厘米＝0.01米，所以 6厘米＝0.06 米。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "能通过吗",
+    "point": "长度改写成小数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·改写",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·能通过吗：长度改写成小数（自编）"
+   },
+   "id": "decimals-059"
+  },
+  {
+   "category": "write",
+   "mode": "fill",
+   "decimal": true,
+   "prompt": "12米3分米＝多少米？写成小数。",
+   "calc": {"kind": "convert", "value": 1230, "weights": [100]},
+   "fields": [{"answer": "12.3", "unit": "米"}],
+   "explanation": "1分米＝0.1米，1厘米＝0.01米，所以 12米3分米＝12.3 米。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "能通过吗",
+    "point": "长度改写成小数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·改写",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·能通过吗：长度改写成小数（自编）"
+   },
+   "id": "decimals-060"
+  },
+  {
+   "category": "read",
+   "prompt": "6.39 读作什么？",
+   "answer": "六点三九",
+   "options": ["六点三九", "六点三十九", "六三九", "六十三点九"],
+   "explanation": "小数点右边的数字要一个一个读，不读“几十”。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "文具店",
+    "point": "小数的读法",
+    "type": "依据教材总结自编",
+    "label": "认识小数·读写",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·文具店：小数的读法（自编）"
+   },
+   "id": "decimals-061"
+  },
+  {
+   "category": "read",
+   "prompt": "3.50 读作什么？",
+   "answer": "三点五零",
+   "options": ["三点五零", "三点五十", "三点五", "三十五点零"],
+   "explanation": "小数点右边的数字要一个一个读，不读“几十”。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "文具店",
+    "point": "小数的读法",
+    "type": "依据教材总结自编",
+    "label": "认识小数·读写",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·文具店：小数的读法（自编）"
+   },
+   "id": "decimals-062"
+  },
+  {
+   "category": "read",
+   "prompt": "10.05 读作什么？",
+   "answer": "十点零五",
+   "options": ["十点零五", "十点五", "十点零零五", "一零点五"],
+   "explanation": "小数点右边的数字要一个一个读，不读“几十”。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "文具店",
+    "point": "小数的读法",
+    "type": "依据教材总结自编",
+    "label": "认识小数·读写",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·文具店：小数的读法（自编）"
+   },
+   "id": "decimals-063"
+  },
+  {
+   "category": "read",
+   "prompt": "0.8 读作什么？",
+   "answer": "零点八",
+   "options": ["零点八", "八点零", "点八", "零点零八"],
+   "explanation": "小数点右边的数字要一个一个读，不读“几十”。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "文具店",
+    "point": "小数的读法",
+    "type": "依据教材总结自编",
+    "label": "认识小数·读写",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·文具店：小数的读法（自编）"
+   },
+   "id": "decimals-064"
+  },
+  {
+   "category": "read",
+   "prompt": "12.6 读作什么？",
+   "answer": "十二点六",
+   "options": ["十二点六", "一二点六", "十二点零六", "十点二六"],
+   "explanation": "小数点右边的数字要一个一个读，不读“几十”。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "文具店",
+    "point": "小数的读法",
+    "type": "依据教材总结自编",
+    "label": "认识小数·读写",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·文具店：小数的读法（自编）"
+   },
+   "id": "decimals-065"
+  },
+  {
+   "category": "read",
+   "prompt": "“四点零二”写作哪个小数？",
+   "answer": "4.02",
+   "options": ["4.02", "4.2", "40.2", "4.002"],
+   "explanation": "按读音一位一位写：四点零二写作 4.02。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "文具店",
+    "point": "小数的写法",
+    "type": "依据教材总结自编",
+    "label": "认识小数·读写",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·文具店：小数的写法（自编）"
+   },
+   "id": "decimals-066"
+  },
+  {
+   "category": "read",
+   "prompt": "“十五点八”写作哪个小数？",
+   "answer": "15.8",
+   "options": ["15.8", "5.18", "15.08", "105.8"],
+   "explanation": "按读音一位一位写：十五点八写作 15.8。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "文具店",
+    "point": "小数的写法",
+    "type": "依据教材总结自编",
+    "label": "认识小数·读写",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·文具店：小数的写法（自编）"
+   },
+   "id": "decimals-067"
+  },
+  {
+   "category": "read",
+   "prompt": "判断对错：30元5分就是30.5元。",
+   "answer": "×",
+   "options": ["√", "×"],
+   "explanation": "5分在第二位小数：30元5分＝30.05元。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "文具店",
+    "point": "小数表示的钱数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·判断",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·文具店：小数表示的钱数（自编）"
+   },
+   "id": "decimals-068"
+  },
+  {
+   "category": "read",
+   "prompt": "判断对错：1.05元就是1元5角。",
+   "answer": "×",
+   "options": ["√", "×"],
+   "explanation": "1.05元＝1元5分，1元5角＝1.5元。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "文具店",
+    "point": "小数表示的钱数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·判断",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·文具店：小数表示的钱数（自编）"
+   },
+   "id": "decimals-069"
+  },
+  {
+   "category": "read",
+   "prompt": "判断对错：2.50元就是2元5角。",
+   "answer": "√",
+   "options": ["√", "×"],
+   "explanation": "第一位是5角，第二位是0分，2.50元＝2元5角。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "文具店",
+    "point": "小数表示的钱数",
+    "type": "依据教材总结自编",
+    "label": "认识小数·判断",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·文具店：小数表示的钱数（自编）"
+   },
+   "id": "decimals-070"
+  },
+  {
+   "category": "compare",
+   "prompt": "3.2元 ○ 3.19元，○ 里应该填什么？",
+   "calc": {"kind": "compare", "a": 320, "b": 319},
+   "answer": ">",
+   "options": [">", "<", "="],
+   "explanation": "先比整数部分，相同再比第一位小数，再比第二位。元和米也可以化成同样的单位再比。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "货比三家",
+    "point": "小数比大小",
+    "type": "依据教材总结自编",
+    "label": "认识小数·比大小",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·货比三家：小数比大小（自编）"
+   },
+   "id": "decimals-071"
+  },
+  {
+   "category": "compare",
+   "prompt": "2.50元 ○ 2.5元，○ 里应该填什么？",
+   "calc": {"kind": "compare", "a": 250, "b": 250},
+   "answer": "=",
+   "options": [">", "<", "="],
+   "explanation": "先比整数部分，相同再比第一位小数，再比第二位。元和米也可以化成同样的单位再比。2.50元和2.5元一样多。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "货比三家",
+    "point": "小数比大小",
+    "type": "依据教材总结自编",
+    "label": "认识小数·比大小",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·货比三家：小数比大小（自编）"
+   },
+   "id": "decimals-072"
+  },
+  {
+   "category": "compare",
+   "prompt": "0.8元 ○ 0.79元，○ 里应该填什么？",
+   "calc": {"kind": "compare", "a": 80, "b": 79},
+   "answer": ">",
+   "options": [">", "<", "="],
+   "explanation": "先比整数部分，相同再比第一位小数，再比第二位。元和米也可以化成同样的单位再比。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "货比三家",
+    "point": "小数比大小",
+    "type": "依据教材总结自编",
+    "label": "认识小数·比大小",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·货比三家：小数比大小（自编）"
+   },
+   "id": "decimals-073"
+  },
+  {
+   "category": "compare",
+   "prompt": "5.6元 ○ 5.06元，○ 里应该填什么？",
+   "calc": {"kind": "compare", "a": 560, "b": 506},
+   "answer": ">",
+   "options": [">", "<", "="],
+   "explanation": "先比整数部分，相同再比第一位小数，再比第二位。元和米也可以化成同样的单位再比。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "货比三家",
+    "point": "小数比大小",
+    "type": "依据教材总结自编",
+    "label": "认识小数·比大小",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·货比三家：小数比大小（自编）"
+   },
+   "id": "decimals-074"
+  },
+  {
+   "category": "compare",
+   "prompt": "1.3米 ○ 1米3厘米，○ 里应该填什么？",
+   "calc": {"kind": "compare", "a": 130, "b": 103},
+   "answer": ">",
+   "options": [">", "<", "="],
+   "explanation": "先比整数部分，相同再比第一位小数，再比第二位。元和米也可以化成同样的单位再比。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "货比三家",
+    "point": "小数比大小",
+    "type": "依据教材总结自编",
+    "label": "认识小数·比大小",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·货比三家：小数比大小（自编）"
+   },
+   "id": "decimals-075"
+  },
+  {
+   "category": "compare",
+   "prompt": "4.5米 ○ 5.4米，○ 里应该填什么？",
+   "calc": {"kind": "compare", "a": 450, "b": 540},
+   "answer": "<",
+   "options": [">", "<", "="],
+   "explanation": "先比整数部分，相同再比第一位小数，再比第二位。元和米也可以化成同样的单位再比。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "货比三家",
+    "point": "小数比大小",
+    "type": "依据教材总结自编",
+    "label": "认识小数·比大小",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·货比三家：小数比大小（自编）"
+   },
+   "id": "decimals-076"
+  },
+  {
+   "category": "compare",
+   "prompt": "0.5元 ○ 5角，○ 里应该填什么？",
+   "calc": {"kind": "compare", "a": 50, "b": 50},
+   "answer": "=",
+   "options": [">", "<", "="],
+   "explanation": "先比整数部分，相同再比第一位小数，再比第二位。元和米也可以化成同样的单位再比。0.5元和5角一样多。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "货比三家",
+    "point": "小数比大小",
+    "type": "依据教材总结自编",
+    "label": "认识小数·比大小",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·货比三家：小数比大小（自编）"
+   },
+   "id": "decimals-077"
+  },
+  {
+   "category": "compare",
+   "prompt": "1.07元 ○ 1.7元，○ 里应该填什么？",
+   "calc": {"kind": "compare", "a": 107, "b": 170},
+   "answer": "<",
+   "options": [">", "<", "="],
+   "explanation": "先比整数部分，相同再比第一位小数，再比第二位。元和米也可以化成同样的单位再比。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "货比三家",
+    "point": "小数比大小",
+    "type": "依据教材总结自编",
+    "label": "认识小数·比大小",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·货比三家：小数比大小（自编）"
+   },
+   "id": "decimals-078"
+  },
+  {
+   "category": "compare",
+   "prompt": "12.3米 ○ 9.99米，○ 里应该填什么？",
+   "calc": {"kind": "compare", "a": 1230, "b": 999},
+   "answer": ">",
+   "options": [">", "<", "="],
+   "explanation": "先比整数部分，相同再比第一位小数，再比第二位。元和米也可以化成同样的单位再比。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "货比三家",
+    "point": "小数比大小",
+    "type": "依据教材总结自编",
+    "label": "认识小数·比大小",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·货比三家：小数比大小（自编）"
+   },
+   "id": "decimals-079"
+  },
+  {
+   "category": "compare",
+   "prompt": "货比三家：同样的铅笔，奇趣店 1.25 元，乐购店 1.1 元，小星店 1.3 元。哪家最便宜？",
+   "calc": {"kind": "cheapest", "prices": {"奇趣店": 125, "乐购店": 110, "小星店": 130}},
+   "answer": "乐购店",
+   "options": ["奇趣店", "乐购店", "小星店"],
+   "explanation": "先比整数部分，再比第一位、第二位小数。乐购店的 1.1 元最小。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "货比三家",
+    "point": "几个小数比大小",
+    "type": "依据教材总结自编",
+    "label": "认识小数·货比三家",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·货比三家：几个小数比大小（自编）"
+   },
+   "id": "decimals-080"
+  },
+  {
+   "category": "compare",
+   "prompt": "货比三家：同样的笔记本，奇趣店 3.5 元，乐购店 3.05 元，小星店 3.3 元。哪家最便宜？",
+   "calc": {"kind": "cheapest", "prices": {"奇趣店": 350, "乐购店": 305, "小星店": 330}},
+   "answer": "乐购店",
+   "options": ["奇趣店", "乐购店", "小星店"],
+   "explanation": "先比整数部分，再比第一位、第二位小数。乐购店的 3.05 元最小。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "货比三家",
+    "point": "几个小数比大小",
+    "type": "依据教材总结自编",
+    "label": "认识小数·货比三家",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·货比三家：几个小数比大小（自编）"
+   },
+   "id": "decimals-081"
+  },
+  {
+   "category": "compare",
+   "prompt": "货比三家：同样的直尺，甲店 1.2 元，乙店 1.02 元，丙店 1.12 元。哪家最便宜？",
+   "calc": {"kind": "cheapest", "prices": {"甲店": 120, "乙店": 102, "丙店": 112}},
+   "answer": "乙店",
+   "options": ["甲店", "乙店", "丙店"],
+   "explanation": "先比整数部分，再比第一位、第二位小数。乙店的 1.02 元最小。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "货比三家",
+    "point": "几个小数比大小",
+    "type": "依据教材总结自编",
+    "label": "认识小数·货比三家",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·货比三家：几个小数比大小（自编）"
+   },
+   "id": "decimals-082"
+  },
+  {
+   "category": "compare",
+   "prompt": "货比三家：同样的橡皮，东店 0.9 元，西店 0.85 元，南店 0.95 元。哪家最便宜？",
+   "calc": {"kind": "cheapest", "prices": {"东店": 90, "西店": 85, "南店": 95}},
+   "answer": "西店",
+   "options": ["东店", "西店", "南店"],
+   "explanation": "先比整数部分，再比第一位、第二位小数。西店的 0.85 元最小。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "货比三家",
+    "point": "几个小数比大小",
+    "type": "依据教材总结自编",
+    "label": "认识小数·货比三家",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·货比三家：几个小数比大小（自编）"
+   },
+   "id": "decimals-083"
+  },
+  {
+   "category": "compare",
+   "prompt": "货比三家：同样的水彩笔，甲店 12.5 元，乙店 12.05 元，丙店 15.2 元。哪家最便宜？",
+   "calc": {"kind": "cheapest", "prices": {"甲店": 1250, "乙店": 1205, "丙店": 1520}},
+   "answer": "乙店",
+   "options": ["甲店", "乙店", "丙店"],
+   "explanation": "先比整数部分，再比第一位、第二位小数。乙店的 12.05 元最小。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "货比三家",
+    "point": "几个小数比大小",
+    "type": "依据教材总结自编",
+    "label": "认识小数·货比三家",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·货比三家：几个小数比大小（自编）"
+   },
+   "id": "decimals-084"
+  },
+  {
+   "category": "compare",
+   "prompt": "货比三家：同样的书签，东店 0.75 元，西店 0.7 元，南店 0.8 元。哪家最便宜？",
+   "calc": {"kind": "cheapest", "prices": {"东店": 75, "西店": 70, "南店": 80}},
+   "answer": "西店",
+   "options": ["东店", "西店", "南店"],
+   "explanation": "先比整数部分，再比第一位、第二位小数。西店的 0.7 元最小。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "货比三家",
+    "point": "几个小数比大小",
+    "type": "依据教材总结自编",
+    "label": "认识小数·货比三家",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·货比三家：几个小数比大小（自编）"
+   },
+   "id": "decimals-085"
+  },
+  {
+   "category": "calc",
+   "mode": "fill",
+   "decimal": true,
+   "prompt": "买一本 3.5 元的笔记本和一支 2.6 元的笔，一共多少元？",
+   "calc": {"kind": "add", "a": "3.5", "b": "2.6"},
+   "fields": [{"answer": "6.1", "unit": "元"}],
+   "explanation": "小数点对齐来算：3.5＋2.6＝6.1（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "存零用钱",
+    "point": "一位小数加减",
+    "type": "依据教材总结自编",
+    "label": "认识小数·加减",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·存零用钱：一位小数加减（自编）"
+   },
+   "id": "decimals-086"
+  },
+  {
+   "category": "calc",
+   "mode": "fill",
+   "decimal": true,
+   "prompt": "付 10 元买 6.8 元的文具，应找回多少元？",
+   "calc": {"kind": "sub", "a": "10", "b": "6.8"},
+   "fields": [{"answer": "3.2", "unit": "元"}],
+   "explanation": "小数点对齐来算：10－6.8＝3.2（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "存零用钱",
+    "point": "一位小数加减",
+    "type": "依据教材总结自编",
+    "label": "认识小数·加减",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·存零用钱：一位小数加减（自编）"
+   },
+   "id": "decimals-087"
+  },
+  {
+   "category": "calc",
+   "mode": "fill",
+   "decimal": true,
+   "prompt": "存了 12.5 元，这周又存 3.8 元，现在有多少元？",
+   "calc": {"kind": "add", "a": "12.5", "b": "3.8"},
+   "fields": [{"answer": "16.3", "unit": "元"}],
+   "explanation": "小数点对齐来算：12.5＋3.8＝16.3（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "存零用钱",
+    "point": "一位小数加减",
+    "type": "依据教材总结自编",
+    "label": "认识小数·加减",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·存零用钱：一位小数加减（自编）"
+   },
+   "id": "decimals-088"
+  },
+  {
+   "category": "calc",
+   "mode": "fill",
+   "decimal": true,
+   "prompt": "一本书重 1.6 千克，包装盒重 0.3 千克，寄出去一共重多少千克？",
+   "calc": {"kind": "add", "a": "1.6", "b": "0.3"},
+   "fields": [{"answer": "1.9", "unit": "千克"}],
+   "explanation": "小数点对齐来算：1.6＋0.3＝1.9（千克）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "存零用钱",
+    "point": "一位小数加减",
+    "type": "依据教材总结自编",
+    "label": "认识小数·加减",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·存零用钱：一位小数加减（自编）"
+   },
+   "id": "decimals-089"
+  },
+  {
+   "category": "calc",
+   "mode": "fill",
+   "decimal": true,
+   "prompt": "邮寄一件 8.5 元，寄两件一共多少元？",
+   "calc": {"kind": "add", "a": "8.5", "b": "8.5"},
+   "fields": [{"answer": "17", "unit": "元"}],
+   "explanation": "小数点对齐来算：8.5＋8.5＝17（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "存零用钱",
+    "point": "一位小数加减",
+    "type": "依据教材总结自编",
+    "label": "认识小数·加减",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·存零用钱：一位小数加减（自编）"
+   },
+   "id": "decimals-090"
+  },
+  {
+   "category": "calc",
+   "mode": "fill",
+   "decimal": true,
+   "prompt": "一根绳子长 2.5 米，用去 0.7 米，还剩多少米？",
+   "calc": {"kind": "sub", "a": "2.5", "b": "0.7"},
+   "fields": [{"answer": "1.8", "unit": "米"}],
+   "explanation": "小数点对齐来算：2.5－0.7＝1.8（米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "存零用钱",
+    "point": "一位小数加减",
+    "type": "依据教材总结自编",
+    "label": "认识小数·加减",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·存零用钱：一位小数加减（自编）"
+   },
+   "id": "decimals-091"
+  },
+  {
+   "category": "calc",
+   "mode": "fill",
+   "decimal": true,
+   "prompt": "身高 1.4 米，站在 0.3 米高的台子上，一共多高？",
+   "calc": {"kind": "add", "a": "1.4", "b": "0.3"},
+   "fields": [{"answer": "1.7", "unit": "米"}],
+   "explanation": "小数点对齐来算：1.4＋0.3＝1.7（米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "存零用钱",
+    "point": "一位小数加减",
+    "type": "依据教材总结自编",
+    "label": "认识小数·加减",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·存零用钱：一位小数加减（自编）"
+   },
+   "id": "decimals-092"
+  },
+  {
+   "category": "calc",
+   "mode": "fill",
+   "decimal": true,
+   "prompt": "存钱罐里有 9.2 元，买东西用了 4.5 元，还有多少元？",
+   "calc": {"kind": "sub", "a": "9.2", "b": "4.5"},
+   "fields": [{"answer": "4.7", "unit": "元"}],
+   "explanation": "小数点对齐来算：9.2－4.5＝4.7（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "存零用钱",
+    "point": "一位小数加减",
+    "type": "依据教材总结自编",
+    "label": "认识小数·加减",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·存零用钱：一位小数加减（自编）"
+   },
+   "id": "decimals-093"
+  },
+  {
+   "category": "calc",
+   "mode": "fill",
+   "decimal": true,
+   "prompt": "妈妈买水果用了 15.6 元，买蔬菜用了 7.8 元，一共多少元？",
+   "calc": {"kind": "add", "a": "15.6", "b": "7.8"},
+   "fields": [{"answer": "23.4", "unit": "元"}],
+   "explanation": "小数点对齐来算：15.6＋7.8＝23.4（元）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "存零用钱",
+    "point": "一位小数加减",
+    "type": "依据教材总结自编",
+    "label": "认识小数·加减",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·存零用钱：一位小数加减（自编）"
+   },
+   "id": "decimals-094"
+  },
+  {
+   "category": "calc",
+   "mode": "fill",
+   "decimal": true,
+   "prompt": "红绳长 1.8 米，蓝绳长 1.2 米，红绳比蓝绳长多少米？",
+   "calc": {"kind": "sub", "a": "1.8", "b": "1.2"},
+   "fields": [{"answer": "0.6", "unit": "米"}],
+   "explanation": "小数点对齐来算：1.8－1.2＝0.6（米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "存零用钱",
+    "point": "一位小数加减",
+    "type": "依据教材总结自编",
+    "label": "认识小数·加减",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·存零用钱：一位小数加减（自编）"
+   },
+   "id": "decimals-095"
+  },
+  {
+   "category": "calc",
+   "prompt": "货车高 1.6 米，车上货物高 0.8 米。这个限高 2.2 米的杆子，货车能通过吗？",
+   "figure": "gate",
+   "gate": {"truck": 1.6, "load": 0.8, "limit": 2.2},
+   "calc": {"kind": "gate"},
+   "answer": "不能",
+   "options": ["能", "不能"],
+   "explanation": "总高度 1.6＋0.8＝2.4（米），2.4 ＞ 2.2，所以不能通过。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "能通过吗",
+    "point": "小数加法解决实际问题",
+    "type": "依据教材总结自编",
+    "label": "认识小数·能通过吗",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·能通过吗：小数加法解决实际问题（自编）"
+   },
+   "id": "decimals-096"
+  },
+  {
+   "category": "calc",
+   "prompt": "货车高 1.7 米，车上货物高 0.4 米。这个限高 2.5 米的杆子，货车能通过吗？",
+   "figure": "gate",
+   "gate": {"truck": 1.7, "load": 0.4, "limit": 2.5},
+   "calc": {"kind": "gate"},
+   "answer": "能",
+   "options": ["能", "不能"],
+   "explanation": "总高度 1.7＋0.4＝2.1（米），2.1 ＜ 2.5，所以能通过。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "能通过吗",
+    "point": "小数加法解决实际问题",
+    "type": "依据教材总结自编",
+    "label": "认识小数·能通过吗",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·能通过吗：小数加法解决实际问题（自编）"
+   },
+   "id": "decimals-097"
+  },
+  {
+   "category": "calc",
+   "prompt": "货车高 1.9 米，车上货物高 0.6 米。这个限高 2.4 米的杆子，货车能通过吗？",
+   "figure": "gate",
+   "gate": {"truck": 1.9, "load": 0.6, "limit": 2.4},
+   "calc": {"kind": "gate"},
+   "answer": "不能",
+   "options": ["能", "不能"],
+   "explanation": "总高度 1.9＋0.6＝2.5（米），2.5 ＞ 2.4，所以不能通过。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "能通过吗",
+    "point": "小数加法解决实际问题",
+    "type": "依据教材总结自编",
+    "label": "认识小数·能通过吗",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·能通过吗：小数加法解决实际问题（自编）"
+   },
+   "id": "decimals-098"
+  },
+  {
+   "category": "calc",
+   "prompt": "货车高 2.1 米，车上货物高 0.5 米。这个限高 2.8 米的杆子，货车能通过吗？",
+   "figure": "gate",
+   "gate": {"truck": 2.1, "load": 0.5, "limit": 2.8},
+   "calc": {"kind": "gate"},
+   "answer": "能",
+   "options": ["能", "不能"],
+   "explanation": "总高度 2.1＋0.5＝2.6（米），2.6 ＜ 2.8，所以能通过。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "能通过吗",
+    "point": "小数加法解决实际问题",
+    "type": "依据教材总结自编",
+    "label": "认识小数·能通过吗",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·能通过吗：小数加法解决实际问题（自编）"
+   },
+   "id": "decimals-099"
+  },
+  {
+   "category": "calc",
+   "prompt": "货车高 1.8 米，车上货物高 0.9 米。这个限高 2.6 米的杆子，货车能通过吗？",
+   "figure": "gate",
+   "gate": {"truck": 1.8, "load": 0.9, "limit": 2.6},
+   "calc": {"kind": "gate"},
+   "answer": "不能",
+   "options": ["能", "不能"],
+   "explanation": "总高度 1.8＋0.9＝2.7（米），2.7 ＞ 2.6，所以不能通过。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第八单元·认识小数",
+    "lesson": "能通过吗",
+    "point": "小数加法解决实际问题",
+    "type": "依据教材总结自编",
+    "label": "认识小数·能通过吗",
+    "detailTitle": "查看知识点来源",
+    "detail": "第八单元·认识小数·能通过吗：小数加法解决实际问题（自编）"
+   },
+   "id": "decimals-100"
+  }
+ ]
+}

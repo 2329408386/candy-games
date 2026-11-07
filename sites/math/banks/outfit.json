@@ -1,0 +1,2905 @@
+{
+ "type": "modes",
+ "meta": {"notes": ["题目依据北师大版三年级上册知识点总结自编，非教材原题。"]},
+ "draw": {"by": ["category"], "counts": {"dress": 6, "missing": 4, "count": 5, "reverse": 2, "scene": 3}},
+ "ui": {},
+ "questions": [
+  {
+   "category": "dress",
+   "mode": "dress",
+   "prompt": "小晴要参加运动会，准备了 2 件上衣和 2 条裤子。每次穿一件上衣和一条裤子，把所有穿法都试一遍、记下来！",
+   "tops": [
+    {"name": "绿格子衬衫", "shape": "shirt", "color": "#6fa86b", "pattern": "checks"},
+    {"name": "橙圆点T恤", "shape": "tee", "color": "#ee9b4d", "pattern": "dots"}
+   ],
+   "bottoms": [{"name": "蓝短裤", "shape": "shorts", "color": "#6f9bd1"}, {"name": "黑长裤", "shape": "pants", "color": "#3f4347"}],
+   "bottomLabel": "裤子",
+   "explanation": "先固定一件上衣，依次配 2 条裤子，再换下一件。每件上衣有 2 种穿法，2 件就是 2×2＝4（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "有序搭配，不重复不遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·换装",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：有序搭配，不重复不遗漏（自编）"
+   },
+   "id": "outfit-001"
+  },
+  {
+   "category": "dress",
+   "mode": "dress",
+   "prompt": "小宇要去春游，准备了 3 件上衣和 2 条裤子。每次穿一件上衣和一条裤子，把所有穿法都试一遍、记下来！",
+   "tops": [
+    {"name": "蓝条纹T恤", "shape": "tee", "color": "#5b8fb9", "pattern": "stripes"},
+    {"name": "橙圆点T恤", "shape": "tee", "color": "#ee9b4d", "pattern": "dots"},
+    {"name": "绿格子衬衫", "shape": "shirt", "color": "#6fa86b", "pattern": "checks"}
+   ],
+   "bottoms": [{"name": "卡其短裤", "shape": "shorts", "color": "#c2a878"}, {"name": "黑长裤", "shape": "pants", "color": "#3f4347"}],
+   "bottomLabel": "裤子",
+   "explanation": "先固定一件上衣，依次配 2 条裤子，再换下一件。每件上衣有 2 种穿法，3 件就是 3×2＝6（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "有序搭配，不重复不遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·换装",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：有序搭配，不重复不遗漏（自编）"
+   },
+   "id": "outfit-002"
+  },
+  {
+   "category": "dress",
+   "mode": "dress",
+   "prompt": "乐乐要参加合唱比赛，准备了 2 件上衣和 3 条裤子。每次穿一件上衣和一条裤子，把所有穿法都试一遍、记下来！",
+   "tops": [
+    {"name": "蓝条纹T恤", "shape": "tee", "color": "#5b8fb9", "pattern": "stripes"},
+    {"name": "紫卫衣", "shape": "hoodie", "color": "#9b7fc1"}
+   ],
+   "bottoms": [
+    {"name": "灰格子长裤", "shape": "pants", "color": "#8b9196", "pattern": "checks"},
+    {"name": "卡其短裤", "shape": "shorts", "color": "#c2a878"},
+    {"name": "蓝短裤", "shape": "shorts", "color": "#6f9bd1"}
+   ],
+   "bottomLabel": "裤子",
+   "explanation": "先固定一件上衣，依次配 3 条裤子，再换下一件。每件上衣有 3 种穿法，2 件就是 2×3＝6（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "有序搭配，不重复不遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·换装",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：有序搭配，不重复不遗漏（自编）"
+   },
+   "id": "outfit-003"
+  },
+  {
+   "category": "dress",
+   "mode": "dress",
+   "prompt": "朵朵要参加生日会，准备了 2 件上衣和 3 条裙子。每次穿一件上衣和一条裙子，把所有穿法都试一遍、记下来！",
+   "tops": [
+    {"name": "橙圆点T恤", "shape": "tee", "color": "#ee9b4d", "pattern": "dots"},
+    {"name": "绿格子衬衫", "shape": "shirt", "color": "#6fa86b", "pattern": "checks"}
+   ],
+   "bottoms": [
+    {"name": "蓝裙子", "shape": "skirt", "color": "#6f9bd1"},
+    {"name": "红格子裙", "shape": "skirt", "color": "#d9645a", "pattern": "checks"},
+    {"name": "黄裙子", "shape": "skirt", "color": "#f1cf62"}
+   ],
+   "bottomLabel": "裙子",
+   "explanation": "先固定一件上衣，依次配 3 条裙子，再换下一件。每件上衣有 3 种穿法，2 件就是 2×3＝6（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "有序搭配，不重复不遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·换装",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：有序搭配，不重复不遗漏（自编）"
+   },
+   "id": "outfit-004"
+  },
+  {
+   "category": "dress",
+   "mode": "dress",
+   "prompt": "阿哲要参加科技节，准备了 3 件上衣和 3 条裤子。每次穿一件上衣和一条裤子，把所有穿法都试一遍、记下来！",
+   "tops": [
+    {"name": "橙圆点T恤", "shape": "tee", "color": "#ee9b4d", "pattern": "dots"},
+    {"name": "红T恤", "shape": "tee", "color": "#e26d5c"},
+    {"name": "灰条纹卫衣", "shape": "hoodie", "color": "#a6adb0", "pattern": "stripes"}
+   ],
+   "bottoms": [
+    {"name": "蓝短裤", "shape": "shorts", "color": "#6f9bd1"},
+    {"name": "黑长裤", "shape": "pants", "color": "#3f4347"},
+    {"name": "蓝长裤", "shape": "pants", "color": "#4a6fa5"}
+   ],
+   "bottomLabel": "裤子",
+   "explanation": "先固定一件上衣，依次配 3 条裤子，再换下一件。每件上衣有 3 种穿法，3 件就是 3×3＝9（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "有序搭配，不重复不遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·换装",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：有序搭配，不重复不遗漏（自编）"
+   },
+   "id": "outfit-005"
+  },
+  {
+   "category": "dress",
+   "mode": "dress",
+   "prompt": "米粒要去郊游，准备了 3 件上衣和 2 条裤子。每次穿一件上衣和一条裤子，把所有穿法都试一遍、记下来！",
+   "tops": [
+    {"name": "紫卫衣", "shape": "hoodie", "color": "#9b7fc1"},
+    {"name": "红T恤", "shape": "tee", "color": "#e26d5c"},
+    {"name": "黄卫衣", "shape": "hoodie", "color": "#f2c14e"}
+   ],
+   "bottoms": [
+    {"name": "灰格子长裤", "shape": "pants", "color": "#8b9196", "pattern": "checks"},
+    {"name": "卡其短裤", "shape": "shorts", "color": "#c2a878"}
+   ],
+   "bottomLabel": "裤子",
+   "explanation": "先固定一件上衣，依次配 2 条裤子，再换下一件。每件上衣有 2 种穿法，3 件就是 3×2＝6（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "有序搭配，不重复不遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·换装",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：有序搭配，不重复不遗漏（自编）"
+   },
+   "id": "outfit-006"
+  },
+  {
+   "category": "dress",
+   "mode": "dress",
+   "prompt": "安安要逛六一游园会，准备了 3 件上衣和 2 条裤子。每次穿一件上衣和一条裤子，把所有穿法都试一遍、记下来！",
+   "tops": [
+    {"name": "红T恤", "shape": "tee", "color": "#e26d5c"},
+    {"name": "白衬衫", "shape": "shirt", "color": "#f6f6ef"},
+    {"name": "粉T恤", "shape": "tee", "color": "#ef9fb0"}
+   ],
+   "bottoms": [{"name": "黑长裤", "shape": "pants", "color": "#3f4347"}, {"name": "蓝长裤", "shape": "pants", "color": "#4a6fa5"}],
+   "bottomLabel": "裤子",
+   "explanation": "先固定一件上衣，依次配 2 条裤子，再换下一件。每件上衣有 2 种穿法，3 件就是 3×2＝6（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "有序搭配，不重复不遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·换装",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：有序搭配，不重复不遗漏（自编）"
+   },
+   "id": "outfit-007"
+  },
+  {
+   "category": "dress",
+   "mode": "dress",
+   "prompt": "小舟要参加读书节，准备了 2 件上衣和 3 条裙子。每次穿一件上衣和一条裙子，把所有穿法都试一遍、记下来！",
+   "tops": [
+    {"name": "橙圆点T恤", "shape": "tee", "color": "#ee9b4d", "pattern": "dots"},
+    {"name": "黄卫衣", "shape": "hoodie", "color": "#f2c14e"}
+   ],
+   "bottoms": [
+    {"name": "紫圆点裙", "shape": "skirt", "color": "#9b7fc1", "pattern": "dots"},
+    {"name": "红格子裙", "shape": "skirt", "color": "#d9645a", "pattern": "checks"},
+    {"name": "蓝裙子", "shape": "skirt", "color": "#6f9bd1"}
+   ],
+   "bottomLabel": "裙子",
+   "explanation": "先固定一件上衣，依次配 3 条裙子，再换下一件。每件上衣有 3 种穿法，2 件就是 2×3＝6（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "有序搭配，不重复不遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·换装",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：有序搭配，不重复不遗漏（自编）"
+   },
+   "id": "outfit-008"
+  },
+  {
+   "category": "dress",
+   "mode": "dress",
+   "prompt": "果果要去爬山，准备了 2 件上衣和 3 条裤子。每次穿一件上衣和一条裤子，把所有穿法都试一遍、记下来！",
+   "tops": [
+    {"name": "橙圆点T恤", "shape": "tee", "color": "#ee9b4d", "pattern": "dots"},
+    {"name": "紫卫衣", "shape": "hoodie", "color": "#9b7fc1"}
+   ],
+   "bottoms": [
+    {"name": "灰格子长裤", "shape": "pants", "color": "#8b9196", "pattern": "checks"},
+    {"name": "绿长裤", "shape": "pants", "color": "#5f8a62"},
+    {"name": "蓝短裤", "shape": "shorts", "color": "#6f9bd1"}
+   ],
+   "bottomLabel": "裤子",
+   "explanation": "先固定一件上衣，依次配 3 条裤子，再换下一件。每件上衣有 3 种穿法，2 件就是 2×3＝6（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "有序搭配，不重复不遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·换装",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：有序搭配，不重复不遗漏（自编）"
+   },
+   "id": "outfit-009"
+  },
+  {
+   "category": "dress",
+   "mode": "dress",
+   "prompt": "思思要上台表演才艺，准备了 2 件上衣和 2 条裤子。每次穿一件上衣和一条裤子，把所有穿法都试一遍、记下来！",
+   "tops": [{"name": "黄卫衣", "shape": "hoodie", "color": "#f2c14e"}, {"name": "粉T恤", "shape": "tee", "color": "#ef9fb0"}],
+   "bottoms": [{"name": "绿长裤", "shape": "pants", "color": "#5f8a62"}, {"name": "卡其短裤", "shape": "shorts", "color": "#c2a878"}],
+   "bottomLabel": "裤子",
+   "explanation": "先固定一件上衣，依次配 2 条裤子，再换下一件。每件上衣有 2 种穿法，2 件就是 2×2＝4（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "有序搭配，不重复不遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·换装",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：有序搭配，不重复不遗漏（自编）"
+   },
+   "id": "outfit-010"
+  },
+  {
+   "category": "dress",
+   "mode": "dress",
+   "prompt": "小晴要逛博物馆，准备了 2 件上衣和 2 条裤子。每次穿一件上衣和一条裤子，把所有穿法都试一遍、记下来！",
+   "tops": [{"name": "黄卫衣", "shape": "hoodie", "color": "#f2c14e"}, {"name": "红T恤", "shape": "tee", "color": "#e26d5c"}],
+   "bottoms": [
+    {"name": "蓝长裤", "shape": "pants", "color": "#4a6fa5"},
+    {"name": "灰格子长裤", "shape": "pants", "color": "#8b9196", "pattern": "checks"}
+   ],
+   "bottomLabel": "裤子",
+   "explanation": "先固定一件上衣，依次配 2 条裤子，再换下一件。每件上衣有 2 种穿法，2 件就是 2×2＝4（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "有序搭配，不重复不遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·换装",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：有序搭配，不重复不遗漏（自编）"
+   },
+   "id": "outfit-011"
+  },
+  {
+   "category": "dress",
+   "mode": "dress",
+   "prompt": "小宇要参加班级联欢会，准备了 2 件上衣和 2 条裙子。每次穿一件上衣和一条裙子，把所有穿法都试一遍、记下来！",
+   "tops": [{"name": "红T恤", "shape": "tee", "color": "#e26d5c"}, {"name": "紫卫衣", "shape": "hoodie", "color": "#9b7fc1"}],
+   "bottoms": [
+    {"name": "蓝裙子", "shape": "skirt", "color": "#6f9bd1"},
+    {"name": "红格子裙", "shape": "skirt", "color": "#d9645a", "pattern": "checks"}
+   ],
+   "bottomLabel": "裙子",
+   "explanation": "先固定一件上衣，依次配 2 条裙子，再换下一件。每件上衣有 2 种穿法，2 件就是 2×2＝4（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "有序搭配，不重复不遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·换装",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：有序搭配，不重复不遗漏（自编）"
+   },
+   "id": "outfit-012"
+  },
+  {
+   "category": "dress",
+   "mode": "dress",
+   "prompt": "乐乐要参加植树节，准备了 3 件上衣和 2 条裤子。每次穿一件上衣和一条裤子，把所有穿法都试一遍、记下来！",
+   "tops": [
+    {"name": "粉T恤", "shape": "tee", "color": "#ef9fb0"},
+    {"name": "黄卫衣", "shape": "hoodie", "color": "#f2c14e"},
+    {"name": "紫卫衣", "shape": "hoodie", "color": "#9b7fc1"}
+   ],
+   "bottoms": [
+    {"name": "黑长裤", "shape": "pants", "color": "#3f4347"},
+    {"name": "灰格子长裤", "shape": "pants", "color": "#8b9196", "pattern": "checks"}
+   ],
+   "bottomLabel": "裤子",
+   "explanation": "先固定一件上衣，依次配 2 条裤子，再换下一件。每件上衣有 2 种穿法，3 件就是 3×2＝6（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "有序搭配，不重复不遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·换装",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：有序搭配，不重复不遗漏（自编）"
+   },
+   "id": "outfit-013"
+  },
+  {
+   "category": "dress",
+   "mode": "dress",
+   "prompt": "朵朵要参加亲子活动，准备了 3 件上衣和 3 条裤子。每次穿一件上衣和一条裤子，把所有穿法都试一遍、记下来！",
+   "tops": [
+    {"name": "灰条纹卫衣", "shape": "hoodie", "color": "#a6adb0", "pattern": "stripes"},
+    {"name": "粉T恤", "shape": "tee", "color": "#ef9fb0"},
+    {"name": "蓝条纹T恤", "shape": "tee", "color": "#5b8fb9", "pattern": "stripes"}
+   ],
+   "bottoms": [
+    {"name": "蓝长裤", "shape": "pants", "color": "#4a6fa5"},
+    {"name": "黑长裤", "shape": "pants", "color": "#3f4347"},
+    {"name": "卡其短裤", "shape": "shorts", "color": "#c2a878"}
+   ],
+   "bottomLabel": "裤子",
+   "explanation": "先固定一件上衣，依次配 3 条裤子，再换下一件。每件上衣有 3 种穿法，3 件就是 3×3＝9（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "有序搭配，不重复不遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·换装",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：有序搭配，不重复不遗漏（自编）"
+   },
+   "id": "outfit-014"
+  },
+  {
+   "category": "dress",
+   "mode": "dress",
+   "prompt": "阿哲要去秋游，准备了 2 件上衣和 2 条裤子。每次穿一件上衣和一条裤子，把所有穿法都试一遍、记下来！",
+   "tops": [
+    {"name": "紫卫衣", "shape": "hoodie", "color": "#9b7fc1"},
+    {"name": "橙圆点T恤", "shape": "tee", "color": "#ee9b4d", "pattern": "dots"}
+   ],
+   "bottoms": [
+    {"name": "蓝长裤", "shape": "pants", "color": "#4a6fa5"},
+    {"name": "灰格子长裤", "shape": "pants", "color": "#8b9196", "pattern": "checks"}
+   ],
+   "bottomLabel": "裤子",
+   "explanation": "先固定一件上衣，依次配 2 条裤子，再换下一件。每件上衣有 2 种穿法，2 件就是 2×2＝4（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "有序搭配，不重复不遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·换装",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：有序搭配，不重复不遗漏（自编）"
+   },
+   "id": "outfit-015"
+  },
+  {
+   "category": "dress",
+   "mode": "dress",
+   "prompt": "米粒要参加运动会，准备了 3 件上衣和 2 条裙子。每次穿一件上衣和一条裙子，把所有穿法都试一遍、记下来！",
+   "tops": [
+    {"name": "灰条纹卫衣", "shape": "hoodie", "color": "#a6adb0", "pattern": "stripes"},
+    {"name": "紫卫衣", "shape": "hoodie", "color": "#9b7fc1"},
+    {"name": "绿格子衬衫", "shape": "shirt", "color": "#6fa86b", "pattern": "checks"}
+   ],
+   "bottoms": [
+    {"name": "红格子裙", "shape": "skirt", "color": "#d9645a", "pattern": "checks"},
+    {"name": "蓝裙子", "shape": "skirt", "color": "#6f9bd1"}
+   ],
+   "bottomLabel": "裙子",
+   "explanation": "先固定一件上衣，依次配 2 条裙子，再换下一件。每件上衣有 2 种穿法，3 件就是 3×2＝6（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "有序搭配，不重复不遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·换装",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：有序搭配，不重复不遗漏（自编）"
+   },
+   "id": "outfit-016"
+  },
+  {
+   "category": "dress",
+   "mode": "dress",
+   "prompt": "安安要去春游，准备了 2 件上衣和 3 条裤子。每次穿一件上衣和一条裤子，把所有穿法都试一遍、记下来！",
+   "tops": [{"name": "白衬衫", "shape": "shirt", "color": "#f6f6ef"}, {"name": "紫卫衣", "shape": "hoodie", "color": "#9b7fc1"}],
+   "bottoms": [
+    {"name": "蓝长裤", "shape": "pants", "color": "#4a6fa5"},
+    {"name": "卡其短裤", "shape": "shorts", "color": "#c2a878"},
+    {"name": "黑长裤", "shape": "pants", "color": "#3f4347"}
+   ],
+   "bottomLabel": "裤子",
+   "explanation": "先固定一件上衣，依次配 3 条裤子，再换下一件。每件上衣有 3 种穿法，2 件就是 2×3＝6（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "有序搭配，不重复不遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·换装",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：有序搭配，不重复不遗漏（自编）"
+   },
+   "id": "outfit-017"
+  },
+  {
+   "category": "dress",
+   "mode": "dress",
+   "prompt": "小舟要参加合唱比赛，准备了 2 件上衣和 3 条裤子。每次穿一件上衣和一条裤子，把所有穿法都试一遍、记下来！",
+   "tops": [{"name": "白衬衫", "shape": "shirt", "color": "#f6f6ef"}, {"name": "粉T恤", "shape": "tee", "color": "#ef9fb0"}],
+   "bottoms": [
+    {"name": "黑长裤", "shape": "pants", "color": "#3f4347"},
+    {"name": "蓝短裤", "shape": "shorts", "color": "#6f9bd1"},
+    {"name": "蓝长裤", "shape": "pants", "color": "#4a6fa5"}
+   ],
+   "bottomLabel": "裤子",
+   "explanation": "先固定一件上衣，依次配 3 条裤子，再换下一件。每件上衣有 3 种穿法，2 件就是 2×3＝6（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "有序搭配，不重复不遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·换装",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：有序搭配，不重复不遗漏（自编）"
+   },
+   "id": "outfit-018"
+  },
+  {
+   "category": "dress",
+   "mode": "dress",
+   "prompt": "果果要参加生日会，准备了 2 件上衣和 2 条裤子。每次穿一件上衣和一条裤子，把所有穿法都试一遍、记下来！",
+   "tops": [
+    {"name": "灰条纹卫衣", "shape": "hoodie", "color": "#a6adb0", "pattern": "stripes"},
+    {"name": "紫卫衣", "shape": "hoodie", "color": "#9b7fc1"}
+   ],
+   "bottoms": [{"name": "黑长裤", "shape": "pants", "color": "#3f4347"}, {"name": "蓝长裤", "shape": "pants", "color": "#4a6fa5"}],
+   "bottomLabel": "裤子",
+   "explanation": "先固定一件上衣，依次配 2 条裤子，再换下一件。每件上衣有 2 种穿法，2 件就是 2×2＝4（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "有序搭配，不重复不遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·换装",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：有序搭配，不重复不遗漏（自编）"
+   },
+   "id": "outfit-019"
+  },
+  {
+   "category": "dress",
+   "mode": "dress",
+   "prompt": "思思要参加科技节，准备了 3 件上衣和 2 条裙子。每次穿一件上衣和一条裙子，把所有穿法都试一遍、记下来！",
+   "tops": [
+    {"name": "白衬衫", "shape": "shirt", "color": "#f6f6ef"},
+    {"name": "黄卫衣", "shape": "hoodie", "color": "#f2c14e"},
+    {"name": "红T恤", "shape": "tee", "color": "#e26d5c"}
+   ],
+   "bottoms": [
+    {"name": "红格子裙", "shape": "skirt", "color": "#d9645a", "pattern": "checks"},
+    {"name": "紫圆点裙", "shape": "skirt", "color": "#9b7fc1", "pattern": "dots"}
+   ],
+   "bottomLabel": "裙子",
+   "explanation": "先固定一件上衣，依次配 2 条裙子，再换下一件。每件上衣有 2 种穿法，3 件就是 3×2＝6（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "有序搭配，不重复不遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·换装",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：有序搭配，不重复不遗漏（自编）"
+   },
+   "id": "outfit-020"
+  },
+  {
+   "category": "dress",
+   "mode": "dress",
+   "prompt": "小晴要去郊游，准备了 3 件上衣和 3 条裤子。每次穿一件上衣和一条裤子，把所有穿法都试一遍、记下来！",
+   "tops": [
+    {"name": "橙圆点T恤", "shape": "tee", "color": "#ee9b4d", "pattern": "dots"},
+    {"name": "粉T恤", "shape": "tee", "color": "#ef9fb0"},
+    {"name": "紫卫衣", "shape": "hoodie", "color": "#9b7fc1"}
+   ],
+   "bottoms": [
+    {"name": "绿长裤", "shape": "pants", "color": "#5f8a62"},
+    {"name": "蓝长裤", "shape": "pants", "color": "#4a6fa5"},
+    {"name": "卡其短裤", "shape": "shorts", "color": "#c2a878"}
+   ],
+   "bottomLabel": "裤子",
+   "explanation": "先固定一件上衣，依次配 3 条裤子，再换下一件。每件上衣有 3 种穿法，3 件就是 3×3＝9（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "有序搭配，不重复不遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·换装",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：有序搭配，不重复不遗漏（自编）"
+   },
+   "id": "outfit-021"
+  },
+  {
+   "category": "dress",
+   "mode": "dress",
+   "prompt": "小宇要逛六一游园会，准备了 2 件上衣和 3 条裤子。每次穿一件上衣和一条裤子，把所有穿法都试一遍、记下来！",
+   "tops": [
+    {"name": "绿格子衬衫", "shape": "shirt", "color": "#6fa86b", "pattern": "checks"},
+    {"name": "白衬衫", "shape": "shirt", "color": "#f6f6ef"}
+   ],
+   "bottoms": [
+    {"name": "蓝短裤", "shape": "shorts", "color": "#6f9bd1"},
+    {"name": "黑长裤", "shape": "pants", "color": "#3f4347"},
+    {"name": "卡其短裤", "shape": "shorts", "color": "#c2a878"}
+   ],
+   "bottomLabel": "裤子",
+   "explanation": "先固定一件上衣，依次配 3 条裤子，再换下一件。每件上衣有 3 种穿法，2 件就是 2×3＝6（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "有序搭配，不重复不遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·换装",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：有序搭配，不重复不遗漏（自编）"
+   },
+   "id": "outfit-022"
+  },
+  {
+   "category": "dress",
+   "mode": "dress",
+   "prompt": "乐乐要参加读书节，准备了 3 件上衣和 2 条裤子。每次穿一件上衣和一条裤子，把所有穿法都试一遍、记下来！",
+   "tops": [
+    {"name": "紫卫衣", "shape": "hoodie", "color": "#9b7fc1"},
+    {"name": "红T恤", "shape": "tee", "color": "#e26d5c"},
+    {"name": "蓝条纹T恤", "shape": "tee", "color": "#5b8fb9", "pattern": "stripes"}
+   ],
+   "bottoms": [
+    {"name": "卡其短裤", "shape": "shorts", "color": "#c2a878"},
+    {"name": "灰格子长裤", "shape": "pants", "color": "#8b9196", "pattern": "checks"}
+   ],
+   "bottomLabel": "裤子",
+   "explanation": "先固定一件上衣，依次配 2 条裤子，再换下一件。每件上衣有 2 种穿法，3 件就是 3×2＝6（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "有序搭配，不重复不遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·换装",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：有序搭配，不重复不遗漏（自编）"
+   },
+   "id": "outfit-023"
+  },
+  {
+   "category": "dress",
+   "mode": "dress",
+   "prompt": "朵朵要去爬山，准备了 2 件上衣和 2 条裙子。每次穿一件上衣和一条裙子，把所有穿法都试一遍、记下来！",
+   "tops": [
+    {"name": "紫卫衣", "shape": "hoodie", "color": "#9b7fc1"},
+    {"name": "橙圆点T恤", "shape": "tee", "color": "#ee9b4d", "pattern": "dots"}
+   ],
+   "bottoms": [
+    {"name": "蓝裙子", "shape": "skirt", "color": "#6f9bd1"},
+    {"name": "紫圆点裙", "shape": "skirt", "color": "#9b7fc1", "pattern": "dots"}
+   ],
+   "bottomLabel": "裙子",
+   "explanation": "先固定一件上衣，依次配 2 条裙子，再换下一件。每件上衣有 2 种穿法，2 件就是 2×2＝4（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "有序搭配，不重复不遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·换装",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：有序搭配，不重复不遗漏（自编）"
+   },
+   "id": "outfit-024"
+  },
+  {
+   "category": "dress",
+   "mode": "dress",
+   "prompt": "阿哲要上台表演才艺，准备了 2 件上衣和 3 条裤子。每次穿一件上衣和一条裤子，把所有穿法都试一遍、记下来！",
+   "tops": [
+    {"name": "红T恤", "shape": "tee", "color": "#e26d5c"},
+    {"name": "绿格子衬衫", "shape": "shirt", "color": "#6fa86b", "pattern": "checks"}
+   ],
+   "bottoms": [
+    {"name": "绿长裤", "shape": "pants", "color": "#5f8a62"},
+    {"name": "蓝长裤", "shape": "pants", "color": "#4a6fa5"},
+    {"name": "黑长裤", "shape": "pants", "color": "#3f4347"}
+   ],
+   "bottomLabel": "裤子",
+   "explanation": "先固定一件上衣，依次配 3 条裤子，再换下一件。每件上衣有 3 种穿法，2 件就是 2×3＝6（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "有序搭配，不重复不遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·换装",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：有序搭配，不重复不遗漏（自编）"
+   },
+   "id": "outfit-025"
+  },
+  {
+   "category": "dress",
+   "mode": "dress",
+   "prompt": "米粒要逛博物馆，准备了 2 件上衣和 3 条裤子。每次穿一件上衣和一条裤子，把所有穿法都试一遍、记下来！",
+   "tops": [
+    {"name": "黄卫衣", "shape": "hoodie", "color": "#f2c14e"},
+    {"name": "蓝条纹T恤", "shape": "tee", "color": "#5b8fb9", "pattern": "stripes"}
+   ],
+   "bottoms": [
+    {"name": "黑长裤", "shape": "pants", "color": "#3f4347"},
+    {"name": "卡其短裤", "shape": "shorts", "color": "#c2a878"},
+    {"name": "蓝长裤", "shape": "pants", "color": "#4a6fa5"}
+   ],
+   "bottomLabel": "裤子",
+   "explanation": "先固定一件上衣，依次配 3 条裤子，再换下一件。每件上衣有 3 种穿法，2 件就是 2×3＝6（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "有序搭配，不重复不遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·换装",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：有序搭配，不重复不遗漏（自编）"
+   },
+   "id": "outfit-026"
+  },
+  {
+   "category": "dress",
+   "mode": "dress",
+   "prompt": "安安要参加班级联欢会，准备了 3 件上衣和 2 条裤子。每次穿一件上衣和一条裤子，把所有穿法都试一遍、记下来！",
+   "tops": [
+    {"name": "紫卫衣", "shape": "hoodie", "color": "#9b7fc1"},
+    {"name": "红T恤", "shape": "tee", "color": "#e26d5c"},
+    {"name": "绿格子衬衫", "shape": "shirt", "color": "#6fa86b", "pattern": "checks"}
+   ],
+   "bottoms": [
+    {"name": "灰格子长裤", "shape": "pants", "color": "#8b9196", "pattern": "checks"},
+    {"name": "黑长裤", "shape": "pants", "color": "#3f4347"}
+   ],
+   "bottomLabel": "裤子",
+   "explanation": "先固定一件上衣，依次配 2 条裤子，再换下一件。每件上衣有 2 种穿法，3 件就是 3×2＝6（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "有序搭配，不重复不遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·换装",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：有序搭配，不重复不遗漏（自编）"
+   },
+   "id": "outfit-027"
+  },
+  {
+   "category": "dress",
+   "mode": "dress",
+   "prompt": "小舟要参加植树节，准备了 2 件上衣和 2 条裙子。每次穿一件上衣和一条裙子，把所有穿法都试一遍、记下来！",
+   "tops": [
+    {"name": "紫卫衣", "shape": "hoodie", "color": "#9b7fc1"},
+    {"name": "绿格子衬衫", "shape": "shirt", "color": "#6fa86b", "pattern": "checks"}
+   ],
+   "bottoms": [{"name": "黄裙子", "shape": "skirt", "color": "#f1cf62"}, {"name": "蓝裙子", "shape": "skirt", "color": "#6f9bd1"}],
+   "bottomLabel": "裙子",
+   "explanation": "先固定一件上衣，依次配 2 条裙子，再换下一件。每件上衣有 2 种穿法，2 件就是 2×2＝4（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "有序搭配，不重复不遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·换装",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：有序搭配，不重复不遗漏（自编）"
+   },
+   "id": "outfit-028"
+  },
+  {
+   "category": "dress",
+   "mode": "dress",
+   "prompt": "果果要参加亲子活动，准备了 3 件上衣和 3 条裤子。每次穿一件上衣和一条裤子，把所有穿法都试一遍、记下来！",
+   "tops": [
+    {"name": "灰条纹卫衣", "shape": "hoodie", "color": "#a6adb0", "pattern": "stripes"},
+    {"name": "紫卫衣", "shape": "hoodie", "color": "#9b7fc1"},
+    {"name": "黄卫衣", "shape": "hoodie", "color": "#f2c14e"}
+   ],
+   "bottoms": [
+    {"name": "灰格子长裤", "shape": "pants", "color": "#8b9196", "pattern": "checks"},
+    {"name": "卡其短裤", "shape": "shorts", "color": "#c2a878"},
+    {"name": "绿长裤", "shape": "pants", "color": "#5f8a62"}
+   ],
+   "bottomLabel": "裤子",
+   "explanation": "先固定一件上衣，依次配 3 条裤子，再换下一件。每件上衣有 3 种穿法，3 件就是 3×3＝9（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "有序搭配，不重复不遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·换装",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：有序搭配，不重复不遗漏（自编）"
+   },
+   "id": "outfit-029"
+  },
+  {
+   "category": "dress",
+   "mode": "dress",
+   "prompt": "思思要去秋游，准备了 3 件上衣和 2 条裤子。每次穿一件上衣和一条裤子，把所有穿法都试一遍、记下来！",
+   "tops": [
+    {"name": "绿格子衬衫", "shape": "shirt", "color": "#6fa86b", "pattern": "checks"},
+    {"name": "橙圆点T恤", "shape": "tee", "color": "#ee9b4d", "pattern": "dots"},
+    {"name": "蓝条纹T恤", "shape": "tee", "color": "#5b8fb9", "pattern": "stripes"}
+   ],
+   "bottoms": [{"name": "蓝短裤", "shape": "shorts", "color": "#6f9bd1"}, {"name": "卡其短裤", "shape": "shorts", "color": "#c2a878"}],
+   "bottomLabel": "裤子",
+   "explanation": "先固定一件上衣，依次配 2 条裤子，再换下一件。每件上衣有 2 种穿法，3 件就是 3×2＝6（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "有序搭配，不重复不遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·换装",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：有序搭配，不重复不遗漏（自编）"
+   },
+   "id": "outfit-030"
+  },
+  {
+   "category": "missing",
+   "prompt": "朵朵按顺序记录穿法，一共应该有 6 种，可记录本上只有 5 种。漏掉的是哪一套？",
+   "figure": "outfit-table",
+   "rows": [
+    {
+     "label": "上衣",
+     "kind": "top",
+     "items": [
+      {"name": "红T恤", "shape": "tee", "color": "#e26d5c"},
+      {"name": "绿格子衬衫", "shape": "shirt", "color": "#6fa86b", "pattern": "checks"}
+     ]
+    },
+    {
+     "label": "裤子",
+     "kind": "bottom",
+     "items": [
+      {"name": "蓝长裤", "shape": "pants", "color": "#4a6fa5"},
+      {"name": "绿长裤", "shape": "pants", "color": "#5f8a62"},
+      {"name": "卡其短裤", "shape": "shorts", "color": "#c2a878"}
+     ]
+    }
+   ],
+   "table": ["红T恤＋蓝长裤", "红T恤＋绿长裤", "红T恤＋卡其短裤", "绿格子衬衫＋蓝长裤", "绿格子衬衫＋绿长裤"],
+   "answer": "绿格子衬衫＋卡其短裤",
+   "options": ["绿格子衬衫＋卡其短裤", "绿格子衬衫＋蓝长裤", "绿格子衬衫＋绿长裤", "红T恤＋卡其短裤"],
+   "explanation": "每件上衣应配 3 条裤子。看看哪件上衣少配了一条：漏的是“绿格子衬衫＋卡其短裤”。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "用有序的记录方法检查遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·找漏",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：用有序的记录方法检查遗漏（自编）"
+   },
+   "id": "outfit-031"
+  },
+  {
+   "category": "missing",
+   "prompt": "阿哲按顺序记录穿法，一共应该有 6 种，可记录本上只有 5 种。漏掉的是哪一套？",
+   "figure": "outfit-table",
+   "rows": [
+    {
+     "label": "上衣",
+     "kind": "top",
+     "items": [{"name": "红T恤", "shape": "tee", "color": "#e26d5c"}, {"name": "白衬衫", "shape": "shirt", "color": "#f6f6ef"}]
+    },
+    {
+     "label": "裤子",
+     "kind": "bottom",
+     "items": [
+      {"name": "绿长裤", "shape": "pants", "color": "#5f8a62"},
+      {"name": "黑长裤", "shape": "pants", "color": "#3f4347"},
+      {"name": "蓝长裤", "shape": "pants", "color": "#4a6fa5"}
+     ]
+    }
+   ],
+   "table": ["红T恤＋绿长裤", "红T恤＋黑长裤", "红T恤＋蓝长裤", "白衬衫＋黑长裤", "白衬衫＋蓝长裤"],
+   "answer": "白衬衫＋绿长裤",
+   "options": ["白衬衫＋绿长裤", "白衬衫＋蓝长裤", "红T恤＋绿长裤", "白衬衫＋黑长裤"],
+   "explanation": "每件上衣应配 3 条裤子。看看哪件上衣少配了一条：漏的是“白衬衫＋绿长裤”。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "用有序的记录方法检查遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·找漏",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：用有序的记录方法检查遗漏（自编）"
+   },
+   "id": "outfit-032"
+  },
+  {
+   "category": "missing",
+   "prompt": "米粒按顺序记录穿法，一共应该有 6 种，可记录本上只有 5 种。漏掉的是哪一套？",
+   "figure": "outfit-table",
+   "rows": [
+    {
+     "label": "上衣",
+     "kind": "top",
+     "items": [
+      {"name": "橙圆点T恤", "shape": "tee", "color": "#ee9b4d", "pattern": "dots"},
+      {"name": "粉T恤", "shape": "tee", "color": "#ef9fb0"}
+     ]
+    },
+    {
+     "label": "裤子",
+     "kind": "bottom",
+     "items": [
+      {"name": "灰格子长裤", "shape": "pants", "color": "#8b9196", "pattern": "checks"},
+      {"name": "卡其短裤", "shape": "shorts", "color": "#c2a878"},
+      {"name": "黑长裤", "shape": "pants", "color": "#3f4347"}
+     ]
+    }
+   ],
+   "table": ["橙圆点T恤＋灰格子长裤", "橙圆点T恤＋卡其短裤", "橙圆点T恤＋黑长裤", "粉T恤＋卡其短裤", "粉T恤＋黑长裤"],
+   "answer": "粉T恤＋灰格子长裤",
+   "options": ["粉T恤＋灰格子长裤", "橙圆点T恤＋灰格子长裤", "粉T恤＋黑长裤", "橙圆点T恤＋黑长裤"],
+   "explanation": "每件上衣应配 3 条裤子。看看哪件上衣少配了一条：漏的是“粉T恤＋灰格子长裤”。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "用有序的记录方法检查遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·找漏",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：用有序的记录方法检查遗漏（自编）"
+   },
+   "id": "outfit-033"
+  },
+  {
+   "category": "missing",
+   "prompt": "安安按顺序记录穿法，一共应该有 6 种，可记录本上只有 5 种。漏掉的是哪一套？",
+   "figure": "outfit-table",
+   "rows": [
+    {
+     "label": "上衣",
+     "kind": "top",
+     "items": [
+      {"name": "白衬衫", "shape": "shirt", "color": "#f6f6ef"},
+      {"name": "蓝条纹T恤", "shape": "tee", "color": "#5b8fb9", "pattern": "stripes"}
+     ]
+    },
+    {
+     "label": "裤子",
+     "kind": "bottom",
+     "items": [
+      {"name": "灰格子长裤", "shape": "pants", "color": "#8b9196", "pattern": "checks"},
+      {"name": "蓝长裤", "shape": "pants", "color": "#4a6fa5"},
+      {"name": "蓝短裤", "shape": "shorts", "color": "#6f9bd1"}
+     ]
+    }
+   ],
+   "table": ["白衬衫＋灰格子长裤", "白衬衫＋蓝长裤", "蓝条纹T恤＋灰格子长裤", "蓝条纹T恤＋蓝长裤", "蓝条纹T恤＋蓝短裤"],
+   "answer": "白衬衫＋蓝短裤",
+   "options": ["白衬衫＋蓝短裤", "蓝条纹T恤＋蓝短裤", "白衬衫＋灰格子长裤", "蓝条纹T恤＋蓝长裤"],
+   "explanation": "每件上衣应配 3 条裤子。看看哪件上衣少配了一条：漏的是“白衬衫＋蓝短裤”。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "用有序的记录方法检查遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·找漏",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：用有序的记录方法检查遗漏（自编）"
+   },
+   "id": "outfit-034"
+  },
+  {
+   "category": "missing",
+   "prompt": "小舟按顺序记录穿法，一共应该有 6 种，可记录本上只有 5 种。漏掉的是哪一套？",
+   "figure": "outfit-table",
+   "rows": [
+    {
+     "label": "上衣",
+     "kind": "top",
+     "items": [
+      {"name": "粉T恤", "shape": "tee", "color": "#ef9fb0"},
+      {"name": "橙圆点T恤", "shape": "tee", "color": "#ee9b4d", "pattern": "dots"}
+     ]
+    },
+    {
+     "label": "裤子",
+     "kind": "bottom",
+     "items": [
+      {"name": "蓝长裤", "shape": "pants", "color": "#4a6fa5"},
+      {"name": "卡其短裤", "shape": "shorts", "color": "#c2a878"},
+      {"name": "灰格子长裤", "shape": "pants", "color": "#8b9196", "pattern": "checks"}
+     ]
+    }
+   ],
+   "table": ["粉T恤＋蓝长裤", "粉T恤＋灰格子长裤", "橙圆点T恤＋蓝长裤", "橙圆点T恤＋卡其短裤", "橙圆点T恤＋灰格子长裤"],
+   "answer": "粉T恤＋卡其短裤",
+   "options": ["粉T恤＋卡其短裤", "橙圆点T恤＋蓝长裤", "粉T恤＋灰格子长裤", "橙圆点T恤＋灰格子长裤"],
+   "explanation": "每件上衣应配 3 条裤子。看看哪件上衣少配了一条：漏的是“粉T恤＋卡其短裤”。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "用有序的记录方法检查遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·找漏",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：用有序的记录方法检查遗漏（自编）"
+   },
+   "id": "outfit-035"
+  },
+  {
+   "category": "missing",
+   "prompt": "果果按顺序记录穿法，一共应该有 6 种，可记录本上只有 5 种。漏掉的是哪一套？",
+   "figure": "outfit-table",
+   "rows": [
+    {
+     "label": "上衣",
+     "kind": "top",
+     "items": [
+      {"name": "灰条纹卫衣", "shape": "hoodie", "color": "#a6adb0", "pattern": "stripes"},
+      {"name": "蓝条纹T恤", "shape": "tee", "color": "#5b8fb9", "pattern": "stripes"}
+     ]
+    },
+    {
+     "label": "裤子",
+     "kind": "bottom",
+     "items": [
+      {"name": "黑长裤", "shape": "pants", "color": "#3f4347"},
+      {"name": "灰格子长裤", "shape": "pants", "color": "#8b9196", "pattern": "checks"},
+      {"name": "绿长裤", "shape": "pants", "color": "#5f8a62"}
+     ]
+    }
+   ],
+   "table": ["灰条纹卫衣＋黑长裤", "灰条纹卫衣＋绿长裤", "蓝条纹T恤＋黑长裤", "蓝条纹T恤＋灰格子长裤", "蓝条纹T恤＋绿长裤"],
+   "answer": "灰条纹卫衣＋灰格子长裤",
+   "options": ["灰条纹卫衣＋灰格子长裤", "蓝条纹T恤＋绿长裤", "灰条纹卫衣＋绿长裤", "蓝条纹T恤＋灰格子长裤"],
+   "explanation": "每件上衣应配 3 条裤子。看看哪件上衣少配了一条：漏的是“灰条纹卫衣＋灰格子长裤”。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "用有序的记录方法检查遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·找漏",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：用有序的记录方法检查遗漏（自编）"
+   },
+   "id": "outfit-036"
+  },
+  {
+   "category": "missing",
+   "prompt": "思思按顺序记录穿法，一共应该有 6 种，可记录本上只有 5 种。漏掉的是哪一套？",
+   "figure": "outfit-table",
+   "rows": [
+    {
+     "label": "上衣",
+     "kind": "top",
+     "items": [{"name": "黄卫衣", "shape": "hoodie", "color": "#f2c14e"}, {"name": "红T恤", "shape": "tee", "color": "#e26d5c"}]
+    },
+    {
+     "label": "裤子",
+     "kind": "bottom",
+     "items": [
+      {"name": "黑长裤", "shape": "pants", "color": "#3f4347"},
+      {"name": "绿长裤", "shape": "pants", "color": "#5f8a62"},
+      {"name": "灰格子长裤", "shape": "pants", "color": "#8b9196", "pattern": "checks"}
+     ]
+    }
+   ],
+   "table": ["黄卫衣＋绿长裤", "黄卫衣＋灰格子长裤", "红T恤＋黑长裤", "红T恤＋绿长裤", "红T恤＋灰格子长裤"],
+   "answer": "黄卫衣＋黑长裤",
+   "options": ["黄卫衣＋黑长裤", "红T恤＋灰格子长裤", "黄卫衣＋绿长裤", "黄卫衣＋灰格子长裤"],
+   "explanation": "每件上衣应配 3 条裤子。看看哪件上衣少配了一条：漏的是“黄卫衣＋黑长裤”。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "用有序的记录方法检查遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·找漏",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：用有序的记录方法检查遗漏（自编）"
+   },
+   "id": "outfit-037"
+  },
+  {
+   "category": "missing",
+   "prompt": "小晴按顺序记录穿法，一共应该有 6 种，可记录本上只有 5 种。漏掉的是哪一套？",
+   "figure": "outfit-table",
+   "rows": [
+    {
+     "label": "上衣",
+     "kind": "top",
+     "items": [
+      {"name": "灰条纹卫衣", "shape": "hoodie", "color": "#a6adb0", "pattern": "stripes"},
+      {"name": "黄卫衣", "shape": "hoodie", "color": "#f2c14e"}
+     ]
+    },
+    {
+     "label": "裤子",
+     "kind": "bottom",
+     "items": [
+      {"name": "绿长裤", "shape": "pants", "color": "#5f8a62"},
+      {"name": "蓝短裤", "shape": "shorts", "color": "#6f9bd1"},
+      {"name": "黑长裤", "shape": "pants", "color": "#3f4347"}
+     ]
+    }
+   ],
+   "table": ["灰条纹卫衣＋蓝短裤", "灰条纹卫衣＋黑长裤", "黄卫衣＋绿长裤", "黄卫衣＋蓝短裤", "黄卫衣＋黑长裤"],
+   "answer": "灰条纹卫衣＋绿长裤",
+   "options": ["灰条纹卫衣＋绿长裤", "灰条纹卫衣＋蓝短裤", "黄卫衣＋黑长裤", "灰条纹卫衣＋黑长裤"],
+   "explanation": "每件上衣应配 3 条裤子。看看哪件上衣少配了一条：漏的是“灰条纹卫衣＋绿长裤”。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "用有序的记录方法检查遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·找漏",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：用有序的记录方法检查遗漏（自编）"
+   },
+   "id": "outfit-038"
+  },
+  {
+   "category": "missing",
+   "prompt": "小宇按顺序记录穿法，一共应该有 6 种，可记录本上只有 5 种。漏掉的是哪一套？",
+   "figure": "outfit-table",
+   "rows": [
+    {
+     "label": "上衣",
+     "kind": "top",
+     "items": [
+      {"name": "蓝条纹T恤", "shape": "tee", "color": "#5b8fb9", "pattern": "stripes"},
+      {"name": "白衬衫", "shape": "shirt", "color": "#f6f6ef"},
+      {"name": "绿格子衬衫", "shape": "shirt", "color": "#6fa86b", "pattern": "checks"}
+     ]
+    },
+    {
+     "label": "裤子",
+     "kind": "bottom",
+     "items": [{"name": "黑长裤", "shape": "pants", "color": "#3f4347"}, {"name": "蓝长裤", "shape": "pants", "color": "#4a6fa5"}]
+    }
+   ],
+   "table": ["蓝条纹T恤＋蓝长裤", "白衬衫＋黑长裤", "白衬衫＋蓝长裤", "绿格子衬衫＋黑长裤", "绿格子衬衫＋蓝长裤"],
+   "answer": "蓝条纹T恤＋黑长裤",
+   "options": ["蓝条纹T恤＋黑长裤", "白衬衫＋蓝长裤", "蓝条纹T恤＋蓝长裤", "绿格子衬衫＋黑长裤"],
+   "explanation": "每件上衣应配 2 条裤子。看看哪件上衣少配了一条：漏的是“蓝条纹T恤＋黑长裤”。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "用有序的记录方法检查遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·找漏",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：用有序的记录方法检查遗漏（自编）"
+   },
+   "id": "outfit-039"
+  },
+  {
+   "category": "missing",
+   "prompt": "乐乐按顺序记录穿法，一共应该有 6 种，可记录本上只有 5 种。漏掉的是哪一套？",
+   "figure": "outfit-table",
+   "rows": [
+    {
+     "label": "上衣",
+     "kind": "top",
+     "items": [
+      {"name": "白衬衫", "shape": "shirt", "color": "#f6f6ef"},
+      {"name": "灰条纹卫衣", "shape": "hoodie", "color": "#a6adb0", "pattern": "stripes"},
+      {"name": "蓝条纹T恤", "shape": "tee", "color": "#5b8fb9", "pattern": "stripes"}
+     ]
+    },
+    {
+     "label": "裤子",
+     "kind": "bottom",
+     "items": [{"name": "黑长裤", "shape": "pants", "color": "#3f4347"}, {"name": "蓝短裤", "shape": "shorts", "color": "#6f9bd1"}]
+    }
+   ],
+   "table": ["白衬衫＋黑长裤", "白衬衫＋蓝短裤", "灰条纹卫衣＋黑长裤", "灰条纹卫衣＋蓝短裤", "蓝条纹T恤＋黑长裤"],
+   "answer": "蓝条纹T恤＋蓝短裤",
+   "options": ["蓝条纹T恤＋蓝短裤", "蓝条纹T恤＋黑长裤", "灰条纹卫衣＋蓝短裤", "白衬衫＋黑长裤"],
+   "explanation": "每件上衣应配 2 条裤子。看看哪件上衣少配了一条：漏的是“蓝条纹T恤＋蓝短裤”。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "用有序的记录方法检查遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·找漏",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：用有序的记录方法检查遗漏（自编）"
+   },
+   "id": "outfit-040"
+  },
+  {
+   "category": "missing",
+   "prompt": "朵朵按顺序记录穿法，一共应该有 6 种，可记录本上只有 5 种。漏掉的是哪一套？",
+   "figure": "outfit-table",
+   "rows": [
+    {
+     "label": "上衣",
+     "kind": "top",
+     "items": [
+      {"name": "紫卫衣", "shape": "hoodie", "color": "#9b7fc1"},
+      {"name": "红T恤", "shape": "tee", "color": "#e26d5c"},
+      {"name": "蓝条纹T恤", "shape": "tee", "color": "#5b8fb9", "pattern": "stripes"}
+     ]
+    },
+    {
+     "label": "裤子",
+     "kind": "bottom",
+     "items": [{"name": "卡其短裤", "shape": "shorts", "color": "#c2a878"}, {"name": "蓝短裤", "shape": "shorts", "color": "#6f9bd1"}]
+    }
+   ],
+   "table": ["紫卫衣＋卡其短裤", "红T恤＋卡其短裤", "红T恤＋蓝短裤", "蓝条纹T恤＋卡其短裤", "蓝条纹T恤＋蓝短裤"],
+   "answer": "紫卫衣＋蓝短裤",
+   "options": ["紫卫衣＋蓝短裤", "蓝条纹T恤＋卡其短裤", "红T恤＋卡其短裤", "紫卫衣＋卡其短裤"],
+   "explanation": "每件上衣应配 2 条裤子。看看哪件上衣少配了一条：漏的是“紫卫衣＋蓝短裤”。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "用有序的记录方法检查遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·找漏",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：用有序的记录方法检查遗漏（自编）"
+   },
+   "id": "outfit-041"
+  },
+  {
+   "category": "missing",
+   "prompt": "阿哲按顺序记录穿法，一共应该有 6 种，可记录本上只有 5 种。漏掉的是哪一套？",
+   "figure": "outfit-table",
+   "rows": [
+    {
+     "label": "上衣",
+     "kind": "top",
+     "items": [
+      {"name": "橙圆点T恤", "shape": "tee", "color": "#ee9b4d", "pattern": "dots"},
+      {"name": "黄卫衣", "shape": "hoodie", "color": "#f2c14e"},
+      {"name": "白衬衫", "shape": "shirt", "color": "#f6f6ef"}
+     ]
+    },
+    {
+     "label": "裤子",
+     "kind": "bottom",
+     "items": [{"name": "黑长裤", "shape": "pants", "color": "#3f4347"}, {"name": "蓝短裤", "shape": "shorts", "color": "#6f9bd1"}]
+    }
+   ],
+   "table": ["橙圆点T恤＋黑长裤", "橙圆点T恤＋蓝短裤", "黄卫衣＋黑长裤", "白衬衫＋黑长裤", "白衬衫＋蓝短裤"],
+   "answer": "黄卫衣＋蓝短裤",
+   "options": ["黄卫衣＋蓝短裤", "白衬衫＋黑长裤", "橙圆点T恤＋蓝短裤", "白衬衫＋蓝短裤"],
+   "explanation": "每件上衣应配 2 条裤子。看看哪件上衣少配了一条：漏的是“黄卫衣＋蓝短裤”。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "用有序的记录方法检查遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·找漏",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：用有序的记录方法检查遗漏（自编）"
+   },
+   "id": "outfit-042"
+  },
+  {
+   "category": "missing",
+   "prompt": "米粒按顺序记录穿法，一共应该有 6 种，可记录本上只有 5 种。漏掉的是哪一套？",
+   "figure": "outfit-table",
+   "rows": [
+    {
+     "label": "上衣",
+     "kind": "top",
+     "items": [
+      {"name": "红T恤", "shape": "tee", "color": "#e26d5c"},
+      {"name": "绿格子衬衫", "shape": "shirt", "color": "#6fa86b", "pattern": "checks"},
+      {"name": "黄卫衣", "shape": "hoodie", "color": "#f2c14e"}
+     ]
+    },
+    {
+     "label": "裤子",
+     "kind": "bottom",
+     "items": [{"name": "蓝长裤", "shape": "pants", "color": "#4a6fa5"}, {"name": "黑长裤", "shape": "pants", "color": "#3f4347"}]
+    }
+   ],
+   "table": ["红T恤＋蓝长裤", "红T恤＋黑长裤", "绿格子衬衫＋黑长裤", "黄卫衣＋蓝长裤", "黄卫衣＋黑长裤"],
+   "answer": "绿格子衬衫＋蓝长裤",
+   "options": ["绿格子衬衫＋蓝长裤", "黄卫衣＋黑长裤", "绿格子衬衫＋黑长裤", "红T恤＋蓝长裤"],
+   "explanation": "每件上衣应配 2 条裤子。看看哪件上衣少配了一条：漏的是“绿格子衬衫＋蓝长裤”。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "用有序的记录方法检查遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·找漏",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：用有序的记录方法检查遗漏（自编）"
+   },
+   "id": "outfit-043"
+  },
+  {
+   "category": "missing",
+   "prompt": "安安按顺序记录穿法，一共应该有 6 种，可记录本上只有 5 种。漏掉的是哪一套？",
+   "figure": "outfit-table",
+   "rows": [
+    {
+     "label": "上衣",
+     "kind": "top",
+     "items": [
+      {"name": "橙圆点T恤", "shape": "tee", "color": "#ee9b4d", "pattern": "dots"},
+      {"name": "黄卫衣", "shape": "hoodie", "color": "#f2c14e"},
+      {"name": "粉T恤", "shape": "tee", "color": "#ef9fb0"}
+     ]
+    },
+    {
+     "label": "裤子",
+     "kind": "bottom",
+     "items": [
+      {"name": "绿长裤", "shape": "pants", "color": "#5f8a62"},
+      {"name": "灰格子长裤", "shape": "pants", "color": "#8b9196", "pattern": "checks"}
+     ]
+    }
+   ],
+   "table": ["橙圆点T恤＋绿长裤", "橙圆点T恤＋灰格子长裤", "黄卫衣＋灰格子长裤", "粉T恤＋绿长裤", "粉T恤＋灰格子长裤"],
+   "answer": "黄卫衣＋绿长裤",
+   "options": ["黄卫衣＋绿长裤", "粉T恤＋绿长裤", "黄卫衣＋灰格子长裤", "橙圆点T恤＋绿长裤"],
+   "explanation": "每件上衣应配 2 条裤子。看看哪件上衣少配了一条：漏的是“黄卫衣＋绿长裤”。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "用有序的记录方法检查遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·找漏",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：用有序的记录方法检查遗漏（自编）"
+   },
+   "id": "outfit-044"
+  },
+  {
+   "category": "missing",
+   "prompt": "小舟按顺序记录穿法，一共应该有 6 种，可记录本上只有 5 种。漏掉的是哪一套？",
+   "figure": "outfit-table",
+   "rows": [
+    {
+     "label": "上衣",
+     "kind": "top",
+     "items": [
+      {"name": "粉T恤", "shape": "tee", "color": "#ef9fb0"},
+      {"name": "白衬衫", "shape": "shirt", "color": "#f6f6ef"},
+      {"name": "红T恤", "shape": "tee", "color": "#e26d5c"}
+     ]
+    },
+    {
+     "label": "裤子",
+     "kind": "bottom",
+     "items": [{"name": "黑长裤", "shape": "pants", "color": "#3f4347"}, {"name": "蓝长裤", "shape": "pants", "color": "#4a6fa5"}]
+    }
+   ],
+   "table": ["粉T恤＋黑长裤", "粉T恤＋蓝长裤", "白衬衫＋蓝长裤", "红T恤＋黑长裤", "红T恤＋蓝长裤"],
+   "answer": "白衬衫＋黑长裤",
+   "options": ["白衬衫＋黑长裤", "红T恤＋黑长裤", "粉T恤＋黑长裤", "粉T恤＋蓝长裤"],
+   "explanation": "每件上衣应配 2 条裤子。看看哪件上衣少配了一条：漏的是“白衬衫＋黑长裤”。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "用有序的记录方法检查遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·找漏",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：用有序的记录方法检查遗漏（自编）"
+   },
+   "id": "outfit-045"
+  },
+  {
+   "category": "missing",
+   "prompt": "果果按顺序记录穿法，一共应该有 9 种，可记录本上只有 8 种。漏掉的是哪一套？",
+   "figure": "outfit-table",
+   "rows": [
+    {
+     "label": "上衣",
+     "kind": "top",
+     "items": [
+      {"name": "红T恤", "shape": "tee", "color": "#e26d5c"},
+      {"name": "紫卫衣", "shape": "hoodie", "color": "#9b7fc1"},
+      {"name": "灰条纹卫衣", "shape": "hoodie", "color": "#a6adb0", "pattern": "stripes"}
+     ]
+    },
+    {
+     "label": "裤子",
+     "kind": "bottom",
+     "items": [
+      {"name": "黑长裤", "shape": "pants", "color": "#3f4347"},
+      {"name": "蓝长裤", "shape": "pants", "color": "#4a6fa5"},
+      {"name": "蓝短裤", "shape": "shorts", "color": "#6f9bd1"}
+     ]
+    }
+   ],
+   "table": ["红T恤＋黑长裤", "红T恤＋蓝长裤", "紫卫衣＋黑长裤", "紫卫衣＋蓝长裤", "紫卫衣＋蓝短裤", "灰条纹卫衣＋黑长裤", "灰条纹卫衣＋蓝长裤", "灰条纹卫衣＋蓝短裤"],
+   "answer": "红T恤＋蓝短裤",
+   "options": ["红T恤＋蓝短裤", "灰条纹卫衣＋蓝短裤", "紫卫衣＋蓝长裤", "红T恤＋黑长裤"],
+   "explanation": "每件上衣应配 3 条裤子。看看哪件上衣少配了一条：漏的是“红T恤＋蓝短裤”。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "用有序的记录方法检查遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·找漏",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：用有序的记录方法检查遗漏（自编）"
+   },
+   "id": "outfit-046"
+  },
+  {
+   "category": "missing",
+   "prompt": "思思按顺序记录穿法，一共应该有 9 种，可记录本上只有 8 种。漏掉的是哪一套？",
+   "figure": "outfit-table",
+   "rows": [
+    {
+     "label": "上衣",
+     "kind": "top",
+     "items": [
+      {"name": "黄卫衣", "shape": "hoodie", "color": "#f2c14e"},
+      {"name": "橙圆点T恤", "shape": "tee", "color": "#ee9b4d", "pattern": "dots"},
+      {"name": "紫卫衣", "shape": "hoodie", "color": "#9b7fc1"}
+     ]
+    },
+    {
+     "label": "裤子",
+     "kind": "bottom",
+     "items": [
+      {"name": "灰格子长裤", "shape": "pants", "color": "#8b9196", "pattern": "checks"},
+      {"name": "蓝短裤", "shape": "shorts", "color": "#6f9bd1"},
+      {"name": "卡其短裤", "shape": "shorts", "color": "#c2a878"}
+     ]
+    }
+   ],
+   "table": ["黄卫衣＋灰格子长裤", "黄卫衣＋蓝短裤", "黄卫衣＋卡其短裤", "橙圆点T恤＋灰格子长裤", "橙圆点T恤＋蓝短裤", "紫卫衣＋灰格子长裤", "紫卫衣＋蓝短裤", "紫卫衣＋卡其短裤"],
+   "answer": "橙圆点T恤＋卡其短裤",
+   "options": ["橙圆点T恤＋卡其短裤", "橙圆点T恤＋灰格子长裤", "紫卫衣＋灰格子长裤", "橙圆点T恤＋蓝短裤"],
+   "explanation": "每件上衣应配 3 条裤子。看看哪件上衣少配了一条：漏的是“橙圆点T恤＋卡其短裤”。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "用有序的记录方法检查遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·找漏",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：用有序的记录方法检查遗漏（自编）"
+   },
+   "id": "outfit-047"
+  },
+  {
+   "category": "missing",
+   "prompt": "小晴按顺序记录穿法，一共应该有 9 种，可记录本上只有 8 种。漏掉的是哪一套？",
+   "figure": "outfit-table",
+   "rows": [
+    {
+     "label": "上衣",
+     "kind": "top",
+     "items": [
+      {"name": "白衬衫", "shape": "shirt", "color": "#f6f6ef"},
+      {"name": "橙圆点T恤", "shape": "tee", "color": "#ee9b4d", "pattern": "dots"},
+      {"name": "蓝条纹T恤", "shape": "tee", "color": "#5b8fb9", "pattern": "stripes"}
+     ]
+    },
+    {
+     "label": "裤子",
+     "kind": "bottom",
+     "items": [
+      {"name": "黑长裤", "shape": "pants", "color": "#3f4347"},
+      {"name": "绿长裤", "shape": "pants", "color": "#5f8a62"},
+      {"name": "蓝短裤", "shape": "shorts", "color": "#6f9bd1"}
+     ]
+    }
+   ],
+   "table": ["白衬衫＋黑长裤", "白衬衫＋绿长裤", "白衬衫＋蓝短裤", "橙圆点T恤＋黑长裤", "橙圆点T恤＋蓝短裤", "蓝条纹T恤＋黑长裤", "蓝条纹T恤＋绿长裤", "蓝条纹T恤＋蓝短裤"],
+   "answer": "橙圆点T恤＋绿长裤",
+   "options": ["橙圆点T恤＋绿长裤", "橙圆点T恤＋黑长裤", "蓝条纹T恤＋蓝短裤", "橙圆点T恤＋蓝短裤"],
+   "explanation": "每件上衣应配 3 条裤子。看看哪件上衣少配了一条：漏的是“橙圆点T恤＋绿长裤”。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "用有序的记录方法检查遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·找漏",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：用有序的记录方法检查遗漏（自编）"
+   },
+   "id": "outfit-048"
+  },
+  {
+   "category": "missing",
+   "prompt": "小宇按顺序记录穿法，一共应该有 9 种，可记录本上只有 8 种。漏掉的是哪一套？",
+   "figure": "outfit-table",
+   "rows": [
+    {
+     "label": "上衣",
+     "kind": "top",
+     "items": [
+      {"name": "红T恤", "shape": "tee", "color": "#e26d5c"},
+      {"name": "灰条纹卫衣", "shape": "hoodie", "color": "#a6adb0", "pattern": "stripes"},
+      {"name": "白衬衫", "shape": "shirt", "color": "#f6f6ef"}
+     ]
+    },
+    {
+     "label": "裤子",
+     "kind": "bottom",
+     "items": [
+      {"name": "蓝长裤", "shape": "pants", "color": "#4a6fa5"},
+      {"name": "灰格子长裤", "shape": "pants", "color": "#8b9196", "pattern": "checks"},
+      {"name": "蓝短裤", "shape": "shorts", "color": "#6f9bd1"}
+     ]
+    }
+   ],
+   "table": ["红T恤＋蓝长裤", "红T恤＋灰格子长裤", "红T恤＋蓝短裤", "灰条纹卫衣＋蓝长裤", "灰条纹卫衣＋蓝短裤", "白衬衫＋蓝长裤", "白衬衫＋灰格子长裤", "白衬衫＋蓝短裤"],
+   "answer": "灰条纹卫衣＋灰格子长裤",
+   "options": ["灰条纹卫衣＋灰格子长裤", "白衬衫＋蓝短裤", "白衬衫＋蓝长裤", "红T恤＋蓝短裤"],
+   "explanation": "每件上衣应配 3 条裤子。看看哪件上衣少配了一条：漏的是“灰条纹卫衣＋灰格子长裤”。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "用有序的记录方法检查遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·找漏",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：用有序的记录方法检查遗漏（自编）"
+   },
+   "id": "outfit-049"
+  },
+  {
+   "category": "missing",
+   "prompt": "乐乐按顺序记录穿法，一共应该有 9 种，可记录本上只有 8 种。漏掉的是哪一套？",
+   "figure": "outfit-table",
+   "rows": [
+    {
+     "label": "上衣",
+     "kind": "top",
+     "items": [
+      {"name": "白衬衫", "shape": "shirt", "color": "#f6f6ef"},
+      {"name": "黄卫衣", "shape": "hoodie", "color": "#f2c14e"},
+      {"name": "粉T恤", "shape": "tee", "color": "#ef9fb0"}
+     ]
+    },
+    {
+     "label": "裤子",
+     "kind": "bottom",
+     "items": [
+      {"name": "蓝短裤", "shape": "shorts", "color": "#6f9bd1"},
+      {"name": "黑长裤", "shape": "pants", "color": "#3f4347"},
+      {"name": "绿长裤", "shape": "pants", "color": "#5f8a62"}
+     ]
+    }
+   ],
+   "table": ["白衬衫＋蓝短裤", "白衬衫＋黑长裤", "白衬衫＋绿长裤", "黄卫衣＋蓝短裤", "黄卫衣＋黑长裤", "黄卫衣＋绿长裤", "粉T恤＋蓝短裤", "粉T恤＋绿长裤"],
+   "answer": "粉T恤＋黑长裤",
+   "options": ["粉T恤＋黑长裤", "白衬衫＋黑长裤", "黄卫衣＋蓝短裤", "白衬衫＋蓝短裤"],
+   "explanation": "每件上衣应配 3 条裤子。看看哪件上衣少配了一条：漏的是“粉T恤＋黑长裤”。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "用有序的记录方法检查遗漏",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·找漏",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：用有序的记录方法检查遗漏（自编）"
+   },
+   "id": "outfit-050"
+  },
+  {
+   "category": "count",
+   "prompt": "小晴有这些衣服。每次穿一件上衣和一条裤子，一共有多少种不同的穿法？",
+   "figure": "outfit-rows",
+   "rows": [
+    {
+     "label": "上衣",
+     "kind": "top",
+     "items": [
+      {"name": "粉T恤", "shape": "tee", "color": "#ef9fb0"},
+      {"name": "蓝条纹T恤", "shape": "tee", "color": "#5b8fb9", "pattern": "stripes"}
+     ]
+    },
+    {
+     "label": "裤子",
+     "kind": "bottom",
+     "items": [{"name": "绿长裤", "shape": "pants", "color": "#5f8a62"}, {"name": "蓝长裤", "shape": "pants", "color": "#4a6fa5"}]
+    }
+   ],
+   "calc": {"kind": "product", "factors": [2, 2]},
+   "answer": 4,
+   "options": [4, 6, 3],
+   "optionSuffix": "种",
+   "explanation": "上衣有 2 件，每件都能配 2 条裤子：2×2＝4（种）。不是 2＋2。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "件数×件数＝搭配种数",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·算一算",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：件数×件数＝搭配种数（自编）"
+   },
+   "id": "outfit-051"
+  },
+  {
+   "category": "count",
+   "prompt": "小宇有这些衣服。每次穿一件上衣和一条裤子，一共有多少种不同的穿法？",
+   "figure": "outfit-rows",
+   "rows": [
+    {
+     "label": "上衣",
+     "kind": "top",
+     "items": [{"name": "粉T恤", "shape": "tee", "color": "#ef9fb0"}, {"name": "白衬衫", "shape": "shirt", "color": "#f6f6ef"}]
+    },
+    {
+     "label": "裤子",
+     "kind": "bottom",
+     "items": [
+      {"name": "卡其短裤", "shape": "shorts", "color": "#c2a878"},
+      {"name": "蓝短裤", "shape": "shorts", "color": "#6f9bd1"},
+      {"name": "黑长裤", "shape": "pants", "color": "#3f4347"}
+     ]
+    }
+   ],
+   "calc": {"kind": "product", "factors": [2, 3]},
+   "answer": 6,
+   "options": [6, 5, 8],
+   "optionSuffix": "种",
+   "explanation": "上衣有 2 件，每件都能配 3 条裤子：2×3＝6（种）。不是 2＋3。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "件数×件数＝搭配种数",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·算一算",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：件数×件数＝搭配种数（自编）"
+   },
+   "id": "outfit-052"
+  },
+  {
+   "category": "count",
+   "prompt": "乐乐有这些衣服。每次穿一件上衣和一条裤子，一共有多少种不同的穿法？",
+   "figure": "outfit-rows",
+   "rows": [
+    {
+     "label": "上衣",
+     "kind": "top",
+     "items": [
+      {"name": "蓝条纹T恤", "shape": "tee", "color": "#5b8fb9", "pattern": "stripes"},
+      {"name": "绿格子衬衫", "shape": "shirt", "color": "#6fa86b", "pattern": "checks"},
+      {"name": "橙圆点T恤", "shape": "tee", "color": "#ee9b4d", "pattern": "dots"}
+     ]
+    },
+    {
+     "label": "裤子",
+     "kind": "bottom",
+     "items": [
+      {"name": "灰格子长裤", "shape": "pants", "color": "#8b9196", "pattern": "checks"},
+      {"name": "绿长裤", "shape": "pants", "color": "#5f8a62"}
+     ]
+    }
+   ],
+   "calc": {"kind": "product", "factors": [3, 2]},
+   "answer": 6,
+   "options": [6, 5, 9, 8],
+   "optionSuffix": "种",
+   "explanation": "上衣有 3 件，每件都能配 2 条裤子：3×2＝6（种）。不是 3＋2。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "件数×件数＝搭配种数",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·算一算",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：件数×件数＝搭配种数（自编）"
+   },
+   "id": "outfit-053"
+  },
+  {
+   "category": "count",
+   "prompt": "朵朵有这些衣服。每次穿一件上衣和一条裤子，一共有多少种不同的穿法？",
+   "figure": "outfit-rows",
+   "rows": [
+    {
+     "label": "上衣",
+     "kind": "top",
+     "items": [
+      {"name": "灰条纹卫衣", "shape": "hoodie", "color": "#a6adb0", "pattern": "stripes"},
+      {"name": "橙圆点T恤", "shape": "tee", "color": "#ee9b4d", "pattern": "dots"},
+      {"name": "紫卫衣", "shape": "hoodie", "color": "#9b7fc1"}
+     ]
+    },
+    {
+     "label": "裤子",
+     "kind": "bottom",
+     "items": [
+      {"name": "蓝短裤", "shape": "shorts", "color": "#6f9bd1"},
+      {"name": "黑长裤", "shape": "pants", "color": "#3f4347"},
+      {"name": "蓝长裤", "shape": "pants", "color": "#4a6fa5"}
+     ]
+    }
+   ],
+   "calc": {"kind": "product", "factors": [3, 3]},
+   "answer": 9,
+   "options": [9, 6, 12, 11],
+   "optionSuffix": "种",
+   "explanation": "上衣有 3 件，每件都能配 3 条裤子：3×3＝9（种）。不是 3＋3。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "件数×件数＝搭配种数",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·算一算",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：件数×件数＝搭配种数（自编）"
+   },
+   "id": "outfit-054"
+  },
+  {
+   "category": "count",
+   "prompt": "阿哲有这些衣服。每次穿一件上衣和一条裤子，一共有多少种不同的穿法？",
+   "figure": "outfit-rows",
+   "rows": [
+    {
+     "label": "上衣",
+     "kind": "top",
+     "items": [
+      {"name": "紫卫衣", "shape": "hoodie", "color": "#9b7fc1"},
+      {"name": "蓝条纹T恤", "shape": "tee", "color": "#5b8fb9", "pattern": "stripes"}
+     ]
+    },
+    {
+     "label": "裤子",
+     "kind": "bottom",
+     "items": [
+      {"name": "蓝长裤", "shape": "pants", "color": "#4a6fa5"},
+      {"name": "黑长裤", "shape": "pants", "color": "#3f4347"},
+      {"name": "卡其短裤", "shape": "shorts", "color": "#c2a878"},
+      {"name": "蓝短裤", "shape": "shorts", "color": "#6f9bd1"}
+     ]
+    }
+   ],
+   "calc": {"kind": "product", "factors": [2, 4]},
+   "answer": 8,
+   "options": [8, 6, 10, 7],
+   "optionSuffix": "种",
+   "explanation": "上衣有 2 件，每件都能配 4 条裤子：2×4＝8（种）。不是 2＋4。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "件数×件数＝搭配种数",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·算一算",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：件数×件数＝搭配种数（自编）"
+   },
+   "id": "outfit-055"
+  },
+  {
+   "category": "count",
+   "prompt": "米粒有这些衣服。每次穿一件上衣和一条裤子，一共有多少种不同的穿法？",
+   "figure": "outfit-rows",
+   "rows": [
+    {
+     "label": "上衣",
+     "kind": "top",
+     "items": [
+      {"name": "黄卫衣", "shape": "hoodie", "color": "#f2c14e"},
+      {"name": "灰条纹卫衣", "shape": "hoodie", "color": "#a6adb0", "pattern": "stripes"},
+      {"name": "白衬衫", "shape": "shirt", "color": "#f6f6ef"},
+      {"name": "紫卫衣", "shape": "hoodie", "color": "#9b7fc1"}
+     ]
+    },
+    {
+     "label": "裤子",
+     "kind": "bottom",
+     "items": [{"name": "卡其短裤", "shape": "shorts", "color": "#c2a878"}, {"name": "绿长裤", "shape": "pants", "color": "#5f8a62"}]
+    }
+   ],
+   "calc": {"kind": "product", "factors": [4, 2]},
+   "answer": 8,
+   "options": [8, 6, 12, 10],
+   "optionSuffix": "种",
+   "explanation": "上衣有 4 件，每件都能配 2 条裤子：4×2＝8（种）。不是 4＋2。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "件数×件数＝搭配种数",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·算一算",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：件数×件数＝搭配种数（自编）"
+   },
+   "id": "outfit-056"
+  },
+  {
+   "category": "count",
+   "prompt": "安安有这些衣服。每次穿一件上衣和一条裤子，一共有多少种不同的穿法？",
+   "figure": "outfit-rows",
+   "rows": [
+    {
+     "label": "上衣",
+     "kind": "top",
+     "items": [
+      {"name": "绿格子衬衫", "shape": "shirt", "color": "#6fa86b", "pattern": "checks"},
+      {"name": "蓝条纹T恤", "shape": "tee", "color": "#5b8fb9", "pattern": "stripes"},
+      {"name": "粉T恤", "shape": "tee", "color": "#ef9fb0"}
+     ]
+    },
+    {
+     "label": "裤子",
+     "kind": "bottom",
+     "items": [
+      {"name": "黑长裤", "shape": "pants", "color": "#3f4347"},
+      {"name": "蓝长裤", "shape": "pants", "color": "#4a6fa5"},
+      {"name": "灰格子长裤", "shape": "pants", "color": "#8b9196", "pattern": "checks"},
+      {"name": "蓝短裤", "shape": "shorts", "color": "#6f9bd1"}
+     ]
+    }
+   ],
+   "calc": {"kind": "product", "factors": [3, 4]},
+   "answer": 12,
+   "options": [12, 7, 15, 14],
+   "optionSuffix": "种",
+   "explanation": "上衣有 3 件，每件都能配 4 条裤子：3×4＝12（种）。不是 3＋4。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "件数×件数＝搭配种数",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·算一算",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：件数×件数＝搭配种数（自编）"
+   },
+   "id": "outfit-057"
+  },
+  {
+   "category": "count",
+   "prompt": "小舟有这些衣服。每次穿一件上衣和一条裤子，一共有多少种不同的穿法？",
+   "figure": "outfit-rows",
+   "rows": [
+    {
+     "label": "上衣",
+     "kind": "top",
+     "items": [
+      {"name": "蓝条纹T恤", "shape": "tee", "color": "#5b8fb9", "pattern": "stripes"},
+      {"name": "黄卫衣", "shape": "hoodie", "color": "#f2c14e"},
+      {"name": "绿格子衬衫", "shape": "shirt", "color": "#6fa86b", "pattern": "checks"},
+      {"name": "橙圆点T恤", "shape": "tee", "color": "#ee9b4d", "pattern": "dots"}
+     ]
+    },
+    {
+     "label": "裤子",
+     "kind": "bottom",
+     "items": [
+      {"name": "卡其短裤", "shape": "shorts", "color": "#c2a878"},
+      {"name": "黑长裤", "shape": "pants", "color": "#3f4347"},
+      {"name": "绿长裤", "shape": "pants", "color": "#5f8a62"}
+     ]
+    }
+   ],
+   "calc": {"kind": "product", "factors": [4, 3]},
+   "answer": 12,
+   "options": [12, 7, 16, 14],
+   "optionSuffix": "种",
+   "explanation": "上衣有 4 件，每件都能配 3 条裤子：4×3＝12（种）。不是 4＋3。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "件数×件数＝搭配种数",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·算一算",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：件数×件数＝搭配种数（自编）"
+   },
+   "id": "outfit-058"
+  },
+  {
+   "category": "count",
+   "prompt": "果果有这些衣服。每次穿一件上衣和一条裤子，一共有多少种不同的穿法？",
+   "figure": "outfit-rows",
+   "rows": [
+    {
+     "label": "上衣",
+     "kind": "top",
+     "items": [
+      {"name": "黄卫衣", "shape": "hoodie", "color": "#f2c14e"},
+      {"name": "灰条纹卫衣", "shape": "hoodie", "color": "#a6adb0", "pattern": "stripes"},
+      {"name": "绿格子衬衫", "shape": "shirt", "color": "#6fa86b", "pattern": "checks"},
+      {"name": "橙圆点T恤", "shape": "tee", "color": "#ee9b4d", "pattern": "dots"}
+     ]
+    },
+    {
+     "label": "裤子",
+     "kind": "bottom",
+     "items": [
+      {"name": "蓝短裤", "shape": "shorts", "color": "#6f9bd1"},
+      {"name": "蓝长裤", "shape": "pants", "color": "#4a6fa5"},
+      {"name": "黑长裤", "shape": "pants", "color": "#3f4347"},
+      {"name": "灰格子长裤", "shape": "pants", "color": "#8b9196", "pattern": "checks"}
+     ]
+    }
+   ],
+   "calc": {"kind": "product", "factors": [4, 4]},
+   "answer": 16,
+   "options": [16, 8, 20, 18],
+   "optionSuffix": "种",
+   "explanation": "上衣有 4 件，每件都能配 4 条裤子：4×4＝16（种）。不是 4＋4。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "件数×件数＝搭配种数",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·算一算",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：件数×件数＝搭配种数（自编）"
+   },
+   "id": "outfit-059"
+  },
+  {
+   "category": "count",
+   "prompt": "思思有这些衣服。每次穿一件上衣和一条裤子，一共有多少种不同的穿法？",
+   "figure": "outfit-rows",
+   "rows": [
+    {
+     "label": "上衣",
+     "kind": "top",
+     "items": [
+      {"name": "蓝条纹T恤", "shape": "tee", "color": "#5b8fb9", "pattern": "stripes"},
+      {"name": "白衬衫", "shape": "shirt", "color": "#f6f6ef"}
+     ]
+    },
+    {
+     "label": "裤子",
+     "kind": "bottom",
+     "items": [
+      {"name": "黑长裤", "shape": "pants", "color": "#3f4347"},
+      {"name": "蓝长裤", "shape": "pants", "color": "#4a6fa5"},
+      {"name": "绿长裤", "shape": "pants", "color": "#5f8a62"},
+      {"name": "灰格子长裤", "shape": "pants", "color": "#8b9196", "pattern": "checks"},
+      {"name": "蓝短裤", "shape": "shorts", "color": "#6f9bd1"}
+     ]
+    }
+   ],
+   "calc": {"kind": "product", "factors": [2, 5]},
+   "answer": 10,
+   "options": [10, 7, 12, 9],
+   "optionSuffix": "种",
+   "explanation": "上衣有 2 件，每件都能配 5 条裤子：2×5＝10（种）。不是 2＋5。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "件数×件数＝搭配种数",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·算一算",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：件数×件数＝搭配种数（自编）"
+   },
+   "id": "outfit-060"
+  },
+  {
+   "category": "count",
+   "prompt": "小晴有这些衣服。每次穿一件上衣和一条裤子，一共有多少种不同的穿法？",
+   "figure": "outfit-rows",
+   "rows": [
+    {
+     "label": "上衣",
+     "kind": "top",
+     "items": [
+      {"name": "黄卫衣", "shape": "hoodie", "color": "#f2c14e"},
+      {"name": "白衬衫", "shape": "shirt", "color": "#f6f6ef"},
+      {"name": "蓝条纹T恤", "shape": "tee", "color": "#5b8fb9", "pattern": "stripes"}
+     ]
+    },
+    {
+     "label": "裤子",
+     "kind": "bottom",
+     "items": [
+      {"name": "灰格子长裤", "shape": "pants", "color": "#8b9196", "pattern": "checks"},
+      {"name": "黑长裤", "shape": "pants", "color": "#3f4347"},
+      {"name": "蓝短裤", "shape": "shorts", "color": "#6f9bd1"},
+      {"name": "蓝长裤", "shape": "pants", "color": "#4a6fa5"},
+      {"name": "卡其短裤", "shape": "shorts", "color": "#c2a878"}
+     ]
+    }
+   ],
+   "calc": {"kind": "product", "factors": [3, 5]},
+   "answer": 15,
+   "options": [15, 8, 18, 17],
+   "optionSuffix": "种",
+   "explanation": "上衣有 3 件，每件都能配 5 条裤子：3×5＝15（种）。不是 3＋5。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "件数×件数＝搭配种数",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·算一算",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：件数×件数＝搭配种数（自编）"
+   },
+   "id": "outfit-061"
+  },
+  {
+   "category": "count",
+   "prompt": "小宇有这些衣服。每次穿一件上衣和一条裤子，一共有多少种不同的穿法？",
+   "figure": "outfit-rows",
+   "rows": [
+    {
+     "label": "上衣",
+     "kind": "top",
+     "items": [
+      {"name": "紫卫衣", "shape": "hoodie", "color": "#9b7fc1"},
+      {"name": "黄卫衣", "shape": "hoodie", "color": "#f2c14e"},
+      {"name": "橙圆点T恤", "shape": "tee", "color": "#ee9b4d", "pattern": "dots"},
+      {"name": "白衬衫", "shape": "shirt", "color": "#f6f6ef"},
+      {"name": "粉T恤", "shape": "tee", "color": "#ef9fb0"}
+     ]
+    },
+    {
+     "label": "裤子",
+     "kind": "bottom",
+     "items": [{"name": "卡其短裤", "shape": "shorts", "color": "#c2a878"}, {"name": "蓝短裤", "shape": "shorts", "color": "#6f9bd1"}]
+    }
+   ],
+   "calc": {"kind": "product", "factors": [5, 2]},
+   "answer": 10,
+   "options": [10, 7, 15, 12],
+   "optionSuffix": "种",
+   "explanation": "上衣有 5 件，每件都能配 2 条裤子：5×2＝10（种）。不是 5＋2。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "件数×件数＝搭配种数",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·算一算",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：件数×件数＝搭配种数（自编）"
+   },
+   "id": "outfit-062"
+  },
+  {
+   "category": "count",
+   "prompt": "乐乐有这些衣服。每次穿一件上衣和一条裤子，一共有多少种不同的穿法？",
+   "figure": "outfit-rows",
+   "rows": [
+    {
+     "label": "上衣",
+     "kind": "top",
+     "items": [
+      {"name": "紫卫衣", "shape": "hoodie", "color": "#9b7fc1"},
+      {"name": "绿格子衬衫", "shape": "shirt", "color": "#6fa86b", "pattern": "checks"},
+      {"name": "白衬衫", "shape": "shirt", "color": "#f6f6ef"}
+     ]
+    },
+    {
+     "label": "裤子",
+     "kind": "bottom",
+     "items": [
+      {"name": "卡其短裤", "shape": "shorts", "color": "#c2a878"},
+      {"name": "灰格子长裤", "shape": "pants", "color": "#8b9196", "pattern": "checks"},
+      {"name": "绿长裤", "shape": "pants", "color": "#5f8a62"}
+     ]
+    }
+   ],
+   "calc": {"kind": "product", "factors": [3, 3]},
+   "answer": 9,
+   "options": [9, 6, 12, 11],
+   "optionSuffix": "种",
+   "explanation": "上衣有 3 件，每件都能配 3 条裤子：3×3＝9（种）。不是 3＋3。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "件数×件数＝搭配种数",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·算一算",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：件数×件数＝搭配种数（自编）"
+   },
+   "id": "outfit-063"
+  },
+  {
+   "category": "count",
+   "prompt": "朵朵有这些衣服。每次穿一件上衣和一条裤子，一共有多少种不同的穿法？",
+   "figure": "outfit-rows",
+   "rows": [
+    {
+     "label": "上衣",
+     "kind": "top",
+     "items": [
+      {"name": "灰条纹卫衣", "shape": "hoodie", "color": "#a6adb0", "pattern": "stripes"},
+      {"name": "橙圆点T恤", "shape": "tee", "color": "#ee9b4d", "pattern": "dots"}
+     ]
+    },
+    {
+     "label": "裤子",
+     "kind": "bottom",
+     "items": [
+      {"name": "黑长裤", "shape": "pants", "color": "#3f4347"},
+      {"name": "灰格子长裤", "shape": "pants", "color": "#8b9196", "pattern": "checks"},
+      {"name": "蓝长裤", "shape": "pants", "color": "#4a6fa5"}
+     ]
+    }
+   ],
+   "calc": {"kind": "product", "factors": [2, 3]},
+   "answer": 6,
+   "options": [6, 5, 8],
+   "optionSuffix": "种",
+   "explanation": "上衣有 2 件，每件都能配 3 条裤子：2×3＝6（种）。不是 2＋3。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "件数×件数＝搭配种数",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·算一算",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：件数×件数＝搭配种数（自编）"
+   },
+   "id": "outfit-064"
+  },
+  {
+   "category": "count",
+   "prompt": "阿哲有这些衣服。每次穿一件上衣和一条裤子，一共有多少种不同的穿法？",
+   "figure": "outfit-rows",
+   "rows": [
+    {
+     "label": "上衣",
+     "kind": "top",
+     "items": [
+      {"name": "橙圆点T恤", "shape": "tee", "color": "#ee9b4d", "pattern": "dots"},
+      {"name": "蓝条纹T恤", "shape": "tee", "color": "#5b8fb9", "pattern": "stripes"},
+      {"name": "白衬衫", "shape": "shirt", "color": "#f6f6ef"},
+      {"name": "绿格子衬衫", "shape": "shirt", "color": "#6fa86b", "pattern": "checks"}
+     ]
+    },
+    {
+     "label": "裤子",
+     "kind": "bottom",
+     "items": [{"name": "黑长裤", "shape": "pants", "color": "#3f4347"}, {"name": "卡其短裤", "shape": "shorts", "color": "#c2a878"}]
+    }
+   ],
+   "calc": {"kind": "product", "factors": [4, 2]},
+   "answer": 8,
+   "options": [8, 6, 12, 10],
+   "optionSuffix": "种",
+   "explanation": "上衣有 4 件，每件都能配 2 条裤子：4×2＝8（种）。不是 4＋2。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "件数×件数＝搭配种数",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·算一算",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：件数×件数＝搭配种数（自编）"
+   },
+   "id": "outfit-065"
+  },
+  {
+   "category": "count",
+   "prompt": "衣柜里有 5 件上衣、4 条裤子。各选一样来搭配，一共有多少种不同的搭法？",
+   "calc": {"kind": "product", "factors": [5, 4]},
+   "answer": 20,
+   "options": [20, 9, 24, 18],
+   "optionSuffix": "种",
+   "explanation": "每件上衣都能配 4 条裤子：5×4＝20（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "件数×件数＝搭配种数",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·算一算",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：件数×件数＝搭配种数（自编）"
+   },
+   "id": "outfit-066"
+  },
+  {
+   "category": "count",
+   "prompt": "衣柜里有 6 件衬衫、3 条短裤。各选一样来搭配，一共有多少种不同的搭法？",
+   "calc": {"kind": "product", "factors": [6, 3]},
+   "answer": 18,
+   "options": [18, 9, 21, 16],
+   "optionSuffix": "种",
+   "explanation": "每件衬衫都能配 3 条短裤：6×3＝18（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "件数×件数＝搭配种数",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·算一算",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：件数×件数＝搭配种数（自编）"
+   },
+   "id": "outfit-067"
+  },
+  {
+   "category": "count",
+   "prompt": "衣柜里有 4 顶帽子、6 条围巾。各选一样来搭配，一共有多少种不同的搭法？",
+   "calc": {"kind": "product", "factors": [4, 6]},
+   "answer": 24,
+   "options": [24, 10, 30, 22],
+   "optionSuffix": "种",
+   "explanation": "每顶帽子都能配 6 条围巾：4×6＝24（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "件数×件数＝搭配种数",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·算一算",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：件数×件数＝搭配种数（自编）"
+   },
+   "id": "outfit-068"
+  },
+  {
+   "category": "count",
+   "prompt": "衣柜里有 7 件外套、2 条裙子。各选一样来搭配，一共有多少种不同的搭法？",
+   "calc": {"kind": "product", "factors": [7, 2]},
+   "answer": 14,
+   "options": [14, 9, 16, 12],
+   "optionSuffix": "种",
+   "explanation": "每件外套都能配 2 条裙子：7×2＝14（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "件数×件数＝搭配种数",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·算一算",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：件数×件数＝搭配种数（自编）"
+   },
+   "id": "outfit-069"
+  },
+  {
+   "category": "count",
+   "prompt": "衣柜里有 8 双袜子、3 双鞋。各选一样来搭配，一共有多少种不同的搭法？",
+   "calc": {"kind": "product", "factors": [8, 3]},
+   "answer": 24,
+   "options": [24, 11, 27, 22],
+   "optionSuffix": "种",
+   "explanation": "每双袜子都能配 3 双鞋：8×3＝24（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "件数×件数＝搭配种数",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·算一算",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：件数×件数＝搭配种数（自编）"
+   },
+   "id": "outfit-070"
+  },
+  {
+   "category": "count",
+   "prompt": "衣柜里有 5 件T恤、6 条长裤。各选一样来搭配，一共有多少种不同的搭法？",
+   "calc": {"kind": "product", "factors": [5, 6]},
+   "answer": 30,
+   "options": [30, 11, 36, 28],
+   "optionSuffix": "种",
+   "explanation": "每件T恤都能配 6 条长裤：5×6＝30（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "件数×件数＝搭配种数",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·算一算",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：件数×件数＝搭配种数（自编）"
+   },
+   "id": "outfit-071"
+  },
+  {
+   "category": "count",
+   "prompt": "衣柜里有 9 件毛衣、2 条裤子。各选一样来搭配，一共有多少种不同的搭法？",
+   "calc": {"kind": "product", "factors": [9, 2]},
+   "answer": 18,
+   "options": [18, 11, 20, 16],
+   "optionSuffix": "种",
+   "explanation": "每件毛衣都能配 2 条裤子：9×2＝18（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "件数×件数＝搭配种数",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·算一算",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：件数×件数＝搭配种数（自编）"
+   },
+   "id": "outfit-072"
+  },
+  {
+   "category": "count",
+   "prompt": "衣柜里有 6 顶帽子、4 副手套。各选一样来搭配，一共有多少种不同的搭法？",
+   "calc": {"kind": "product", "factors": [6, 4]},
+   "answer": 24,
+   "options": [24, 10, 28, 22],
+   "optionSuffix": "种",
+   "explanation": "每顶帽子都能配 4 副手套：6×4＝24（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "件数×件数＝搭配种数",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·算一算",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：件数×件数＝搭配种数（自编）"
+   },
+   "id": "outfit-073"
+  },
+  {
+   "category": "count",
+   "prompt": "衣柜里有 7 件上衣、3 条裙子。各选一样来搭配，一共有多少种不同的搭法？",
+   "calc": {"kind": "product", "factors": [7, 3]},
+   "answer": 21,
+   "options": [21, 10, 24, 19],
+   "optionSuffix": "种",
+   "explanation": "每件上衣都能配 3 条裙子：7×3＝21（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "件数×件数＝搭配种数",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·算一算",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：件数×件数＝搭配种数（自编）"
+   },
+   "id": "outfit-074"
+  },
+  {
+   "category": "count",
+   "prompt": "衣柜里有 8 件T恤、4 条短裤。各选一样来搭配，一共有多少种不同的搭法？",
+   "calc": {"kind": "product", "factors": [8, 4]},
+   "answer": 32,
+   "options": [32, 12, 36, 30],
+   "optionSuffix": "种",
+   "explanation": "每件T恤都能配 4 条短裤：8×4＝32（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "件数×件数＝搭配种数",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·算一算",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：件数×件数＝搭配种数（自编）"
+   },
+   "id": "outfit-075"
+  },
+  {
+   "category": "reverse",
+   "prompt": "小晴有 3 条裤子，和几件上衣搭配，正好有 12 种不同的穿法。小晴有几件上衣？",
+   "calc": {"kind": "quotient", "total": 12, "known": 3},
+   "answer": 4,
+   "options": [4, 9, 15, 5],
+   "optionSuffix": "件",
+   "explanation": "上衣件数×3＝12，所以上衣有 12÷3＝4（件）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "由搭配总数反推件数",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·反推",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：由搭配总数反推件数（自编）"
+   },
+   "id": "outfit-076"
+  },
+  {
+   "category": "reverse",
+   "prompt": "小宇有 4 条裤子，和几件上衣搭配，正好有 12 种不同的穿法。小宇有几件上衣？",
+   "calc": {"kind": "quotient", "total": 12, "known": 4},
+   "answer": 3,
+   "options": [3, 8, 16, 4],
+   "optionSuffix": "件",
+   "explanation": "上衣件数×4＝12，所以上衣有 12÷4＝3（件）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "由搭配总数反推件数",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·反推",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：由搭配总数反推件数（自编）"
+   },
+   "id": "outfit-077"
+  },
+  {
+   "category": "reverse",
+   "prompt": "乐乐有 5 条裤子，和几件上衣搭配，正好有 20 种不同的穿法。乐乐有几件上衣？",
+   "calc": {"kind": "quotient", "total": 20, "known": 5},
+   "answer": 4,
+   "options": [4, 15, 25, 5],
+   "optionSuffix": "件",
+   "explanation": "上衣件数×5＝20，所以上衣有 20÷5＝4（件）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "由搭配总数反推件数",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·反推",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：由搭配总数反推件数（自编）"
+   },
+   "id": "outfit-078"
+  },
+  {
+   "category": "reverse",
+   "prompt": "朵朵有 3 条裤子，和几件上衣搭配，正好有 15 种不同的穿法。朵朵有几件上衣？",
+   "calc": {"kind": "quotient", "total": 15, "known": 3},
+   "answer": 5,
+   "options": [5, 12, 18, 6],
+   "optionSuffix": "件",
+   "explanation": "上衣件数×3＝15，所以上衣有 15÷3＝5（件）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "由搭配总数反推件数",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·反推",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：由搭配总数反推件数（自编）"
+   },
+   "id": "outfit-079"
+  },
+  {
+   "category": "reverse",
+   "prompt": "阿哲有 6 条裤子，和几件上衣搭配，正好有 18 种不同的穿法。阿哲有几件上衣？",
+   "calc": {"kind": "quotient", "total": 18, "known": 6},
+   "answer": 3,
+   "options": [3, 12, 24, 4],
+   "optionSuffix": "件",
+   "explanation": "上衣件数×6＝18，所以上衣有 18÷6＝3（件）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "由搭配总数反推件数",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·反推",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：由搭配总数反推件数（自编）"
+   },
+   "id": "outfit-080"
+  },
+  {
+   "category": "reverse",
+   "prompt": "米粒有 4 条裤子，和几件上衣搭配，正好有 24 种不同的穿法。米粒有几件上衣？",
+   "calc": {"kind": "quotient", "total": 24, "known": 4},
+   "answer": 6,
+   "options": [6, 20, 28, 7],
+   "optionSuffix": "件",
+   "explanation": "上衣件数×4＝24，所以上衣有 24÷4＝6（件）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "由搭配总数反推件数",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·反推",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：由搭配总数反推件数（自编）"
+   },
+   "id": "outfit-081"
+  },
+  {
+   "category": "reverse",
+   "prompt": "安安有 2 条裤子，和几件上衣搭配，正好有 8 种不同的穿法。安安有几件上衣？",
+   "calc": {"kind": "quotient", "total": 8, "known": 2},
+   "answer": 4,
+   "options": [4, 6, 10, 5],
+   "optionSuffix": "件",
+   "explanation": "上衣件数×2＝8，所以上衣有 8÷2＝4（件）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "由搭配总数反推件数",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·反推",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：由搭配总数反推件数（自编）"
+   },
+   "id": "outfit-082"
+  },
+  {
+   "category": "reverse",
+   "prompt": "小舟有 2 条裤子，和几件上衣搭配，正好有 10 种不同的穿法。小舟有几件上衣？",
+   "calc": {"kind": "quotient", "total": 10, "known": 2},
+   "answer": 5,
+   "options": [5, 8, 12, 6],
+   "optionSuffix": "件",
+   "explanation": "上衣件数×2＝10，所以上衣有 10÷2＝5（件）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "由搭配总数反推件数",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·反推",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：由搭配总数反推件数（自编）"
+   },
+   "id": "outfit-083"
+  },
+  {
+   "category": "reverse",
+   "prompt": "果果有 4 条裤子，和几件上衣搭配，正好有 16 种不同的穿法。果果有几件上衣？",
+   "calc": {"kind": "quotient", "total": 16, "known": 4},
+   "answer": 4,
+   "options": [4, 12, 20, 5],
+   "optionSuffix": "件",
+   "explanation": "上衣件数×4＝16，所以上衣有 16÷4＝4（件）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "由搭配总数反推件数",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·反推",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：由搭配总数反推件数（自编）"
+   },
+   "id": "outfit-084"
+  },
+  {
+   "category": "reverse",
+   "prompt": "思思有 7 条裤子，和几件上衣搭配，正好有 21 种不同的穿法。思思有几件上衣？",
+   "calc": {"kind": "quotient", "total": 21, "known": 7},
+   "answer": 3,
+   "options": [3, 14, 28, 4],
+   "optionSuffix": "件",
+   "explanation": "上衣件数×7＝21，所以上衣有 21÷7＝3（件）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配服装",
+    "point": "由搭配总数反推件数",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·反推",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配服装：由搭配总数反推件数（自编）"
+   },
+   "id": "outfit-085"
+  },
+  {
+   "category": "scene",
+   "prompt": "早餐要选一种饮品和一种主食，一共有多少种不同的搭配？",
+   "figure": "outfit-rows",
+   "rows": [
+    {"label": "饮品", "items": [{"emoji": "🥛", "name": "牛奶"}, {"emoji": "🧃", "name": "果汁"}]},
+    {
+     "label": "主食",
+     "items": [{"emoji": "🍞", "name": "面包"}, {"emoji": "🥟", "name": "包子"}, {"emoji": "🍳", "name": "煎蛋"}]
+    }
+   ],
+   "calc": {"kind": "product", "factors": [2, 3]},
+   "answer": 6,
+   "options": [6, 5, 7, 8],
+   "optionSuffix": "种",
+   "explanation": "第一样有 2 种选法，每种再配 3 种：2×3＝6（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配中的学问",
+    "point": "把搭配方法用到生活中",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·生活",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配中的学问：把搭配方法用到生活中（自编）"
+   },
+   "id": "outfit-086"
+  },
+  {
+   "category": "scene",
+   "prompt": "午餐要选一个荤菜和一个素菜，一共有多少种配法？",
+   "figure": "outfit-rows",
+   "rows": [
+    {
+     "label": "荤菜",
+     "items": [{"emoji": "🍗", "name": "鸡腿"}, {"emoji": "🐟", "name": "鱼块"}, {"emoji": "🥩", "name": "牛肉"}]
+    },
+    {"label": "素菜", "items": [{"emoji": "🥦", "name": "西兰花"}, {"emoji": "🥕", "name": "胡萝卜"}]}
+   ],
+   "calc": {"kind": "product", "factors": [3, 2]},
+   "answer": 6,
+   "options": [6, 5, 7, 9],
+   "optionSuffix": "种",
+   "explanation": "第一样有 3 种选法，每种再配 2 种：3×2＝6（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配中的学问",
+    "point": "把搭配方法用到生活中",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·生活",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配中的学问：把搭配方法用到生活中（自编）"
+   },
+   "id": "outfit-087"
+  },
+  {
+   "category": "scene",
+   "prompt": "选一个冰淇淋球和一种蛋筒，一共有多少种搭配？",
+   "figure": "outfit-rows",
+   "rows": [
+    {
+     "label": "口味",
+     "items": [
+      {"emoji": "🍓", "name": "草莓"},
+      {"emoji": "🍫", "name": "巧克力"},
+      {"emoji": "🍋", "name": "柠檬"},
+      {"emoji": "🥭", "name": "芒果"}
+     ]
+    },
+    {"label": "蛋筒", "items": [{"emoji": "🍦", "name": "脆筒"}, {"emoji": "🥣", "name": "纸杯"}]}
+   ],
+   "calc": {"kind": "product", "factors": [4, 2]},
+   "answer": 8,
+   "options": [8, 6, 9, 12],
+   "optionSuffix": "种",
+   "explanation": "第一样有 4 种选法，每种再配 2 种：4×2＝8（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配中的学问",
+    "point": "把搭配方法用到生活中",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·生活",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配中的学问：把搭配方法用到生活中（自编）"
+   },
+   "id": "outfit-088"
+  },
+  {
+   "category": "scene",
+   "prompt": "选一支笔和一个本子作奖品，一共有多少种选法？",
+   "figure": "outfit-rows",
+   "rows": [
+    {
+     "label": "笔",
+     "items": [{"emoji": "✏️", "name": "铅笔"}, {"emoji": "🖊️", "name": "水笔"}, {"emoji": "🖍️", "name": "蜡笔"}]
+    },
+    {
+     "label": "本子",
+     "items": [{"emoji": "📓", "name": "笔记本"}, {"emoji": "📒", "name": "作业本"}, {"emoji": "📔", "name": "图画本"}]
+    }
+   ],
+   "calc": {"kind": "product", "factors": [3, 3]},
+   "answer": 9,
+   "options": [9, 6, 10, 12],
+   "optionSuffix": "种",
+   "explanation": "第一样有 3 种选法，每种再配 3 种：3×3＝9（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配中的学问",
+    "point": "把搭配方法用到生活中",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·生活",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配中的学问：把搭配方法用到生活中（自编）"
+   },
+   "id": "outfit-089"
+  },
+  {
+   "category": "scene",
+   "prompt": "秋游时选一顶帽子和一个包，一共有多少种搭配？",
+   "figure": "outfit-rows",
+   "rows": [
+    {"label": "帽子", "items": [{"emoji": "🧢", "name": "棒球帽"}, {"emoji": "👒", "name": "草帽"}]},
+    {
+     "label": "包",
+     "items": [
+      {"emoji": "🎒", "name": "书包"},
+      {"emoji": "👜", "name": "拎包"},
+      {"emoji": "👝", "name": "小挎包"},
+      {"emoji": "🛍️", "name": "布袋"}
+     ]
+    }
+   ],
+   "calc": {"kind": "product", "factors": [2, 4]},
+   "answer": 8,
+   "options": [8, 6, 9, 10],
+   "optionSuffix": "种",
+   "explanation": "第一样有 2 种选法，每种再配 4 种：2×4＝8（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配中的学问",
+    "point": "把搭配方法用到生活中",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·生活",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配中的学问：把搭配方法用到生活中（自编）"
+   },
+   "id": "outfit-090"
+  },
+  {
+   "category": "scene",
+   "prompt": "从家到公园有 2 条路，从公园到学校有 3 条路。从家经过公园到学校，一共有多少种走法？",
+   "figure": "route-map",
+   "route": {"a": "家", "b": "公园", "c": "学校", "n1": 2, "n2": 3},
+   "calc": {"kind": "product", "factors": [2, 3]},
+   "answer": 6,
+   "options": [6, 5, 7, 8],
+   "optionSuffix": "种",
+   "explanation": "第一段选一条路有 2 种，每种再接第二段的 3 条路：2×3＝6（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配中的学问",
+    "point": "路线问题也是搭配",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·路线",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配中的学问：路线问题也是搭配（自编）"
+   },
+   "id": "outfit-091"
+  },
+  {
+   "category": "scene",
+   "prompt": "从学校到书店有 3 条路，从书店到家有 2 条路。从学校经过书店到家，一共有多少种走法？",
+   "figure": "route-map",
+   "route": {"a": "学校", "b": "书店", "c": "家", "n1": 3, "n2": 2},
+   "calc": {"kind": "product", "factors": [3, 2]},
+   "answer": 6,
+   "options": [6, 5, 7, 9],
+   "optionSuffix": "种",
+   "explanation": "第一段选一条路有 3 种，每种再接第二段的 2 条路：3×2＝6（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配中的学问",
+    "point": "路线问题也是搭配",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·路线",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配中的学问：路线问题也是搭配（自编）"
+   },
+   "id": "outfit-092"
+  },
+  {
+   "category": "scene",
+   "prompt": "从家到超市有 2 条路，从超市到车站有 4 条路。从家经过超市到车站，一共有多少种走法？",
+   "figure": "route-map",
+   "route": {"a": "家", "b": "超市", "c": "车站", "n1": 2, "n2": 4},
+   "calc": {"kind": "product", "factors": [2, 4]},
+   "answer": 8,
+   "options": [8, 6, 9, 10],
+   "optionSuffix": "种",
+   "explanation": "第一段选一条路有 2 种，每种再接第二段的 4 条路：2×4＝8（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配中的学问",
+    "point": "路线问题也是搭配",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·路线",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配中的学问：路线问题也是搭配（自编）"
+   },
+   "id": "outfit-093"
+  },
+  {
+   "category": "scene",
+   "prompt": "从校门到花园有 3 条路，从花园到操场有 3 条路。从校门经过花园到操场，一共有多少种走法？",
+   "figure": "route-map",
+   "route": {"a": "校门", "b": "花园", "c": "操场", "n1": 3, "n2": 3},
+   "calc": {"kind": "product", "factors": [3, 3]},
+   "answer": 9,
+   "options": [9, 6, 10, 12],
+   "optionSuffix": "种",
+   "explanation": "第一段选一条路有 3 种，每种再接第二段的 3 条路：3×3＝9（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配中的学问",
+    "point": "路线问题也是搭配",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·路线",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配中的学问：路线问题也是搭配（自编）"
+   },
+   "id": "outfit-094"
+  },
+  {
+   "category": "scene",
+   "prompt": "从宿营地到小溪有 4 条路，从小溪到山顶有 2 条路。从宿营地经过小溪到山顶，一共有多少种走法？",
+   "figure": "route-map",
+   "route": {"a": "宿营地", "b": "小溪", "c": "山顶", "n1": 4, "n2": 2},
+   "calc": {"kind": "product", "factors": [4, 2]},
+   "answer": 8,
+   "options": [8, 6, 9, 12],
+   "optionSuffix": "种",
+   "explanation": "第一段选一条路有 4 种，每种再接第二段的 2 条路：4×2＝8（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配中的学问",
+    "point": "路线问题也是搭配",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·路线",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配中的学问：路线问题也是搭配（自编）"
+   },
+   "id": "outfit-095"
+  },
+  {
+   "category": "scene",
+   "prompt": "上衣 2 件、裤子 3 条、鞋 2 双。每次各选一样，一共有多少种穿法？（挑战题）",
+   "calc": {"kind": "product", "factors": [2, 3, 2]},
+   "answer": 12,
+   "options": [12, 7, 6, 14],
+   "optionSuffix": "种",
+   "explanation": "三样依次选，每一步的选法都要乘上：2×3×2＝12（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配中的学问",
+    "point": "三类物品的搭配（拓展）",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·挑战",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配中的学问：三类物品的搭配（拓展）（自编）"
+   },
+   "id": "outfit-096"
+  },
+  {
+   "category": "scene",
+   "prompt": "饮料 2 种、主食 3 种、水果 2 种。午餐各选一种，一共有多少种吃法？（挑战题）",
+   "calc": {"kind": "product", "factors": [2, 3, 2]},
+   "answer": 12,
+   "options": [12, 7, 6, 14],
+   "optionSuffix": "种",
+   "explanation": "三样依次选，每一步的选法都要乘上：2×3×2＝12（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配中的学问",
+    "point": "三类物品的搭配（拓展）",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·挑战",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配中的学问：三类物品的搭配（拓展）（自编）"
+   },
+   "id": "outfit-097"
+  },
+  {
+   "category": "scene",
+   "prompt": "帽子 2 顶、上衣 2 件、裤子 2 条。每次各选一样，一共有多少种穿法？（挑战题）",
+   "calc": {"kind": "product", "factors": [2, 2, 2]},
+   "answer": 8,
+   "options": [8, 6, 4, 10],
+   "optionSuffix": "种",
+   "explanation": "三样依次选，每一步的选法都要乘上：2×2×2＝8（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配中的学问",
+    "point": "三类物品的搭配（拓展）",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·挑战",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配中的学问：三类物品的搭配（拓展）（自编）"
+   },
+   "id": "outfit-098"
+  },
+  {
+   "category": "scene",
+   "prompt": "从甲村到乙村有 3 条路，乙村到丙村有 2 条路，丙村到丁村有 2 条路。从甲村到丁村一共有多少种走法？（挑战题）",
+   "calc": {"kind": "product", "factors": [3, 2, 2]},
+   "answer": 12,
+   "options": [12, 7, 6, 14],
+   "optionSuffix": "种",
+   "explanation": "三样依次选，每一步的选法都要乘上：3×2×2＝12（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配中的学问",
+    "point": "三类物品的搭配（拓展）",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·挑战",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配中的学问：三类物品的搭配（拓展）（自编）"
+   },
+   "id": "outfit-099"
+  },
+  {
+   "category": "scene",
+   "prompt": "上衣 3 件、裤子 2 条、帽子 3 顶。每次各选一样，一共有多少种穿法？（挑战题）",
+   "calc": {"kind": "product", "factors": [3, 2, 3]},
+   "answer": 18,
+   "options": [18, 8, 6, 20],
+   "optionSuffix": "种",
+   "explanation": "三样依次选，每一步的选法都要乘上：3×2×3＝18（种）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "数学好玩·搭配中的学问",
+    "lesson": "搭配中的学问",
+    "point": "三类物品的搭配（拓展）",
+    "type": "依据教材总结自编",
+    "label": "搭配中的学问·挑战",
+    "detailTitle": "查看知识点来源",
+    "detail": "数学好玩·搭配中的学问·搭配中的学问：三类物品的搭配（拓展）（自编）"
+   },
+   "id": "outfit-100"
+  }
+ ]
+}

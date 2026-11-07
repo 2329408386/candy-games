@@ -3,8 +3,8 @@
 const fs = require('fs'), path = require('path'), vm = require('vm'), assert = require('assert');
 const ROOT = path.resolve(__dirname, '..');
 const renderers = {};
-const PK = { register: (type, r) => (renderers[type] = r), el() {}, button() {}, svg() {}, shuffle: a => [...a], figures: {} };
-for (const file of ['choice', 'blanks', 'tiles', 'expand', 'edit', 'measure']) {
+const PK = { register: (type, r) => (renderers[type] = r), renderer: type => renderers[type], el() {}, button() {}, svg() {}, shuffle: a => [...a], figures: {} };
+for (const file of ['choice', 'blanks', 'tiles', 'expand', 'edit', 'measure', 'modes', 'outfit', 'angles', 'odometer', 'shop', 'decimals']) {
   vm.runInNewContext(fs.readFileSync(path.join(ROOT, 'shared-static/pk/types', file + '.js'), 'utf8'), { PK, window: {} });
 }
 const bank = (site, game) => JSON.parse(fs.readFileSync(path.join(ROOT, 'sites', site, 'banks', game + '.json'), 'utf8'));
@@ -105,4 +105,51 @@ for (const q of bank('english', 'read').questions) {
   assert.ok(renderers.read.check(q, renderers.read.value(q, { score: 80, heard: '' }).value), q.id);
   assert.ok(!renderers.read.check(q, renderers.read.value(q, { score: 79, heard: '' }).value), q.id);
 }
+// 数学 B 组 (type "modes"): each mode grades its stored answer right and the typical slip wrong.
+const modes = renderers.modes;
+const right = q => {
+  if (!q.mode) return q.answer;
+  if (q.mode === 'fill') return q.fields.map(f => f.answer);
+  if (q.mode === 'dress') return q.tops.flatMap((_, t) => q.bottoms.map((_, b) => `${t}-${b}`));
+  if (q.mode === 'turn') return { right: 90, acute: 60, obtuse: 120 }[q.target];
+  if (q.mode === 'pick' || q.mode === 'drive' || q.mode === 'stick') return q.answer;
+  if (q.mode === 'cart') return { cart: q.items.map((_, i) => q.order.find(o => o.item === i)?.count ?? 0), total: q.total };
+  if (q.mode === 'pay') return q.fen;
+  throw Error('unknown mode ' + q.mode);
+};
+for (const game of ['outfit', 'angles', 'odometer', 'shop', 'decimals']) {
+  const b = bank('math', game);
+  assert.strictEqual(b.type, 'modes', game);
+  for (const q of b.questions) {
+    assert.ok(modes.check(q, right(q)), `${q.id} right answer graded wrong`);
+    assert.ok(modes.solution(q), `${q.id} has no solution text`);
+    assert.ok(modes.describe(q), `${q.id} has no description`);
+    if (!q.mode) for (const o of q.options) assert.strictEqual(modes.check(q, o), String(o) === String(q.answer), `${q.id} option ${o}`);
+    if (q.mode === 'fill') assert.ok(!modes.check(q, q.fields.map(f => String(Number(f.answer) + 1))), `${q.id} off by one graded right`);
+    if (q.mode === 'dress') {
+      const missing = right(q).slice(1);
+      assert.ok(!modes.check(q, missing), `${q.id} missing outfit graded right`);
+      assert.ok(modes.diagnose(q, missing).includes('还差 1 套'), `${q.id} diagnose`);
+    }
+    if (q.mode === 'turn') assert.ok(!modes.check(q, q.target === 'right' ? 90 + q.step : 90), `${q.id} near miss graded right`);
+    if (q.mode === 'pick') {
+      assert.ok(!modes.check(q, q.answer.slice(1)), `${q.id} partial pick graded right`);
+      assert.ok(!modes.check(q, [...q.answer, 99]), `${q.id} extra pick graded right`);
+    }
+    if (q.mode === 'cart') {
+      const v = right(q);
+      const more = { ...v, cart: v.cart.map((n, i) => (i === q.order[0].item ? n + 1 : n)) };
+      assert.ok(!modes.check(q, more), `${q.id} one extra item graded right`);
+      assert.ok(modes.diagnose(q, more).includes('和单子不一样'), `${q.id} diagnose`);
+      assert.ok(!modes.check(q, { ...v, total: String(Number(v.total) + 1) }), `${q.id} wrong total graded right`);
+    }
+    if (q.mode === 'pay') assert.ok(!modes.check(q, q.fen + 45), `${q.id} 1.05 read as 1.5 graded right`);
+  }
+}
+// Typed decimals compare as numbers: 1.30 is 1.3, but 1.05 is not 1.5 and half-typed numbers are wrong.
+const decimalQ = { mode: 'fill', fields: [{ answer: '1.3' }] };
+assert.ok(modes.check(decimalQ, ['1.30']));
+assert.ok(!modes.check({ mode: 'fill', fields: [{ answer: '1.05' }] }, ['1.5']));
+assert.ok(!modes.check(decimalQ, ['1.']) && !modes.check(decimalQ, ['.3']));
+
 console.log('engine ok');

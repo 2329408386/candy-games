@@ -4,8 +4,8 @@
   python tools/banks.py --fix      rewrite banks in the canonical format and regenerate docs/<site>/*.md
 
 Each game has sites/<site>/banks/<game>.json:
-  type       renderer in shared-static/pk/ ("choice", "blanks", "tiles", "expand", "edit", "measure", "read" or
-             "handwrite")
+  type       renderer in shared-static/pk/ ("choice", "blanks", "tiles", "expand", "edit", "measure", "read",
+             "handwrite" or "modes": hands-on modes mixed with choice questions, see types/modes.js)
   draw       how each player's 20 questions are drawn (see draw_plans)
   ui         per-game options for the renderer (task, instruction, blankOptions, lettered, allowUnusedCards,
              joiner: text between word cards, units/unitNames: the start page offers 期末综合 or one unit)
@@ -16,8 +16,9 @@ audioText), pictures (options shown as pictures) and figure "pic" with pic (pict
              source.detailTitle/source.detail are shown under the feedback
 """
 
-import argparse, json, re, sys
+import argparse, json, math, re, sys
 from collections import Counter
+from decimal import Decimal
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -381,6 +382,312 @@ def check_handwrite(q, bank, game):
     return errors
 
 
+def oral_division(total, count):
+    """Division taught by 三年级上册: 表内除法（24÷3）, 每一位都能整除（84÷4）, or 整十整百 ÷ 一位数（240÷3）."""
+    if total % count:
+        return False
+    if count < 10 and total // count < 10:
+        return True
+    if all(int(d) % count == 0 for d in str(total)):
+        return True
+    trimmed = total
+    while trimmed % 10 == 0:
+        trimmed //= 10
+    return total != trimmed and count < 10 and trimmed % count == 0
+
+
+def angle_class(points, i):
+    """Exact kind of a polygon's vertex from its coordinates; None when too close to a right angle to judge by eye."""
+    n = len(points)
+    (x, y), (ax, ay), (bx, by) = points[i], points[i - 1], points[(i + 1) % n]
+    u, v = (ax - x, ay - y), (bx - x, by - y)
+    dot = u[0] * v[0] + u[1] * v[1]
+    if dot == 0:
+        return "right"
+    deg = math.degrees(math.acos(dot / (math.hypot(*u) * math.hypot(*v))))
+    if abs(deg - 90) < 15:
+        return None
+    return "acute" if deg < 90 else "obtuse"
+
+
+def is_convex(points):
+    n, signs = len(points), set()
+    for i in range(n):
+        (ax, ay), (bx, by), (cx, cy) = points[i], points[(i + 1) % n], points[(i + 2) % n]
+        cross = (bx - ax) * (cy - by) - (by - ay) * (cx - bx)
+        if cross:
+            signs.add(cross > 0)
+    return len(signs) == 1
+
+
+KIND_NAME = {"right": "直角", "acute": "锐角", "obtuse": "钝角"}
+CUT_CORNERS = {"two-corners": 3, "corner-side": 4, "two-sides": 5}
+
+
+def deg_kind(deg):
+    return "right" if deg == 90 else "acute" if deg < 90 else "obtuse"
+
+
+def check_outfit(q):
+    errors = []
+    calc = q.get("calc")
+    if q.get("mode") == "dress":
+        names = [i["name"] for i in q["tops"] + q["bottoms"]]
+        if len(set(names)) != len(names):
+            errors.append("衣服名字重复")
+        if len(q["tops"]) * len(q["bottoms"]) > 9:
+            errors.append("换装题最多 9 套，否则点不完")
+    elif q["category"] == "missing":
+        all_lines = {f"{t['name']}＋{b['name']}" for t in q["rows"][0]["items"] for b in q["rows"][1]["items"]}
+        gone = all_lines - set(q["table"])
+        if gone != {q["answer"]} or len(q["table"]) != len(all_lines) - 1:
+            errors.append(f"记录表应正好漏一套：{gone}")
+        if any(o != q["answer"] and o not in q["table"] for o in q["options"]):
+            errors.append("干扰项应是记录表里已有的搭配")
+    elif calc["kind"] == "product":
+        if math.prod(calc["factors"]) != q["answer"]:
+            errors.append(f"搭配数错误：{calc['factors']} → {q['answer']}")
+        if "rows" in q and [len(r["items"]) for r in q["rows"]] != calc["factors"]:
+            errors.append("图上的件数和算式不一致")
+        if "route" in q and [q["route"]["n1"], q["route"]["n2"]] != calc["factors"]:
+            errors.append("路线图的条数和算式不一致")
+    elif calc["kind"] == "quotient":
+        if calc["known"] * q["answer"] != calc["total"]:
+            errors.append(f"反推错误：{calc}")
+    return errors
+
+
+def check_angles(q):
+    errors = []
+    fig = q.get("fig", {})
+    if q.get("mode") == "turn":
+        if q["start"] % q["step"] or not q["step"] <= q["start"] <= 180 - q["step"]:
+            errors.append("起始角度不在转动范围内")
+        if deg_kind(q["start"]) == q["target"]:
+            errors.append("一开始就已经符合要求")
+        if q["target"] == "right" and 90 % q["step"]:
+            errors.append("每次转动的角度转不到直角")
+    elif q.get("mode") == "pick":
+        points = q["points"]
+        if not is_convex(points):
+            errors.append("图形不是凸多边形，角的类别难以判断")
+        kinds = [angle_class(points, i) for i in range(len(points))]
+        if None in kinds:
+            errors.append(f"有接近直角的角，不好辨认：{kinds}")
+        if [i for i, k in enumerate(kinds) if k == q["target"]] != q["answer"]:
+            errors.append(f"答案和坐标算出的不一致：{kinds} → {q['answer']}")
+        if not q["answer"]:
+            errors.append("没有可选的角")
+    elif fig.get("kind") == "angle":
+        if KIND_NAME[deg_kind(fig["deg"])] != q["answer"]:
+            errors.append(f"看图辨角答案错误：{fig['deg']} → {q['answer']}")
+    elif fig.get("kind") == "clock":
+        h = fig["hour"]
+        if KIND_NAME[deg_kind(min(h, 12 - h) * 30)] != q["answer"]:
+            errors.append(f"钟面角答案错误：{h}时 → {q['answer']}")
+    elif fig.get("kind") == "compare":
+        a, b = fig["a"]["deg"], fig["b"]["deg"]
+        if ("角①大" if a > b else "角②大" if b > a else "一样大") != q["answer"]:
+            errors.append(f"比较角的答案错误：{a}、{b} → {q['answer']}")
+    elif fig.get("kind") == "rays":
+        n = len(fig["rays"])
+        if n * (n - 1) // 2 != q["answer"]:
+            errors.append(f"数角错误：{n} 条线 → {q['answer']}")
+    elif fig.get("kind") == "poly":
+        points = fig["points"]
+        want = len(points) if q["count"] == "all" else [angle_class(points, i) for i in range(len(points))].count(q["count"])
+        if want != q["answer"]:
+            errors.append(f"数角错误：应为 {want}")
+    elif fig.get("kind") == "cut":
+        if CUT_CORNERS[fig["cut"]] != q["answer"]:
+            errors.append(f"剪角答案错误：{fig['cut']} → {q['answer']}")
+    return errors
+
+
+def check_odometer(q):
+    errors = []
+    stops = q.get("stops")
+    if stops and [s["km"] for s in stops] != sorted({s["km"] for s in stops}):
+        errors.append("里程应从小到大且不重复")
+    calc = q.get("calc", {})
+    km = [s["km"] for s in stops] if stops else []
+    want = None
+    if q.get("mode") == "drive":
+        if abs(km[q["answer"]] - km[q["from"]]) != q["km"] or q["answer"] == q["from"]:
+            errors.append(f"开到哪一站错误：{q['km']} → {q['answer']}")
+        return errors
+    kind = calc.get("kind")
+    if kind == "between":
+        want = km[calc["to"]] - km[calc["from"]]
+    elif kind == "sum":
+        want = km[calc["to"]] - km[calc["from"]]
+    elif kind == "round":
+        want = 2 * (km[calc["to"]] - km[calc["from"]])
+    elif kind == "back":
+        want = (km[calc["far"]] - km[calc["from"]]) + (km[calc["far"]] - km[calc["to"]])
+    elif kind == "meaning":
+        a, b = calc["from"], calc["to"]
+        if f"{km[b]}－{km[a]}" not in q["prompt"] or q["answer"] != f"{stops[a]['name']}—{stops[b]['name']}":
+            errors.append("算式和答案的两站不一致")
+        if any(o.split("—")[0] == o.split("—")[1] for o in q["options"]):
+            errors.append("选项的两站相同")
+    elif kind == "reading":
+        r = [x["value"] for x in q["readings"]]
+        if r != sorted(r) or max(r) > 9999:
+            errors.append("读数应递增且不超过 4 位")
+        want = r[calc["to"]] - r[calc["from"]]
+    elif kind == "before":
+        want = q["readings"][0]["value"] - calc["driven"]
+    elif kind == "enough":
+        need = calc["target"] - q["readings"][-1]["value"]
+        if ("够" if calc["fuel"] >= need else "不够") != q["answer"] or need <= 0:
+            errors.append(f"够不够错误：还要 {need}，能跑 {calc['fuel']}")
+    else:
+        errors.append(f"未知的里程题：{kind}")
+    if want is not None:
+        if q["fields"][0]["answer"] != str(want):
+            errors.append(f"路程错误：应为 {want}，题库 {q['fields'][0]['answer']}")
+        if kind in ("between", "reading", "before") and not 0 < want <= 9999:
+            errors.append(f"结果超出范围：{want}")
+    return errors
+
+
+FORMULA = str.maketrans({"×": "*", "÷": "/", "＋": "+", "－": "-"})
+
+
+def eval_formula(text):
+    if not re.fullmatch(r"[\d×÷＋－()]+", text):
+        raise ValueError(text)
+    return eval(text.translate(FORMULA), {"__builtins__": {}})  # text is limited to digits and operators above
+
+
+def check_shop(q):
+    errors = []
+    calc = q.get("calc", {})
+    if q.get("mode") == "cart":
+        total = sum(q["items"][o["item"]]["price"] * o["count"] for o in q["order"])
+        if str(total) != str(q["total"]):
+            errors.append(f"总价错误：应为 {total}")
+        if len({o["item"] for o in q["order"]}) != len(q["order"]):
+            errors.append("订单重复")
+    elif q["category"] == "enough":
+        cost = calc["price"] * calc["count"]
+        if q.get("mode") == "fill":
+            if str(abs(calc["wallet"] - cost)) != q["fields"][0]["answer"]:
+                errors.append("找零或差额错误")
+            if calc["wallet"] < cost and "差" not in q["prompt"]:
+                errors.append("钱不够却没问还差多少")
+        elif ("够" if calc["wallet"] >= cost else "不够") != q["answer"]:
+            errors.append(f"够不够错误：{cost} 元，有 {calc['wallet']} 元")
+    elif q["category"] == "most":
+        n, r = q["fields"][0]["answer"], q["fields"][1]["answer"]
+        if calc["wallet"] != int(n) * calc["price"] + int(r) or not 0 <= int(r) < calc["price"]:
+            errors.append("最多买几个错误")
+        if calc["price"] > 9 or int(n) > 9:
+            errors.append("超出表内除法范围")
+    elif q["category"] == "price":
+        if int(q["fields"][0]["answer"]) * calc["count"] != calc["total"]:
+            errors.append("单价错误")
+        if not oral_division(calc["total"], calc["count"]):
+            errors.append(f"{calc['total']}÷{calc['count']} 超出三上的除法范围")
+    elif q["category"] == "formula":
+        if eval_formula(q["answer"]) != q["result"]:
+            errors.append(f"算式错误：{q['answer']} ≠ {q['result']}")
+        if [o for o in q["options"] if o != q["answer"] and eval_formula(o) == q["result"]]:
+            errors.append("干扰算式的结果也对")
+    elif q["category"] == "deal":
+        each = {s["name"]: s["total"] / s["count"] for s in q["stores"]}
+        cheapest = min(each.values())
+        if [n for n, v in each.items() if v == cheapest] != [q["answer"]]:
+            errors.append(f"最便宜的店错误：{each}")
+        for s in q["stores"]:
+            if not oral_division(s["total"], s["count"]):
+                errors.append(f"{s['total']}÷{s['count']} 超出三上的除法范围")
+    return errors
+
+
+def check_decimals(q):
+    errors = []
+    calc = q.get("calc", {})
+    kind = calc.get("kind")
+    if q.get("mode") == "pay":
+        if int(Decimal(q["priceText"].removesuffix("元")) * 100) != q["fen"]:
+            errors.append(f"价格和分数不一致：{q['priceText']} / {q['fen']}")
+    elif q.get("mode") == "stick":
+        if not 0 < q["answer"] < q["metres"] * 10 or Decimal(calc["metres"]) * 10 != q["answer"]:
+            errors.append(f"尺上位置错误：{calc} → {q['answer']}")
+        if str(calc["metres"]) not in q["prompt"]:
+            errors.append("题干里没有要找的小数")
+    elif kind == "bug":
+        if Decimal(q["fields"][0]["answer"]) * 10 != q["dm"]:
+            errors.append(f"小虫位置错误：{q['dm']}分米 → {q['fields'][0]['answer']}米")
+    elif kind == "convert":
+        got = sum(Decimal(f["answer"]) * w for f, w in zip(q["fields"], calc["weights"]))
+        if got != calc["value"]:
+            errors.append(f"改写错误：应为 {calc['value']}，算得 {got}")
+    elif kind == "compare":
+        a, b = calc["a"], calc["b"]
+        if (">" if a > b else "<" if a < b else "=") != q["answer"]:
+            errors.append(f"比大小错误：{a}、{b} → {q['answer']}")
+    elif kind == "cheapest":
+        low = min(calc["prices"].values())
+        if [k for k, v in calc["prices"].items() if v == low] != [q["answer"]]:
+            errors.append(f"最便宜的店错误：{calc['prices']}")
+    elif kind == "add" or kind == "sub":
+        a, b = Decimal(calc["a"]), Decimal(calc["b"])
+        want = a + b if kind == "add" else a - b
+        if want != Decimal(q["fields"][0]["answer"]) or want < 0:
+            errors.append(f"小数加减错误：{a}、{b} → {q['fields'][0]['answer']}")
+        if a.as_tuple().exponent < -1 or b.as_tuple().exponent < -1:
+            errors.append("加减只用一位小数")
+    elif kind == "gate":
+        gate = q["gate"]
+        high = Decimal(str(gate["truck"])) + Decimal(str(gate["load"]))
+        if high == Decimal(str(gate["limit"])) or ("能" if high < Decimal(str(gate["limit"])) else "不能") != q["answer"]:
+            errors.append(f"限高判断错误：{gate} → {q['answer']}")
+    return errors
+
+
+MODE_CHECKS = {"outfit": check_outfit, "angles": check_angles, "odometer": check_odometer, "shop": check_shop, "decimals": check_decimals}
+
+
+def check_modes(q, bank, game):
+    mode = q.get("mode")
+    errors = []
+    if mode is None:
+        errors += check_choice(q, bank, game)
+    elif not q.get("prompt"):
+        errors.append("缺少题干")
+    if mode == "fill":
+        for field in q.get("fields") or [{}]:
+            if not re.fullmatch(r"\d+(\.\d+)?", str(field.get("answer"))):
+                errors.append(f"填空答案不是数字：{field}")
+    return errors + MODE_CHECKS[game](q)
+
+
+def modes_answer(q):
+    mode = q.get("mode")
+    if mode is None:
+        return q.get("answerText", f"{q['answer']}{q.get('optionSuffix', '')}")
+    if mode == "fill":
+        return q.get("answerText") or " ".join(f.get("before", "") + f["answer"] + f.get("unit", "") for f in q["fields"])
+    if mode == "dress":
+        return f"{len(q['tops'])}×{len(q['bottoms'])}＝{len(q['tops']) * len(q['bottoms'])} 套"
+    if mode == "turn":
+        return KIND_NAME[q["target"]]
+    if mode == "pick":
+        return "、".join("ABCDEFGH"[i] for i in q["answer"]) + f"（{q['shape']}）"
+    if mode == "drive":
+        return q["stops"][q["answer"]]["name"]
+    if mode == "cart":
+        return q["calcText"]
+    if mode == "pay":
+        return q["priceText"]
+    if mode == "stick":
+        return f"{q['answer']} 分米处"
+    raise ValueError(mode)
+
+
 CHECKS = {
     "choice": check_choice,
     "blanks": check_blanks,
@@ -390,6 +697,7 @@ CHECKS = {
     "measure": check_measure,
     "read": check_read,
     "handwrite": check_handwrite,
+    "modes": check_modes,
 }
 
 
@@ -473,6 +781,9 @@ def doc_rows(site, game, bank):
             yield f"- {q['id']}（{q['unit']}）：**{q['text']}** {q['zh']}"
         elif t == "handwrite":
             yield f"- {q['id']}：{q['prompt']} 答案：**{q['answer']}**"
+        elif t == "modes":
+            options = f" 选项：{' / '.join(map(str, q['options']))}" if "options" in q else ""
+            yield f"- {q['id']}（{q['category']}）：{q['prompt']}{options} 答案：**{modes_answer(q)}**"
         elif t == "measure":
             yield (
                 f"- {q['id']}：{q['object']}，起点{q['startMm']}毫米，终点{q['endMm']}毫米，"

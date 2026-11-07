@@ -1,0 +1,2526 @@
+{
+ "type": "modes",
+ "meta": {"notes": ["题目依据北师大版三年级上册知识点总结自编，非教材原题。", "线路和地名都是虚构的，只用来练习。"]},
+ "draw": {"by": ["category"], "counts": {"drive": 2, "table": 6, "meaning": 3, "gauge": 6, "multi": 3}},
+ "ui": {},
+ "questions": [
+  {
+   "category": "table",
+   "mode": "fill",
+   "prompt": "森林线的里程表如下。从小鹿坡到清泉镇有多少千米？",
+   "figure": "mileage-table",
+   "stops": [
+    {"name": "松果站", "km": 0},
+    {"name": "蘑菇村", "km": 128},
+    {"name": "小鹿坡", "km": 305},
+    {"name": "清泉镇", "km": 562},
+    {"name": "百灵谷", "km": 840}
+   ],
+   "tableTitle": "森林线：松果站到各站的里程",
+   "calc": {"kind": "between", "from": 2, "to": 3},
+   "fields": [{"answer": "257", "unit": "千米"}],
+   "explanation": "表里的数都是从松果站算起的，两站之间的路程用大数减小数：562－305＝257（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "读火车里程表，求两站之间的路程",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：读火车里程表，求两站之间的路程（自编）"
+   },
+   "id": "odometer-001"
+  },
+  {
+   "category": "table",
+   "mode": "fill",
+   "prompt": "星河线的里程表如下。火箭村和宇宙城相距多少千米？",
+   "figure": "mileage-table",
+   "stops": [
+    {"name": "银河站", "km": 0},
+    {"name": "火箭村", "km": 158},
+    {"name": "流星坡", "km": 372},
+    {"name": "土星镇", "km": 545},
+    {"name": "彗星湾", "km": 767},
+    {"name": "宇宙城", "km": 1012}
+   ],
+   "tableTitle": "星河线：银河站到各站的里程",
+   "calc": {"kind": "between", "from": 1, "to": 5},
+   "fields": [{"answer": "854", "unit": "千米"}],
+   "explanation": "表里的数都是从银河站算起的，两站之间的路程用大数减小数：1012－158＝854（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "读火车里程表，求两站之间的路程",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：读火车里程表，求两站之间的路程（自编）"
+   },
+   "id": "odometer-002"
+  },
+  {
+   "category": "table",
+   "mode": "fill",
+   "prompt": "草原线的里程表如下。蓝湖镇和金沙坡相距多少千米？",
+   "figure": "mileage-table",
+   "stops": [
+    {"name": "白马站", "km": 0},
+    {"name": "牧歌村", "km": 219},
+    {"name": "蓝湖镇", "km": 436},
+    {"name": "金沙坡", "km": 658},
+    {"name": "落日城", "km": 985}
+   ],
+   "tableTitle": "草原线：白马站到各站的里程",
+   "calc": {"kind": "between", "from": 2, "to": 3},
+   "fields": [{"answer": "222", "unit": "千米"}],
+   "explanation": "表里的数都是从白马站算起的，两站之间的路程用大数减小数：658－436＝222（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "读火车里程表，求两站之间的路程",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：读火车里程表，求两站之间的路程（自编）"
+   },
+   "id": "odometer-003"
+  },
+  {
+   "category": "table",
+   "mode": "fill",
+   "prompt": "海滨线的里程表如下。灯塔村和白沙镇相距多少千米？",
+   "figure": "mileage-table",
+   "stops": [
+    {"name": "贝壳港", "km": 0},
+    {"name": "珊瑚站", "km": 95},
+    {"name": "海豚湾", "km": 263},
+    {"name": "灯塔村", "km": 418},
+    {"name": "椰子岛", "km": 676},
+    {"name": "白沙镇", "km": 907}
+   ],
+   "tableTitle": "海滨线：贝壳港到各站的里程",
+   "calc": {"kind": "between", "from": 3, "to": 5},
+   "fields": [{"answer": "489", "unit": "千米"}],
+   "explanation": "表里的数都是从贝壳港算起的，两站之间的路程用大数减小数：907－418＝489（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "读火车里程表，求两站之间的路程",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：读火车里程表，求两站之间的路程（自编）"
+   },
+   "id": "odometer-004"
+  },
+  {
+   "category": "table",
+   "mode": "fill",
+   "prompt": "草原线的里程表如下。从蓝湖镇到落日城有多少千米？",
+   "figure": "mileage-table",
+   "stops": [
+    {"name": "白马站", "km": 0},
+    {"name": "牧歌村", "km": 219},
+    {"name": "蓝湖镇", "km": 436},
+    {"name": "金沙坡", "km": 658},
+    {"name": "落日城", "km": 985}
+   ],
+   "tableTitle": "草原线：白马站到各站的里程",
+   "calc": {"kind": "between", "from": 2, "to": 4},
+   "fields": [{"answer": "549", "unit": "千米"}],
+   "explanation": "表里的数都是从白马站算起的，两站之间的路程用大数减小数：985－436＝549（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "读火车里程表，求两站之间的路程",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：读火车里程表，求两站之间的路程（自编）"
+   },
+   "id": "odometer-005"
+  },
+  {
+   "category": "table",
+   "mode": "fill",
+   "prompt": "海滨线的里程表如下。小车从灯塔村开到椰子岛，要行驶多少千米？",
+   "figure": "mileage-table",
+   "stops": [
+    {"name": "贝壳港", "km": 0},
+    {"name": "珊瑚站", "km": 95},
+    {"name": "海豚湾", "km": 263},
+    {"name": "灯塔村", "km": 418},
+    {"name": "椰子岛", "km": 676},
+    {"name": "白沙镇", "km": 907}
+   ],
+   "tableTitle": "海滨线：贝壳港到各站的里程",
+   "calc": {"kind": "between", "from": 3, "to": 4},
+   "fields": [{"answer": "258", "unit": "千米"}],
+   "explanation": "表里的数都是从贝壳港算起的，两站之间的路程用大数减小数：676－418＝258（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "读火车里程表，求两站之间的路程",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：读火车里程表，求两站之间的路程（自编）"
+   },
+   "id": "odometer-006"
+  },
+  {
+   "category": "table",
+   "mode": "fill",
+   "prompt": "星河线的里程表如下。从土星镇到宇宙城有多少千米？",
+   "figure": "mileage-table",
+   "stops": [
+    {"name": "银河站", "km": 0},
+    {"name": "火箭村", "km": 158},
+    {"name": "流星坡", "km": 372},
+    {"name": "土星镇", "km": 545},
+    {"name": "彗星湾", "km": 767},
+    {"name": "宇宙城", "km": 1012}
+   ],
+   "tableTitle": "星河线：银河站到各站的里程",
+   "calc": {"kind": "between", "from": 3, "to": 5},
+   "fields": [{"answer": "467", "unit": "千米"}],
+   "explanation": "表里的数都是从银河站算起的，两站之间的路程用大数减小数：1012－545＝467（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "读火车里程表，求两站之间的路程",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：读火车里程表，求两站之间的路程（自编）"
+   },
+   "id": "odometer-007"
+  },
+  {
+   "category": "table",
+   "mode": "fill",
+   "prompt": "糖果线的里程表如下。从彩虹站到星星湖有多少千米？",
+   "figure": "mileage-table",
+   "stops": [
+    {"name": "糖果镇", "km": 0},
+    {"name": "彩虹站", "km": 146},
+    {"name": "云朵村", "km": 277},
+    {"name": "星星湖", "km": 489},
+    {"name": "月亮湾", "km": 713},
+    {"name": "太阳城", "km": 1025}
+   ],
+   "tableTitle": "糖果线：糖果镇到各站的里程",
+   "calc": {"kind": "between", "from": 1, "to": 3},
+   "fields": [{"answer": "343", "unit": "千米"}],
+   "explanation": "表里的数都是从糖果镇算起的，两站之间的路程用大数减小数：489－146＝343（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "读火车里程表，求两站之间的路程",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：读火车里程表，求两站之间的路程（自编）"
+   },
+   "id": "odometer-008"
+  },
+  {
+   "category": "table",
+   "mode": "fill",
+   "prompt": "果园线的里程表如下。小车从蜜桃站开到西瓜镇，要行驶多少千米？",
+   "figure": "mileage-table",
+   "stops": [
+    {"name": "苹果村", "km": 0},
+    {"name": "蜜桃站", "km": 187},
+    {"name": "葡萄沟", "km": 354},
+    {"name": "西瓜镇", "km": 629},
+    {"name": "橙子坡", "km": 918}
+   ],
+   "tableTitle": "果园线：苹果村到各站的里程",
+   "calc": {"kind": "between", "from": 1, "to": 3},
+   "fields": [{"answer": "442", "unit": "千米"}],
+   "explanation": "表里的数都是从苹果村算起的，两站之间的路程用大数减小数：629－187＝442（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "读火车里程表，求两站之间的路程",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：读火车里程表，求两站之间的路程（自编）"
+   },
+   "id": "odometer-009"
+  },
+  {
+   "category": "table",
+   "mode": "fill",
+   "prompt": "高山线的里程表如下。从云海寺到飞瀑村有多少千米？",
+   "figure": "mileage-table",
+   "stops": [
+    {"name": "雪松站", "km": 0},
+    {"name": "云海寺", "km": 134},
+    {"name": "飞瀑村", "km": 308},
+    {"name": "鹰嘴岩", "km": 471},
+    {"name": "天池镇", "km": 752},
+    {"name": "风铃口", "km": 1136}
+   ],
+   "tableTitle": "高山线：雪松站到各站的里程",
+   "calc": {"kind": "between", "from": 1, "to": 2},
+   "fields": [{"answer": "174", "unit": "千米"}],
+   "explanation": "表里的数都是从雪松站算起的，两站之间的路程用大数减小数：308－134＝174（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "读火车里程表，求两站之间的路程",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：读火车里程表，求两站之间的路程（自编）"
+   },
+   "id": "odometer-010"
+  },
+  {
+   "category": "table",
+   "mode": "fill",
+   "prompt": "果园线的里程表如下。小车从葡萄沟开到西瓜镇，要行驶多少千米？",
+   "figure": "mileage-table",
+   "stops": [
+    {"name": "苹果村", "km": 0},
+    {"name": "蜜桃站", "km": 187},
+    {"name": "葡萄沟", "km": 354},
+    {"name": "西瓜镇", "km": 629},
+    {"name": "橙子坡", "km": 918}
+   ],
+   "tableTitle": "果园线：苹果村到各站的里程",
+   "calc": {"kind": "between", "from": 2, "to": 3},
+   "fields": [{"answer": "275", "unit": "千米"}],
+   "explanation": "表里的数都是从苹果村算起的，两站之间的路程用大数减小数：629－354＝275（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "读火车里程表，求两站之间的路程",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：读火车里程表，求两站之间的路程（自编）"
+   },
+   "id": "odometer-011"
+  },
+  {
+   "category": "table",
+   "mode": "fill",
+   "prompt": "森林线的里程表如下。蘑菇村和清泉镇相距多少千米？",
+   "figure": "mileage-table",
+   "stops": [
+    {"name": "松果站", "km": 0},
+    {"name": "蘑菇村", "km": 128},
+    {"name": "小鹿坡", "km": 305},
+    {"name": "清泉镇", "km": 562},
+    {"name": "百灵谷", "km": 840}
+   ],
+   "tableTitle": "森林线：松果站到各站的里程",
+   "calc": {"kind": "between", "from": 1, "to": 3},
+   "fields": [{"answer": "434", "unit": "千米"}],
+   "explanation": "表里的数都是从松果站算起的，两站之间的路程用大数减小数：562－128＝434（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "读火车里程表，求两站之间的路程",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：读火车里程表，求两站之间的路程（自编）"
+   },
+   "id": "odometer-012"
+  },
+  {
+   "category": "table",
+   "mode": "fill",
+   "prompt": "果园线的里程表如下。蜜桃站和橙子坡相距多少千米？",
+   "figure": "mileage-table",
+   "stops": [
+    {"name": "苹果村", "km": 0},
+    {"name": "蜜桃站", "km": 187},
+    {"name": "葡萄沟", "km": 354},
+    {"name": "西瓜镇", "km": 629},
+    {"name": "橙子坡", "km": 918}
+   ],
+   "tableTitle": "果园线：苹果村到各站的里程",
+   "calc": {"kind": "between", "from": 1, "to": 4},
+   "fields": [{"answer": "731", "unit": "千米"}],
+   "explanation": "表里的数都是从苹果村算起的，两站之间的路程用大数减小数：918－187＝731（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "读火车里程表，求两站之间的路程",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：读火车里程表，求两站之间的路程（自编）"
+   },
+   "id": "odometer-013"
+  },
+  {
+   "category": "table",
+   "mode": "fill",
+   "prompt": "星河线的里程表如下。从流星坡到宇宙城有多少千米？",
+   "figure": "mileage-table",
+   "stops": [
+    {"name": "银河站", "km": 0},
+    {"name": "火箭村", "km": 158},
+    {"name": "流星坡", "km": 372},
+    {"name": "土星镇", "km": 545},
+    {"name": "彗星湾", "km": 767},
+    {"name": "宇宙城", "km": 1012}
+   ],
+   "tableTitle": "星河线：银河站到各站的里程",
+   "calc": {"kind": "between", "from": 2, "to": 5},
+   "fields": [{"answer": "640", "unit": "千米"}],
+   "explanation": "表里的数都是从银河站算起的，两站之间的路程用大数减小数：1012－372＝640（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "读火车里程表，求两站之间的路程",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：读火车里程表，求两站之间的路程（自编）"
+   },
+   "id": "odometer-014"
+  },
+  {
+   "category": "table",
+   "mode": "fill",
+   "prompt": "童话线的里程表如下。从魔法村到城堡镇有多少千米？",
+   "figure": "mileage-table",
+   "stops": [
+    {"name": "南瓜车站", "km": 0},
+    {"name": "魔法村", "km": 112},
+    {"name": "水晶桥", "km": 390},
+    {"name": "城堡镇", "km": 575},
+    {"name": "童话港", "km": 1003}
+   ],
+   "tableTitle": "童话线：南瓜车站到各站的里程",
+   "calc": {"kind": "between", "from": 1, "to": 3},
+   "fields": [{"answer": "463", "unit": "千米"}],
+   "explanation": "表里的数都是从南瓜车站算起的，两站之间的路程用大数减小数：575－112＝463（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "读火车里程表，求两站之间的路程",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：读火车里程表，求两站之间的路程（自编）"
+   },
+   "id": "odometer-015"
+  },
+  {
+   "category": "table",
+   "mode": "fill",
+   "prompt": "海滨线的里程表如下。珊瑚站和白沙镇相距多少千米？",
+   "figure": "mileage-table",
+   "stops": [
+    {"name": "贝壳港", "km": 0},
+    {"name": "珊瑚站", "km": 95},
+    {"name": "海豚湾", "km": 263},
+    {"name": "灯塔村", "km": 418},
+    {"name": "椰子岛", "km": 676},
+    {"name": "白沙镇", "km": 907}
+   ],
+   "tableTitle": "海滨线：贝壳港到各站的里程",
+   "calc": {"kind": "between", "from": 1, "to": 5},
+   "fields": [{"answer": "812", "unit": "千米"}],
+   "explanation": "表里的数都是从贝壳港算起的，两站之间的路程用大数减小数：907－95＝812（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "读火车里程表，求两站之间的路程",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：读火车里程表，求两站之间的路程（自编）"
+   },
+   "id": "odometer-016"
+  },
+  {
+   "category": "table",
+   "mode": "fill",
+   "prompt": "高山线的里程表如下。飞瀑村和鹰嘴岩相距多少千米？",
+   "figure": "mileage-table",
+   "stops": [
+    {"name": "雪松站", "km": 0},
+    {"name": "云海寺", "km": 134},
+    {"name": "飞瀑村", "km": 308},
+    {"name": "鹰嘴岩", "km": 471},
+    {"name": "天池镇", "km": 752},
+    {"name": "风铃口", "km": 1136}
+   ],
+   "tableTitle": "高山线：雪松站到各站的里程",
+   "calc": {"kind": "between", "from": 2, "to": 3},
+   "fields": [{"answer": "163", "unit": "千米"}],
+   "explanation": "表里的数都是从雪松站算起的，两站之间的路程用大数减小数：471－308＝163（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "读火车里程表，求两站之间的路程",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：读火车里程表，求两站之间的路程（自编）"
+   },
+   "id": "odometer-017"
+  },
+  {
+   "category": "table",
+   "mode": "fill",
+   "prompt": "海滨线的里程表如下。从海豚湾到椰子岛有多少千米？",
+   "figure": "mileage-table",
+   "stops": [
+    {"name": "贝壳港", "km": 0},
+    {"name": "珊瑚站", "km": 95},
+    {"name": "海豚湾", "km": 263},
+    {"name": "灯塔村", "km": 418},
+    {"name": "椰子岛", "km": 676},
+    {"name": "白沙镇", "km": 907}
+   ],
+   "tableTitle": "海滨线：贝壳港到各站的里程",
+   "calc": {"kind": "between", "from": 2, "to": 4},
+   "fields": [{"answer": "413", "unit": "千米"}],
+   "explanation": "表里的数都是从贝壳港算起的，两站之间的路程用大数减小数：676－263＝413（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "读火车里程表，求两站之间的路程",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：读火车里程表，求两站之间的路程（自编）"
+   },
+   "id": "odometer-018"
+  },
+  {
+   "category": "table",
+   "mode": "fill",
+   "prompt": "海滨线的里程表如下。海豚湾和灯塔村相距多少千米？",
+   "figure": "mileage-table",
+   "stops": [
+    {"name": "贝壳港", "km": 0},
+    {"name": "珊瑚站", "km": 95},
+    {"name": "海豚湾", "km": 263},
+    {"name": "灯塔村", "km": 418},
+    {"name": "椰子岛", "km": 676},
+    {"name": "白沙镇", "km": 907}
+   ],
+   "tableTitle": "海滨线：贝壳港到各站的里程",
+   "calc": {"kind": "between", "from": 2, "to": 3},
+   "fields": [{"answer": "155", "unit": "千米"}],
+   "explanation": "表里的数都是从贝壳港算起的，两站之间的路程用大数减小数：418－263＝155（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "读火车里程表，求两站之间的路程",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：读火车里程表，求两站之间的路程（自编）"
+   },
+   "id": "odometer-019"
+  },
+  {
+   "category": "table",
+   "mode": "fill",
+   "prompt": "草原线的里程表如下。小车从牧歌村开到蓝湖镇，要行驶多少千米？",
+   "figure": "mileage-table",
+   "stops": [
+    {"name": "白马站", "km": 0},
+    {"name": "牧歌村", "km": 219},
+    {"name": "蓝湖镇", "km": 436},
+    {"name": "金沙坡", "km": 658},
+    {"name": "落日城", "km": 985}
+   ],
+   "tableTitle": "草原线：白马站到各站的里程",
+   "calc": {"kind": "between", "from": 1, "to": 2},
+   "fields": [{"answer": "217", "unit": "千米"}],
+   "explanation": "表里的数都是从白马站算起的，两站之间的路程用大数减小数：436－219＝217（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "读火车里程表，求两站之间的路程",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：读火车里程表，求两站之间的路程（自编）"
+   },
+   "id": "odometer-020"
+  },
+  {
+   "category": "table",
+   "mode": "fill",
+   "prompt": "草原线的里程表如下。从金沙坡到落日城有多少千米？",
+   "figure": "mileage-table",
+   "stops": [
+    {"name": "白马站", "km": 0},
+    {"name": "牧歌村", "km": 219},
+    {"name": "蓝湖镇", "km": 436},
+    {"name": "金沙坡", "km": 658},
+    {"name": "落日城", "km": 985}
+   ],
+   "tableTitle": "草原线：白马站到各站的里程",
+   "calc": {"kind": "between", "from": 3, "to": 4},
+   "fields": [{"answer": "327", "unit": "千米"}],
+   "explanation": "表里的数都是从白马站算起的，两站之间的路程用大数减小数：985－658＝327（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "读火车里程表，求两站之间的路程",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：读火车里程表，求两站之间的路程（自编）"
+   },
+   "id": "odometer-021"
+  },
+  {
+   "category": "table",
+   "mode": "fill",
+   "prompt": "高山线的里程表如下。从天池镇到风铃口有多少千米？",
+   "figure": "mileage-table",
+   "stops": [
+    {"name": "雪松站", "km": 0},
+    {"name": "云海寺", "km": 134},
+    {"name": "飞瀑村", "km": 308},
+    {"name": "鹰嘴岩", "km": 471},
+    {"name": "天池镇", "km": 752},
+    {"name": "风铃口", "km": 1136}
+   ],
+   "tableTitle": "高山线：雪松站到各站的里程",
+   "calc": {"kind": "between", "from": 4, "to": 5},
+   "fields": [{"answer": "384", "unit": "千米"}],
+   "explanation": "表里的数都是从雪松站算起的，两站之间的路程用大数减小数：1136－752＝384（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "读火车里程表，求两站之间的路程",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：读火车里程表，求两站之间的路程（自编）"
+   },
+   "id": "odometer-022"
+  },
+  {
+   "category": "table",
+   "mode": "fill",
+   "prompt": "海滨线的里程表如下。小车从海豚湾开到白沙镇，要行驶多少千米？",
+   "figure": "mileage-table",
+   "stops": [
+    {"name": "贝壳港", "km": 0},
+    {"name": "珊瑚站", "km": 95},
+    {"name": "海豚湾", "km": 263},
+    {"name": "灯塔村", "km": 418},
+    {"name": "椰子岛", "km": 676},
+    {"name": "白沙镇", "km": 907}
+   ],
+   "tableTitle": "海滨线：贝壳港到各站的里程",
+   "calc": {"kind": "between", "from": 2, "to": 5},
+   "fields": [{"answer": "644", "unit": "千米"}],
+   "explanation": "表里的数都是从贝壳港算起的，两站之间的路程用大数减小数：907－263＝644（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "读火车里程表，求两站之间的路程",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：读火车里程表，求两站之间的路程（自编）"
+   },
+   "id": "odometer-023"
+  },
+  {
+   "category": "table",
+   "mode": "fill",
+   "prompt": "糖果线的里程表如下。从彩虹站到太阳城有多少千米？",
+   "figure": "mileage-table",
+   "stops": [
+    {"name": "糖果镇", "km": 0},
+    {"name": "彩虹站", "km": 146},
+    {"name": "云朵村", "km": 277},
+    {"name": "星星湖", "km": 489},
+    {"name": "月亮湾", "km": 713},
+    {"name": "太阳城", "km": 1025}
+   ],
+   "tableTitle": "糖果线：糖果镇到各站的里程",
+   "calc": {"kind": "between", "from": 1, "to": 5},
+   "fields": [{"answer": "879", "unit": "千米"}],
+   "explanation": "表里的数都是从糖果镇算起的，两站之间的路程用大数减小数：1025－146＝879（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "读火车里程表，求两站之间的路程",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：读火车里程表，求两站之间的路程（自编）"
+   },
+   "id": "odometer-024"
+  },
+  {
+   "category": "table",
+   "mode": "fill",
+   "prompt": "糖果线的里程表如下。从月亮湾到太阳城有多少千米？",
+   "figure": "mileage-table",
+   "stops": [
+    {"name": "糖果镇", "km": 0},
+    {"name": "彩虹站", "km": 146},
+    {"name": "云朵村", "km": 277},
+    {"name": "星星湖", "km": 489},
+    {"name": "月亮湾", "km": 713},
+    {"name": "太阳城", "km": 1025}
+   ],
+   "tableTitle": "糖果线：糖果镇到各站的里程",
+   "calc": {"kind": "between", "from": 4, "to": 5},
+   "fields": [{"answer": "312", "unit": "千米"}],
+   "explanation": "表里的数都是从糖果镇算起的，两站之间的路程用大数减小数：1025－713＝312（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "读火车里程表，求两站之间的路程",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：读火车里程表，求两站之间的路程（自编）"
+   },
+   "id": "odometer-025"
+  },
+  {
+   "category": "table",
+   "mode": "fill",
+   "prompt": "星河线的里程表如下。小车从火箭村开到土星镇，要行驶多少千米？",
+   "figure": "mileage-table",
+   "stops": [
+    {"name": "银河站", "km": 0},
+    {"name": "火箭村", "km": 158},
+    {"name": "流星坡", "km": 372},
+    {"name": "土星镇", "km": 545},
+    {"name": "彗星湾", "km": 767},
+    {"name": "宇宙城", "km": 1012}
+   ],
+   "tableTitle": "星河线：银河站到各站的里程",
+   "calc": {"kind": "between", "from": 1, "to": 3},
+   "fields": [{"answer": "387", "unit": "千米"}],
+   "explanation": "表里的数都是从银河站算起的，两站之间的路程用大数减小数：545－158＝387（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "读火车里程表，求两站之间的路程",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：读火车里程表，求两站之间的路程（自编）"
+   },
+   "id": "odometer-026"
+  },
+  {
+   "category": "table",
+   "mode": "fill",
+   "prompt": "童话线的里程表如下。从魔法村到童话港有多少千米？",
+   "figure": "mileage-table",
+   "stops": [
+    {"name": "南瓜车站", "km": 0},
+    {"name": "魔法村", "km": 112},
+    {"name": "水晶桥", "km": 390},
+    {"name": "城堡镇", "km": 575},
+    {"name": "童话港", "km": 1003}
+   ],
+   "tableTitle": "童话线：南瓜车站到各站的里程",
+   "calc": {"kind": "between", "from": 1, "to": 4},
+   "fields": [{"answer": "891", "unit": "千米"}],
+   "explanation": "表里的数都是从南瓜车站算起的，两站之间的路程用大数减小数：1003－112＝891（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "读火车里程表，求两站之间的路程",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：读火车里程表，求两站之间的路程（自编）"
+   },
+   "id": "odometer-027"
+  },
+  {
+   "category": "table",
+   "mode": "fill",
+   "prompt": "星河线的里程表如下。土星镇和彗星湾相距多少千米？",
+   "figure": "mileage-table",
+   "stops": [
+    {"name": "银河站", "km": 0},
+    {"name": "火箭村", "km": 158},
+    {"name": "流星坡", "km": 372},
+    {"name": "土星镇", "km": 545},
+    {"name": "彗星湾", "km": 767},
+    {"name": "宇宙城", "km": 1012}
+   ],
+   "tableTitle": "星河线：银河站到各站的里程",
+   "calc": {"kind": "between", "from": 3, "to": 4},
+   "fields": [{"answer": "222", "unit": "千米"}],
+   "explanation": "表里的数都是从银河站算起的，两站之间的路程用大数减小数：767－545＝222（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "读火车里程表，求两站之间的路程",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：读火车里程表，求两站之间的路程（自编）"
+   },
+   "id": "odometer-028"
+  },
+  {
+   "category": "table",
+   "mode": "fill",
+   "prompt": "糖果线的里程表如下。云朵村和星星湖相距多少千米？",
+   "figure": "mileage-table",
+   "stops": [
+    {"name": "糖果镇", "km": 0},
+    {"name": "彩虹站", "km": 146},
+    {"name": "云朵村", "km": 277},
+    {"name": "星星湖", "km": 489},
+    {"name": "月亮湾", "km": 713},
+    {"name": "太阳城", "km": 1025}
+   ],
+   "tableTitle": "糖果线：糖果镇到各站的里程",
+   "calc": {"kind": "between", "from": 2, "to": 3},
+   "fields": [{"answer": "212", "unit": "千米"}],
+   "explanation": "表里的数都是从糖果镇算起的，两站之间的路程用大数减小数：489－277＝212（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "读火车里程表，求两站之间的路程",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：读火车里程表，求两站之间的路程（自编）"
+   },
+   "id": "odometer-029"
+  },
+  {
+   "category": "table",
+   "mode": "fill",
+   "prompt": "童话线的里程表如下。从水晶桥到童话港有多少千米？",
+   "figure": "mileage-table",
+   "stops": [
+    {"name": "南瓜车站", "km": 0},
+    {"name": "魔法村", "km": 112},
+    {"name": "水晶桥", "km": 390},
+    {"name": "城堡镇", "km": 575},
+    {"name": "童话港", "km": 1003}
+   ],
+   "tableTitle": "童话线：南瓜车站到各站的里程",
+   "calc": {"kind": "between", "from": 2, "to": 4},
+   "fields": [{"answer": "613", "unit": "千米"}],
+   "explanation": "表里的数都是从南瓜车站算起的，两站之间的路程用大数减小数：1003－390＝613（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "读火车里程表，求两站之间的路程",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：读火车里程表，求两站之间的路程（自编）"
+   },
+   "id": "odometer-030"
+  },
+  {
+   "category": "meaning",
+   "prompt": "看糖果线的里程表：算式 1025－277 求的是哪两站之间的路程？",
+   "figure": "mileage-table",
+   "stops": [
+    {"name": "糖果镇", "km": 0},
+    {"name": "彩虹站", "km": 146},
+    {"name": "云朵村", "km": 277},
+    {"name": "星星湖", "km": 489},
+    {"name": "月亮湾", "km": 713},
+    {"name": "太阳城", "km": 1025}
+   ],
+   "tableTitle": "糖果线：糖果镇到各站的里程",
+   "calc": {"kind": "meaning", "from": 2, "to": 5},
+   "answer": "云朵村—太阳城",
+   "options": ["云朵村—太阳城", "糖果镇—云朵村", "糖果镇—太阳城", "云朵村—星星湖"],
+   "explanation": "1025 是糖果镇到太阳城，277 是糖果镇到云朵村，相减就是云朵村—太阳城的路程 748 千米。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "说出算式表示的意义",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：说出算式表示的意义（自编）"
+   },
+   "id": "odometer-031"
+  },
+  {
+   "category": "meaning",
+   "prompt": "看森林线的里程表：算式 840－305 求的是哪两站之间的路程？",
+   "figure": "mileage-table",
+   "stops": [
+    {"name": "松果站", "km": 0},
+    {"name": "蘑菇村", "km": 128},
+    {"name": "小鹿坡", "km": 305},
+    {"name": "清泉镇", "km": 562},
+    {"name": "百灵谷", "km": 840}
+   ],
+   "tableTitle": "森林线：松果站到各站的里程",
+   "calc": {"kind": "meaning", "from": 2, "to": 4},
+   "answer": "小鹿坡—百灵谷",
+   "options": ["小鹿坡—百灵谷", "松果站—小鹿坡", "松果站—百灵谷", "小鹿坡—清泉镇"],
+   "explanation": "840 是松果站到百灵谷，305 是松果站到小鹿坡，相减就是小鹿坡—百灵谷的路程 535 千米。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "说出算式表示的意义",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：说出算式表示的意义（自编）"
+   },
+   "id": "odometer-032"
+  },
+  {
+   "category": "meaning",
+   "prompt": "看草原线的里程表：算式 658－219 求的是哪两站之间的路程？",
+   "figure": "mileage-table",
+   "stops": [
+    {"name": "白马站", "km": 0},
+    {"name": "牧歌村", "km": 219},
+    {"name": "蓝湖镇", "km": 436},
+    {"name": "金沙坡", "km": 658},
+    {"name": "落日城", "km": 985}
+   ],
+   "tableTitle": "草原线：白马站到各站的里程",
+   "calc": {"kind": "meaning", "from": 1, "to": 3},
+   "answer": "牧歌村—金沙坡",
+   "options": ["牧歌村—金沙坡", "金沙坡—落日城", "白马站—金沙坡", "白马站—落日城"],
+   "explanation": "658 是白马站到金沙坡，219 是白马站到牧歌村，相减就是牧歌村—金沙坡的路程 439 千米。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "说出算式表示的意义",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：说出算式表示的意义（自编）"
+   },
+   "id": "odometer-033"
+  },
+  {
+   "category": "meaning",
+   "prompt": "看海滨线的里程表：算式 418－95 求的是哪两站之间的路程？",
+   "figure": "mileage-table",
+   "stops": [
+    {"name": "贝壳港", "km": 0},
+    {"name": "珊瑚站", "km": 95},
+    {"name": "海豚湾", "km": 263},
+    {"name": "灯塔村", "km": 418},
+    {"name": "椰子岛", "km": 676},
+    {"name": "白沙镇", "km": 907}
+   ],
+   "tableTitle": "海滨线：贝壳港到各站的里程",
+   "calc": {"kind": "meaning", "from": 1, "to": 3},
+   "answer": "珊瑚站—灯塔村",
+   "options": ["珊瑚站—灯塔村", "贝壳港—珊瑚站", "贝壳港—白沙镇", "贝壳港—灯塔村"],
+   "explanation": "418 是贝壳港到灯塔村，95 是贝壳港到珊瑚站，相减就是珊瑚站—灯塔村的路程 323 千米。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "说出算式表示的意义",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：说出算式表示的意义（自编）"
+   },
+   "id": "odometer-034"
+  },
+  {
+   "category": "meaning",
+   "prompt": "看童话线的里程表：算式 575－390 求的是哪两站之间的路程？",
+   "figure": "mileage-table",
+   "stops": [
+    {"name": "南瓜车站", "km": 0},
+    {"name": "魔法村", "km": 112},
+    {"name": "水晶桥", "km": 390},
+    {"name": "城堡镇", "km": 575},
+    {"name": "童话港", "km": 1003}
+   ],
+   "tableTitle": "童话线：南瓜车站到各站的里程",
+   "calc": {"kind": "meaning", "from": 2, "to": 3},
+   "answer": "水晶桥—城堡镇",
+   "options": ["水晶桥—城堡镇", "城堡镇—童话港", "南瓜车站—城堡镇", "南瓜车站—水晶桥"],
+   "explanation": "575 是南瓜车站到城堡镇，390 是南瓜车站到水晶桥，相减就是水晶桥—城堡镇的路程 185 千米。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "说出算式表示的意义",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：说出算式表示的意义（自编）"
+   },
+   "id": "odometer-035"
+  },
+  {
+   "category": "meaning",
+   "prompt": "看糖果线的里程表：算式 277－146 求的是哪两站之间的路程？",
+   "figure": "mileage-table",
+   "stops": [
+    {"name": "糖果镇", "km": 0},
+    {"name": "彩虹站", "km": 146},
+    {"name": "云朵村", "km": 277},
+    {"name": "星星湖", "km": 489},
+    {"name": "月亮湾", "km": 713},
+    {"name": "太阳城", "km": 1025}
+   ],
+   "tableTitle": "糖果线：糖果镇到各站的里程",
+   "calc": {"kind": "meaning", "from": 1, "to": 2},
+   "answer": "彩虹站—云朵村",
+   "options": ["彩虹站—云朵村", "糖果镇—彩虹站", "糖果镇—太阳城", "云朵村—太阳城"],
+   "explanation": "277 是糖果镇到云朵村，146 是糖果镇到彩虹站，相减就是彩虹站—云朵村的路程 131 千米。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "说出算式表示的意义",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：说出算式表示的意义（自编）"
+   },
+   "id": "odometer-036"
+  },
+  {
+   "category": "meaning",
+   "prompt": "看海滨线的里程表：算式 676－95 求的是哪两站之间的路程？",
+   "figure": "mileage-table",
+   "stops": [
+    {"name": "贝壳港", "km": 0},
+    {"name": "珊瑚站", "km": 95},
+    {"name": "海豚湾", "km": 263},
+    {"name": "灯塔村", "km": 418},
+    {"name": "椰子岛", "km": 676},
+    {"name": "白沙镇", "km": 907}
+   ],
+   "tableTitle": "海滨线：贝壳港到各站的里程",
+   "calc": {"kind": "meaning", "from": 1, "to": 4},
+   "answer": "珊瑚站—椰子岛",
+   "options": ["珊瑚站—椰子岛", "贝壳港—椰子岛", "珊瑚站—海豚湾", "贝壳港—白沙镇"],
+   "explanation": "676 是贝壳港到椰子岛，95 是贝壳港到珊瑚站，相减就是珊瑚站—椰子岛的路程 581 千米。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "说出算式表示的意义",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：说出算式表示的意义（自编）"
+   },
+   "id": "odometer-037"
+  },
+  {
+   "category": "meaning",
+   "prompt": "看果园线的里程表：算式 918－629 求的是哪两站之间的路程？",
+   "figure": "mileage-table",
+   "stops": [
+    {"name": "苹果村", "km": 0},
+    {"name": "蜜桃站", "km": 187},
+    {"name": "葡萄沟", "km": 354},
+    {"name": "西瓜镇", "km": 629},
+    {"name": "橙子坡", "km": 918}
+   ],
+   "tableTitle": "果园线：苹果村到各站的里程",
+   "calc": {"kind": "meaning", "from": 3, "to": 4},
+   "answer": "西瓜镇—橙子坡",
+   "options": ["西瓜镇—橙子坡", "葡萄沟—橙子坡", "苹果村—橙子坡", "苹果村—西瓜镇"],
+   "explanation": "918 是苹果村到橙子坡，629 是苹果村到西瓜镇，相减就是西瓜镇—橙子坡的路程 289 千米。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "说出算式表示的意义",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：说出算式表示的意义（自编）"
+   },
+   "id": "odometer-038"
+  },
+  {
+   "category": "meaning",
+   "prompt": "看糖果线的里程表：算式 1025－489 求的是哪两站之间的路程？",
+   "figure": "mileage-table",
+   "stops": [
+    {"name": "糖果镇", "km": 0},
+    {"name": "彩虹站", "km": 146},
+    {"name": "云朵村", "km": 277},
+    {"name": "星星湖", "km": 489},
+    {"name": "月亮湾", "km": 713},
+    {"name": "太阳城", "km": 1025}
+   ],
+   "tableTitle": "糖果线：糖果镇到各站的里程",
+   "calc": {"kind": "meaning", "from": 3, "to": 5},
+   "answer": "星星湖—太阳城",
+   "options": ["星星湖—太阳城", "云朵村—太阳城", "糖果镇—星星湖", "糖果镇—太阳城"],
+   "explanation": "1025 是糖果镇到太阳城，489 是糖果镇到星星湖，相减就是星星湖—太阳城的路程 536 千米。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "说出算式表示的意义",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：说出算式表示的意义（自编）"
+   },
+   "id": "odometer-039"
+  },
+  {
+   "category": "meaning",
+   "prompt": "看童话线的里程表：算式 1003－575 求的是哪两站之间的路程？",
+   "figure": "mileage-table",
+   "stops": [
+    {"name": "南瓜车站", "km": 0},
+    {"name": "魔法村", "km": 112},
+    {"name": "水晶桥", "km": 390},
+    {"name": "城堡镇", "km": 575},
+    {"name": "童话港", "km": 1003}
+   ],
+   "tableTitle": "童话线：南瓜车站到各站的里程",
+   "calc": {"kind": "meaning", "from": 3, "to": 4},
+   "answer": "城堡镇—童话港",
+   "options": ["城堡镇—童话港", "水晶桥—童话港", "南瓜车站—童话港", "南瓜车站—城堡镇"],
+   "explanation": "1003 是南瓜车站到童话港，575 是南瓜车站到城堡镇，相减就是城堡镇—童话港的路程 428 千米。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "说出算式表示的意义",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：说出算式表示的意义（自编）"
+   },
+   "id": "odometer-040"
+  },
+  {
+   "category": "meaning",
+   "prompt": "看糖果线的里程表：算式 713－489 求的是哪两站之间的路程？",
+   "figure": "mileage-table",
+   "stops": [
+    {"name": "糖果镇", "km": 0},
+    {"name": "彩虹站", "km": 146},
+    {"name": "云朵村", "km": 277},
+    {"name": "星星湖", "km": 489},
+    {"name": "月亮湾", "km": 713},
+    {"name": "太阳城", "km": 1025}
+   ],
+   "tableTitle": "糖果线：糖果镇到各站的里程",
+   "calc": {"kind": "meaning", "from": 3, "to": 4},
+   "answer": "星星湖—月亮湾",
+   "options": ["星星湖—月亮湾", "糖果镇—星星湖", "月亮湾—太阳城", "星星湖—太阳城"],
+   "explanation": "713 是糖果镇到月亮湾，489 是糖果镇到星星湖，相减就是星星湖—月亮湾的路程 224 千米。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "说出算式表示的意义",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：说出算式表示的意义（自编）"
+   },
+   "id": "odometer-041"
+  },
+  {
+   "category": "meaning",
+   "prompt": "看高山线的里程表：算式 752－471 求的是哪两站之间的路程？",
+   "figure": "mileage-table",
+   "stops": [
+    {"name": "雪松站", "km": 0},
+    {"name": "云海寺", "km": 134},
+    {"name": "飞瀑村", "km": 308},
+    {"name": "鹰嘴岩", "km": 471},
+    {"name": "天池镇", "km": 752},
+    {"name": "风铃口", "km": 1136}
+   ],
+   "tableTitle": "高山线：雪松站到各站的里程",
+   "calc": {"kind": "meaning", "from": 3, "to": 4},
+   "answer": "鹰嘴岩—天池镇",
+   "options": ["鹰嘴岩—天池镇", "雪松站—风铃口", "飞瀑村—天池镇", "雪松站—鹰嘴岩"],
+   "explanation": "752 是雪松站到天池镇，471 是雪松站到鹰嘴岩，相减就是鹰嘴岩—天池镇的路程 281 千米。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "说出算式表示的意义",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：说出算式表示的意义（自编）"
+   },
+   "id": "odometer-042"
+  },
+  {
+   "category": "meaning",
+   "prompt": "看星河线的里程表：算式 1012－767 求的是哪两站之间的路程？",
+   "figure": "mileage-table",
+   "stops": [
+    {"name": "银河站", "km": 0},
+    {"name": "火箭村", "km": 158},
+    {"name": "流星坡", "km": 372},
+    {"name": "土星镇", "km": 545},
+    {"name": "彗星湾", "km": 767},
+    {"name": "宇宙城", "km": 1012}
+   ],
+   "tableTitle": "星河线：银河站到各站的里程",
+   "calc": {"kind": "meaning", "from": 4, "to": 5},
+   "answer": "彗星湾—宇宙城",
+   "options": ["彗星湾—宇宙城", "银河站—彗星湾", "银河站—宇宙城", "土星镇—宇宙城"],
+   "explanation": "1012 是银河站到宇宙城，767 是银河站到彗星湾，相减就是彗星湾—宇宙城的路程 245 千米。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "说出算式表示的意义",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：说出算式表示的意义（自编）"
+   },
+   "id": "odometer-043"
+  },
+  {
+   "category": "meaning",
+   "prompt": "看草原线的里程表：算式 985－219 求的是哪两站之间的路程？",
+   "figure": "mileage-table",
+   "stops": [
+    {"name": "白马站", "km": 0},
+    {"name": "牧歌村", "km": 219},
+    {"name": "蓝湖镇", "km": 436},
+    {"name": "金沙坡", "km": 658},
+    {"name": "落日城", "km": 985}
+   ],
+   "tableTitle": "草原线：白马站到各站的里程",
+   "calc": {"kind": "meaning", "from": 1, "to": 4},
+   "answer": "牧歌村—落日城",
+   "options": ["牧歌村—落日城", "白马站—落日城", "牧歌村—蓝湖镇", "白马站—牧歌村"],
+   "explanation": "985 是白马站到落日城，219 是白马站到牧歌村，相减就是牧歌村—落日城的路程 766 千米。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "说出算式表示的意义",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：说出算式表示的意义（自编）"
+   },
+   "id": "odometer-044"
+  },
+  {
+   "category": "meaning",
+   "prompt": "看高山线的里程表：算式 752－134 求的是哪两站之间的路程？",
+   "figure": "mileage-table",
+   "stops": [
+    {"name": "雪松站", "km": 0},
+    {"name": "云海寺", "km": 134},
+    {"name": "飞瀑村", "km": 308},
+    {"name": "鹰嘴岩", "km": 471},
+    {"name": "天池镇", "km": 752},
+    {"name": "风铃口", "km": 1136}
+   ],
+   "tableTitle": "高山线：雪松站到各站的里程",
+   "calc": {"kind": "meaning", "from": 1, "to": 4},
+   "answer": "云海寺—天池镇",
+   "options": ["云海寺—天池镇", "云海寺—风铃口", "雪松站—天池镇", "天池镇—风铃口"],
+   "explanation": "752 是雪松站到天池镇，134 是雪松站到云海寺，相减就是云海寺—天池镇的路程 618 千米。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "说出算式表示的意义",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：说出算式表示的意义（自编）"
+   },
+   "id": "odometer-045"
+  },
+  {
+   "category": "gauge",
+   "mode": "fill",
+   "prompt": "爸爸开车去旅行，看看仪表盘上的里程表。今天一共开了多少千米？",
+   "figure": "dash",
+   "readings": [{"label": "早上出发时", "value": 7685}, {"label": "晚上到达时", "value": 8151}],
+   "calc": {"kind": "reading", "from": 0, "to": 1},
+   "fields": [{"answer": "466", "unit": "千米"}],
+   "explanation": "里程表记的是车一共跑过的路程，今天开的＝到达读数－出发读数：8151－7685＝466（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "读汽车里程表，求行驶路程",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表读数",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：读汽车里程表，求行驶路程（自编）"
+   },
+   "id": "odometer-046"
+  },
+  {
+   "category": "gauge",
+   "mode": "fill",
+   "prompt": "王叔叔开车去旅行，看看仪表盘上的里程表。今天一共开了多少千米？",
+   "figure": "dash",
+   "readings": [{"label": "早上出发时", "value": 8102}, {"label": "晚上到达时", "value": 8496}],
+   "calc": {"kind": "reading", "from": 0, "to": 1},
+   "fields": [{"answer": "394", "unit": "千米"}],
+   "explanation": "里程表记的是车一共跑过的路程，今天开的＝到达读数－出发读数：8496－8102＝394（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "读汽车里程表，求行驶路程",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表读数",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：读汽车里程表，求行驶路程（自编）"
+   },
+   "id": "odometer-047"
+  },
+  {
+   "category": "gauge",
+   "mode": "fill",
+   "prompt": "李阿姨开车去旅行，看看仪表盘上的里程表。今天一共开了多少千米？",
+   "figure": "dash",
+   "readings": [{"label": "早上出发时", "value": 6472}, {"label": "晚上到达时", "value": 6933}],
+   "calc": {"kind": "reading", "from": 0, "to": 1},
+   "fields": [{"answer": "461", "unit": "千米"}],
+   "explanation": "里程表记的是车一共跑过的路程，今天开的＝到达读数－出发读数：6933－6472＝461（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "读汽车里程表，求行驶路程",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表读数",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：读汽车里程表，求行驶路程（自编）"
+   },
+   "id": "odometer-048"
+  },
+  {
+   "category": "gauge",
+   "mode": "fill",
+   "prompt": "张师傅开车去旅行，看看仪表盘上的里程表。今天一共开了多少千米？",
+   "figure": "dash",
+   "readings": [{"label": "早上出发时", "value": 6538}, {"label": "晚上到达时", "value": 7366}],
+   "calc": {"kind": "reading", "from": 0, "to": 1},
+   "fields": [{"answer": "828", "unit": "千米"}],
+   "explanation": "里程表记的是车一共跑过的路程，今天开的＝到达读数－出发读数：7366－6538＝828（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "读汽车里程表，求行驶路程",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表读数",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：读汽车里程表，求行驶路程（自编）"
+   },
+   "id": "odometer-049"
+  },
+  {
+   "category": "gauge",
+   "mode": "fill",
+   "prompt": "小舟的妈妈开车去旅行，看看仪表盘上的里程表。今天一共开了多少千米？",
+   "figure": "dash",
+   "readings": [{"label": "早上出发时", "value": 8470}, {"label": "晚上到达时", "value": 8828}],
+   "calc": {"kind": "reading", "from": 0, "to": 1},
+   "fields": [{"answer": "358", "unit": "千米"}],
+   "explanation": "里程表记的是车一共跑过的路程，今天开的＝到达读数－出发读数：8828－8470＝358（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "读汽车里程表，求行驶路程",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表读数",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：读汽车里程表，求行驶路程（自编）"
+   },
+   "id": "odometer-050"
+  },
+  {
+   "category": "gauge",
+   "mode": "fill",
+   "prompt": "陈叔叔开车去旅行，看看仪表盘上的里程表。今天一共开了多少千米？",
+   "figure": "dash",
+   "readings": [{"label": "早上出发时", "value": 4146}, {"label": "晚上到达时", "value": 4739}],
+   "calc": {"kind": "reading", "from": 0, "to": 1},
+   "fields": [{"answer": "593", "unit": "千米"}],
+   "explanation": "里程表记的是车一共跑过的路程，今天开的＝到达读数－出发读数：4739－4146＝593（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "读汽车里程表，求行驶路程",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表读数",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：读汽车里程表，求行驶路程（自编）"
+   },
+   "id": "odometer-051"
+  },
+  {
+   "category": "gauge",
+   "mode": "fill",
+   "prompt": "周阿姨开车去旅行，看看仪表盘上的里程表。今天一共开了多少千米？",
+   "figure": "dash",
+   "readings": [{"label": "早上出发时", "value": 7742}, {"label": "晚上到达时", "value": 8133}],
+   "calc": {"kind": "reading", "from": 0, "to": 1},
+   "fields": [{"answer": "391", "unit": "千米"}],
+   "explanation": "里程表记的是车一共跑过的路程，今天开的＝到达读数－出发读数：8133－7742＝391（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "读汽车里程表，求行驶路程",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表读数",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：读汽车里程表，求行驶路程（自编）"
+   },
+   "id": "odometer-052"
+  },
+  {
+   "category": "gauge",
+   "mode": "fill",
+   "prompt": "刘师傅开车去旅行，看看仪表盘上的里程表。今天一共开了多少千米？",
+   "figure": "dash",
+   "readings": [{"label": "早上出发时", "value": 1559}, {"label": "晚上到达时", "value": 2276}],
+   "calc": {"kind": "reading", "from": 0, "to": 1},
+   "fields": [{"answer": "717", "unit": "千米"}],
+   "explanation": "里程表记的是车一共跑过的路程，今天开的＝到达读数－出发读数：2276－1559＝717（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "读汽车里程表，求行驶路程",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表读数",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：读汽车里程表，求行驶路程（自编）"
+   },
+   "id": "odometer-053"
+  },
+  {
+   "category": "gauge",
+   "mode": "fill",
+   "prompt": "爸爸开车去旅行，看看仪表盘上的里程表。今天一共开了多少千米？",
+   "figure": "dash",
+   "readings": [{"label": "早上出发时", "value": 7858}, {"label": "晚上到达时", "value": 8238}],
+   "calc": {"kind": "reading", "from": 0, "to": 1},
+   "fields": [{"answer": "380", "unit": "千米"}],
+   "explanation": "里程表记的是车一共跑过的路程，今天开的＝到达读数－出发读数：8238－7858＝380（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "读汽车里程表，求行驶路程",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表读数",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：读汽车里程表，求行驶路程（自编）"
+   },
+   "id": "odometer-054"
+  },
+  {
+   "category": "gauge",
+   "mode": "fill",
+   "prompt": "王叔叔开车去旅行，看看仪表盘上的里程表。今天一共开了多少千米？",
+   "figure": "dash",
+   "readings": [{"label": "早上出发时", "value": 3010}, {"label": "晚上到达时", "value": 3470}],
+   "calc": {"kind": "reading", "from": 0, "to": 1},
+   "fields": [{"answer": "460", "unit": "千米"}],
+   "explanation": "里程表记的是车一共跑过的路程，今天开的＝到达读数－出发读数：3470－3010＝460（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "读汽车里程表，求行驶路程",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表读数",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：读汽车里程表，求行驶路程（自编）"
+   },
+   "id": "odometer-055"
+  },
+  {
+   "category": "gauge",
+   "mode": "fill",
+   "prompt": "李阿姨开车去旅行，看看仪表盘上的里程表。今天一共开了多少千米？",
+   "figure": "dash",
+   "readings": [{"label": "早上出发时", "value": 6693}, {"label": "晚上到达时", "value": 7102}],
+   "calc": {"kind": "reading", "from": 0, "to": 1},
+   "fields": [{"answer": "409", "unit": "千米"}],
+   "explanation": "里程表记的是车一共跑过的路程，今天开的＝到达读数－出发读数：7102－6693＝409（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "读汽车里程表，求行驶路程",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表读数",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：读汽车里程表，求行驶路程（自编）"
+   },
+   "id": "odometer-056"
+  },
+  {
+   "category": "gauge",
+   "mode": "fill",
+   "prompt": "张师傅开车去旅行，看看仪表盘上的里程表。今天一共开了多少千米？",
+   "figure": "dash",
+   "readings": [{"label": "早上出发时", "value": 5367}, {"label": "晚上到达时", "value": 5644}],
+   "calc": {"kind": "reading", "from": 0, "to": 1},
+   "fields": [{"answer": "277", "unit": "千米"}],
+   "explanation": "里程表记的是车一共跑过的路程，今天开的＝到达读数－出发读数：5644－5367＝277（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "读汽车里程表，求行驶路程",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表读数",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：读汽车里程表，求行驶路程（自编）"
+   },
+   "id": "odometer-057"
+  },
+  {
+   "category": "gauge",
+   "mode": "fill",
+   "prompt": "爸爸两天的里程表读数如下。第二天开了多少千米？",
+   "figure": "dash",
+   "readings": [{"label": "第一天早上", "value": 6019}, {"label": "第一天晚上", "value": 6475}, {"label": "第二天晚上", "value": 6744}],
+   "calc": {"kind": "reading", "from": 1, "to": 2},
+   "fields": [{"answer": "269", "unit": "千米"}],
+   "explanation": "第二天从 6475 开到 6744：6744－6475＝269（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "连续几天的里程表读数",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表读数",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：连续几天的里程表读数（自编）"
+   },
+   "id": "odometer-058"
+  },
+  {
+   "category": "gauge",
+   "mode": "fill",
+   "prompt": "王叔叔两天的里程表读数如下。两天一共开了多少千米？",
+   "figure": "dash",
+   "readings": [{"label": "第一天早上", "value": 3598}, {"label": "第一天晚上", "value": 3911}, {"label": "第二天晚上", "value": 4288}],
+   "calc": {"kind": "reading", "from": 0, "to": 2},
+   "fields": [{"answer": "690", "unit": "千米"}],
+   "explanation": "从最早的读数算到最后的读数：4288－3598＝690（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "连续几天的里程表读数",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表读数",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：连续几天的里程表读数（自编）"
+   },
+   "id": "odometer-059"
+  },
+  {
+   "category": "gauge",
+   "mode": "fill",
+   "prompt": "李阿姨两天的里程表读数如下。第二天开了多少千米？",
+   "figure": "dash",
+   "readings": [{"label": "第一天早上", "value": 1715}, {"label": "第一天晚上", "value": 1906}, {"label": "第二天晚上", "value": 2021}],
+   "calc": {"kind": "reading", "from": 1, "to": 2},
+   "fields": [{"answer": "115", "unit": "千米"}],
+   "explanation": "第二天从 1906 开到 2021：2021－1906＝115（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "连续几天的里程表读数",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表读数",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：连续几天的里程表读数（自编）"
+   },
+   "id": "odometer-060"
+  },
+  {
+   "category": "gauge",
+   "mode": "fill",
+   "prompt": "张师傅两天的里程表读数如下。两天一共开了多少千米？",
+   "figure": "dash",
+   "readings": [{"label": "第一天早上", "value": 6819}, {"label": "第一天晚上", "value": 7260}, {"label": "第二天晚上", "value": 7407}],
+   "calc": {"kind": "reading", "from": 0, "to": 2},
+   "fields": [{"answer": "588", "unit": "千米"}],
+   "explanation": "从最早的读数算到最后的读数：7407－6819＝588（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "连续几天的里程表读数",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表读数",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：连续几天的里程表读数（自编）"
+   },
+   "id": "odometer-061"
+  },
+  {
+   "category": "gauge",
+   "mode": "fill",
+   "prompt": "小舟的妈妈两天的里程表读数如下。第二天开了多少千米？",
+   "figure": "dash",
+   "readings": [{"label": "第一天早上", "value": 3599}, {"label": "第一天晚上", "value": 4045}, {"label": "第二天晚上", "value": 4289}],
+   "calc": {"kind": "reading", "from": 1, "to": 2},
+   "fields": [{"answer": "244", "unit": "千米"}],
+   "explanation": "第二天从 4045 开到 4289：4289－4045＝244（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "连续几天的里程表读数",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表读数",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：连续几天的里程表读数（自编）"
+   },
+   "id": "odometer-062"
+  },
+  {
+   "category": "gauge",
+   "mode": "fill",
+   "prompt": "陈叔叔两天的里程表读数如下。两天一共开了多少千米？",
+   "figure": "dash",
+   "readings": [{"label": "第一天早上", "value": 6423}, {"label": "第一天晚上", "value": 6548}, {"label": "第二天晚上", "value": 6867}],
+   "calc": {"kind": "reading", "from": 0, "to": 2},
+   "fields": [{"answer": "444", "unit": "千米"}],
+   "explanation": "从最早的读数算到最后的读数：6867－6423＝444（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "连续几天的里程表读数",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表读数",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：连续几天的里程表读数（自编）"
+   },
+   "id": "odometer-063"
+  },
+  {
+   "category": "gauge",
+   "mode": "fill",
+   "prompt": "周阿姨两天的里程表读数如下。第二天开了多少千米？",
+   "figure": "dash",
+   "readings": [{"label": "第一天早上", "value": 4695}, {"label": "第一天晚上", "value": 4906}, {"label": "第二天晚上", "value": 5032}],
+   "calc": {"kind": "reading", "from": 1, "to": 2},
+   "fields": [{"answer": "126", "unit": "千米"}],
+   "explanation": "第二天从 4906 开到 5032：5032－4906＝126（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "连续几天的里程表读数",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表读数",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：连续几天的里程表读数（自编）"
+   },
+   "id": "odometer-064"
+  },
+  {
+   "category": "gauge",
+   "mode": "fill",
+   "prompt": "刘师傅两天的里程表读数如下。两天一共开了多少千米？",
+   "figure": "dash",
+   "readings": [{"label": "第一天早上", "value": 3968}, {"label": "第一天晚上", "value": 4163}, {"label": "第二天晚上", "value": 4404}],
+   "calc": {"kind": "reading", "from": 0, "to": 2},
+   "fields": [{"answer": "436", "unit": "千米"}],
+   "explanation": "从最早的读数算到最后的读数：4404－3968＝436（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "连续几天的里程表读数",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表读数",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：连续几天的里程表读数（自编）"
+   },
+   "id": "odometer-065"
+  },
+  {
+   "category": "gauge",
+   "mode": "fill",
+   "prompt": "爸爸两天的里程表读数如下。第二天开了多少千米？",
+   "figure": "dash",
+   "readings": [{"label": "第一天早上", "value": 5757}, {"label": "第一天晚上", "value": 5959}, {"label": "第二天晚上", "value": 6270}],
+   "calc": {"kind": "reading", "from": 1, "to": 2},
+   "fields": [{"answer": "311", "unit": "千米"}],
+   "explanation": "第二天从 5959 开到 6270：6270－5959＝311（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "连续几天的里程表读数",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表读数",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：连续几天的里程表读数（自编）"
+   },
+   "id": "odometer-066"
+  },
+  {
+   "category": "gauge",
+   "mode": "fill",
+   "prompt": "王叔叔两天的里程表读数如下。两天一共开了多少千米？",
+   "figure": "dash",
+   "readings": [{"label": "第一天早上", "value": 4101}, {"label": "第一天晚上", "value": 4275}, {"label": "第二天晚上", "value": 4462}],
+   "calc": {"kind": "reading", "from": 0, "to": 2},
+   "fields": [{"answer": "361", "unit": "千米"}],
+   "explanation": "从最早的读数算到最后的读数：4462－4101＝361（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "连续几天的里程表读数",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表读数",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：连续几天的里程表读数（自编）"
+   },
+   "id": "odometer-067"
+  },
+  {
+   "category": "gauge",
+   "mode": "fill",
+   "prompt": "爸爸今天开了 620 千米，到达时里程表读数如下。出发时的读数是多少？",
+   "figure": "dash",
+   "readings": [{"label": "到达时", "value": 7463}],
+   "calc": {"kind": "before", "driven": 620},
+   "fields": [{"answer": "6843", "unit": "千米"}],
+   "explanation": "出发读数＝到达读数－今天开的路程：7463－620＝6843（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "由读数和路程反推读数",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表读数",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：由读数和路程反推读数（自编）"
+   },
+   "id": "odometer-068"
+  },
+  {
+   "category": "gauge",
+   "mode": "fill",
+   "prompt": "王叔叔今天开了 419 千米，到达时里程表读数如下。出发时的读数是多少？",
+   "figure": "dash",
+   "readings": [{"label": "到达时", "value": 7881}],
+   "calc": {"kind": "before", "driven": 419},
+   "fields": [{"answer": "7462", "unit": "千米"}],
+   "explanation": "出发读数＝到达读数－今天开的路程：7881－419＝7462（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "由读数和路程反推读数",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表读数",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：由读数和路程反推读数（自编）"
+   },
+   "id": "odometer-069"
+  },
+  {
+   "category": "gauge",
+   "mode": "fill",
+   "prompt": "李阿姨今天开了 507 千米，到达时里程表读数如下。出发时的读数是多少？",
+   "figure": "dash",
+   "readings": [{"label": "到达时", "value": 6129}],
+   "calc": {"kind": "before", "driven": 507},
+   "fields": [{"answer": "5622", "unit": "千米"}],
+   "explanation": "出发读数＝到达读数－今天开的路程：6129－507＝5622（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "由读数和路程反推读数",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表读数",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：由读数和路程反推读数（自编）"
+   },
+   "id": "odometer-070"
+  },
+  {
+   "category": "gauge",
+   "mode": "fill",
+   "prompt": "张师傅今天开了 315 千米，到达时里程表读数如下。出发时的读数是多少？",
+   "figure": "dash",
+   "readings": [{"label": "到达时", "value": 7958}],
+   "calc": {"kind": "before", "driven": 315},
+   "fields": [{"answer": "7643", "unit": "千米"}],
+   "explanation": "出发读数＝到达读数－今天开的路程：7958－315＝7643（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "由读数和路程反推读数",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表读数",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：由读数和路程反推读数（自编）"
+   },
+   "id": "odometer-071"
+  },
+  {
+   "category": "gauge",
+   "prompt": "里程表读到 6077 千米时就到目的地了。现在车里的油还能跑 670 千米，够开到目的地吗？",
+   "figure": "dash",
+   "readings": [{"label": "现在", "value": 5470}],
+   "calc": {"kind": "enough", "target": 6077, "fuel": 670},
+   "answer": "够",
+   "options": ["够", "不够"],
+   "explanation": "还要开 6077－5470＝607（千米）。670 ＞ 607，所以够。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "用里程表解决实际问题",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表读数",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：用里程表解决实际问题（自编）"
+   },
+   "id": "odometer-072"
+  },
+  {
+   "category": "gauge",
+   "prompt": "里程表读到 6773 千米时就到目的地了。现在车里的油还能跑 200 千米，够开到目的地吗？",
+   "figure": "dash",
+   "readings": [{"label": "现在", "value": 6499}],
+   "calc": {"kind": "enough", "target": 6773, "fuel": 200},
+   "answer": "不够",
+   "options": ["够", "不够"],
+   "explanation": "还要开 6773－6499＝274（千米）。200 ＜ 274，所以不够。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "用里程表解决实际问题",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表读数",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：用里程表解决实际问题（自编）"
+   },
+   "id": "odometer-073"
+  },
+  {
+   "category": "gauge",
+   "prompt": "里程表读到 2770 千米时就到目的地了。现在车里的油还能跑 216 千米，够开到目的地吗？",
+   "figure": "dash",
+   "readings": [{"label": "现在", "value": 2580}],
+   "calc": {"kind": "enough", "target": 2770, "fuel": 216},
+   "answer": "够",
+   "options": ["够", "不够"],
+   "explanation": "还要开 2770－2580＝190（千米）。216 ＞ 190，所以够。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "用里程表解决实际问题",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表读数",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：用里程表解决实际问题（自编）"
+   },
+   "id": "odometer-074"
+  },
+  {
+   "category": "gauge",
+   "prompt": "里程表读到 4362 千米时就到目的地了。现在车里的油还能跑 366 千米，够开到目的地吗？",
+   "figure": "dash",
+   "readings": [{"label": "现在", "value": 3934}],
+   "calc": {"kind": "enough", "target": 4362, "fuel": 366},
+   "answer": "不够",
+   "options": ["够", "不够"],
+   "explanation": "还要开 4362－3934＝428（千米）。366 ＜ 428，所以不够。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "用里程表解决实际问题",
+    "type": "依据教材总结自编",
+    "label": "加与减·里程表读数",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：用里程表解决实际问题（自编）"
+   },
+   "id": "odometer-075"
+  },
+  {
+   "category": "multi",
+   "mode": "fill",
+   "prompt": "小车沿糖果线从糖果镇一路开到星星湖，一共开了多少千米？",
+   "figure": "route-line",
+   "stops": [{"name": "糖果镇", "km": 0}, {"name": "彩虹站", "km": 146}, {"name": "云朵村", "km": 277}, {"name": "星星湖", "km": 489}],
+   "calc": {"kind": "sum", "from": 0, "to": 3},
+   "fields": [{"answer": "489", "unit": "千米"}],
+   "explanation": "把每段路程加起来：146＋131＋212＝489（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "连加",
+    "point": "三位数连加解决路程问题",
+    "type": "依据教材总结自编",
+    "label": "加与减·连加",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·连加：三位数连加解决路程问题（自编）"
+   },
+   "id": "odometer-076"
+  },
+  {
+   "category": "multi",
+   "mode": "fill",
+   "prompt": "小车沿森林线从松果站一路开到清泉镇，一共开了多少千米？",
+   "figure": "route-line",
+   "stops": [{"name": "松果站", "km": 0}, {"name": "蘑菇村", "km": 128}, {"name": "小鹿坡", "km": 305}, {"name": "清泉镇", "km": 562}],
+   "calc": {"kind": "sum", "from": 0, "to": 3},
+   "fields": [{"answer": "562", "unit": "千米"}],
+   "explanation": "把每段路程加起来：128＋177＋257＝562（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "连加",
+    "point": "三位数连加解决路程问题",
+    "type": "依据教材总结自编",
+    "label": "加与减·连加",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·连加：三位数连加解决路程问题（自编）"
+   },
+   "id": "odometer-077"
+  },
+  {
+   "category": "multi",
+   "mode": "fill",
+   "prompt": "小车沿海滨线从贝壳港一路开到灯塔村，一共开了多少千米？",
+   "figure": "route-line",
+   "stops": [{"name": "贝壳港", "km": 0}, {"name": "珊瑚站", "km": 95}, {"name": "海豚湾", "km": 263}, {"name": "灯塔村", "km": 418}],
+   "calc": {"kind": "sum", "from": 0, "to": 3},
+   "fields": [{"answer": "418", "unit": "千米"}],
+   "explanation": "把每段路程加起来：95＋168＋155＝418（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "连加",
+    "point": "三位数连加解决路程问题",
+    "type": "依据教材总结自编",
+    "label": "加与减·连加",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·连加：三位数连加解决路程问题（自编）"
+   },
+   "id": "odometer-078"
+  },
+  {
+   "category": "multi",
+   "mode": "fill",
+   "prompt": "小车沿果园线从苹果村一路开到西瓜镇，一共开了多少千米？",
+   "figure": "route-line",
+   "stops": [{"name": "苹果村", "km": 0}, {"name": "蜜桃站", "km": 187}, {"name": "葡萄沟", "km": 354}, {"name": "西瓜镇", "km": 629}],
+   "calc": {"kind": "sum", "from": 0, "to": 3},
+   "fields": [{"answer": "629", "unit": "千米"}],
+   "explanation": "把每段路程加起来：187＋167＋275＝629（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "连加",
+    "point": "三位数连加解决路程问题",
+    "type": "依据教材总结自编",
+    "label": "加与减·连加",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·连加：三位数连加解决路程问题（自编）"
+   },
+   "id": "odometer-079"
+  },
+  {
+   "category": "multi",
+   "mode": "fill",
+   "prompt": "小车沿高山线从雪松站一路开到鹰嘴岩，一共开了多少千米？",
+   "figure": "route-line",
+   "stops": [{"name": "雪松站", "km": 0}, {"name": "云海寺", "km": 134}, {"name": "飞瀑村", "km": 308}, {"name": "鹰嘴岩", "km": 471}],
+   "calc": {"kind": "sum", "from": 0, "to": 3},
+   "fields": [{"answer": "471", "unit": "千米"}],
+   "explanation": "把每段路程加起来：134＋174＋163＝471（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "连加",
+    "point": "三位数连加解决路程问题",
+    "type": "依据教材总结自编",
+    "label": "加与减·连加",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·连加：三位数连加解决路程问题（自编）"
+   },
+   "id": "odometer-080"
+  },
+  {
+   "category": "multi",
+   "mode": "fill",
+   "prompt": "小车从苹果村开到葡萄沟，再原路回到苹果村。一共开了多少千米？",
+   "figure": "route-line",
+   "stops": [{"name": "苹果村", "km": 0}, {"name": "蜜桃站", "km": 187}, {"name": "葡萄沟", "km": 354}, {"name": "西瓜镇", "km": 629}],
+   "calc": {"kind": "round", "from": 0, "to": 2},
+   "fields": [{"answer": "708", "unit": "千米"}],
+   "explanation": "单程 354 千米，往返是两个单程：354＋354＝708（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "连加",
+    "point": "往返路程",
+    "type": "依据教材总结自编",
+    "label": "加与减·往返",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·连加：往返路程（自编）"
+   },
+   "id": "odometer-081"
+  },
+  {
+   "category": "multi",
+   "mode": "fill",
+   "prompt": "小车从雪松站开到飞瀑村，再原路回到雪松站。一共开了多少千米？",
+   "figure": "route-line",
+   "stops": [{"name": "雪松站", "km": 0}, {"name": "云海寺", "km": 134}, {"name": "飞瀑村", "km": 308}, {"name": "鹰嘴岩", "km": 471}],
+   "calc": {"kind": "round", "from": 0, "to": 2},
+   "fields": [{"answer": "616", "unit": "千米"}],
+   "explanation": "单程 308 千米，往返是两个单程：308＋308＝616（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "连加",
+    "point": "往返路程",
+    "type": "依据教材总结自编",
+    "label": "加与减·往返",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·连加：往返路程（自编）"
+   },
+   "id": "odometer-082"
+  },
+  {
+   "category": "multi",
+   "mode": "fill",
+   "prompt": "小车从白马站开到蓝湖镇，再原路回到白马站。一共开了多少千米？",
+   "figure": "route-line",
+   "stops": [{"name": "白马站", "km": 0}, {"name": "牧歌村", "km": 219}, {"name": "蓝湖镇", "km": 436}, {"name": "金沙坡", "km": 658}],
+   "calc": {"kind": "round", "from": 0, "to": 2},
+   "fields": [{"answer": "872", "unit": "千米"}],
+   "explanation": "单程 436 千米，往返是两个单程：436＋436＝872（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "连加",
+    "point": "往返路程",
+    "type": "依据教材总结自编",
+    "label": "加与减·往返",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·连加：往返路程（自编）"
+   },
+   "id": "odometer-083"
+  },
+  {
+   "category": "multi",
+   "mode": "fill",
+   "prompt": "小车从南瓜车站开到水晶桥，再原路回到南瓜车站。一共开了多少千米？",
+   "figure": "route-line",
+   "stops": [{"name": "南瓜车站", "km": 0}, {"name": "魔法村", "km": 112}, {"name": "水晶桥", "km": 390}, {"name": "城堡镇", "km": 575}],
+   "calc": {"kind": "round", "from": 0, "to": 2},
+   "fields": [{"answer": "780", "unit": "千米"}],
+   "explanation": "单程 390 千米，往返是两个单程：390＋390＝780（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "连加",
+    "point": "往返路程",
+    "type": "依据教材总结自编",
+    "label": "加与减·往返",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·连加：往返路程（自编）"
+   },
+   "id": "odometer-084"
+  },
+  {
+   "category": "multi",
+   "mode": "fill",
+   "prompt": "小车从银河站开到流星坡，再原路回到银河站。一共开了多少千米？",
+   "figure": "route-line",
+   "stops": [{"name": "银河站", "km": 0}, {"name": "火箭村", "km": 158}, {"name": "流星坡", "km": 372}, {"name": "土星镇", "km": 545}],
+   "calc": {"kind": "round", "from": 0, "to": 2},
+   "fields": [{"answer": "744", "unit": "千米"}],
+   "explanation": "单程 372 千米，往返是两个单程：372＋372＝744（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "连加",
+    "point": "往返路程",
+    "type": "依据教材总结自编",
+    "label": "加与减·往返",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·连加：往返路程（自编）"
+   },
+   "id": "odometer-085"
+  },
+  {
+   "category": "multi",
+   "mode": "fill",
+   "prompt": "小车从松果站开到清泉镇，又折返回蘑菇村。一共开了多少千米？",
+   "figure": "route-line",
+   "stops": [{"name": "松果站", "km": 0}, {"name": "蘑菇村", "km": 128}, {"name": "小鹿坡", "km": 305}, {"name": "清泉镇", "km": 562}],
+   "calc": {"kind": "back", "from": 0, "far": 3, "to": 1},
+   "fields": [{"answer": "996", "unit": "千米"}],
+   "explanation": "去程 562 千米，折返 434 千米，合起来是 562＋434＝996（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "加与减",
+    "point": "走过头再折返",
+    "type": "依据教材总结自编",
+    "label": "加与减·折返",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·加与减：走过头再折返（自编）"
+   },
+   "id": "odometer-086"
+  },
+  {
+   "category": "multi",
+   "mode": "fill",
+   "prompt": "小车从贝壳港开到灯塔村，又折返回珊瑚站。一共开了多少千米？",
+   "figure": "route-line",
+   "stops": [{"name": "贝壳港", "km": 0}, {"name": "珊瑚站", "km": 95}, {"name": "海豚湾", "km": 263}, {"name": "灯塔村", "km": 418}],
+   "calc": {"kind": "back", "from": 0, "far": 3, "to": 1},
+   "fields": [{"answer": "741", "unit": "千米"}],
+   "explanation": "去程 418 千米，折返 323 千米，合起来是 418＋323＝741（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "加与减",
+    "point": "走过头再折返",
+    "type": "依据教材总结自编",
+    "label": "加与减·折返",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·加与减：走过头再折返（自编）"
+   },
+   "id": "odometer-087"
+  },
+  {
+   "category": "multi",
+   "mode": "fill",
+   "prompt": "小车从苹果村开到西瓜镇，又折返回蜜桃站。一共开了多少千米？",
+   "figure": "route-line",
+   "stops": [{"name": "苹果村", "km": 0}, {"name": "蜜桃站", "km": 187}, {"name": "葡萄沟", "km": 354}, {"name": "西瓜镇", "km": 629}],
+   "calc": {"kind": "back", "from": 0, "far": 3, "to": 1},
+   "fields": [{"answer": "1071", "unit": "千米"}],
+   "explanation": "去程 629 千米，折返 442 千米，合起来是 629＋442＝1071（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "加与减",
+    "point": "走过头再折返",
+    "type": "依据教材总结自编",
+    "label": "加与减·折返",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·加与减：走过头再折返（自编）"
+   },
+   "id": "odometer-088"
+  },
+  {
+   "category": "multi",
+   "mode": "fill",
+   "prompt": "小车从雪松站开到鹰嘴岩，又折返回云海寺。一共开了多少千米？",
+   "figure": "route-line",
+   "stops": [{"name": "雪松站", "km": 0}, {"name": "云海寺", "km": 134}, {"name": "飞瀑村", "km": 308}, {"name": "鹰嘴岩", "km": 471}],
+   "calc": {"kind": "back", "from": 0, "far": 3, "to": 1},
+   "fields": [{"answer": "808", "unit": "千米"}],
+   "explanation": "去程 471 千米，折返 337 千米，合起来是 471＋337＝808（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "加与减",
+    "point": "走过头再折返",
+    "type": "依据教材总结自编",
+    "label": "加与减·折返",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·加与减：走过头再折返（自编）"
+   },
+   "id": "odometer-089"
+  },
+  {
+   "category": "multi",
+   "mode": "fill",
+   "prompt": "小车从白马站开到金沙坡，又折返回牧歌村。一共开了多少千米？",
+   "figure": "route-line",
+   "stops": [{"name": "白马站", "km": 0}, {"name": "牧歌村", "km": 219}, {"name": "蓝湖镇", "km": 436}, {"name": "金沙坡", "km": 658}],
+   "calc": {"kind": "back", "from": 0, "far": 3, "to": 1},
+   "fields": [{"answer": "1097", "unit": "千米"}],
+   "explanation": "去程 658 千米，折返 439 千米，合起来是 658＋439＝1097（千米）。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "加与减",
+    "point": "走过头再折返",
+    "type": "依据教材总结自编",
+    "label": "加与减·折返",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·加与减：走过头再折返（自编）"
+   },
+   "id": "odometer-090"
+  },
+  {
+   "category": "drive",
+   "mode": "drive",
+   "prompt": "小车从糖果镇出发，朝太阳城方向开了 1025 千米。它停在哪一站？在线路上点一点。",
+   "stops": [
+    {"name": "糖果镇", "km": 0},
+    {"name": "彩虹站", "km": 146},
+    {"name": "云朵村", "km": 277},
+    {"name": "星星湖", "km": 489},
+    {"name": "月亮湾", "km": 713},
+    {"name": "太阳城", "km": 1025}
+   ],
+   "tableTitle": "糖果线：糖果镇到各站的里程",
+   "from": 0,
+   "km": 1025,
+   "answer": 5,
+   "explanation": "糖果镇的里程是 0，加 1025 得 1025，表里 1025 千米的是太阳城。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "用里程表确定位置",
+    "type": "依据教材总结自编",
+    "label": "加与减·开到哪一站",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：用里程表确定位置（自编）"
+   },
+   "id": "odometer-091"
+  },
+  {
+   "category": "drive",
+   "mode": "drive",
+   "prompt": "小车从太阳城出发，朝糖果镇方向开了 879 千米。它停在哪一站？在线路上点一点。",
+   "stops": [
+    {"name": "糖果镇", "km": 0},
+    {"name": "彩虹站", "km": 146},
+    {"name": "云朵村", "km": 277},
+    {"name": "星星湖", "km": 489},
+    {"name": "月亮湾", "km": 713},
+    {"name": "太阳城", "km": 1025}
+   ],
+   "tableTitle": "糖果线：糖果镇到各站的里程",
+   "from": 5,
+   "km": 879,
+   "answer": 1,
+   "explanation": "太阳城的里程是 1025，减 879 得 146，表里 146 千米的是彩虹站。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "用里程表确定位置",
+    "type": "依据教材总结自编",
+    "label": "加与减·开到哪一站",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：用里程表确定位置（自编）"
+   },
+   "id": "odometer-092"
+  },
+  {
+   "category": "drive",
+   "mode": "drive",
+   "prompt": "小车从松果站出发，朝百灵谷方向开了 562 千米。它停在哪一站？在线路上点一点。",
+   "stops": [
+    {"name": "松果站", "km": 0},
+    {"name": "蘑菇村", "km": 128},
+    {"name": "小鹿坡", "km": 305},
+    {"name": "清泉镇", "km": 562},
+    {"name": "百灵谷", "km": 840}
+   ],
+   "tableTitle": "森林线：松果站到各站的里程",
+   "from": 0,
+   "km": 562,
+   "answer": 3,
+   "explanation": "松果站的里程是 0，加 562 得 562，表里 562 千米的是清泉镇。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "用里程表确定位置",
+    "type": "依据教材总结自编",
+    "label": "加与减·开到哪一站",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：用里程表确定位置（自编）"
+   },
+   "id": "odometer-093"
+  },
+  {
+   "category": "drive",
+   "mode": "drive",
+   "prompt": "小车从百灵谷出发，朝松果站方向开了 840 千米。它停在哪一站？在线路上点一点。",
+   "stops": [
+    {"name": "松果站", "km": 0},
+    {"name": "蘑菇村", "km": 128},
+    {"name": "小鹿坡", "km": 305},
+    {"name": "清泉镇", "km": 562},
+    {"name": "百灵谷", "km": 840}
+   ],
+   "tableTitle": "森林线：松果站到各站的里程",
+   "from": 4,
+   "km": 840,
+   "answer": 0,
+   "explanation": "百灵谷的里程是 840，减 840 得 0，表里 0 千米的是松果站。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "用里程表确定位置",
+    "type": "依据教材总结自编",
+    "label": "加与减·开到哪一站",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：用里程表确定位置（自编）"
+   },
+   "id": "odometer-094"
+  },
+  {
+   "category": "drive",
+   "mode": "drive",
+   "prompt": "小车从贝壳港出发，朝白沙镇方向开了 907 千米。它停在哪一站？在线路上点一点。",
+   "stops": [
+    {"name": "贝壳港", "km": 0},
+    {"name": "珊瑚站", "km": 95},
+    {"name": "海豚湾", "km": 263},
+    {"name": "灯塔村", "km": 418},
+    {"name": "椰子岛", "km": 676},
+    {"name": "白沙镇", "km": 907}
+   ],
+   "tableTitle": "海滨线：贝壳港到各站的里程",
+   "from": 0,
+   "km": 907,
+   "answer": 5,
+   "explanation": "贝壳港的里程是 0，加 907 得 907，表里 907 千米的是白沙镇。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "用里程表确定位置",
+    "type": "依据教材总结自编",
+    "label": "加与减·开到哪一站",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：用里程表确定位置（自编）"
+   },
+   "id": "odometer-095"
+  },
+  {
+   "category": "drive",
+   "mode": "drive",
+   "prompt": "小车从白沙镇出发，朝贝壳港方向开了 644 千米。它停在哪一站？在线路上点一点。",
+   "stops": [
+    {"name": "贝壳港", "km": 0},
+    {"name": "珊瑚站", "km": 95},
+    {"name": "海豚湾", "km": 263},
+    {"name": "灯塔村", "km": 418},
+    {"name": "椰子岛", "km": 676},
+    {"name": "白沙镇", "km": 907}
+   ],
+   "tableTitle": "海滨线：贝壳港到各站的里程",
+   "from": 5,
+   "km": 644,
+   "answer": 2,
+   "explanation": "白沙镇的里程是 907，减 644 得 263，表里 263 千米的是海豚湾。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "用里程表确定位置",
+    "type": "依据教材总结自编",
+    "label": "加与减·开到哪一站",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：用里程表确定位置（自编）"
+   },
+   "id": "odometer-096"
+  },
+  {
+   "category": "drive",
+   "mode": "drive",
+   "prompt": "小车从苹果村出发，朝橙子坡方向开了 629 千米。它停在哪一站？在线路上点一点。",
+   "stops": [
+    {"name": "苹果村", "km": 0},
+    {"name": "蜜桃站", "km": 187},
+    {"name": "葡萄沟", "km": 354},
+    {"name": "西瓜镇", "km": 629},
+    {"name": "橙子坡", "km": 918}
+   ],
+   "tableTitle": "果园线：苹果村到各站的里程",
+   "from": 0,
+   "km": 629,
+   "answer": 3,
+   "explanation": "苹果村的里程是 0，加 629 得 629，表里 629 千米的是西瓜镇。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "用里程表确定位置",
+    "type": "依据教材总结自编",
+    "label": "加与减·开到哪一站",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：用里程表确定位置（自编）"
+   },
+   "id": "odometer-097"
+  },
+  {
+   "category": "drive",
+   "mode": "drive",
+   "prompt": "小车从橙子坡出发，朝苹果村方向开了 918 千米。它停在哪一站？在线路上点一点。",
+   "stops": [
+    {"name": "苹果村", "km": 0},
+    {"name": "蜜桃站", "km": 187},
+    {"name": "葡萄沟", "km": 354},
+    {"name": "西瓜镇", "km": 629},
+    {"name": "橙子坡", "km": 918}
+   ],
+   "tableTitle": "果园线：苹果村到各站的里程",
+   "from": 4,
+   "km": 918,
+   "answer": 0,
+   "explanation": "橙子坡的里程是 918，减 918 得 0，表里 0 千米的是苹果村。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "用里程表确定位置",
+    "type": "依据教材总结自编",
+    "label": "加与减·开到哪一站",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：用里程表确定位置（自编）"
+   },
+   "id": "odometer-098"
+  },
+  {
+   "category": "drive",
+   "mode": "drive",
+   "prompt": "小车从雪松站出发，朝风铃口方向开了 1136 千米。它停在哪一站？在线路上点一点。",
+   "stops": [
+    {"name": "雪松站", "km": 0},
+    {"name": "云海寺", "km": 134},
+    {"name": "飞瀑村", "km": 308},
+    {"name": "鹰嘴岩", "km": 471},
+    {"name": "天池镇", "km": 752},
+    {"name": "风铃口", "km": 1136}
+   ],
+   "tableTitle": "高山线：雪松站到各站的里程",
+   "from": 0,
+   "km": 1136,
+   "answer": 5,
+   "explanation": "雪松站的里程是 0，加 1136 得 1136，表里 1136 千米的是风铃口。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "用里程表确定位置",
+    "type": "依据教材总结自编",
+    "label": "加与减·开到哪一站",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：用里程表确定位置（自编）"
+   },
+   "id": "odometer-099"
+  },
+  {
+   "category": "drive",
+   "mode": "drive",
+   "prompt": "小车从风铃口出发，朝雪松站方向开了 665 千米。它停在哪一站？在线路上点一点。",
+   "stops": [
+    {"name": "雪松站", "km": 0},
+    {"name": "云海寺", "km": 134},
+    {"name": "飞瀑村", "km": 308},
+    {"name": "鹰嘴岩", "km": 471},
+    {"name": "天池镇", "km": 752},
+    {"name": "风铃口", "km": 1136}
+   ],
+   "tableTitle": "高山线：雪松站到各站的里程",
+   "from": 5,
+   "km": 665,
+   "answer": 3,
+   "explanation": "风铃口的里程是 1136，减 665 得 471，表里 471 千米的是鹰嘴岩。",
+   "source": {
+    "book": "北师大版三年级上册数学（知识点总结）",
+    "unit": "第三单元·加与减",
+    "lesson": "里程表",
+    "point": "用里程表确定位置",
+    "type": "依据教材总结自编",
+    "label": "加与减·开到哪一站",
+    "detailTitle": "查看知识点来源",
+    "detail": "第三单元·加与减·里程表：用里程表确定位置（自编）"
+   },
+   "id": "odometer-100"
+  }
+ ]
+}

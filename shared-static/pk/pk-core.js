@@ -1435,6 +1435,7 @@
     register(type, r) {
       renderers[type] = r;
     },
+    renderer: type => renderers[type],
     el, button, shuffle, svg,
     figures: {},
     url,
