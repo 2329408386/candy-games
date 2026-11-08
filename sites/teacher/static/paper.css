@@ -1,0 +1,161 @@
+/* 班级作文报 (paper.html) and its editor (paper_edit.html). The paper looks like a small printed newspaper: warm
+ * paper, ink-green masthead, a vermilion seal for the issue, the essays in 霞鹜文楷 (RedPen, declared in essay.css),
+ * 好词好句 under a red wavy line, 老师点评 in red pen. A4 when printed; one column on phones. */
+.paper-page,.paper-edit{--paper:#fbf6ea;--paper-2:#f3ecd9;--ink-green:#2c4a37;--vermilion:#b5483c;--gold:#a8741c;--rule:#d9cfb5}
+
+/* ---- toolbar (teacher) ---- */
+.paper-toolbar{max-width:880px;margin:0 auto 16px;display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;justify-content:space-between}
+.paper-toolbar-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.paper-legend{max-width:880px;margin:14px auto 0;text-align:center}
+
+/* ---- the sheet ---- */
+.paper-sheet{position:relative;max-width:880px;margin:0 auto;padding:44px 48px 30px;color:#2b2a24;
+  background:
+    radial-gradient(circle at 12% 8%,#fffdf6 0,transparent 45%),
+    radial-gradient(circle at 88% 92%,#f4ecd6 0,transparent 50%),
+    var(--paper);
+  border-radius:4px;box-shadow:0 1px 0 #e9e0c8,0 22px 50px #4a3f2422,0 2px 6px #4a3f2414}
+.paper-sheet::before{content:"";position:absolute;inset:14px;border:1.5px solid var(--ink-green);outline:1px solid var(--ink-green);outline-offset:-6px;pointer-events:none;opacity:.55}
+
+/* masthead */
+.paper-mast{display:flex;align-items:center;justify-content:space-between;gap:20px;position:relative}
+.paper-mast-title{min-width:0}
+.paper-kicker{margin:0 0 2px;font-size:13px;letter-spacing:8px;color:var(--vermilion);font-weight:600}
+.paper-mast h1{margin:0;font-family:RedPen,'Kaiti SC','STKaiti',KaiTi,serif;font-weight:400;font-size:56px;line-height:1.15;letter-spacing:6px;color:var(--ink-green);overflow-wrap:anywhere}
+.paper-seal{flex:none;width:84px;height:84px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  color:var(--vermilion);border:3px solid var(--vermilion);border-radius:10px;transform:rotate(-7deg);
+  box-shadow:inset 0 0 0 3px var(--paper),inset 0 0 0 4.5px var(--vermilion);font-family:RedPen,KaiTi,serif;line-height:1}
+.paper-seal span{font-size:14px;letter-spacing:2px}
+.paper-seal b{font-size:32px;font-weight:400;margin:2px 0}
+.paper-rule{height:8px;margin:14px 0 10px;border-top:4px solid var(--ink-green);border-bottom:1.5px solid var(--ink-green)}
+.paper-meta{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 12px;margin:0 0 22px;font-size:14px;color:#5e5a4c;letter-spacing:.5px}
+.paper-meta i{font-style:normal;color:var(--vermilion);font-size:9px;align-self:center}
+
+/* front: 卷首语 + 头条 */
+.paper-front{display:grid;grid-template-columns:180px 1fr;gap:26px;padding-bottom:6px}
+.paper-intro{position:relative;background:var(--paper-2);border-radius:6px;padding:18px 16px 14px;border-top:3px solid var(--vermilion);align-self:start}
+.paper-intro h2{margin:0 0 10px;font-family:RedPen,KaiTi,serif;font-weight:400;font-size:22px;letter-spacing:4px;color:var(--vermilion)}
+.paper-intro p{margin:0;font-size:14px;line-height:1.9;color:#4c4838;text-align:justify}
+.paper-intro-art{color:var(--ink-green);opacity:.35;margin-top:12px}
+.paper-intro-art svg{width:100%;height:auto;display:block}
+.paper-lead{min-width:0}
+.paper-lead-head{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.paper-badge{display:inline-block;background:var(--vermilion);color:#fff;font-size:13px;font-weight:700;letter-spacing:3px;padding:2px 10px 2px 12px;border-radius:3px}
+.paper-star{display:inline-block;font-size:12px;font-weight:700;color:var(--gold);border:1px solid #d9b86f;background:#fff7e3;border-radius:999px;padding:1px 9px;letter-spacing:1px}
+.paper-star.corner{position:absolute;top:12px;right:12px}
+.paper-title{font-family:RedPen,KaiTi,serif;font-weight:400;color:var(--ink-green);margin:0;letter-spacing:2px;line-height:1.35}
+.paper-title::before{content:"《"}.paper-title::after{content:"》"}
+.paper-lead .paper-title{font-size:34px;margin-left:-.4em}
+.paper-byline{margin:4px 0 14px;font-size:14px;color:#6b6553;letter-spacing:1px}
+.paper-byline strong{color:#3a372c;font-weight:600}
+.paper-lead .paper-byline::before{content:"";display:inline-block;width:26px;height:1px;background:#a89f86;vertical-align:middle;margin-right:8px}
+
+/* essay text */
+.paper-body p{margin:0 0 .55em;text-indent:2em;font-family:RedPen,'Kaiti SC',KaiTi,serif;font-size:18px;line-height:1.95;text-align:justify;color:#2b2a24}
+.paper-cols{column-count:2;column-gap:30px;column-rule:1px dashed var(--rule)}
+.paper-body p.drop{text-indent:0}
+.paper-body p.drop::first-letter{float:left;font-size:3.1em;line-height:1;margin:.08em .12em 0 0;color:var(--vermilion)}
+.good{text-decoration:underline wavy var(--vermilion);text-decoration-thickness:1px;text-underline-offset:6px;text-decoration-skip-ink:none}
+
+/* 老师点评 */
+.paper-comment{position:relative;margin:14px 0 4px;padding:16px 16px 10px;border:1.5px dashed #d79b92;border-radius:10px;background:#fff8f2;
+  font-family:RedPen,KaiTi,serif;font-size:16px;line-height:1.8;color:var(--vermilion)}
+.paper-comment span{position:absolute;top:-11px;left:12px;background:var(--vermilion);color:#fff;font-family:'PingFang SC','Microsoft YaHei',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;padding:1px 10px;border-radius:999px}
+
+/* 佳作展台 */
+.paper-divider{display:flex;align-items:center;gap:14px;margin:26px 0 18px;color:var(--ink-green)}
+.paper-divider::before,.paper-divider::after{content:"";flex:1;height:5px;border-top:1.5px solid currentColor;border-bottom:1px solid currentColor;opacity:.6}
+.paper-divider span{font-family:RedPen,KaiTi,serif;font-size:22px;letter-spacing:6px}
+.paper-grid{column-count:2;column-gap:22px}
+.paper-card{position:relative;break-inside:avoid;display:inline-block;width:100%;margin:0 0 22px;padding:22px 20px 14px;background:#fffdf7;border:1px solid #e6dcc2;border-radius:6px;
+  background-image:
+    linear-gradient(var(--ink-green),var(--ink-green)),linear-gradient(var(--ink-green),var(--ink-green)),
+    linear-gradient(var(--ink-green),var(--ink-green)),linear-gradient(var(--ink-green),var(--ink-green));
+  background-size:18px 2px,2px 18px,18px 2px,2px 18px;
+  background-position:6px 6px,6px 6px,calc(100% - 6px) calc(100% - 6px),calc(100% - 6px) calc(100% - 6px);
+  background-repeat:no-repeat}
+.paper-card .paper-title{font-size:23px;text-align:center;padding:0 40px}
+.paper-card .paper-byline{text-align:center;margin-bottom:12px}
+.paper-card .paper-byline::before,.paper-card .paper-byline::after{content:"·";margin:0 8px;color:var(--vermilion)}
+.paper-card .paper-body p{font-size:17px}
+
+/* 妙笔集锦 */
+.paper-quotes{margin:8px 0 10px;padding:20px 22px 12px;background:var(--paper-2);border-radius:8px;position:relative}
+.paper-quotes h2{margin:0 0 12px;text-align:center}
+.paper-quotes h2 span{display:inline-block;font-family:RedPen,KaiTi,serif;font-weight:400;font-size:22px;letter-spacing:6px;color:var(--vermilion);padding:0 16px;border-bottom:2px solid var(--vermilion)}
+.paper-quotes ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:10px 26px}
+.paper-quotes li{font-family:RedPen,KaiTi,serif;font-size:16px;line-height:1.75;color:#3a372c;padding-left:22px;position:relative}
+.paper-quotes li::before{content:"❀";position:absolute;left:0;top:1px;color:var(--vermilion);font-size:13px}
+.paper-quotes q{quotes:"「" "」"}
+.paper-quotes cite{display:block;text-align:right;font-style:normal;font-size:13px;color:#7a735e;font-family:'PingFang SC','Microsoft YaHei',sans-serif}
+
+/* foot */
+.paper-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:18px;padding-top:10px;border-top:1.5px solid var(--ink-green);font-size:12px;color:#6b6553;letter-spacing:1px}
+.paper-foot-flower{color:var(--vermilion);letter-spacing:6px}
+
+/* ---- phones ---- */
+@media (max-width:720px){
+  .paper-sheet{padding:30px 22px 22px}
+  .paper-sheet::before{inset:8px}
+  .paper-mast h1{font-size:36px;letter-spacing:3px}
+  .paper-kicker{letter-spacing:5px;font-size:12px}
+  .paper-seal{width:64px;height:64px}
+  .paper-seal b{font-size:24px}
+  .paper-front{grid-template-columns:1fr;gap:18px}
+  .paper-intro-art{display:none}
+  .paper-cols,.paper-grid{column-count:1}
+  .paper-lead .paper-title{font-size:27px}
+  .paper-card .paper-title{font-size:21px;padding:0 0 0;margin-top:14px}
+  .paper-body p{font-size:17px}
+  .paper-quotes ul{grid-template-columns:1fr}
+  .paper-foot{flex-direction:column;gap:4px}
+}
+
+/* ---- print: A4, colours kept, page chrome hidden ---- */
+@page{size:A4;margin:10mm}
+@media print{
+  .paper-page{background:#fff}
+  .paper-page *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .paper-page .site-header,.paper-page .site-footer,.paper-page .trial-banner,.paper-page .notice,.paper-toolbar,.paper-legend{display:none!important}
+  .paper-page .student-main{padding:0;max-width:none;margin:0}
+  .paper-sheet{max-width:none;box-shadow:none;border-radius:0;padding:30px 34px 20px}
+  .paper-mast h1{font-size:48px}
+  .paper-body p{font-size:15.5px;line-height:1.85}
+  .paper-sheet{background:var(--paper)}
+  .paper-card .paper-body p{font-size:15px}
+  .paper-card.long{break-inside:auto;display:block}
+  .paper-comment,.paper-quotes,.paper-front,.paper-foot{break-inside:avoid}
+  .paper-divider{break-after:avoid;break-inside:avoid}
+}
+
+/* ---- editor ---- */
+.paper-edit{display:grid;grid-template-columns:minmax(300px,380px) 1fr;gap:20px;align-items:start}
+.paper-edit-side{display:flex;flex-direction:column;gap:20px}
+.paper-edit-row{display:grid;grid-template-columns:1fr 92px;gap:10px}
+.paper-edit-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.paper-edit-head h2{margin:0}
+.paper-edit-head small{font-size:15px;color:var(--muted);font-weight:500}
+.pe-pool{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:6px;max-height:560px;overflow:auto}
+.pe-pool-item label{display:flex;align-items:center;gap:10px;padding:9px 12px;border:1px solid var(--line);border-radius:12px;cursor:pointer;margin:0;font-weight:500}
+.pe-pool-item.on label{border-color:#a9c0a2;background:#f3f8ef}
+.pe-who{display:flex;flex-wrap:wrap;align-items:center;gap:2px 8px;min-width:0}
+.pe-who small{flex-basis:100%;color:var(--muted);font-size:13px;font-weight:400}
+.pe-rec{font-size:12px;font-weight:700;color:#fff;background:var(--red);border-radius:999px;padding:0 8px;line-height:1.7}
+.pe-list{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:10px}
+.pe-item{border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:#fff}
+.pe-item.lead{border-color:#e2b3aa;background:#fffaf6}
+.pe-item-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.pe-no{flex:none;min-width:34px;height:34px;padding:0 6px;border-radius:10px;display:grid;place-items:center;background:var(--soft);color:var(--green-dark);font-weight:700;font-size:14px}
+.pe-item.lead .pe-no{background:var(--red);color:#fff;font-size:13px}
+.pe-item-title{flex:1;min-width:140px;display:flex;flex-direction:column}
+.pe-item-title strong{font-family:RedPen,KaiTi,serif;font-weight:400;font-size:19px}
+.pe-item-title small{color:var(--muted);font-size:13px}
+.pe-tools{display:flex;align-items:center;gap:4px}
+.pe-icon{min-height:32px!important;width:32px;padding:0!important;background:#fff!important;color:var(--green)!important;border:1px solid var(--line)!important;border-radius:8px!important}
+.pe-icon:disabled{opacity:.35;cursor:default}
+.pe-editor{margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)}
+.pe-editor textarea[data-k=text]{font-family:RedPen,KaiTi,serif;font-size:17px}
+.pe-actions{margin-top:16px;display:flex;justify-content:flex-end}
+.pe-empty{text-align:center;padding:26px 0;border:1px dashed var(--line);border-radius:14px}
+.pe-empty[hidden]{display:none}
+@media (max-width:860px){.paper-edit{grid-template-columns:1fr}.pe-pool{max-height:none}}

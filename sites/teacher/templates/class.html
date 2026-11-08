@@ -47,6 +47,21 @@
     {% endif %}
   </section>
 
+  {% if papers %}
+  <section class="wb-section">
+    <div class="wb-section-head"><h2>班级作文报</h2></div>
+    <div class="paper-shelf">
+      {% for p in papers %}
+        <a class="paper-chip" href="{{url_for('paper_view', pid=p.id)}}">
+          <span class="paper-chip-issue">第{{p.issue}}期</span>
+          <strong>{{p.name}}</strong>
+          <small>《{{p.assignment_title}}》· {{p.items}} 篇 · {{'已发布' if p.published_at else '未发布'}}</small>
+        </a>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
   <section class="wb-section">
     <div class="wb-section-head">
       <h2>学生（{{students|length}} 人）</h2>

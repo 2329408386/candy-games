@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+{% block title %}做作文报 · {{assignment.title}}{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{asset('paper.css')}}">{% endblock %}
+{% block header_actions %}<a class="header-link" href="{{url_for('assignment_page', aid=assignment.id)}}">返回作业</a>{% endblock %}
+{% block content %}
+  <div class="wb-heading">
+    <div>
+      <h1>{{'编辑作文报' if paper else '做一期作文报'}}</h1>
+      <p class="muted">《{{assignment.title}}》· {{assignment.class_name}} · 挑几篇好作文排成一份小报，可以打印贴在教室里，也可以发布给学生看。</p>
+    </div>
+  </div>
+  <div class="paper-edit">
+    <div class="paper-edit-side">
+      <section class="wb-card">
+        <h2>报头</h2>
+        <div class="wb-form">
+          <div class="paper-edit-row">
+            <label>报名<input id="pe-name" maxlength="30"></label>
+            <label class="paper-edit-issue">期号<input id="pe-issue" type="number" min="1" max="999"></label>
+          </div>
+          <label>卷首语（选填）<textarea id="pe-intro" rows="3" maxlength="300"></textarea></label>
+        </div>
+      </section>
+      <section class="wb-card">
+        <div class="paper-edit-head">
+          <h2>选文章</h2>
+          <span>
+            <button type="button" class="link-button" id="pe-pick-rec">只选推荐的</button>
+            <button type="button" class="link-button" id="pe-clear">全部清空</button>
+          </span>
+        </div>
+        <p class="hint">按分数从高到低排列。带「推荐」的是这次写得最好的几篇，也可以勾选其他同学。</p>
+        <ul class="pe-pool" id="pe-pool"></ul>
+        <p class="hint" id="pe-waiting" hidden></p>
+      </section>
+    </div>
+    <section class="wb-card paper-edit-main">
+      <div class="paper-edit-head">
+        <h2>本期刊登 <small id="pe-count"></small></h2>
+      </div>
+      <p class="hint">排第一的是头条。点「改文字」可以修改题目、刊登的文字和老师点评。错别字、标点和病句已经按批改改好，好词好句会标出红色波浪线。</p>
+      <ol class="pe-list" id="pe-list"></ol>
+      <p class="pe-empty hint" id="pe-empty">左边勾选要刊登的作文。</p>
+      <p class="wb-error" id="pe-error" role="alert"></p>
+      <div class="pe-actions"><button type="button" id="pe-save">保存并预览</button></div>
+    </section>
+  </div>
+{% endblock %}
+{% block page_data %}<script>window.PAPER={{page_data|tojson}};</script>{% endblock %}
+{% block scripts %}
+<script>
+(() => {
+  const P = window.PAPER, $ = (id) => document.getElementById(id), esc = WB.esc;
+  const rows = new Map(P.rows.map((r) => [r.sid, r]));
+  let picked = P.selected.map((x) => ({ ...x }));
+  let open = null, dirty = false;
+
+  $('pe-name').value = P.name;
+  $('pe-issue').value = P.issue;
+  $('pe-intro').value = P.intro;
+  $('pe-intro').placeholder = P.introDefault;
+  for (const id of ['pe-name', 'pe-issue', 'pe-intro']) $(id).addEventListener('input', () => { dirty = true; });
+
+  function fresh(r) { return { sid: r.sid, title: r.title, text: r.text, comment: r.comment }; }
+
+  function drawPool() {
+    const ul = $('pe-pool');
+    ul.replaceChildren();
+    const chosen = new Set(picked.map((x) => x.sid));
+    for (const r of P.rows) {
+      const li = document.createElement('li');
+      li.className = 'pe-pool-item' + (chosen.has(r.sid) ? ' on' : '');
+      li.innerHTML = `<label><input type="checkbox" ${chosen.has(r.sid) ? 'checked' : ''}>
+        <span class="pe-who"><strong>${esc(r.student)}</strong>${r.recommended ? '<span class="pe-rec">推荐</span>' : ''}
+        <small>${esc(r.reason || r.level)}${r.total !== null ? ' · ' + r.total + ' 分' : ''}</small></span></label>`;
+      li.querySelector('input').addEventListener('change', (e) => {
+        if (e.target.checked) {
+          if (picked.length >= P.max) { e.target.checked = false; alert(`一期最多刊登 ${P.max} 篇`); return; }
+          picked.push(fresh(r));
+        } else {
+          picked = picked.filter((x) => x.sid !== r.sid);
+        }
+        dirty = true;
+        draw();
+      });
+      ul.append(li);
+    }
+    if (!P.rows.length) ul.innerHTML = '<li class="hint">还没有批改好的作文。</li>';
+    const w = $('pe-waiting');
+    w.hidden = !P.waiting.length;
+    w.textContent = P.waiting.length ? `还没有批改好的同学（${P.waiting.length} 人）：${P.waiting.join('、')}` : '';
+  }
+
+  function drawList() {
+    const ol = $('pe-list');
+    ol.replaceChildren();
+    picked.forEach((x, i) => {
+      const r = rows.get(x.sid) || {};
+      const li = document.createElement('li');
+      li.className = 'pe-item' + (i === 0 ? ' lead' : '');
+      li.innerHTML = `
+        <div class="pe-item-head">
+          <span class="pe-no">${i === 0 ? '头条' : i + 1}</span>
+          <span class="pe-item-title"><strong>${esc(x.title)}</strong><small>${esc(r.student || '')} · ${x.text.length} 字</small></span>
+          <span class="pe-tools">
+            <button type="button" class="pe-icon" data-move="-1" ${i === 0 ? 'disabled' : ''} aria-label="上移">↑</button>
+            <button type="button" class="pe-icon" data-move="1" ${i === picked.length - 1 ? 'disabled' : ''} aria-label="下移">↓</button>
+            <button type="button" class="link-button" data-edit>${open === x.sid ? '收起' : '改文字'}</button>
+            <button type="button" class="link-button danger-text" data-drop>移除</button>
+          </span>
+        </div>`;
+      if (open === x.sid) {
+        const box = document.createElement('div');
+        box.className = 'wb-form pe-editor';
+        box.innerHTML = `
+          <label>题目<input data-k="title" maxlength="${P.limits.title}"></label>
+          <label>刊登文字<textarea data-k="text" rows="10" maxlength="${P.limits.text}"></textarea></label>
+          <label>老师点评<textarea data-k="comment" rows="2" maxlength="${P.limits.comment}" placeholder="写一两句点评，空着就不显示"></textarea></label>
+          <button type="button" class="link-button" data-reset>恢复成批改后的文字</button>`;
+        for (const el of box.querySelectorAll('[data-k]')) {
+          el.value = x[el.dataset.k];
+          el.addEventListener('input', () => { x[el.dataset.k] = el.value; dirty = true; });
+        }
+        box.querySelector('[data-reset]').addEventListener('click', () => {
+          if (!rows.get(x.sid) || !confirm('把题目、文字和点评恢复成批改后的样子？')) return;
+          Object.assign(x, fresh(rows.get(x.sid)));
+          dirty = true;
+          draw();
+        });
+        li.append(box);
+      }
+      li.querySelector('[data-edit]').addEventListener('click', () => { open = open === x.sid ? null : x.sid; drawList(); });
+      li.querySelector('[data-drop]').addEventListener('click', () => { picked.splice(i, 1); dirty = true; draw(); });
+      for (const b of li.querySelectorAll('[data-move]')) {
+        b.addEventListener('click', () => {
+          const j = i + Number(b.dataset.move);
+          [picked[i], picked[j]] = [picked[j], picked[i]];
+          dirty = true;
+          drawList();
+        });
+      }
+      ol.append(li);
+    });
+    $('pe-count').textContent = picked.length ? `（${picked.length} 篇）` : '';
+    $('pe-empty').hidden = picked.length > 0;
+  }
+
+  function draw() { drawPool(); drawList(); }
+
+  $('pe-pick-rec').addEventListener('click', () => {
+    picked = P.rows.filter((r) => r.recommended).map(fresh);
+    dirty = true;
+    draw();
+  });
+  $('pe-clear').addEventListener('click', () => { picked = []; dirty = true; draw(); });
+
+  $('pe-save').addEventListener('click', async (e) => {
+    const btn = e.currentTarget;
+    $('pe-error').textContent = '';
+    if (!picked.length) { $('pe-error').textContent = '请至少选一篇作文'; return; }
+    btn.disabled = true;
+    try {
+      const body = await WB.post(P.save, {
+        name: $('pe-name').value, issue: $('pe-issue').value, intro: $('pe-intro').value,
+        items: picked.map((x) => ({ sid: x.sid, title: x.title, text: x.text, comment: x.comment })),
+      });
+      dirty = false;
+      location.href = body.url;
+    } catch (err) {
+      $('pe-error').textContent = err.message;
+      btn.disabled = false;
+    }
+  });
+  addEventListener('beforeunload', (e) => { if (dirty) { e.preventDefault(); e.returnValue = ''; } });
+  draw();
+})();
+</script>
+{% endblock %}

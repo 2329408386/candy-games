@@ -18,6 +18,8 @@
       {% if latest.values()|selectattr('status', 'in', ('review', 'published'))|list %}
         <button type="button" class="secondary" id="export-all" data-url="{{url_for('assignment_export', aid=assignment.id)}}">批量导出（PDF）</button>
       {% endif %}
+      {% if paper %}<a class="button secondary paper-link" href="{{url_for('paper_view', pid=paper.id)}}">📰 作文报 · {{'已发布' if paper.published_at else '未发布'}}</a>
+      {% elif latest.values()|selectattr('status', 'in', ('review', 'published'))|list %}<a class="button secondary paper-link" href="{{url_for('paper_edit', aid=assignment.id)}}">📰 做作文报</a>{% endif %}
       <details class="wb-menu">
         <summary>作业设置</summary>
         {% set a = assignment %}{% include 'assignment_form.html' %}

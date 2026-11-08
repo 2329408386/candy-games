@@ -2,6 +2,21 @@
 {% block title %}我的作业 · 语文老师工作台{% endblock %}
 {% block content %}
   <div class="wb-heading"><div><h1>{{me.name}}，你好</h1><p class="muted">{{me.class_name}} · 我的作业</p></div></div>
+  {% if papers %}
+  <section class="wb-section">
+    <div class="wb-section-head"><h2>班级作文报</h2></div>
+    <div class="paper-shelf">
+      {% for p in papers %}
+        <a class="paper-chip" href="{{url_for('student_paper', pid=p.id)}}">
+          <span class="paper-chip-issue">第{{p.issue}}期</span>
+          <strong>{{p.name}}</strong>
+          <small>《{{p.assignment_title}}》· {{p.items}} 篇习作</small>
+        </a>
+      {% endfor %}
+    </div>
+  </section>
+  <h2 class="list-title">我的作业</h2>
+  {% endif %}
   <div class="wb-list">
     {% for a in assignments %}
       <a class="wb-card assignment-card" href="{{url_for('result_page', sid=a.my_result) if a.my_status == 'published' else url_for('write_page', aid=a.id)}}">

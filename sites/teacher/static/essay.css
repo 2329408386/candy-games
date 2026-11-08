@@ -382,3 +382,11 @@ a.feature-card{display:flex}
 .table-tools{display:flex;justify-content:flex-end;margin:0 0 8px}
 .table-tools label{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--muted)}
 .table-tools select{width:auto;min-height:34px;padding:4px 10px}
+/* 班级作文报 shelf (class page, student home) */
+.paper-shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;max-width:860px}
+.paper-chip{position:relative;display:flex;flex-direction:column;gap:2px;padding:18px 18px 14px;border-radius:6px;color:var(--ink);background:#fbf6ea;border:1px solid #e6dcc2;border-top:4px solid #2c4a37;box-shadow:var(--shadow);transition:transform .15s}
+.paper-chip:hover{transform:translateY(-2px);color:var(--ink)}
+.paper-chip strong{font-family:RedPen,KaiTi,serif;font-weight:400;font-size:22px;color:#2c4a37;letter-spacing:1px;padding-right:58px}
+.paper-chip small{color:var(--muted);font-size:13px}
+.paper-chip-issue{position:absolute;top:14px;right:14px;color:#b5483c;border:2px solid #b5483c;border-radius:6px;padding:0 6px;font-size:13px;font-weight:700;transform:rotate(-6deg)}
+.list-title{margin:28px 0 12px}

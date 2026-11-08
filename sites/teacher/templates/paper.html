@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% block title %}{{paper.name}} · 第{{paper.issue}}期{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{asset('paper.css')}}">{% endblock %}
+{% block body_class %} paper-page{% endblock %}
+{% block header_actions %}{% if for_teacher %}<a class="header-link" href="{{url_for('assignment_page', aid=assignment.id)}}">返回作业</a>{% else %}<a class="header-link" href="{{url_for('student_home')}}">返回</a>{% endif %}{% endblock %}
+{% macro body(paras, lead=False) %}
+  {% for para in paras %}<p{% if lead and loop.first %} class="drop"{% endif %}>{% for run, note in para %}{% if note is not none %}<span class="good"{% if note %} title="{{note}}"{% endif %}>{{run}}</span>{% else %}{{run}}{% endif %}{% endfor %}</p>{% endfor %}
+{% endmacro %}
+{% block content %}
+  {% if for_teacher %}
+    <div class="paper-toolbar" role="toolbar" aria-label="作文报">
+      <span class="tag {{'' if paper.published_at else 'off'}}">{{'学生已经能看到' if paper.published_at else '还没发布，学生看不到'}}</span>
+      <span class="paper-toolbar-actions">
+        <a class="button secondary small" href="{{url_for('paper_edit', aid=assignment.id)}}">编辑</a>
+        <button type="button" class="secondary small" onclick="window.print()">打印 / 存为 PDF</button>
+        {% if paper.published_at %}
+          <button type="button" class="secondary small" data-post="{{url_for('paper_publish', pid=paper.id, action='unpublish')}}" data-confirm="撤回后学生就看不到这期作文报了。确定？">撤回</button>
+        {% else %}
+          <button type="button" class="small" data-post="{{url_for('paper_publish', pid=paper.id, action='publish')}}" data-confirm="发布后，{{assignment.class_name}}的同学登录后都能看到这期作文报。确定发布？">发布给学生</button>
+        {% endif %}
+        <button type="button" class="link-button danger-text" data-post="{{url_for('paper_delete', pid=paper.id)}}" data-confirm="删除这期作文报？作文本身不受影响。">删除</button>
+      </span>
+    </div>
+  {% endif %}
+
+  <article class="paper-sheet">
+    <header class="paper-mast">
+      <div class="paper-mast-title">
+        <p class="paper-kicker">班级习作园地</p>
+        <h1>{{paper.name}}</h1>
+      </div>
+      <div class="paper-seal" aria-label="第{{paper.issue}}期"><span>第</span><b>{{paper.issue}}</b><span>期</span></div>
+    </header>
+    <div class="paper-rule" aria-hidden="true"></div>
+    <p class="paper-meta">
+      <span>{{day}}</span><i aria-hidden="true">◆</i>
+      <span>本期主题《{{assignment.title}}》</span>{% if editor %}<i aria-hidden="true">◆</i>
+      <span>主编 {{editor}}</span>{% endif %}<i aria-hidden="true">◆</i>
+      <span>共 {{items|length}} 篇</span>
+    </p>
+
+    {% set lead = items[0] if items else none %}
+    <section class="paper-front">
+      <aside class="paper-intro">
+        <h2>卷首语</h2>
+        <p>{{paper.intro or ('本期主题是《%s》。这一期刊登了 %d 位同学的习作，读一读，看看他们是怎样把文章写得具体又生动的。'|format(assignment.title, items|length))}}</p>
+        <div class="paper-intro-art" aria-hidden="true">
+          <svg viewBox="0 0 120 60"><path d="M6 52c18-30 38-30 54 0M60 52c16-24 34-24 54 0" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="92" cy="14" r="7" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+        </div>
+      </aside>
+      {% if lead %}
+        <div class="paper-lead">
+          <div class="paper-lead-head">
+            <span class="paper-badge">头条</span>
+            {% if lead.excellent %}<span class="paper-star">★ 优秀习作</span>{% endif %}
+          </div>
+          <h2 class="paper-title">{{lead.title}}</h2>
+          <p class="paper-byline">{{assignment.class_name}} · <strong>{{lead.student}}</strong></p>
+          <div class="paper-body paper-cols">{{ body(lead.paragraphs, True) }}</div>
+          {% if lead.comment %}<div class="paper-comment"><span>老师点评</span>{{lead.comment}}</div>{% endif %}
+        </div>
+      {% endif %}
+    </section>
+
+    {% if items|length > 1 %}
+      <div class="paper-divider" aria-hidden="true"><span>佳作展台</span></div>
+      <section class="paper-grid">
+        {% for it in items[1:] %}
+          <article class="paper-card{{' long' if it.long}}">
+            {% if it.excellent %}<span class="paper-star corner">★ 优秀习作</span>{% endif %}
+            <h3 class="paper-title">{{it.title}}</h3>
+            <p class="paper-byline">{{it.student}}</p>
+            <div class="paper-body">{{ body(it.paragraphs) }}</div>
+            {% if it.comment %}<div class="paper-comment"><span>老师点评</span>{{it.comment}}</div>{% endif %}
+          </article>
+        {% endfor %}
+      </section>
+    {% endif %}
+
+    {% if quotes %}
+      <section class="paper-quotes">
+        <h2><span>妙笔集锦</span></h2>
+        <ul>
+          {% for q in quotes %}<li><q>{{q.quote}}</q><cite>—— {{q.student}}</cite></li>{% endfor %}
+        </ul>
+      </section>
+    {% endif %}
+
+    <footer class="paper-foot">
+      <span>{{paper.name}}</span><span class="paper-foot-flower" aria-hidden="true">✿ ✿ ✿</span><span>第{{paper.issue}}期 · {{day}}</span>
+    </footer>
+  </article>
+  {% if items %}<p class="paper-legend hint">红色波浪线是老师圈出的好词好句{% if for_teacher %}；电脑上点「打印 / 存为 PDF」可以打印或保存，纸张选 A4{% endif %}。</p>{% endif %}
+{% endblock %}

@@ -564,7 +564,7 @@ MARK_CLASS = {"错别字": "typo", "用词不当": "word", "病句": "sentence",
 
 
 def register_essay(app):
-    from . import admin
+    from . import admin, paper
 
     app.jinja_env.globals.update(
         STATUS=STATUS,
@@ -613,6 +613,7 @@ def register_essay(app):
 
     register_pages(app)
     register_teacher_api(app)
+    paper.register(app)
     register_student_api(app)
     register_trial(app)
     register_pdf_links(app)
@@ -886,8 +887,11 @@ def register_pages(app):
             " FROM ess_assignments a WHERE a.class_id=? AND a.deleted_at IS NULL ORDER BY a.id DESC",
             (cid,),
         ).fetchall()
+        from .paper import class_papers
+
         return render_template(
             "class.html",
+            papers=class_papers(cid),
             klass=klass,
             students=students,
             assignments=assignments,
@@ -1005,8 +1009,11 @@ def register_pages(app):
             final = review and (review["final"] or review["ai"])
             if final:
                 scores[sid] = final
+        from .paper import paper_of_assignment
+
         return render_template(
             "assignment.html",
+            paper=paper_of_assignment(aid),
             assignment=assignment,
             students=students,
             latest=latest,
@@ -1119,7 +1126,9 @@ def register_pages(app):
             " FROM ess_assignments a WHERE a.class_id=? AND a.deleted_at IS NULL ORDER BY a.id DESC",
             (me["id"], me["id"], me["id"], me["class_id"]),
         ).fetchall()
-        return render_template("student_home.html", me=me, assignments=assignments)
+        from .paper import class_papers
+
+        return render_template("student_home.html", me=me, assignments=assignments, papers=class_papers(me["class_id"], True))
 
     @app.get("/student/essay/<int:aid>")
     def write_page(aid):
