@@ -295,38 +295,17 @@ def test_ranking_page_and_header_links(client, alice, bob, site):
     assert "查看班级榜" in alice.get("/me").get_data(as_text=True)
 
 
-def test_my_devices_self_remove_once_a_month(alice, site, db):
-    db.execute("DELETE FROM audit WHERE site=? AND action='device_self_remove'", (site,))
-    db.commit()
+def test_my_devices_read_only(alice, site, db):
     second, third = SiteClient(site), SiteClient(site)
     assert second.activate().status_code == 200 and third.activate().status_code == 200
     full = SiteClient(site).activate()
-    assert full.status_code == 403 and "我的设备" in full.get_json()["error"]
+    assert full.status_code == 403 and "联系管理员" in full.get_json()["error"] and "我的设备" not in full.get_json()["error"]
 
     me = alice.get("/api/me").get_json()["devices"]
-    assert (len(me["list"]), me["limit"], me["removals_left"], me["days"]) == (3, 3, 1, 30)
+    assert (len(me["list"]), me["limit"]) == (3, 3) and "removals_left" not in me
     assert [x["me"] for x in me["list"]].count(True) == 1 and "token_hash" not in me["list"][0]
-    mine = next(x for x in me["list"] if x["me"])
-    others = [x for x in me["list"] if not x["me"]]
-
-    def remove(c, x, created=None):
-        return c.post(f"/api/me/devices/{x['n']}/remove", json={"created_at": x["created_at"] if created is None else created})
-
-    assert remove(alice, mine).status_code == 400, "not the device in use"
-    assert remove(alice, others[0], created=1).status_code == 400, "stale list"
-    assert SiteClient(site).post("/api/me/devices/1/remove", json={}).status_code == 403
-    sessions = {c: c.get("/api/session").status_code for c in (second, third)}
-    assert set(sessions.values()) == {200}
-
-    r = remove(alice, others[0])
-    assert r.status_code == 200
-    left = r.get_json()["devices"]
-    assert len(left["list"]) == 2 and left["removals_left"] == 0
-    assert sorted(c.get("/api/session").status_code for c in (second, third)) == [200, 403], "the removed one is signed out"
-    still = next(x for x in left["list"] if not x["me"])
-    r = remove(alice, still)
-    assert r.status_code == 400 and "联系管理员" in r.get_json()["error"]
-    assert SiteClient(site).activate().status_code == 200, "the freed slot can be used"
-    assert "我的设备" in alice.get("/me").get_data(as_text=True)
-    db.execute("DELETE FROM audit WHERE site=? AND action='device_self_remove'", (site,))
-    db.commit()
+    other = next(x for x in me["list"] if not x["me"])
+    assert alice.post(f"/api/me/devices/{other['n']}/remove", json={"created_at": other["created_at"]}).status_code == 404
+    assert {c.get("/api/session").status_code for c in (second, third)} == {200}
+    page = alice.get("/me").get_data(as_text=True)
+    assert "我的设备" in page and "removeDevice" not in page

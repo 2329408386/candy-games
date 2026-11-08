@@ -24,8 +24,6 @@ TOP_CACHE_SECONDS = 60
 _top_cache = {}
 MIN_SECONDS_PER_ANSWER = 1  # a round now moves on by itself 1 s (right) or 2 s (wrong) after each answer
 BEIJING = 8 * 3600
-SELF_REMOVALS = 1  # devices a user may remove themselves (我的设备) per SELF_REMOVAL_DAYS; the admin can always unbind
-SELF_REMOVAL_DAYS = 30
 
 
 def period_start(kind, now=None):
@@ -283,8 +281,6 @@ def register_social(app):
             devices={
                 "list": [{k: x[k] for k in ("n", "name", "created_at", "last_seen", "me")} for x in devices.my_devices(lid)],
                 "limit": current()["device_limit"],
-                "removals_left": max(0, SELF_REMOVALS - devices.self_removals(lid, SELF_REMOVAL_DAYS)),
-                "days": SELF_REMOVAL_DAYS,
             },
         )
 
@@ -358,15 +354,6 @@ def register_social(app):
         lid = user()
         reset_profile(lid, "avatar")
         db().commit()
-        return jsonify(me_payload(lid))
-
-    @app.post("/api/me/devices/<int:n>/remove")
-    def remove_device(n):
-        lid = user()
-        try:
-            devices.remove(lid, n, payload().get("created_at"), SELF_REMOVALS, SELF_REMOVAL_DAYS)
-        except ValueError as exc:
-            return fail(str(exc))
         return jsonify(me_payload(lid))
 
     @app.post("/api/class/create")

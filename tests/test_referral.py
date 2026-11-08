@@ -164,7 +164,7 @@ def test_trial_convert_with_code(db):
     a = SiteClient("teacher")
     a.login()
     assert 'name="referral"' in a.get(f"/admin/licenses/{lid}").get_data(as_text=True)
-    form = {"buyer": "订单 9", "days": "365", "students": "50", "monthly": "200", "device_limit": "3"}
+    form = {"buyer": "订单 9", "days": "365", "students": "50", "monthly": "200"}
     # A wrong code converts nothing.
     a.post(f"/admin/licenses/{lid}/trial_convert", dict(form, referral="WRONGCDE"))
     assert db.execute("SELECT 1 FROM ess_trials WHERE license_id=?", (lid,)).fetchone()

@@ -88,7 +88,7 @@
                   <td>
                     {% if archived %}{{r.games|game_names}}{% else %}{% for label in group_labels(license_group_ids(r.id)) %}<span class="tag">{{label}}</span>{% endfor %}{% endif %}
                   </td>
-                  <td style="white-space:nowrap">{{r.devices}} / {{r.device_limit}}</td>
+                  <td style="white-space:nowrap">{{r.devices}} / {{'不限' if site.kind == 'workbench' else r.device_limit}}</td>
                   <td>
                     <span class="tag {{'off' if not r.enabled else ''}}">{{'已归档' if archived else ('启用' if r.enabled else '停用')}}</span><span class="buyer">{{r.buyer if r.assigned_at else '未分配'}}</span>
                   </td>

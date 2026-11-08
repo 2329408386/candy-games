@@ -55,7 +55,6 @@
                 <a href="{{url_for('teacher_home')}}">我的功能</a>
                 <a href="{{url_for('classes_page')}}">我的班级</a>
                 <a href="{{url_for('profile_page')}}">修改名字和头像</a>
-                <a href="{{url_for('profile_page')}}#devices">我的设备（{{me_teacher.devices}}/{{me_teacher.device_limit}}）</a>
                 {% if not me_teacher.trial %}
                   <a href="{{url_for('profile_page')}}#referral">我的推荐码</a>
                   <a href="{{url_for('feedback_page')}}">提改进建议{% if me_teacher.feedback_unread %} <span class="fb-dot" role="img" aria-label="有新回复"></span>{% endif %}</a>

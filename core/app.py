@@ -374,7 +374,7 @@ def licenses_xlsx(rows):
                 r["id"],
                 keys[r["key_hash"]],
                 "、".join(group_labels(groups.get(r["id"], []))),
-                r["device_limit"],
+                "不限" if site().kind == "workbench" else r["device_limit"],
                 "已归档（不可使用）" if r["archived_at"] is not None else ("启用" if r["enabled"] else "停用"),
                 r["buyer"],
                 "、".join(site().games[g] for g in json.loads(r["games"])) if r["archived_at"] is not None else "",
@@ -709,11 +709,11 @@ def register_api(app):
             "SELECT 1 FROM devices WHERE site=? AND license_id=? AND token_hash=?", (s, row["id"], digest(token))
         ).fetchone()
         count = device_count(row["id"])
-        if not bound and count >= row["device_limit"]:
+        if not bound and count >= row["device_limit"] and site().kind != "workbench":  # the workbench has no device limit
             d.rollback()
             return (
                 jsonify(
-                    error=f"此授权码已绑定{row['device_limit']}台设备。可以在已登录的设备上，点右上角头像 →「我的设备」移除不用的设备，或联系管理员解绑",
+                    error=f"此授权码已绑定{row['device_limit']}台设备，请联系管理员解绑",
                     device_count=count,
                     device_limit=row["device_limit"],
                 ),
@@ -911,7 +911,8 @@ def register_admin(app):
                 except ValueError:
                     raise ValueError("生成数量必须为1至1000的整数")
                 try:
-                    limit = integer_field("device_limit", 1, 100)
+                    # The workbench has no device limit: the column is NOT NULL, so it holds the maximum.
+                    limit = 100 if workbench else integer_field("device_limit", 1, 100)
                 except ValueError:
                     raise ValueError("设备上限必须为1至100的整数")
                 grades_json = json.dumps(list(dict.fromkeys(group_map()[gid]["grade"] for gid in chosen)))

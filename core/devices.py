@@ -1,15 +1,11 @@
-"""我的设备: a user sees the devices (browsers) their license is activated on and may remove other ones themselves.
+"""我的设备 on the game sites: a user sees (read only) the devices (browsers) their license is activated on.
 
-Each site sets how many self-removals a license gets per window (the game sites 1 in 30 days, the teacher
-workbench 3); removals are counted from the audit log ('device_self_remove'). The admin can always unbind.
-A removed browser is signed out on its next request: core.app.current() joins the devices table.
+Users cannot remove devices themselves; only the admin unbinds. The teacher workbench shows no devices at all.
 """
 
 import time
 from flask import session
-from .app import audit, db, digest, site
-
-DAYS = 30
+from .app import db, digest, site
 
 
 def device_name(ua):
@@ -69,25 +65,3 @@ def my_devices(lid):
          "me": r["token_hash"] == mine, "token_hash": r["token_hash"]}
         for i, r in enumerate(rows, 1)
     ]
-
-
-def self_removals(lid, days=DAYS):
-    since = int(time.time()) - days * 86400
-    return db().execute(
-        "SELECT count(*) FROM audit WHERE site=? AND license_id=? AND action='device_self_remove' AND created_at>=?",
-        (site().key, lid, since),
-    ).fetchone()[0]
-
-
-def remove(lid, n, created_at, allowed, days=DAYS):
-    """Removes device n (checked against its created_at, so a stale page cannot hit the wrong one); ValueError says why not."""
-    device = next((x for x in my_devices(lid) if x["n"] == n and x["created_at"] == created_at), None)
-    if not device:
-        raise ValueError("设备列表变了，请刷新页面再试")
-    if device["me"]:
-        raise ValueError("不能移除正在用的这台设备；要换设备，请在这台设备上退出登录")
-    if self_removals(lid, days) >= allowed:
-        raise ValueError(f"{days} 天内最多自己移除 {allowed} 台设备，请联系管理员解绑")
-    db().execute("DELETE FROM devices WHERE site=? AND license_id=? AND token_hash=?", (site().key, lid, device["token_hash"]))
-    audit("device_self_remove", lid, device["name"])
-    db().commit()

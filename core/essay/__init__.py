@@ -21,8 +21,8 @@ edits and publishes it → the student sees the review written in red pen on the
 student may submit an assignment up to MAX_ATTEMPTS times (a resubmission waits until the previous one is published
 or failed). Starting work needs the feature to be active (features.require); what is already queued is finished.
 
-Devices. A teacher sees the devices their code is activated on (我的设备 on the profile page) and may remove other
-devices themselves, at most SELF_REMOVALS times in 30 days (audit 'device_self_remove'); the admin can always unbind.
+Devices. A teacher code works on any number of devices, and teachers see nothing about devices; the admin sees the
+bound browsers (with 最近使用, kept by touch_device) and may unbind them.
 
 Students never read "AI" or "模型": their pages and the status API they poll speak of the teacher marking the work
 (STUDENT_STATUS); why a job waits (HOLDS) is shown to teachers only.
@@ -47,7 +47,6 @@ from flask import Response, abort, g, jsonify, redirect, render_template, reques
 from core import feedback as user_feedback
 from core.app import KEY_ALPHABET, XLSX_MIME, csrf, current, data_dir, db, device_hash, limited, new_xlsx, site, xlsx_download
 from core import devices
-from core.devices import device_name  # noqa: F401  (templates and tests use core.essay.device_name)
 from . import features, grading, referral
 
 DEFAULT_STUDENTS = 70
@@ -103,8 +102,6 @@ FAILS = {
 }
 # A student may hand in this many times in all, counted or not: photos that keep failing end with 请找老师.
 MAX_SUBMISSIONS = MAX_ATTEMPTS + 3
-SELF_REMOVALS = 3
-SELF_REMOVAL_DAYS = 30
 # 统编版 习作 / 写话 per grade and term (tools/units.py builds it): 布置作文 fills in 主题, 文体 and 要求 from it.
 UNITS = json.loads((grading.PROMPTS.parent / "data" / "units.json").read_text(encoding="utf-8"))
 HOLDS = {
@@ -181,10 +178,6 @@ def teacher():
 
 def touch_device(lid):
     devices.touch(lid)
-
-
-def my_devices(lid):
-    return devices.my_devices(lid)
 
 
 # ---- trials: each browser may try each feature once ----
@@ -593,7 +586,6 @@ def register_essay(app):
         workbench_features=lambda lid: features.overview(db(), lid),
         workbench_feature_list=features.FEATURES,
         referral_info=lambda lid: referral.admin_info(db(), lid),
-        device_name=device_name,
     )
     app.jinja_env.filters["mark_class"] = lambda t: MARK_CLASS.get(t, "tip")
     app.jinja_env.filters["date"] = lambda value: time.strftime("%Y-%m-%d", time.gmtime(value + BEIJING)) if value else ""
@@ -610,8 +602,6 @@ def register_essay(app):
             me["classes"] = db().execute(
                 "SELECT count(*) FROM ess_classes WHERE license_id=? AND archived_at IS NULL", (row["id"],)
             ).fetchone()[0]
-            me["devices"] = db().execute("SELECT count(*) FROM devices WHERE site='teacher' AND license_id=?", (row["id"],)).fetchone()[0]
-            me["device_limit"] = row["device_limit"]
             me["trial"] = dict(trial_info(row["id"]), id=row["id"]) if is_trial(row["id"]) else None
             me["notices"] = referral.pending_notices(db(), row["id"])
             me["feedback_unread"] = 0 if me["trial"] else user_feedback.unread(row["id"])
@@ -827,10 +817,6 @@ def register_pages(app):
         return render_template(
             "profile.html",
             name_max=TEACHER_NAME_MAX,
-            devices=my_devices(row["id"]),
-            device_limit=row["device_limit"],
-            removals_left=max(0, SELF_REMOVALS - devices.self_removals(row["id"], SELF_REMOVAL_DAYS)),
-            removal_days=SELF_REMOVAL_DAYS,
             referral_code=referral_code,
             referred=referral.count_referred(d, row["id"]),
             referrer_days=referral.REFERRER_DAYS,
@@ -1384,12 +1370,6 @@ def register_teacher_api(app):
         d.execute("UPDATE profiles SET avatar=?,avatar_ver=avatar_ver+1 WHERE site='teacher' AND license_id=?", (data, row["id"]))
         d.commit()
         return jsonify(ok=True, avatar=teacher_profile(row["id"])["avatar"])
-
-    @app.post("/api/me/devices/<int:n>/remove")
-    @teacher_api
-    def device_remove(row, n):
-        devices.remove(row["id"], n, payload().get("created_at"), SELF_REMOVALS, SELF_REMOVAL_DAYS)
-        return jsonify(ok=True)
 
     @app.post("/api/classes")
     @teacher_api

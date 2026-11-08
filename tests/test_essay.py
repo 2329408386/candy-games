@@ -867,9 +867,9 @@ def test_generated_codes_carry_features_from_activation(db):
     a = SiteClient("teacher")
     a.login()
     page = a.get("/admin/licenses/new").get_data(as_text=True)
-    assert "功能和有效期" in page and 'name="days_essay"' in page
+    assert "功能和有效期" in page and 'name="days_essay"' in page and 'name="device_limit"' not in page
     nonce = re.search(r'name="nonce" value="([^"]+)"', page).group(1)
-    r = a.post("/admin/licenses/new", {"nonce": nonce, "quantity": "1", "device_limit": "3", "feature_essay": "1", "days_essay": "730"})
+    r = a.post("/admin/licenses/new", {"nonce": nonce, "quantity": "1", "feature_essay": "1", "days_essay": "730"})
     assert r.status_code == 302, r.get_data(as_text=True)[:500]
     lid = db.execute("SELECT max(id) FROM licenses WHERE site='teacher'").fetchone()[0]
     row = db.execute("SELECT * FROM ws_entitlements WHERE license_id=?", (lid,)).fetchone()
@@ -881,7 +881,7 @@ def test_generated_codes_carry_features_from_activation(db):
 
     assert features.describe(row)["days"] == 730
     nonce = re.search(r'name="nonce" value="([^"]+)"', a.get("/admin/licenses/new").get_data(as_text=True)).group(1)
-    assert a.post("/admin/licenses/new", {"nonce": nonce, "quantity": "1", "device_limit": "3"}).status_code == 400
+    assert a.post("/admin/licenses/new", {"nonce": nonce, "quantity": "1"}).status_code == 400
 
 
 def test_photo_essay_is_read_graded_and_drawn_on_the_photo(models, klass, db):
@@ -1328,14 +1328,14 @@ def test_admin_converts_a_trial_and_keeps_its_data(models, db):
     a.login()
     assert "转为正式" in a.get(f"/admin/licenses/{lid}").get_data(as_text=True)
     assert "转为正式" not in a.get("/admin/licenses/2").get_data(as_text=True)
-    assert a.post("/admin/licenses/2/trial_convert", {"buyer": "x", "days": "365", "students": "60", "monthly": "300", "device_limit": "2"}).status_code == 404
-    form = {"buyer": "王老师 订单 123", "days": "365", "students": "50", "monthly": "200", "device_limit": "3"}
+    assert a.post("/admin/licenses/2/trial_convert", {"buyer": "x", "days": "365", "students": "60", "monthly": "300"}).status_code == 404
+    form = {"buyer": "王老师 订单 123", "days": "365", "students": "50", "monthly": "200"}
     a.post(f"/admin/licenses/{lid}/trial_convert", dict(form, buyer=" "))
     assert db.execute("SELECT 1 FROM ess_trials WHERE license_id=?", (lid,)).fetchone()
     a.post(f"/admin/licenses/{lid}/trial_convert", form)
     assert not db.execute("SELECT 1 FROM ess_trials WHERE license_id=?", (lid,)).fetchone()
     lic = db.execute("SELECT * FROM licenses WHERE site='teacher' AND id=?", (lid,)).fetchone()
-    assert lic["buyer"] == "王老师 订单 123" and lic["device_limit"] == 3
+    assert lic["buyer"] == "王老师 订单 123"
     assert tuple(db.execute("SELECT students,monthly FROM ess_quota WHERE license_id=?", (lid,)).fetchone()) == (50, 200)
     expires = db.execute("SELECT expires_at FROM ws_entitlements WHERE license_id=? AND feature='essay'", (lid,)).fetchone()[0]
     assert 364 * 86400 < expires - time.time() < 366 * 86400
@@ -1431,7 +1431,7 @@ def test_reviews_rescaled_to_25(db):
 
 # ---- devices, feature pages, classes overview, student wording ----
 def test_device_name():
-    from core.essay import device_name
+    from core.devices import device_name
 
     assert device_name("Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit Mobile MicroMessenger/8.0") == "iPhone · 微信"
     assert device_name("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit Chrome/120 Safari/537") == "Windows 电脑 · Chrome"
@@ -1439,40 +1439,23 @@ def test_device_name():
     assert device_name("") == "未知设备"
 
 
-def test_teacher_sees_and_removes_own_devices(db):
+def test_teacher_devices_unlimited_and_hidden(db):
     db.execute("DELETE FROM limits")  # activations are rate limited per address
-    db.commit()
     db.execute("DELETE FROM devices WHERE site='teacher' AND license_id=2")
-    db.execute("DELETE FROM audit WHERE site='teacher' AND action='device_self_remove'")
+    db.execute("UPDATE licenses SET device_limit=1 WHERE site='teacher' AND id=2")
     db.commit()
-    phones = [teacher_client(TEACHER2_KEY) for _ in range(5)]
+    phones = [teacher_client(TEACHER2_KEY) for _ in range(4)]  # more than device_limit: the workbench has no limit
+    assert db.execute("SELECT count(*) FROM devices WHERE site='teacher' AND license_id=2").fetchone()[0] == 4
     me = phones[0]
-    page = me.get("/teacher/profile").get_data(as_text=True)
-    assert 'id="devices"' in page and "本机" in page and "<strong>5</strong> 台设备" in page
-    assert "我的设备（5/100）" in page  # in the header menu
-    rows = db.execute("SELECT created_at FROM devices WHERE site='teacher' AND license_id=2 ORDER BY created_at,token_hash").fetchall()
-    links = re.findall(r'devices/(\d+)/remove" data-body=\'\{"created_at": (\d+)\}\'', page)
-    assert len(links) == 4  # every device but this one
-    mine = next(n for n in range(1, 6) if str(n) not in [x[0] for x in links])
-    r = jpost(me, f"/api/me/devices/{mine}/remove", {"created_at": rows[mine - 1]["created_at"]})
-    assert r.status_code == 400 and "正在用" in r.get_json()["error"]
-    # Remove three others; the removed browsers are signed out at once.
-    for _ in range(3):
-        page = me.get("/teacher/profile").get_data(as_text=True)
-        n, created = re.findall(r'devices/(\d+)/remove" data-body=\'\{"created_at": (\d+)\}\'', page)[0]
-        assert jpost(me, f"/api/me/devices/{n}/remove", {"created_at": int(created)}).status_code == 200
-    assert db.execute("SELECT count(*) FROM devices WHERE site='teacher' AND license_id=2").fetchone()[0] == 2
-    signed_out = [p for p in phones[1:] if "teacher-activate" in p.get("/teacher/").get_data(as_text=True)]
-    assert len(signed_out) == 3
-    # The fourth removal within 30 days needs the admin.
-    page = me.get("/teacher/profile").get_data(as_text=True)
-    assert "移除的次数已经用完" in page
-    left = db.execute("SELECT created_at FROM devices WHERE site='teacher' AND license_id=2 ORDER BY created_at,token_hash").fetchall()
-    errors = [jpost(me, f"/api/me/devices/{n}/remove", {"created_at": left[n - 1][0]}).get_json()["error"] for n in (1, 2)]
-    assert any("管理员" in e for e in errors) and any("正在用" in e for e in errors)
-    assert db.execute("SELECT count(*) FROM audit WHERE site='teacher' AND action='device_self_remove' AND license_id=2").fetchone()[0] == 3
-    # A stale list does not remove the wrong device.
-    assert jpost(me, "/api/me/devices/1/remove", {"created_at": 1}).status_code == 400
+    for path in ("/teacher/profile", "/teacher/", "/teacher/help"):
+        r = me.get(path)
+        if r.status_code == 200:
+            page = r.get_data(as_text=True)
+            assert "我的设备" not in page and 'id="devices"' not in page and "本机" not in page, path
+    assert jpost(me, "/api/me/devices/1/remove", {"created_at": 1}).status_code == 404
+    assert all("teacher-activate" not in p.get("/teacher/").get_data(as_text=True) for p in phones)
+    db.execute("UPDATE licenses SET device_limit=100 WHERE site='teacher' AND id=2")
+    db.commit()
 
 
 def test_home_lists_features_and_header_leads_to_classes(models, klass, db):

@@ -48,8 +48,9 @@
       {% if site.kind == 'workbench' %}{% include 'trial_convert.html' %}{% include 'referral_admin.html' %}{% include 'entitlements.html' %}{% include 'essay_quota.html' %}{% endif %}
       <section class="panel">
         <h2>设备名额</h2>
-        <p class="muted">已绑定 {{devices|length}} / {{row.device_limit}} 个浏览器</p>
-        {% if not row.archived_at %}
+        {% if site.kind == 'workbench' %}<p class="muted">已绑定 {{devices|length}} 个浏览器，设备数量不限</p>
+        {% else %}<p class="muted">已绑定 {{devices|length}} / {{row.device_limit}} 个浏览器</p>{% endif %}
+        {% if not row.archived_at and site.kind != 'workbench' %}
           <form method="post" action="{{url_for('edit',lid=row.id,action='limit')}}">
             <input type="hidden" name="csrf" value="{{csrf()}}">
             <div class="form-field">

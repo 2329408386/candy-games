@@ -67,7 +67,6 @@
 .device-list .device-main{flex:1;min-width:0}
 .device-list strong{font-size:16px}
 .device-list small{display:block;color:var(--muted);font-size:13px;margin-top:2px}
-.device-list .text-button{flex-shrink:0}
 @media(max-width:640px){.class-join{grid-template-columns:1fr}.me-card{padding:18px}.me-profile{gap:16px}.me-profile .av{--av:76px}.me-name{font-size:22px}.rank-list li{grid-template-columns:34px auto 1fr auto;gap:9px;padding:9px 6px}.rank-list .av{--av:36px}}
 @media(min-width:1600px){.me-page{max-width:1080px}.rank-list li{padding:14px 18px}.rank-list .av{--av:52px}.rank-who strong{font-size:20px}.rank-points{font-size:26px}}
 .me-page [hidden]{display:none!important}

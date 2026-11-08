@@ -33,9 +33,9 @@
           <div class="form-field">
             <label for="quantity">生成数量</label><input id="quantity" name="quantity" type="number" min="1" max="1000" step="1" required value="{{request.form.get('quantity','100')}}"><small>每次可生成1至1000个授权码。</small>
           </div>
-          <div class="form-field">
+          {% if site.kind != 'workbench' %}<div class="form-field">
             <label for="device_limit">每码设备上限</label><input id="device_limit" name="device_limit" type="number" min="1" max="100" step="1" required value="{{request.form.get('device_limit','3')}}"><small>1至100个浏览器，同码全部游戏共用。</small>
-          </div>
+          </div>{% endif %}
         </div>
         <div class="form-actions">
           <button id="generate-button">生成授权码 <span aria-hidden="true">↗</span></button><a class="button secondary" href="{{url_for('dashboard')}}">取消</a>
