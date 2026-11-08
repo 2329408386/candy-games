@@ -1430,15 +1430,6 @@ def test_reviews_rescaled_to_25(db):
 
 
 # ---- devices, feature pages, classes overview, student wording ----
-def test_device_name():
-    from core.devices import device_name
-
-    assert device_name("Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit Mobile MicroMessenger/8.0") == "iPhone · 微信"
-    assert device_name("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit Chrome/120 Safari/537") == "Windows 电脑 · Chrome"
-    assert device_name("Mozilla/5.0 (Linux; Android 14; ALN) AppleWebKit Mobile HuaweiBrowser/15 Chrome Safari") == "安卓手机 · 华为浏览器"
-    assert device_name("") == "未知设备"
-
-
 def test_teacher_devices_unlimited_and_hidden(db):
     db.execute("DELETE FROM limits")  # activations are rate limited per address
     db.execute("DELETE FROM devices WHERE site='teacher' AND license_id=2")

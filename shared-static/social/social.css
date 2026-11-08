@@ -60,13 +60,6 @@
 .rank-manage .text-button{font-size:13px}
 .rank-list li.rank-empty{display:block;color:var(--muted);text-align:center;padding:22px 16px;margin-top:4px;background:#f7f8f2;border:1px dashed var(--line);border-radius:16px;font-size:15px;line-height:1.6}
 .rank-list li.rank-empty::before{content:"✏️";display:block;font-size:26px;margin-bottom:4px}
-.device-list{list-style:none;margin:0;padding:0}
-.device-list li{display:flex;align-items:center;gap:12px;padding:12px 4px;border-top:1px solid var(--line)}
-.device-list li:first-child{border-top:0}
-.device-list li.me{background:#f3f9ef;border-radius:14px;padding:12px}
-.device-list .device-main{flex:1;min-width:0}
-.device-list strong{font-size:16px}
-.device-list small{display:block;color:var(--muted);font-size:13px;margin-top:2px}
 @media(max-width:640px){.class-join{grid-template-columns:1fr}.me-card{padding:18px}.me-profile{gap:16px}.me-profile .av{--av:76px}.me-name{font-size:22px}.rank-list li{grid-template-columns:34px auto 1fr auto;gap:9px;padding:9px 6px}.rank-list .av{--av:36px}}
 @media(min-width:1600px){.me-page{max-width:1080px}.rank-list li{padding:14px 18px}.rank-list .av{--av:52px}.rank-who strong{font-size:20px}.rank-points{font-size:26px}}
 .me-page [hidden]{display:none!important}

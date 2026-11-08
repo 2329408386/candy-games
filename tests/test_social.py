@@ -295,17 +295,11 @@ def test_ranking_page_and_header_links(client, alice, bob, site):
     assert "查看班级榜" in alice.get("/me").get_data(as_text=True)
 
 
-def test_my_devices_read_only(alice, site, db):
+def test_no_device_list_or_removal(alice, site, db):
     second, third = SiteClient(site), SiteClient(site)
     assert second.activate().status_code == 200 and third.activate().status_code == 200
     full = SiteClient(site).activate()
     assert full.status_code == 403 and "联系管理员" in full.get_json()["error"] and "我的设备" not in full.get_json()["error"]
-
-    me = alice.get("/api/me").get_json()["devices"]
-    assert (len(me["list"]), me["limit"]) == (3, 3) and "removals_left" not in me
-    assert [x["me"] for x in me["list"]].count(True) == 1 and "token_hash" not in me["list"][0]
-    other = next(x for x in me["list"] if not x["me"])
-    assert alice.post(f"/api/me/devices/{other['n']}/remove", json={"created_at": other["created_at"]}).status_code == 404
-    assert {c.get("/api/session").status_code for c in (second, third)} == {200}
-    page = alice.get("/me").get_data(as_text=True)
-    assert "我的设备" in page and "removeDevice" not in page
+    assert "devices" not in alice.get("/api/me").get_json()
+    assert alice.post("/api/me/devices/1/remove", json={"created_at": 1}).status_code == 404
+    assert "我的设备" not in alice.get("/me").get_data(as_text=True)

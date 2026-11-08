@@ -56,7 +56,6 @@
       <ol class="rank-list" id="rank-list"></ol>
       <p class="hint">单人练习和联网PK按游戏得分的十分之一计入排行（230 分记 23 分），联网PK前三名另有名次奖励；错题重练每改对一道 +1 分。本周榜每周一 0 点清零。</p>
     </section>
-    <section class="me-card" id="devices-card" aria-label="我的设备"></section>
     <p class="me-feedback"><a href="{{url_for('feedback_page')}}">有什么想法，告诉我们{% if header_profile().feedback_unread %} <span class="fb-dot" role="img" aria-label="有新回复"></span>{% endif %}</a></p>
   </div>
   <script id="me-config" type="application/json">{{ {
@@ -261,37 +260,6 @@
     card.append(msg);
   }
 
-  // ---------- 我的设备 ----------
-  function day(t) { const d = new Date(t * 1000); return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`; }
-  function ago(t) {
-    const s = Date.now() / 1000 - t;
-    if (s < 3600) return '刚刚';
-    if (s < 86400) return Math.floor(s / 3600) + ' 小时前';
-    if (s < 86400 * 30) return Math.floor(s / 86400) + ' 天前';
-    return day(t);
-  }
-  function renderDevices() {
-    const D = me.devices, card = $('devices-card');
-    if (!D) return;
-    card.replaceChildren();
-    const head = el('h2', '', '我的设备 ');
-    head.append(el('small', 'hint', `${D.list.length} / ${D.limit} 台`));
-    card.append(head, el('p', 'hint', `这个授权码已经在 ${D.list.length} 台设备上登录，最多 ${D.limit} 台。`));
-    const list = el('ul', 'device-list');
-    for (const x of D.list) {
-      const li = el('li', x.me ? 'me' : '');
-      const main = el('div', 'device-main');
-      const name = el('strong', '', x.name);
-      main.append(name);
-      if (x.me) { main.append(' '); main.append(el('span', 'me-tag', '本机')); }
-      main.append(el('small', '', `${day(x.created_at)} 登录 · 最近使用 ${ago(x.last_seen)}`));
-      li.append(main);
-      list.append(li);
-    }
-    card.append(list);
-    card.append(el('p', 'hint', '换了新手机或平板、设备满了？请联系管理员解绑不用的设备。'));
-  }
-
   // ---------- ranking ----------
   let rankSeq = 0;
   async function loadRanking() {
@@ -327,7 +295,7 @@
     if (!data.rows.some(r => r.points)) list.append(el('li', 'rank-empty', '还没有人得分，快去玩一局吧！'));
   }
 
-  function render() { renderProfile(); renderTier(); renderClass(); renderDevices(); loadRanking(); }
+  function render() { renderProfile(); renderTier(); renderClass(); loadRanking(); }
   async function refresh() { me = await call(C.me); render(); }
   refresh().catch(e => { $('class-card').textContent = e.message; });
 })();

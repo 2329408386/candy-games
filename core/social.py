@@ -278,10 +278,6 @@ def register_social(app):
             rank=ranks.info(p["rank_stars"], p["rank_progress"]),
             klass=c
             and {"name": c["name"], "code": c["code"], "owner": c["owner"] == lid, "members": member_count(c["id"])},
-            devices={
-                "list": [{k: x[k] for k in ("n", "name", "created_at", "last_seen", "me")} for x in devices.my_devices(lid)],
-                "limit": current()["device_limit"],
-            },
         )
 
     @app.get("/me")
