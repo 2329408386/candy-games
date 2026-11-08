@@ -39,6 +39,7 @@ DIMS = {"content": "内容", "structure": "结构", "language": "语言", "norms
 PLACE_MIN_RATIO = 0.8  # place_lines: how alike two readings of a page must be
 ERROR_TYPES = ("错别字", "用词不当", "病句", "标点")
 MODEL_TYPES = ERROR_TYPES + ("好词好句", "修改建议", "分段")  # what the grade step may write
+VERIFY_REASON = "看图复核和识别结果对不上，已改成书写提醒，不算错别字"  # why verify_typos moved a mark to review["rejected"]
 SOFT = "书写提醒"  # not called wrong, the right form is given: the photo and the reading disagree, or the child wrote pinyin
 PINYIN_TYPE = "拼音"  # what the grade step calls pinyin written for a character; stored as a SOFT mark with pinyin=True
 MARK_TYPES = MODEL_TYPES + (SOFT,)

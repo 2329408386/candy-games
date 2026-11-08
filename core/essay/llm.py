@@ -116,6 +116,12 @@ def configured(d, step):
     return bool(step_rows(d, step))
 
 
+def check_enabled(d):
+    """批改复核 runs only when switched on in 模型设置 (ess_meta 'check_enabled' = '1'); off by default."""
+    row = d.execute("SELECT value FROM ess_meta WHERE key='check_enabled'").fetchone()
+    return bool(row) and row[0] == "1"
+
+
 def in_peak(spec, now=None):
     """spec like "9-12,14-18": Beijing-time hours on weekdays (Mon–Fri) when peak prices apply."""
     if not spec:

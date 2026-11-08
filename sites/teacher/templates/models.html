@@ -59,7 +59,15 @@
     <section class="panel" id="step-{{step}}">
       <h2>{{step_name}}</h2>
       <p class="hint">{{ {'ocr': '把学生作文的照片识别成文字（拍照提交下一期上线）。需要能看图的模型，例如 qwen-vl-ocr。', 'grade': '给作文打分、写评语和标注，质量最关键，建议用旗舰模型。必须支持 JSON 输出。', 'check': '逐条复核批改里的错别字、病句等标注，去掉误判，并独立给出等级。可以用便宜一些的模型。', 'verify': '放大照片再看一次被标成错别字的字，确认是学生写错的还是识别看错的。需要能看图的模型。没有配置时用照片识别的模型。'}[step] }}主模型出错、超时或被限流时，自动改用备用模型。</p>
-      {% if first_model[step] %}<p class="hint">现在先用：<strong>{{first_model[step]}}</strong></p>{% endif %}
+      {% if step == 'check' %}
+        <form method="post" class="check-toggle">
+          <input type="hidden" name="csrf" value="{{csrf()}}"><input type="hidden" name="action" value="check_toggle"><input type="hidden" name="anchor" value="#step-check">
+          <label class="check"><input type="checkbox" name="check_enabled" value="1"{{' checked' if check_enabled}}> 启用批改复核</label>
+          <button>保存</button>
+          <p class="hint">{{ '已启用：批改完逐条复核，复核否掉的标注不给学生看。' if check_enabled else '已关闭：批改完不复核，批改的标注全部保留。' }}</p>
+        </form>
+      {% endif %}
+      {% if first_model[step] and (step != 'check' or check_enabled) %}<p class="hint">现在先用：<strong>{{first_model[step]}}</strong></p>{% endif %}
       <div class="step-slots">
         {% for slot, slot_name in SLOTS.items() %}
           {% set s = steps.get((step, slot)) %}

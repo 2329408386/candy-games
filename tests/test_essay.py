@@ -96,6 +96,7 @@ def models(monkeypatch, db):
     )
     db.execute("DELETE FROM ess_meta WHERE key='daily_budget'")
     db.execute("INSERT OR REPLACE INTO ess_meta VALUES('models_checked',?)", (str(int(time.time())),))
+    db.execute("INSERT OR REPLACE INTO ess_meta VALUES('check_enabled','1')")  # off by default; most tests cover it on
     db.commit()
     monkeypatch.setattr(models_sync, "fetch_models", lambda provider: [{"id": "big"}, {"id": "small"}, {"id": "spare"}])
     return fake
@@ -341,6 +342,60 @@ def test_a_one_off_failure_is_retried_on_the_same_model(models, klass, db, monke
     run_worker()
     assert calls[:2] == ["big", "big"]
     assert "big" in db.execute("SELECT model FROM ess_reviews WHERE submission_id=?", (sid,)).fetchone()[0]
+
+
+def test_check_off_by_default_keeps_every_mark(models, klass, db):
+    t, cid, aid = klass
+    db.execute("DELETE FROM ess_meta WHERE key='check_enabled'")
+    db.commit()
+    aid2 = jpost(t, f"/api/classes/{cid}/assignments", {"title": "自动", "auto_publish": True}).get_json()["id"]
+    s, _ = student_client(db, cid)
+    sid = jpost(s, f"/api/write/{aid2}", {"text": ESSAY}).get_json()["id"]
+    run_worker()
+    review = json.loads(db.execute("SELECT ai FROM ess_reviews WHERE submission_id=?", (sid,)).fetchone()[0])
+    assert not any(m == "small" for m, _ in models.calls)  # the checker is not called
+    assert any(m["quote"] == "我和妈妈去公园玩" for m in review["marks"]) and review["rejected"] == []
+    assert "unchecked" not in review["flags"] and review["check_level"] is None
+    assert db.execute("SELECT status FROM ess_submissions WHERE id=?", (sid,)).fetchone()[0] == "published"
+
+
+def test_admin_check_toggle(db):
+    a = SiteClient("teacher")
+    assert a.login().status_code == 302
+    db.execute("DELETE FROM ess_meta WHERE key='check_enabled'")
+    db.commit()
+    assert "已关闭：批改完不复核" in a.get("/admin/models").get_data(as_text=True)
+    assert a.post("/admin/models", {"action": "check_toggle", "check_enabled": "1"}).status_code == 302
+    assert llm.check_enabled(db) and "已启用" in a.get("/admin/models").get_data(as_text=True)
+    a.post("/admin/models", {"action": "check_toggle"})
+    assert not llm.check_enabled(db)
+
+
+def test_migration_restores_rejected_marks(tmp_path):
+    import sqlite3
+    from core import schema
+
+    path = tmp_path / "old.sqlite3"
+    schema.initialize(path)
+    kept = {"type": "错别字", "start": 0, "end": 2, "quote": "高心", "fix": "高兴", "note": ""}
+    checked = {"type": "修改建议", "start": 5, "end": 9, "quote": "我去公园", "fix": "我和妈妈去公园", "note": "", "reason": "改了原意"}
+    restored = {"type": "病句", "start": 12, "end": 14, "quote": "ab", "fix": "ac", "note": "", "reason": "没有错"}
+    seen = {"type": "错别字", "start": 3, "end": 4, "quote": "设", "fix": "没", "note": "", "reason": grading.VERIFY_REASON}
+    ai = {"marks": [kept], "rejected": [checked, restored, seen]}
+    final = {"marks": [kept, {k: v for k, v in restored.items() if k != "reason"}], "rejected": [checked, seen]}
+    with sqlite3.connect(path) as d:
+        d.execute("DELETE FROM migrations WHERE name='essay_restore_rejected'")
+        d.execute("INSERT INTO ess_reviews VALUES(1,?,?,'m','v',1,NULL)", (json.dumps(ai), json.dumps(final)))
+        d.execute("INSERT INTO ess_reviews VALUES(2,?,NULL,'m','v',1,NULL)", (json.dumps({"marks": [kept], "rejected": []}),))
+    schema.initialize(path)
+    with sqlite3.connect(path) as d:
+        new_ai, new_final = (json.loads(v) for v in d.execute("SELECT ai,final FROM ess_reviews WHERE submission_id=1").fetchone())
+        untouched = json.loads(d.execute("SELECT ai FROM ess_reviews WHERE submission_id=2").fetchone()[0])
+    for r in (new_ai, new_final):
+        assert [m["quote"] for m in r["marks"]] == ["高心", "我去公园", "ab"]  # back in text order, no duplicate
+        assert all("reason" not in m for m in r["marks"])
+        assert r["rejected"] == [seen]  # the photo re-check's 书写提醒 originals stay out
+    assert untouched["marks"] == [kept]
 
 
 def test_check_failure_keeps_marks_and_flags(models, klass, db):

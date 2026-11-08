@@ -221,6 +221,12 @@ def register(app):
                             "INSERT INTO ess_meta VALUES(?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value", (key, str(value))
                         )
                     details = {"daily_budget": budget, "usd_cny": rate, "trial_daily": trials}
+                elif action == "check_toggle":
+                    on = request.form.get("check_enabled") == "1"
+                    d.execute(
+                        "INSERT INTO ess_meta VALUES('check_enabled',?) ON CONFLICT(key) DO UPDATE SET value=excluded.value", ("1" if on else "0",)
+                    )
+                    details = {"check_enabled": on}
                 elif action == "models_check":
                     # The worker runs the check within half a minute (model calls do not belong in a web request).
                     d.execute("INSERT INTO ess_meta VALUES('models_checked','0') ON CONFLICT(key) DO UPDATE SET value='0'")
@@ -289,6 +295,7 @@ def register(app):
             usd_cny=float(rate[0]) if rate else models_sync.USD_CNY,
             trial_daily=trial_daily(),
             models_checked=int(checked[0]) if checked else 0,
+            check_enabled=llm.check_enabled(d),
             AUTO_MODES=AUTO_MODES,
             worker_seen=int(seen[0]) if seen else None,
             now=int(time.time()),

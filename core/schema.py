@@ -238,6 +238,11 @@ def migrate(d):
         # Submission 148 failed on a photo of a printed book page before failures kept their reason.
         d.execute("UPDATE ess_submissions SET fail='印刷' WHERE id=148 AND status='failed' AND text=''")
         d.execute("INSERT INTO migrations VALUES('essay_fail_148',?)", (int(time.time()),))
+    if "essay_restore_rejected" not in done:
+        # 批改复核 was switched off by default: every mark it had rejected goes back into the review (and into the
+        # teacher's saved version). Marks the photo re-check turned into 书写提醒 stay where they are.
+        restore_rejected(d)
+        d.execute("INSERT INTO migrations VALUES('essay_restore_rejected',?)", (int(time.time()),))
 
 
 BEIJING = 8 * 3600
@@ -247,6 +252,35 @@ def end_of_day(ts):
     """23:59:59 Beijing time on the day of ts."""
     local = int(ts) + BEIJING
     return local - local % 86400 + 86399 - BEIJING
+
+
+def restore_rejected(d):
+    import json
+
+    from .essay.grading import VERIFY_REASON
+
+    def restore(review):
+        if not review or not isinstance(review.get("rejected"), list) or not isinstance(review.get("marks"), list):
+            return review
+        back = [m for m in review["rejected"] if isinstance(m, dict) and m.get("reason") != VERIFY_REASON]
+        if not back:
+            return review
+        seen = {(m.get("start"), m.get("end"), m.get("type")) for m in review["marks"]}
+        for m in back:
+            m = {k: v for k, v in m.items() if k != "reason"}
+            key = (m.get("start"), m.get("end"), m.get("type"))
+            if key not in seen and isinstance(m.get("start"), int):
+                seen.add(key)
+                review["marks"].append(m)
+        review["marks"].sort(key=lambda m: m.get("start", 0))
+        review["rejected"] = [m for m in review["rejected"] if not (isinstance(m, dict) and m.get("reason") != VERIFY_REASON)]
+        return review
+
+    for sid, ai, final in d.execute("SELECT submission_id,ai,final FROM ess_reviews").fetchall():
+        new_ai = json.dumps(restore(json.loads(ai)), ensure_ascii=False)
+        new_final = json.dumps(restore(json.loads(final)), ensure_ascii=False) if final else None
+        if new_ai != ai or new_final != final:
+            d.execute("UPDATE ess_reviews SET ai=?,final=? WHERE submission_id=?", (new_ai, new_final, sid))
 
 
 def rescale_reviews(d):

@@ -292,21 +292,25 @@ def grade(d, essay):
         parse=lambda content: grading.clean_review(llm.parse_json(content), essay),
         **meta,
     )
-    # The checker always runs, even without error marks: it also gives its own level (llm.chat tries each model
-    # twice). A review that could not be checked is not published by itself (run_job sends it to the teacher first).
-    try:
-        (verdicts, level), _ = llm.chat(
-            d,
-            "check",
-            grading.check_messages(essay, review["marks"]),
-            json_mode=True,
-            parse=lambda content: grading.parse_check(llm.parse_json(content)),
-            **meta,
-        )
-        review = grading.apply_check(review, verdicts, level)
-    except llm.LLMError as e:
-        log.warning("check failed for submission %s: %s", essay["id"], e)
-        review = {**review, "flags": review["flags"] + ["unchecked"], "rejected": [], "check_level": None}
+    # 批改复核 is off unless switched on in 模型设置: every mark is kept and the review is published as usual.
+    if not llm.check_enabled(d):
+        review = {**review, "rejected": [], "check_level": None}
+    else:
+        # The checker runs even without error marks: it also gives its own level (llm.chat tries each model twice).
+        # A review that could not be checked is not published by itself (run_job sends it to the teacher first).
+        try:
+            (verdicts, level), _ = llm.chat(
+                d,
+                "check",
+                grading.check_messages(essay, review["marks"]),
+                json_mode=True,
+                parse=lambda content: grading.parse_check(llm.parse_json(content)),
+                **meta,
+            )
+            review = grading.apply_check(review, verdicts, level)
+        except llm.LLMError as e:
+            log.warning("check failed for submission %s: %s", essay["id"], e)
+            review = {**review, "flags": review["flags"] + ["unchecked"], "rejected": [], "check_level": None}
     if essay["source"] == "photo":
         review = verify_typos(d, essay, review)
         if essay["shapes"]:
@@ -345,8 +349,7 @@ def verify_typos(d, essay, review):
         log.info("submission %s: %s 错别字 mark(s) not confirmed on the photo", essay["id"], len(dropped))
         d.execute("UPDATE ess_submissions SET text=? WHERE id=?", (text, essay["id"]))
         d.commit()
-        reason = "看图复核和识别结果对不上，已改成书写提醒，不算错别字"
-        review = {**review, "rejected": review.get("rejected", []) + [{**m, "reason": reason} for m in dropped]}
+        review = {**review, "rejected": review.get("rejected", []) + [{**m, "reason": grading.VERIFY_REASON} for m in dropped]}
     return review
 
 
