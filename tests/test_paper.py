@@ -1,6 +1,6 @@
 """班级作文报: recommendations, the corrected printed text, saving, publishing and who may see it."""
 
-import json, re, time
+import json, re, time, urllib.parse
 import pytest
 from conftest import TEACHER2_KEY, SiteClient
 from core.essay import paper
@@ -89,22 +89,33 @@ def test_make_publish_and_read(paper_class, db):
     first = data["selected"][0]
     assert "高兴" in first["text"] and first["comment"] == "你把赏月写得很美。下次多写写心情。", "a short first sentence takes the next one"
 
+    # The unit of the assignment (三下第四单元 中华传统节日) gives the masthead and the background.
+    head = data["head"]
+    assert head["art"] == "3-下册-第四单元" and head["title"] == "灯火里的中国年" and head["subject"] == "中华传统节日"
+    assert head["tagline"] and head["intro"] and data["arts"][0]["key"] == "3-下册-第四单元" and len(data["arts"]) == 16
     items = [dict(first, comment="写得真好！"), {**next(r for r in data["rows"] if r["sid"] == sids["庚"])}]
-    r = jpost(t, f"/api/assignments/{aid}/paper", {"name": "小荷作文报", "issue": 3, "intro": "第一段\n\n第二段", "items": items})
+    body = {"name": "小荷作文报", "issue": 3, **dict(head, intro="第一段\n\n第二段", art="3-上册-第一单元"), "items": items}
+    r = jpost(t, f"/api/assignments/{aid}/paper", body)
     assert r.status_code == 200, r.get_json()
     pid = int(r.get_json()["url"].rsplit("/", 1)[1])
     page = t.get(f"/teacher/essay/papers/{pid}").get_data(as_text=True)
-    assert "小荷作文报" in page and "头条" in page and "写得真好！" in page and "妙笔集锦" in page and "★ 优秀习作" in page
+    assert "小荷作文报" in page and "灯火里的中国年" in page and "本期主题：中华传统节日" in page and "★ 优秀习作" in page
+    assert "老师点评" in page and "写得真好！" in page and "妙笔集锦" in page and "小作者：甲、庚" in page
+    assert paper.art_file("3-上册-第一单元") in urllib.parse.unquote(page)
     assert '<span class="good" title="比喻真形象">像一个大玉盘</span>' in page
-    assert edit_data(t, aid)["selected"][0]["comment"] == "写得真好！", "the saved paper is loaded again"
+    again = edit_data(t, aid)
+    assert again["selected"][0]["comment"] == "写得真好！" and again["head"]["art"] == "3-上册-第一单元", "the saved paper is loaded again"
+    base = {"name": "x", "issue": 1, **head}
+    assert jpost(t, f"/api/assignments/{aid}/paper", dict(body, art="nope")).status_code == 400
+    assert jpost(t, f"/api/assignments/{aid}/paper", dict(body, title="")).status_code == 400
 
     # Bad saves: an essay of another assignment, the same student twice, nothing at all.
     other = jpost(t, f"/api/classes/{cid}/assignments", {"title": "别的作业", "genre": "记事"}).get_json()["id"]
-    assert jpost(t, f"/api/assignments/{other}/paper", {"name": "x", "issue": 1, "items": [first]}).status_code == 400
-    assert jpost(t, f"/api/assignments/{aid}/paper", {"name": "x", "issue": 1, "items": [first, first]}).status_code == 400
-    assert jpost(t, f"/api/assignments/{aid}/paper", {"name": "x", "issue": 1, "items": []}).status_code == 400
+    assert jpost(t, f"/api/assignments/{other}/paper", dict(base, items=[first])).status_code == 400
+    assert jpost(t, f"/api/assignments/{aid}/paper", dict(base, items=[first, first])).status_code == 400
+    assert jpost(t, f"/api/assignments/{aid}/paper", dict(base, items=[])).status_code == 400
     waiting = {"sid": sids["辛"], "title": "x", "text": "x", "comment": ""}
-    assert jpost(t, f"/api/assignments/{aid}/paper", {"name": "x", "issue": 1, "items": [waiting]}).status_code == 400
+    assert jpost(t, f"/api/assignments/{aid}/paper", dict(base, items=[waiting])).status_code == 400
 
     # Students see it only once it is published, and only in their own class.
     s, _ = student_client(db, cid, "乙")
@@ -142,3 +153,27 @@ def test_units_has_third_grade_unit_four():
 
     unit = next(u for u in UNITS["3"]["下册"] if u["unit"] == "第四单元")
     assert unit["topic"] == "中华传统节日" and unit["genres"] == ["记事"] and "传统节日" in unit["intro"]
+
+
+def test_theme_for():
+    def a(title, grade=3, genre=""):
+        return {"title": title, "grade": grade, "genre": genre}
+
+    assert paper.theme_for(a("猜猜他是谁"))[0] == "3-上册-第一单元"
+    assert paper.theme_for(a("国宝大熊猫", grade=5))[0] == "3-下册-第七单元", "a unit of another grade"
+    key, theme = paper.theme_for(a("快乐的端午节", genre="记事"))
+    assert theme["art"] == "festival" and theme["title"] == "快乐的端午节" and theme["intro"] == paper.THEMES["genre:记事"]["intro"]
+    key, theme = paper.theme_for(a("一件小事", genre="写人"))
+    assert key == "genre:写人" and theme["title"] == "一件小事"
+    assert paper.theme_for(a("", genre=""))[0] == "default"
+
+
+def test_paper_art_up_to_date():
+    import subprocess, sys
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parent.parent
+    r = subprocess.run([sys.executable, str(root / "tools" / "paper_art.py"), "--check"], capture_output=True, text=True)
+    assert r.returncode == 0, r.stdout + r.stderr
+    for key in paper.THEMES:
+        assert (root / "sites" / "teacher" / "static" / paper.art_file(key)).is_file(), key

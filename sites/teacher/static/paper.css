@@ -1,131 +1,88 @@
-/* 班级作文报 (paper.html) and its editor (paper_edit.html). The paper looks like a small printed newspaper: warm
- * paper, ink-green masthead, a vermilion seal for the issue, the essays in 霞鹜文楷 (RedPen, declared in essay.css),
- * 好词好句 under a red wavy line, 老师点评 in red pen. A4 when printed; one column on phones. */
-.paper-page,.paper-edit{--paper:#fbf6ea;--paper-2:#f3ecd9;--ink-green:#2c4a37;--vermilion:#b5483c;--gold:#a8741c;--rule:#d9cfb5}
+/* 班级作文报 (paper.html) and its editor (paper_edit.html). The paper is one A3 landscape sheet (1587×1123 px =
+ * 420×297 mm): a watercolor background for the topic (static/paper-art/, tools/paper_art.py), a translucent panel
+ * with the masthead, then 卷首语, the essays, each with its 老师点评, and 妙笔集锦 flowing through six columns.
+ * paper.html shrinks the text (--fs) until it fits and scales the sheet to the window; phones get a reading view. */
+.paper-page{--ink-2:#2b2a24;--vermilion:#b5483c}
 
 /* ---- toolbar (teacher) ---- */
-.paper-toolbar{max-width:880px;margin:0 auto 16px;display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;justify-content:space-between}
+.paper-toolbar{max-width:1587px;margin:0 auto 14px;display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;justify-content:space-between}
 .paper-toolbar-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.paper-legend{max-width:880px;margin:14px auto 0;text-align:center}
+.paper-overflow{max-width:1587px;margin:0 auto 14px}
+.paper-overflow[hidden]{display:none}
+.paper-legend{max-width:1587px;margin:12px auto 0;text-align:center}
 
 /* ---- the sheet ---- */
-.paper-sheet{position:relative;max-width:880px;margin:0 auto;padding:44px 48px 30px;color:#2b2a24;
-  background:
-    radial-gradient(circle at 12% 8%,#fffdf6 0,transparent 45%),
-    radial-gradient(circle at 88% 92%,#f4ecd6 0,transparent 50%),
-    var(--paper);
-  border-radius:4px;box-shadow:0 1px 0 #e9e0c8,0 22px 50px #4a3f2422,0 2px 6px #4a3f2414}
-.paper-sheet::before{content:"";position:absolute;inset:14px;border:1.5px solid var(--ink-green);outline:1px solid var(--ink-green);outline-offset:-6px;pointer-events:none;opacity:.55}
+.a3-wrap{max-width:1587px;margin:0 auto;position:relative}
+.a3{--fs:16px;--accent:#2c4a37;position:relative;width:1587px;height:1123px;transform-origin:0 0;overflow:hidden;color:var(--ink-2);
+  border-radius:6px;box-shadow:0 22px 50px #4a3f2426,0 2px 6px #4a3f2418;background:#f7f2e7}
+.a3-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;user-select:none}
+.a3-panel{position:absolute;inset:50px 62px 46px;display:flex;flex-direction:column;padding:22px 34px 12px;
+  background:rgba(255,253,248,.84);border-radius:22px;box-shadow:0 0 0 1px rgba(255,255,255,.7),0 8px 30px rgba(90,70,40,.10)}
 
 /* masthead */
-.paper-mast{display:flex;align-items:center;justify-content:space-between;gap:20px;position:relative}
-.paper-mast-title{min-width:0}
-.paper-kicker{margin:0 0 2px;font-size:13px;letter-spacing:8px;color:var(--vermilion);font-weight:600}
-.paper-mast h1{margin:0;font-family:RedPen,'Kaiti SC','STKaiti',KaiTi,serif;font-weight:400;font-size:56px;line-height:1.15;letter-spacing:6px;color:var(--ink-green);overflow-wrap:anywhere}
-.paper-seal{flex:none;width:84px;height:84px;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  color:var(--vermilion);border:3px solid var(--vermilion);border-radius:10px;transform:rotate(-7deg);
-  box-shadow:inset 0 0 0 3px var(--paper),inset 0 0 0 4.5px var(--vermilion);font-family:RedPen,KaiTi,serif;line-height:1}
-.paper-seal span{font-size:14px;letter-spacing:2px}
-.paper-seal b{font-size:32px;font-weight:400;margin:2px 0}
-.paper-rule{height:8px;margin:14px 0 10px;border-top:4px solid var(--ink-green);border-bottom:1.5px solid var(--ink-green)}
-.paper-meta{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 12px;margin:0 0 22px;font-size:14px;color:#5e5a4c;letter-spacing:.5px}
-.paper-meta i{font-style:normal;color:var(--vermilion);font-size:9px;align-self:center}
+.a3-head{position:relative;text-align:center;padding-bottom:12px;margin-bottom:4px}
+.a3-head::after{content:"";position:absolute;left:0;right:0;bottom:0;height:6px;border-top:2.5px solid var(--accent);border-bottom:1px solid var(--accent);opacity:.75}
+.a3-issue,.a3-date{position:absolute;top:6px;font-size:14px;color:#6b6553;letter-spacing:1px}
+.a3-issue{left:0}.a3-date{right:0}
+.a3-head h1{margin:0;font-family:RedPen,'Kaiti SC',STKaiti,KaiTi,serif;font-weight:400;font-size:62px;line-height:1.15;letter-spacing:.42em;padding-left:.42em;color:var(--accent)}
+.a3-subject{margin:6px 0 0;font-size:17px;font-weight:600;letter-spacing:2px;color:var(--vermilion)}
+.a3-tagline{margin:3px 0 0;font-size:15px;color:#5e5a4c;letter-spacing:1px}
 
-/* front: 卷首语 + 头条 */
-.paper-front{display:grid;grid-template-columns:180px 1fr;gap:26px;padding-bottom:6px}
-.paper-intro{position:relative;background:var(--paper-2);border-radius:6px;padding:18px 16px 14px;border-top:3px solid var(--vermilion);align-self:start}
-.paper-intro h2{margin:0 0 10px;font-family:RedPen,KaiTi,serif;font-weight:400;font-size:22px;letter-spacing:4px;color:var(--vermilion)}
-.paper-intro p{margin:0;font-size:14px;line-height:1.9;color:#4c4838;text-align:justify}
-.paper-intro-art{color:var(--ink-green);opacity:.35;margin-top:12px}
-.paper-intro-art svg{width:100%;height:auto;display:block}
-.paper-lead{min-width:0}
-.paper-lead-head{display:flex;align-items:center;gap:10px;margin-bottom:6px}
-.paper-badge{display:inline-block;background:var(--vermilion);color:#fff;font-size:13px;font-weight:700;letter-spacing:3px;padding:2px 10px 2px 12px;border-radius:3px}
-.paper-star{display:inline-block;font-size:12px;font-weight:700;color:var(--gold);border:1px solid #d9b86f;background:#fff7e3;border-radius:999px;padding:1px 9px;letter-spacing:1px}
-.paper-star.corner{position:absolute;top:12px;right:12px}
-.paper-title{font-family:RedPen,KaiTi,serif;font-weight:400;color:var(--ink-green);margin:0;letter-spacing:2px;line-height:1.35}
-.paper-title::before{content:"《"}.paper-title::after{content:"》"}
-.paper-lead .paper-title{font-size:34px;margin-left:-.4em}
-.paper-byline{margin:4px 0 14px;font-size:14px;color:#6b6553;letter-spacing:1px}
-.paper-byline strong{color:#3a372c;font-weight:600}
-.paper-lead .paper-byline::before{content:"";display:inline-block;width:26px;height:1px;background:#a89f86;vertical-align:middle;margin-right:8px}
+/* six columns, a fine rule down the middle like a folded sheet */
+.a3-cols{position:relative;flex:1;min-height:0;column-count:6;column-gap:36px;column-fill:auto;overflow:hidden;padding-top:.75em;font-size:var(--fs)}
+.a3-cols::before{content:"";position:absolute;top:0;bottom:0;left:50%;border-left:1.5px dashed color-mix(in srgb,var(--accent) 40%,transparent)}
+.a3-cols h2{margin:0}
 
-/* essay text */
-.paper-body p{margin:0 0 .55em;text-indent:2em;font-family:RedPen,'Kaiti SC',KaiTi,serif;font-size:18px;line-height:1.95;text-align:justify;color:#2b2a24}
-.paper-cols{column-count:2;column-gap:30px;column-rule:1px dashed var(--rule)}
-.paper-body p.drop{text-indent:0}
-.paper-body p.drop::first-letter{float:left;font-size:3.1em;line-height:1;margin:.08em .12em 0 0;color:var(--vermilion)}
-.good{text-decoration:underline wavy var(--vermilion);text-decoration-thickness:1px;text-underline-offset:6px;text-decoration-skip-ink:none}
+.a3-intro{break-inside:avoid;margin:0 0 1.1em;padding:.8em .9em .7em;border-radius:12px;background:color-mix(in srgb,var(--accent) 9%,#fffaf0);border-left:4px solid var(--accent)}
+.a3-intro h2{font-family:RedPen,KaiTi,serif;font-weight:400;font-size:1.35em;letter-spacing:.3em;color:var(--accent);margin-bottom:.25em}
+.a3-intro p{margin:0;font-size:.92em;line-height:1.85;text-align:justify;color:#4c4838}
 
-/* 老师点评 */
-.paper-comment{position:relative;margin:14px 0 4px;padding:16px 16px 10px;border:1.5px dashed #d79b92;border-radius:10px;background:#fff8f2;
-  font-family:RedPen,KaiTi,serif;font-size:16px;line-height:1.8;color:var(--vermilion)}
-.paper-comment span{position:absolute;top:-11px;left:12px;background:var(--vermilion);color:#fff;font-family:'PingFang SC','Microsoft YaHei',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;padding:1px 10px;border-radius:999px}
+.a3-essay{margin:0 0 1.2em}
+.a3-title{font-family:RedPen,KaiTi,serif;font-weight:400;font-size:1.3em;line-height:1.35;color:var(--accent);break-after:avoid;display:flex;align-items:center;gap:.4em;flex-wrap:wrap}
+.a3-title i{flex:none;width:.62em;height:.62em;background:var(--accent);border-radius:2px;opacity:.85}
+.a3-star{font-family:'PingFang SC','Microsoft YaHei',sans-serif;font-size:.5em;font-weight:700;color:#a8741c;border:1px solid #d9b86f;background:#fff7e3;border-radius:999px;padding:0 .7em;letter-spacing:1px}
+.a3-byline{margin:.15em 0 .45em;font-size:.78em;color:#7a735e;letter-spacing:1px;break-after:avoid}
+.a3-body p{margin:0 0 .3em;text-indent:2em;font-family:RedPen,'Kaiti SC',KaiTi,serif;line-height:1.78;text-align:justify}
+.good{text-decoration:underline wavy var(--vermilion);text-decoration-thickness:1px;text-underline-offset:.32em;text-decoration-skip-ink:none}
 
-/* 佳作展台 */
-.paper-divider{display:flex;align-items:center;gap:14px;margin:26px 0 18px;color:var(--ink-green)}
-.paper-divider::before,.paper-divider::after{content:"";flex:1;height:5px;border-top:1.5px solid currentColor;border-bottom:1px solid currentColor;opacity:.6}
-.paper-divider span{font-family:RedPen,KaiTi,serif;font-size:22px;letter-spacing:6px}
-.paper-grid{column-count:2;column-gap:22px}
-.paper-card{position:relative;break-inside:avoid;display:inline-block;width:100%;margin:0 0 22px;padding:22px 20px 14px;background:#fffdf7;border:1px solid #e6dcc2;border-radius:6px;
-  background-image:
-    linear-gradient(var(--ink-green),var(--ink-green)),linear-gradient(var(--ink-green),var(--ink-green)),
-    linear-gradient(var(--ink-green),var(--ink-green)),linear-gradient(var(--ink-green),var(--ink-green));
-  background-size:18px 2px,2px 18px,18px 2px,2px 18px;
-  background-position:6px 6px,6px 6px,calc(100% - 6px) calc(100% - 6px),calc(100% - 6px) calc(100% - 6px);
-  background-repeat:no-repeat}
-.paper-card .paper-title{font-size:23px;text-align:center;padding:0 40px}
-.paper-card .paper-byline{text-align:center;margin-bottom:12px}
-.paper-card .paper-byline::before,.paper-card .paper-byline::after{content:"·";margin:0 8px;color:var(--vermilion)}
-.paper-card .paper-body p{font-size:17px}
+/* 老师点评: red pen in a dashed frame with a tab */
+.a3-comment{display:flow-root;break-inside:avoid;margin:.95em 0 .2em;padding:0 .8em .55em;border:1.5px dashed #d79b92;border-radius:10px;background:#fff6f0;
+  font-family:RedPen,KaiTi,serif;font-size:.95em;line-height:1.7;color:var(--vermilion)}
+.a3-comment span{display:table;margin:-.95em 0 .45em -.1em;line-height:1.6;background:var(--vermilion);color:#fff;font-family:'PingFang SC','Microsoft YaHei',sans-serif;font-size:.7em;font-weight:700;letter-spacing:2px;padding:.05em .8em;border-radius:999px}
 
 /* 妙笔集锦 */
-.paper-quotes{margin:8px 0 10px;padding:20px 22px 12px;background:var(--paper-2);border-radius:8px;position:relative}
-.paper-quotes h2{margin:0 0 12px;text-align:center}
-.paper-quotes h2 span{display:inline-block;font-family:RedPen,KaiTi,serif;font-weight:400;font-size:22px;letter-spacing:6px;color:var(--vermilion);padding:0 16px;border-bottom:2px solid var(--vermilion)}
-.paper-quotes ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:10px 26px}
-.paper-quotes li{font-family:RedPen,KaiTi,serif;font-size:16px;line-height:1.75;color:#3a372c;padding-left:22px;position:relative}
-.paper-quotes li::before{content:"❀";position:absolute;left:0;top:1px;color:var(--vermilion);font-size:13px}
-.paper-quotes q{quotes:"「" "」"}
-.paper-quotes cite{display:block;text-align:right;font-style:normal;font-size:13px;color:#7a735e;font-family:'PingFang SC','Microsoft YaHei',sans-serif}
+.a3-quotes{break-inside:avoid;margin:.4em 0 0;padding:.9em .9em .5em;border-radius:14px;background:linear-gradient(160deg,#fff4e6,#fdeee8);border:1.5px solid #efc6b8;position:relative}
+.a3-quotes h2{text-align:center;font-family:RedPen,KaiTi,serif;font-weight:400;font-size:1.4em;letter-spacing:.35em;color:var(--vermilion);margin-bottom:.4em}
+.a3-quotes h2::before,.a3-quotes h2::after{content:"❀";font-size:.6em;margin:0 .5em;vertical-align:middle;opacity:.8}
+.a3-quotes ul{list-style:none;margin:0;padding:0}
+.a3-quotes li{font-family:RedPen,KaiTi,serif;font-size:.95em;line-height:1.65;padding:.2em 0 .35em;border-bottom:1px dotted #e6c3b6}
+.a3-quotes li:last-child{border-bottom:0}
+.a3-quotes q{quotes:"「" "」"}
+.a3-quotes cite{display:block;text-align:right;font-style:normal;font-size:.75em;color:#8a7a6a;font-family:'PingFang SC','Microsoft YaHei',sans-serif}
 
-/* foot */
-.paper-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:18px;padding-top:10px;border-top:1.5px solid var(--ink-green);font-size:12px;color:#6b6553;letter-spacing:1px}
-.paper-foot-flower{color:var(--vermilion);letter-spacing:6px}
+.a3-foot{display:flex;justify-content:space-between;gap:20px;padding-top:8px;margin-top:6px;border-top:1px solid color-mix(in srgb,var(--accent) 35%,transparent);font-size:13px;color:#6b6553;letter-spacing:.5px}
+.a3-foot span:first-child{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
-/* ---- phones ---- */
-@media (max-width:720px){
-  .paper-sheet{padding:30px 22px 22px}
-  .paper-sheet::before{inset:8px}
-  .paper-mast h1{font-size:36px;letter-spacing:3px}
-  .paper-kicker{letter-spacing:5px;font-size:12px}
-  .paper-seal{width:64px;height:64px}
-  .paper-seal b{font-size:24px}
-  .paper-front{grid-template-columns:1fr;gap:18px}
-  .paper-intro-art{display:none}
-  .paper-cols,.paper-grid{column-count:1}
-  .paper-lead .paper-title{font-size:27px}
-  .paper-card .paper-title{font-size:21px;padding:0 0 0;margin-top:14px}
-  .paper-body p{font-size:17px}
-  .paper-quotes ul{grid-template-columns:1fr}
-  .paper-foot{flex-direction:column;gap:4px}
-}
+/* ---- phones: a reading view, one column, the picture as a soft backdrop ---- */
+.a3-wrap.reading .a3{width:auto;height:auto;transform:none;border-radius:4px}
+.a3-wrap.reading .a3-bg{object-fit:cover;opacity:.9}
+.a3-wrap.reading .a3-panel{position:relative;inset:auto;margin:34px 14px;padding:18px 16px 12px}
+.a3-wrap.reading .a3-head h1{font-size:34px;letter-spacing:.2em;padding-left:.2em;margin-top:24px}
+.a3-wrap.reading .a3-issue,.a3-wrap.reading .a3-date{font-size:12px;top:0}
+.a3-wrap.reading .a3-cols{column-count:1;overflow:visible;--fs:17px;font-size:17px}
+.a3-wrap.reading .a3-cols::before{display:none}
+.a3-wrap.reading .a3-foot{flex-direction:column;gap:2px}
+.a3-wrap.reading .a3-foot span:first-child{white-space:normal}
 
-/* ---- print: A4, colours kept, page chrome hidden ---- */
-@page{size:A4;margin:10mm}
+/* ---- print: exactly one A3 landscape page ---- */
+@page{size:A3 landscape;margin:0}
 @media print{
-  .paper-page{background:#fff}
+  html,body.paper-page{background:#fff;margin:0}
   .paper-page *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   .paper-page .site-header,.paper-page .site-footer,.paper-page .trial-banner,.paper-page .notice,.paper-toolbar,.paper-legend{display:none!important}
-  .paper-page .student-main{padding:0;max-width:none;margin:0}
-  .paper-sheet{max-width:none;box-shadow:none;border-radius:0;padding:30px 34px 20px}
-  .paper-mast h1{font-size:48px}
-  .paper-body p{font-size:15.5px;line-height:1.85}
-  .paper-sheet{background:var(--paper)}
-  .paper-card .paper-body p{font-size:15px}
-  .paper-card.long{break-inside:auto;display:block}
-  .paper-comment,.paper-quotes,.paper-front,.paper-foot{break-inside:avoid}
-  .paper-divider{break-after:avoid;break-inside:avoid}
+  .paper-page .student-main{padding:0!important;margin:0!important;max-width:none!important}
+  .a3-wrap{height:auto!important;max-width:none}
+  .a3{transform:none!important;box-shadow:none;border-radius:0;width:420mm;height:297mm;break-inside:avoid}
 }
 
 /* ---- editor ---- */
@@ -143,10 +100,8 @@
 .pe-rec{font-size:12px;font-weight:700;color:#fff;background:var(--red);border-radius:999px;padding:0 8px;line-height:1.7}
 .pe-list{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:10px}
 .pe-item{border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:#fff}
-.pe-item.lead{border-color:#e2b3aa;background:#fffaf6}
 .pe-item-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .pe-no{flex:none;min-width:34px;height:34px;padding:0 6px;border-radius:10px;display:grid;place-items:center;background:var(--soft);color:var(--green-dark);font-weight:700;font-size:14px}
-.pe-item.lead .pe-no{background:var(--red);color:#fff;font-size:13px}
 .pe-item-title{flex:1;min-width:140px;display:flex;flex-direction:column}
 .pe-item-title strong{font-family:RedPen,KaiTi,serif;font-weight:400;font-size:19px}
 .pe-item-title small{color:var(--muted);font-size:13px}
@@ -159,3 +114,8 @@
 .pe-empty{text-align:center;padding:26px 0;border:1px dashed var(--line);border-radius:14px}
 .pe-empty[hidden]{display:none}
 @media (max-width:860px){.paper-edit{grid-template-columns:1fr}.pe-pool{max-height:none}}
+.pe-art-preview{width:100%;aspect-ratio:1587/1123;border-radius:10px;border:1px solid var(--line);object-fit:cover;background:#f7f2e7}
+.pe-fit{margin:6px 0 0;font-size:14px;color:var(--green-dark)}
+.pe-fit.warn{color:var(--amber)}
+.pe-fit.bad{color:var(--red);font-weight:600}
+.pe-fit:empty{display:none}

@@ -6,7 +6,7 @@
   <div class="wb-heading">
     <div>
       <h1>{{'编辑作文报' if paper else '做一期作文报'}}</h1>
-      <p class="muted">《{{assignment.title}}》· {{assignment.class_name}} · 挑几篇好作文排成一份小报，可以打印贴在教室里，也可以发布给学生看。</p>
+      <p class="muted">《{{assignment.title}}》· {{assignment.class_name}} · 挑几篇好作文排成一张 A3 小报，可以打印贴在教室里，也可以发布给学生看。</p>
     </div>
   </div>
   <div class="paper-edit">
@@ -18,7 +18,13 @@
             <label>报名<input id="pe-name" maxlength="30"></label>
             <label class="paper-edit-issue">期号<input id="pe-issue" type="number" min="1" max="999"></label>
           </div>
-          <label>卷首语（选填）<textarea id="pe-intro" rows="3" maxlength="300"></textarea></label>
+          <label>标题<input id="pe-title" maxlength="12"></label>
+          <label>本期主题<input id="pe-subject" maxlength="20"></label>
+          <label>点题的一句话<input id="pe-tagline" maxlength="40"></label>
+          <label>卷首语<textarea id="pe-intro" rows="4" maxlength="300"></textarea></label>
+          <p class="hint">标题、主题和卷首语已经按这次习作的单元写好，可以直接用，也可以改成自己的话。</p>
+          <label>背景图案<select id="pe-art"></select></label>
+          <img class="pe-art-preview" id="pe-art-preview" alt="背景图案预览">
         </div>
       </section>
       <section class="wb-card">
@@ -38,7 +44,8 @@
       <div class="paper-edit-head">
         <h2>本期刊登 <small id="pe-count"></small></h2>
       </div>
-      <p class="hint">排第一的是头条。点「改文字」可以修改题目、刊登的文字和老师点评。错别字、标点和病句已经按批改改好，好词好句会标出红色波浪线。</p>
+      <p class="hint">按这里的顺序排版。点「改文字」可以修改题目、刊登的文字和老师点评。错别字、标点和病句已经按批改改好，好词好句会标出红色波浪线。</p>
+      <p class="pe-fit" id="pe-fit"></p>
       <ol class="pe-list" id="pe-list"></ol>
       <p class="pe-empty hint" id="pe-empty">左边勾选要刊登的作文。</p>
       <p class="wb-error" id="pe-error" role="alert"></p>
@@ -57,9 +64,13 @@
 
   $('pe-name').value = P.name;
   $('pe-issue').value = P.issue;
-  $('pe-intro').value = P.intro;
-  $('pe-intro').placeholder = P.introDefault;
-  for (const id of ['pe-name', 'pe-issue', 'pe-intro']) $(id).addEventListener('input', () => { dirty = true; });
+  for (const k of ['title', 'subject', 'tagline', 'intro']) $('pe-' + k).value = P.head[k];
+  const art = $('pe-art');
+  for (const a of P.arts) art.append(new Option(a.label, a.key, false, a.key === P.head.art));
+  const preview = () => { $('pe-art-preview').src = P.arts.find((a) => a.key === art.value).src; };
+  preview();
+  art.addEventListener('change', () => { preview(); dirty = true; });
+  for (const id of ['pe-name', 'pe-issue', 'pe-title', 'pe-subject', 'pe-tagline', 'pe-intro']) $(id).addEventListener('input', () => { dirty = true; });
 
   function fresh(r) { return { sid: r.sid, title: r.title, text: r.text, comment: r.comment }; }
 
@@ -97,10 +108,10 @@
     picked.forEach((x, i) => {
       const r = rows.get(x.sid) || {};
       const li = document.createElement('li');
-      li.className = 'pe-item' + (i === 0 ? ' lead' : '');
+      li.className = 'pe-item';
       li.innerHTML = `
         <div class="pe-item-head">
-          <span class="pe-no">${i === 0 ? '头条' : i + 1}</span>
+          <span class="pe-no">${i + 1}</span>
           <span class="pe-item-title"><strong>${esc(x.title)}</strong><small>${esc(r.student || '')} · ${x.text.length} 字</small></span>
           <span class="pe-tools">
             <button type="button" class="pe-icon" data-move="-1" ${i === 0 ? 'disabled' : ''} aria-label="上移">↑</button>
@@ -143,6 +154,11 @@
     });
     $('pe-count').textContent = picked.length ? `（${picked.length} 篇）` : '';
     $('pe-empty').hidden = picked.length > 0;
+    const chars = picked.reduce((n, x) => n + x.text.length + x.comment.length, 0), fit = $('pe-fit');
+    const tight = picked.length > 6 || chars > 2400, full = picked.length > 9 || chars > 3800;
+    fit.className = 'pe-fit' + (full ? ' bad' : tight ? ' warn' : '');
+    fit.textContent = !picked.length ? '' : full ? `共 ${chars} 字，一张 A3 很可能放不下，建议减少几篇或删短一些。`
+      : tight ? `共 ${chars} 字，字会排得比较小；想要字大一些，可以少选一两篇。` : `共 ${chars} 字，一张 A3 放得下。`;
   }
 
   function draw() { drawPool(); drawList(); }
@@ -162,6 +178,7 @@
     try {
       const body = await WB.post(P.save, {
         name: $('pe-name').value, issue: $('pe-issue').value, intro: $('pe-intro').value,
+        title: $('pe-title').value, subject: $('pe-subject').value, tagline: $('pe-tagline').value, art: art.value,
         items: picked.map((x) => ({ sid: x.sid, title: x.title, text: x.text, comment: x.comment })),
       });
       dirty = false;

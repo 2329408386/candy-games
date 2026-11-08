@@ -1,14 +1,21 @@
 """班级作文报: a teacher picks good essays of one assignment and lays them out as a class newspaper.
 
-One paper per assignment (ess_papers), its essays in ess_paper_items in order (the first is the 头条). The editor
+One paper per assignment (ess_papers), its essays in ess_paper_items in order. The editor
 lists every student's newest graded essay with a few recommended (recommend()); the teacher ticks any of them and
 may edit the printed text, title and comment. Saving takes a snapshot — the printed text starts as the essay with
 its errors corrected (clean_text()) and 好词好句 (goods) are kept to be underlined — so later changes to a review do
 not change a paper already made. Published papers are listed on the class's student pages; students of other
 classes never see them.
+
+The paper is one A3 landscape sheet: a watercolor background for its topic, a 标题, 本期主题, a one-line tagline and a
+卷首语, then the essays in six columns, each with its 老师点评, and 妙笔集锦 at the end. The background and the four texts
+were written in advance for every textbook unit (sites/teacher/data/paper_themes.json, pictures built by
+tools/paper_art.py into static/paper-art/); theme_for() finds the unit of an assignment by its title, else falls
+back to its genre, and the teacher may change all of them.
 """
 
 import json, re, time
+from pathlib import Path
 from flask import abort, jsonify, redirect, render_template, url_for
 from core.app import db
 from . import (
@@ -22,7 +29,77 @@ NAME_MAX, INTRO_MAX, TITLE_MAX, COMMENT_MAX = 30, 300, 30, 150
 RECOMMEND_MIN, RECOMMEND_MAX, RECOMMEND_SHARE, RECOMMEND_SCORE = 3, 6, 0.2, 18
 FIXED_TYPES = set(grading.ERROR_TYPES) | {grading.SOFT}  # corrections applied to the printed text
 GOOD = "好词好句"
-QUOTES_MAX = 8  # 妙笔集锦
+QUOTES_MAX = 10  # 妙笔集锦
+HEAD_MAX, SUBJECT_MAX, TAGLINE_MAX = 12, 20, 40
+THEMES = json.loads((Path(grading.PROMPTS).parent / "data" / "paper_themes.json").read_text(encoding="utf-8"))
+ART_NAMES = {
+    "autumn": "秋日", "spring": "春天", "festival": "节庆", "classmates": "同学校园", "plants": "植物", "animals": "小动物",
+    "panda": "熊猫竹林", "fairy": "童话星空", "science": "科学太空", "landscape": "山水风景", "books": "书香",
+    "letters": "书信", "play": "活动游戏", "toys": "玩具", "growth": "成长阳光", "colorful": "缤纷",
+}
+ACCENT = {  # the title color of each background
+    "autumn": "#9a5b1e", "spring": "#3f7a4a", "festival": "#b0322a", "classmates": "#2f5f8a", "plants": "#3f7a3a",
+    "animals": "#8a5a2a", "panda": "#2f6a3a", "fairy": "#6a4a9a", "science": "#2f5f8a", "landscape": "#2f6a5a",
+    "books": "#7a4a2a", "letters": "#a5483c", "play": "#c0503a", "toys": "#b0603a", "growth": "#b06a1a", "colorful": "#7a4a8a",
+}
+KEYWORDS = (  # topic words of an assignment not taken from a unit → background set
+    ("熊猫", "panda"), ("节", "festival"), ("年", "festival"), ("俗", "festival"), ("秋", "autumn"), ("春", "spring"),
+    ("植物", "plants"), ("花", "plants"), ("树", "plants"), ("动物", "animals"), ("猫", "animals"), ("狗", "animals"),
+    ("童话", "fairy"), ("想象", "fairy"), ("假如", "fairy"), ("科学", "science"), ("实验", "science"), ("未来", "science"),
+    ("信", "letters"), ("读", "books"), ("书", "books"), ("游戏", "play"), ("活动", "play"), ("比赛", "play"),
+    ("玩具", "toys"), ("景", "landscape"), ("游", "landscape"), ("家乡", "landscape"), ("同学", "classmates"),
+    ("朋友", "classmates"), ("老师", "classmates"), ("妈妈", "growth"), ("爸爸", "growth"), ("成长", "growth"),
+)
+
+
+def _units():
+    from . import UNITS
+
+    return UNITS
+
+
+def art_sets():
+    """{art: the first theme key using it} — the 背景图案 a teacher may switch to."""
+    out = {}
+    for key, v in THEMES.items():
+        out.setdefault(v["art"], key)
+    return out
+
+
+def theme_for(assignment):
+    """(theme key, theme) for an assignment: its unit (title = 单元主题, the class's grade first), else a background
+    from a topic word with the texts of its genre, else its genre, else default."""
+    units = _units()
+    title = (assignment["title"] or "").strip()
+    grades = [str(assignment["grade"])] + [g for g in units if g != str(assignment["grade"])]
+    for g in grades:
+        for term, rows in units.get(g, {}).items():
+            for u in rows:
+                if u["topic"] == title:
+                    key = f"{g}-{term}-{u['unit']}"
+                    if key in THEMES:
+                        return key, THEMES[key]
+    genres = [x for x in re.split(r"[、，,\s]+", assignment["genre"] or "") if x]
+    base_key = next((f"genre:{x}" for x in genres if f"genre:{x}" in THEMES), "default")
+    for word, art in KEYWORDS:
+        if word in title:
+            key = art_sets()[art]
+            theme = dict(THEMES[base_key], art=art)
+            theme["title"] = title[:HEAD_MAX]
+            return key, theme
+    theme = dict(THEMES[base_key])
+    if base_key != "default" or title:
+        theme["title"] = title[:HEAD_MAX] or theme["title"]
+    return base_key, theme
+
+
+ART_DIR = Path(grading.PROMPTS).parent / "static" / "paper-art"
+# 3-上册-第一单元 → its file name, which carries a content hash (tools/paper_art.py, tools/assets.py).
+ART_FILES = {p.name.rsplit(".", 2)[0]: p.name for p in ART_DIR.glob("*.svg")}
+
+
+def art_file(key):
+    return "paper-art/" + ART_FILES[key.replace(":", "-")]
 
 
 def clean_text(text, marks):
@@ -209,9 +286,9 @@ def paragraphs(text, goods):
     return out
 
 
-def day_label(ts):
+def month_label(ts):
     t = time.gmtime(ts + BEIJING)
-    return f"{t.tm_year}年{t.tm_mon}月{t.tm_mday}日"
+    return f"{t.tm_year}年{t.tm_mon}月"
 
 
 def render_paper(paper, assignment, for_teacher):
@@ -241,20 +318,27 @@ def render_paper(paper, assignment, for_teacher):
                 picked.append(q)
                 per[q["student"]] = per.get(q["student"], 0) + 1
     profile = teacher_profile(assignment["license_id"])
+    key, theme = theme_for(assignment)
+    art = paper["art"] if paper["art"] in THEMES else key
     return render_template(
         "paper.html",
         paper=paper,
         assignment=assignment,
         items=items,
         quotes=picked,
-        editor=profile["nickname"],
-        day=day_label(paper["published_at"] or paper["updated_at"]),
+        head={
+            "title": paper["title"] or theme["title"],
+            "subject": paper["subject"] or theme["subject"],
+            "tagline": paper["tagline"] or theme["tagline"],
+            "intro": paper["intro"] or theme["intro"],
+            "art": art_file(art),
+            "accent": ACCENT[THEMES[art]["art"]],
+        },
+        authors=[it["student"] for it in items],
+        editor=profile["nickname"] or "",
+        day=month_label(paper["published_at"] or paper["updated_at"]),
         for_teacher=for_teacher,
     )
-
-
-def default_intro(assignment, count):
-    return f"本期主题是《{assignment['title']}》。这一期刊登了 {count} 位同学的习作，读一读，看看他们是怎样把文章写得具体又生动的。"
 
 
 def register(app):
@@ -271,6 +355,13 @@ def register(app):
             r["recommended"] = r["sid"] in recommended
             r["reason"] = reason(r)
         paper = paper_of_assignment(aid)
+        key, theme = theme_for(assignment)
+        sets = art_sets()
+        arts = [{"key": key, "label": f"本单元专属（{ART_NAMES[THEMES[key]['art']]}）"}] + [
+            {"key": k, "label": ART_NAMES[a]} for a, k in sets.items() if k != key
+        ]
+        for a in arts:
+            a["src"] = url_for("static", filename=art_file(a["key"]))
         selected = []
         if paper:
             for it in items_of(paper["id"]):
@@ -291,10 +382,17 @@ def register(app):
                 "selected": selected,
                 "name": paper["name"] if paper else f"{assignment['class_name']}作文报",
                 "issue": paper["issue"] if paper else next_issue(assignment["class_id"], aid),
-                "intro": paper["intro"] if paper else "",
-                "introDefault": default_intro(assignment, len(selected) or 1),
+                "head": {
+                    "title": (paper and paper["title"]) or theme["title"],
+                    "subject": (paper and paper["subject"]) or theme["subject"],
+                    "tagline": (paper and paper["tagline"]) or theme["tagline"],
+                    "intro": (paper and paper["intro"]) or theme["intro"],
+                    "art": paper["art"] if paper and paper["art"] in THEMES else key,
+                },
+                "arts": arts,
                 "max": MAX_ITEMS,
-                "limits": {"name": NAME_MAX, "intro": INTRO_MAX, "title": TITLE_MAX, "comment": COMMENT_MAX, "text": MAX_TEXT},
+                "limits": {"name": NAME_MAX, "intro": INTRO_MAX, "title": TITLE_MAX, "comment": COMMENT_MAX, "text": MAX_TEXT,
+                           "head": HEAD_MAX, "subject": SUBJECT_MAX, "tagline": TAGLINE_MAX},
                 "save": url_for("paper_save", aid=aid),
             },
         )
@@ -311,6 +409,12 @@ def register(app):
         if not isinstance(issue, int) or isinstance(issue, bool) or not 1 <= issue <= 999:
             raise ValueError("期号要在 1—999 之间")
         intro = multiline(data, "intro", INTRO_MAX, "卷首语")
+        head = oneline(data.get("title", ""), HEAD_MAX, "标题", required=True)
+        subject = oneline(data.get("subject", ""), SUBJECT_MAX, "本期主题")
+        tagline = oneline(data.get("tagline", ""), TAGLINE_MAX, "点题的一句话")
+        art = data.get("art")
+        if art not in THEMES:
+            raise ValueError("背景图案不对，请刷新页面再试")
         items = data.get("items")
         if not isinstance(items, list) or not items:
             raise ValueError("请至少选一篇作文")
@@ -343,12 +447,16 @@ def register(app):
         paper = paper_of_assignment(aid)
         if paper:
             pid = paper["id"]
-            d.execute("UPDATE ess_papers SET name=?,issue=?,intro=?,updated_at=? WHERE id=?", (name, issue, intro, now, pid))
+            d.execute(
+                "UPDATE ess_papers SET name=?,issue=?,intro=?,title=?,subject=?,tagline=?,art=?,updated_at=? WHERE id=?",
+                (name, issue, intro, head, subject, tagline, art, now, pid),
+            )
             d.execute("DELETE FROM ess_paper_items WHERE paper_id=?", (pid,))
         else:
             pid = d.execute(
-                "INSERT INTO ess_papers(assignment_id,name,issue,intro,created_at,updated_at) VALUES(?,?,?,?,?,?)",
-                (aid, name, issue, intro, now, now),
+                "INSERT INTO ess_papers(assignment_id,name,issue,intro,title,subject,tagline,art,created_at,updated_at)"
+                " VALUES(?,?,?,?,?,?,?,?,?,?)",
+                (aid, name, issue, intro, head, subject, tagline, art, now, now),
             ).lastrowid
         d.executemany(
             "INSERT INTO ess_paper_items(paper_id,submission_id,position,title,text,comment,goods) VALUES(?,?,?,?,?,?,?)",
@@ -398,7 +506,7 @@ def register(app):
         if not paper:
             abort(404)
         assignment = db().execute(
-            "SELECT a.*,c.name class_name,c.license_id FROM ess_assignments a JOIN ess_classes c ON c.id=a.class_id WHERE a.id=?",
+            "SELECT a.*,c.name class_name,c.grade,c.license_id FROM ess_assignments a JOIN ess_classes c ON c.id=a.class_id WHERE a.id=?",
             (paper["assignment_id"],),
         ).fetchone()
         return render_paper(paper, assignment, for_teacher=False)

@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
-{% block title %}{{paper.name}} · 第{{paper.issue}}期{% endblock %}
+{% block title %}{{head.title}} · {{paper.name}} 第{{paper.issue}}期{% endblock %}
 {% block head %}<link rel="stylesheet" href="{{asset('paper.css')}}">{% endblock %}
 {% block body_class %} paper-page{% endblock %}
 {% block header_actions %}{% if for_teacher %}<a class="header-link" href="{{url_for('assignment_page', aid=assignment.id)}}">返回作业</a>{% else %}<a class="header-link" href="{{url_for('student_home')}}">返回</a>{% endif %}{% endblock %}
-{% macro body(paras, lead=False) %}
-  {% for para in paras %}<p{% if lead and loop.first %} class="drop"{% endif %}>{% for run, note in para %}{% if note is not none %}<span class="good"{% if note %} title="{{note}}"{% endif %}>{{run}}</span>{% else %}{{run}}{% endif %}{% endfor %}</p>{% endfor %}
+{% macro body(paras) %}
+  {% for para in paras %}<p>{% for run, note in para %}{% if note is not none %}<span class="good"{% if note %} title="{{note}}"{% endif %}>{{run}}</span>{% else %}{{run}}{% endif %}{% endfor %}</p>{% endfor %}
 {% endmacro %}
 {% block content %}
   {% if for_teacher %}
@@ -12,7 +12,7 @@
       <span class="tag {{'' if paper.published_at else 'off'}}">{{'学生已经能看到' if paper.published_at else '还没发布，学生看不到'}}</span>
       <span class="paper-toolbar-actions">
         <a class="button secondary small" href="{{url_for('paper_edit', aid=assignment.id)}}">编辑</a>
-        <button type="button" class="secondary small" onclick="window.print()">打印 / 存为 PDF</button>
+        <button type="button" class="secondary small" id="paper-print">打印 / 存为 PDF（A3）</button>
         {% if paper.published_at %}
           <button type="button" class="secondary small" data-post="{{url_for('paper_publish', pid=paper.id, action='unpublish')}}" data-confirm="撤回后学生就看不到这期作文报了。确定？">撤回</button>
         {% else %}
@@ -21,74 +21,86 @@
         <button type="button" class="link-button danger-text" data-post="{{url_for('paper_delete', pid=paper.id)}}" data-confirm="删除这期作文报？作文本身不受影响。">删除</button>
       </span>
     </div>
+    <p class="notice error paper-overflow" id="paper-overflow" hidden>文章有点多，一张 A3 放不下（字已经缩到最小）。建议点「编辑」去掉 1—2 篇，或把长文章删短一些。</p>
   {% endif %}
 
-  <article class="paper-sheet">
-    <header class="paper-mast">
-      <div class="paper-mast-title">
-        <p class="paper-kicker">班级习作园地</p>
-        <h1>{{paper.name}}</h1>
+  <div class="a3-wrap" id="a3-wrap">
+    <article class="a3" id="a3" style="--accent:{{head.accent}}">
+      <img class="a3-bg" src="{{url_for('static', filename=head.art)}}" alt="" aria-hidden="true">
+      <div class="a3-panel">
+        <header class="a3-head">
+          <span class="a3-issue">{{paper.name}} · 第 {{paper.issue}} 期</span>
+          <span class="a3-date">{{day}}</span>
+          <h1>{{head.title}}</h1>
+          {% if head.subject %}<p class="a3-subject">本期主题：{{head.subject}}</p>{% endif %}
+          {% if head.tagline %}<p class="a3-tagline">{{head.tagline}}</p>{% endif %}
+        </header>
+        <div class="a3-cols" id="a3-cols">
+          {% if head.intro %}
+            <section class="a3-intro">
+              <h2>卷首语</h2>
+              <p>{{head.intro}}</p>
+            </section>
+          {% endif %}
+          {% for it in items %}
+            <article class="a3-essay">
+              <h2 class="a3-title"><i aria-hidden="true"></i>{{it.title}}{% if it.excellent %}<span class="a3-star">★ 优秀习作</span>{% endif %}</h2>
+              <p class="a3-byline">{{it.student}} · {{assignment.class_name}}</p>
+              <div class="a3-body">{{ body(it.paragraphs) }}</div>
+              {% if it.comment %}<div class="a3-comment"><span>老师点评</span>{{it.comment}}</div>{% endif %}
+            </article>
+          {% endfor %}
+          {% if quotes %}
+            <section class="a3-quotes">
+              <h2>妙笔集锦</h2>
+              <ul>
+                {% for q in quotes %}<li><q>{{q.quote}}</q><cite>—— {{q.student}}</cite></li>{% endfor %}
+              </ul>
+            </section>
+          {% endif %}
+        </div>
+        <footer class="a3-foot">
+          <span>小作者：{{authors|join('、')}}</span>
+          <span>指导老师：{{editor or '语文老师'}}</span>
+        </footer>
       </div>
-      <div class="paper-seal" aria-label="第{{paper.issue}}期"><span>第</span><b>{{paper.issue}}</b><span>期</span></div>
-    </header>
-    <div class="paper-rule" aria-hidden="true"></div>
-    <p class="paper-meta">
-      <span>{{day}}</span><i aria-hidden="true">◆</i>
-      <span>本期主题《{{assignment.title}}》</span>{% if editor %}<i aria-hidden="true">◆</i>
-      <span>主编 {{editor}}</span>{% endif %}<i aria-hidden="true">◆</i>
-      <span>共 {{items|length}} 篇</span>
-    </p>
-
-    {% set lead = items[0] if items else none %}
-    <section class="paper-front">
-      <aside class="paper-intro">
-        <h2>卷首语</h2>
-        <p>{{paper.intro or ('本期主题是《%s》。这一期刊登了 %d 位同学的习作，读一读，看看他们是怎样把文章写得具体又生动的。'|format(assignment.title, items|length))}}</p>
-        <div class="paper-intro-art" aria-hidden="true">
-          <svg viewBox="0 0 120 60"><path d="M6 52c18-30 38-30 54 0M60 52c16-24 34-24 54 0" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="92" cy="14" r="7" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
-        </div>
-      </aside>
-      {% if lead %}
-        <div class="paper-lead">
-          <div class="paper-lead-head">
-            <span class="paper-badge">头条</span>
-            {% if lead.excellent %}<span class="paper-star">★ 优秀习作</span>{% endif %}
-          </div>
-          <h2 class="paper-title">{{lead.title}}</h2>
-          <p class="paper-byline">{{assignment.class_name}} · <strong>{{lead.student}}</strong></p>
-          <div class="paper-body paper-cols">{{ body(lead.paragraphs, True) }}</div>
-          {% if lead.comment %}<div class="paper-comment"><span>老师点评</span>{{lead.comment}}</div>{% endif %}
-        </div>
-      {% endif %}
-    </section>
-
-    {% if items|length > 1 %}
-      <div class="paper-divider" aria-hidden="true"><span>佳作展台</span></div>
-      <section class="paper-grid">
-        {% for it in items[1:] %}
-          <article class="paper-card{{' long' if it.long}}">
-            {% if it.excellent %}<span class="paper-star corner">★ 优秀习作</span>{% endif %}
-            <h3 class="paper-title">{{it.title}}</h3>
-            <p class="paper-byline">{{it.student}}</p>
-            <div class="paper-body">{{ body(it.paragraphs) }}</div>
-            {% if it.comment %}<div class="paper-comment"><span>老师点评</span>{{it.comment}}</div>{% endif %}
-          </article>
-        {% endfor %}
-      </section>
-    {% endif %}
-
-    {% if quotes %}
-      <section class="paper-quotes">
-        <h2><span>妙笔集锦</span></h2>
-        <ul>
-          {% for q in quotes %}<li><q>{{q.quote}}</q><cite>—— {{q.student}}</cite></li>{% endfor %}
-        </ul>
-      </section>
-    {% endif %}
-
-    <footer class="paper-foot">
-      <span>{{paper.name}}</span><span class="paper-foot-flower" aria-hidden="true">✿ ✿ ✿</span><span>第{{paper.issue}}期 · {{day}}</span>
-    </footer>
-  </article>
-  {% if items %}<p class="paper-legend hint">红色波浪线是老师圈出的好词好句{% if for_teacher %}；电脑上点「打印 / 存为 PDF」可以打印或保存，纸张选 A4{% endif %}。</p>{% endif %}
+    </article>
+  </div>
+  <p class="paper-legend hint">红色波浪线是老师圈出的好词好句{% if for_teacher %}。打印时纸张选 A3、横向，边距选「无」，并勾选「背景图形」{% endif %}。</p>
+{% endblock %}
+{% block scripts %}
+<script>
+(() => {
+  /* One A3 sheet: shrink the text until the six columns hold everything, then scale the sheet to the window. */
+  const wrap = document.getElementById('a3-wrap'), sheet = document.getElementById('a3'), cols = document.getElementById('a3-cols');
+  const warn = document.getElementById('paper-overflow');
+  const MAX = 17, MIN = 11;
+  function fits() { return cols.scrollWidth <= cols.clientWidth + 2 && cols.scrollHeight <= cols.clientHeight + 2; }
+  function fit() {
+    let size = MAX;
+    sheet.style.setProperty('--fs', size + 'px');
+    while (!fits() && size > MIN) {
+      size -= 0.5;
+      sheet.style.setProperty('--fs', size + 'px');
+    }
+    if (warn) warn.hidden = fits();
+  }
+  function scale() {
+    const reading = wrap.clientWidth < 900;
+    wrap.classList.toggle('reading', reading);
+    if (reading) { sheet.style.transform = ''; wrap.style.height = ''; return; }
+    const s = Math.min(1, wrap.clientWidth / 1587);
+    sheet.style.transform = `scale(${s})`;
+    wrap.style.height = 1123 * s + 'px';
+  }
+  function layout() { wrap.classList.remove('reading'); fit(); scale(); }
+  layout();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(layout);
+  addEventListener('resize', scale);
+  addEventListener('beforeprint', () => { wrap.classList.remove('reading'); sheet.style.transform = ''; });
+  addEventListener('afterprint', scale);
+  const print = document.getElementById('paper-print');
+  if (print) print.addEventListener('click', () => window.print());
+})();
+</script>
 {% endblock %}

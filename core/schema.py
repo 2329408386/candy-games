@@ -70,7 +70,7 @@ CREATE INDEX IF NOT EXISTS ess_images_submission ON ess_images(submission_id,pag
 CREATE TABLE IF NOT EXISTS ws_entitlements(license_id INTEGER NOT NULL,feature TEXT NOT NULL,days INTEGER NOT NULL,starts_at INTEGER,expires_at INTEGER,PRIMARY KEY(license_id,feature));
 CREATE TABLE IF NOT EXISTS ess_trials(license_id INTEGER PRIMARY KEY,device_hash TEXT NOT NULL,created_at INTEGER NOT NULL);
 CREATE INDEX IF NOT EXISTS ess_trials_device ON ess_trials(device_hash);
-CREATE TABLE IF NOT EXISTS ess_papers(id INTEGER PRIMARY KEY,assignment_id INTEGER NOT NULL UNIQUE REFERENCES ess_assignments(id),name TEXT NOT NULL,issue INTEGER NOT NULL,intro TEXT NOT NULL DEFAULT '',created_at INTEGER NOT NULL,updated_at INTEGER NOT NULL,published_at INTEGER);
+CREATE TABLE IF NOT EXISTS ess_papers(id INTEGER PRIMARY KEY,assignment_id INTEGER NOT NULL UNIQUE REFERENCES ess_assignments(id),name TEXT NOT NULL,issue INTEGER NOT NULL,intro TEXT NOT NULL DEFAULT '',created_at INTEGER NOT NULL,updated_at INTEGER NOT NULL,published_at INTEGER,title TEXT NOT NULL DEFAULT '',subject TEXT NOT NULL DEFAULT '',tagline TEXT NOT NULL DEFAULT '',art TEXT NOT NULL DEFAULT '');
 CREATE TABLE IF NOT EXISTS ess_paper_items(paper_id INTEGER NOT NULL REFERENCES ess_papers(id),submission_id INTEGER NOT NULL REFERENCES ess_submissions(id),position INTEGER NOT NULL,title TEXT NOT NULL,text TEXT NOT NULL,comment TEXT NOT NULL DEFAULT '',goods TEXT NOT NULL DEFAULT '[]',PRIMARY KEY(paper_id,submission_id));
 CREATE TABLE IF NOT EXISTS ws_referral_codes(license_id INTEGER PRIMARY KEY,code TEXT NOT NULL UNIQUE,created_at INTEGER NOT NULL);
 CREATE TABLE IF NOT EXISTS ws_referrals(referee_id INTEGER PRIMARY KEY,referrer_id INTEGER NOT NULL,created_at INTEGER NOT NULL);
@@ -227,6 +227,13 @@ def migrate(d):
             d.execute("ALTER TABLE ess_assignments ADD COLUMN deleted_at INTEGER")
         d.execute("UPDATE ess_assignments SET genre='' WHERE genre='其他'")
         d.execute("INSERT INTO migrations VALUES('assignment_intro_delete',?)", (int(time.time()),))
+    if "paper_a3" not in done:
+        # 班级作文报 became one A3 sheet with a 标题, 本期主题, 点题句 and a background picked for its topic.
+        cols = {r[1] for r in d.execute("PRAGMA table_info(ess_papers)")}
+        for column in ("title", "subject", "tagline", "art"):
+            if column not in cols:
+                d.execute(f"ALTER TABLE ess_papers ADD COLUMN {column} TEXT NOT NULL DEFAULT ''")
+        d.execute("INSERT INTO migrations VALUES('paper_a3',?)", (int(time.time()),))
     if "submission_writing" not in done:
         # How neat the handwriting of a photographed essay is (工整/一般/凌乱, read by the ocr step); graded in 规范.
         if "writing" not in {r[1] for r in d.execute("PRAGMA table_info(ess_submissions)")}:
