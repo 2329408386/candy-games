@@ -713,8 +713,7 @@ def register_api(app):
             d.rollback()
             return (
                 jsonify(
-                    error=f"此授权码已绑定{row['device_limit']}台设备，请联系管理员解绑"
-                    + ("；也可以在已登录的设备上，点右上角头像 →「我的设备」移除不用的设备" if site().kind == "workbench" else ""),
+                    error=f"此授权码已绑定{row['device_limit']}台设备。可以在已登录的设备上，点右上角头像 →「我的设备」移除不用的设备，或联系管理员解绑",
                     device_count=count,
                     device_limit=row["device_limit"],
                 ),
@@ -757,6 +756,9 @@ def register_api(app):
         row = current(request.args.get("game"))
         if not row:
             return jsonify(error="授权已失效，请返回首页重新激活或联系管理员"), 403
+        from .devices import touch  # keeps 我的设备 → 最近使用 current while a game page is open
+
+        touch(row["id"])
         return jsonify(
             games=allowed_games(row),
             grade_scopes=license_grades(row["id"]),

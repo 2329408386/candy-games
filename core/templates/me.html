@@ -56,6 +56,7 @@
       <ol class="rank-list" id="rank-list"></ol>
       <p class="hint">单人练习和联网PK按游戏得分的十分之一计入排行（230 分记 23 分），联网PK前三名另有名次奖励；错题重练每改对一道 +1 分。本周榜每周一 0 点清零。</p>
     </section>
+    <section class="me-card" id="devices-card" aria-label="我的设备"></section>
     <p class="me-feedback"><a href="{{url_for('feedback_page')}}">有什么想法，告诉我们{% if header_profile().feedback_unread %} <span class="fb-dot" role="img" aria-label="有新回复"></span>{% endif %}</a></p>
   </div>
   <script id="me-config" type="application/json">{{ {
@@ -70,6 +71,7 @@
     "manage": url_for("manage_class", action="ACTION"),
     "member": url_for("manage_member", member=0, action="ACTION"),
     "ranking": url_for("class_ranking"),
+    "removeDevice": url_for("remove_device", n=0),
   }|tojson }}</script>
   <script>
 (() => {
@@ -260,6 +262,47 @@
     card.append(msg);
   }
 
+  // ---------- 我的设备 ----------
+  function day(t) { const d = new Date(t * 1000); return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`; }
+  function ago(t) {
+    const s = Date.now() / 1000 - t;
+    if (s < 3600) return '刚刚';
+    if (s < 86400) return Math.floor(s / 3600) + ' 小时前';
+    if (s < 86400 * 30) return Math.floor(s / 86400) + ' 天前';
+    return day(t);
+  }
+  function renderDevices() {
+    const D = me.devices, card = $('devices-card');
+    if (!D) return;
+    card.replaceChildren();
+    const head = el('h2', '', '我的设备 ');
+    head.append(el('small', 'hint', `${D.list.length} / ${D.limit} 台`));
+    card.append(head, el('p', 'hint', `这个授权码已经在 ${D.list.length} 台设备上登录，最多 ${D.limit} 台。`));
+    const list = el('ul', 'device-list');
+    for (const x of D.list) {
+      const li = el('li', x.me ? 'me' : '');
+      const main = el('div', 'device-main');
+      const name = el('strong', '', x.name);
+      main.append(name);
+      if (x.me) { main.append(' '); main.append(el('span', 'me-tag', '本机')); }
+      main.append(el('small', '', `${day(x.created_at)} 登录 · 最近使用 ${ago(x.last_seen)}`));
+      li.append(main);
+      if (!x.me && D.removals_left) {
+        li.append(button('移除', () => confirm(`移除「${x.name}」？那台设备会退出登录，要再用得重新输入授权码。\n${D.days} 天内只能自己移除 ${D.removals_left} 台，确定吗？`)
+          && act('device-msg', async () => { const data = await call(C.removeDevice.replace('/0/', '/' + x.n + '/'), { created_at: x.created_at }); toast('已移除'); return data; }), 'text-button'));
+      }
+      list.append(li);
+    }
+    card.append(list);
+    card.append(el('p', 'hint', D.removals_left
+      ? `换了新手机或平板？可以把不用的设备移除，空出名额（${D.days} 天内还能自己移除 ${D.removals_left} 台）。`
+      : `${D.days} 天内自己移除的次数已经用完，需要换设备请联系管理员。`));
+    const msg = el('p', 'me-msg');
+    msg.id = 'device-msg';
+    msg.setAttribute('role', 'status');
+    card.append(msg);
+  }
+
   // ---------- ranking ----------
   let rankSeq = 0;
   async function loadRanking() {
@@ -295,7 +338,7 @@
     if (!data.rows.some(r => r.points)) list.append(el('li', 'rank-empty', '还没有人得分，快去玩一局吧！'));
   }
 
-  function render() { renderProfile(); renderTier(); renderClass(); loadRanking(); }
+  function render() { renderProfile(); renderTier(); renderClass(); renderDevices(); loadRanking(); }
   async function refresh() { me = await call(C.me); render(); }
   refresh().catch(e => { $('class-card').textContent = e.message; });
 })();

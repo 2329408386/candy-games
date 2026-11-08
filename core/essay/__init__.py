@@ -46,6 +46,8 @@ from urllib.parse import quote
 from flask import Response, abort, g, jsonify, redirect, render_template, request, send_file, session, url_for
 from core import feedback as user_feedback
 from core.app import KEY_ALPHABET, XLSX_MIME, csrf, current, data_dir, db, device_hash, limited, new_xlsx, site, xlsx_download
+from core import devices
+from core.devices import device_name  # noqa: F401  (templates and tests use core.essay.device_name)
 from . import features, grading, referral
 
 DEFAULT_STUDENTS = 70
@@ -178,74 +180,11 @@ def teacher():
 
 
 def touch_device(lid):
-    """Keeps 最近使用 of this device up to date (at most one write an hour)."""
-    from core.app import digest
-
-    d = db()
-    if d.in_transaction:
-        return
-    now = int(time.time())
-    d.execute(
-        "UPDATE devices SET last_seen=? WHERE site='teacher' AND license_id=? AND token_hash=? AND last_seen<?",
-        (now, lid, digest(session["device"]), now - 3600),
-    )
-    d.commit()
-
-
-def device_name(ua):
-    """A short, friendly name for a device from its User-Agent, e.g. 「iPhone · 微信」."""
-    ua = ua or ""
-    if "iPad" in ua or ("Macintosh" in ua and "Mobile" in ua):
-        kind = "iPad"
-    elif "iPhone" in ua:
-        kind = "iPhone"
-    elif "HarmonyOS" in ua or "OpenHarmony" in ua:
-        kind = "鸿蒙设备"
-    elif "Android" in ua:
-        kind = "安卓平板" if "Mobile" not in ua else "安卓手机"
-    elif "Windows" in ua:
-        kind = "Windows 电脑"
-    elif "Macintosh" in ua or "Mac OS X" in ua:
-        kind = "Mac 电脑"
-    elif "CrOS" in ua:
-        kind = "Chromebook"
-    elif "Linux" in ua:
-        kind = "Linux 电脑"
-    else:
-        kind = "未知设备"
-    browsers = (
-        ("MicroMessenger", "微信"), ("wxwork", "企业微信"), ("DingTalk", "钉钉"), ("QQ/", "QQ"), ("MQQBrowser", "QQ 浏览器"),
-        ("UCBrowser", "UC 浏览器"), ("Quark", "夸克"), ("HuaweiBrowser", "华为浏览器"), ("HeyTapBrowser", "OPPO 浏览器"),
-        ("MiuiBrowser", "小米浏览器"), ("VivoBrowser", "vivo 浏览器"), ("baiduboxapp", "百度"), ("Edg", "Edge"),
-        ("SE 2.X", "搜狗浏览器"), ("360", "360 浏览器"), ("Firefox", "Firefox"), ("Chrome", "Chrome"), ("CriOS", "Chrome"),
-        ("Safari", "Safari"),
-    )
-    browser = next((name for key, name in browsers if key in ua), "")
-    return f"{kind} · {browser}" if browser else kind
+    devices.touch(lid)
 
 
 def my_devices(lid):
-    """This license's devices, oldest first: [{n, name, created_at, last_seen, me}]; n is what the page sends back."""
-    from core.app import digest
-
-    mine = digest(session.get("device") or "")
-    rows = db().execute(
-        "SELECT token_hash,label,created_at,last_seen FROM devices WHERE site='teacher' AND license_id=? ORDER BY created_at,token_hash",
-        (lid,),
-    ).fetchall()
-    return [
-        {"n": i, "name": device_name(r["label"]), "created_at": r["created_at"], "last_seen": r["last_seen"],
-         "me": r["token_hash"] == mine, "token_hash": r["token_hash"]}
-        for i, r in enumerate(rows, 1)
-    ]
-
-
-def self_removals(lid):
-    since = int(time.time()) - SELF_REMOVAL_DAYS * 86400
-    return db().execute(
-        "SELECT count(*) FROM audit WHERE site='teacher' AND license_id=? AND action='device_self_remove' AND created_at>=?",
-        (lid, since),
-    ).fetchone()[0]
+    return devices.my_devices(lid)
 
 
 # ---- trials: each browser may try each feature once ----
@@ -890,7 +829,7 @@ def register_pages(app):
             name_max=TEACHER_NAME_MAX,
             devices=my_devices(row["id"]),
             device_limit=row["device_limit"],
-            removals_left=max(0, SELF_REMOVALS - self_removals(row["id"])),
+            removals_left=max(0, SELF_REMOVALS - devices.self_removals(row["id"], SELF_REMOVAL_DAYS)),
             removal_days=SELF_REMOVAL_DAYS,
             referral_code=referral_code,
             referred=referral.count_referred(d, row["id"]),
@@ -1449,20 +1388,7 @@ def register_teacher_api(app):
     @app.post("/api/me/devices/<int:n>/remove")
     @teacher_api
     def device_remove(row, n):
-        from core.app import audit
-
-        created = payload().get("created_at")
-        device = next((x for x in my_devices(row["id"]) if x["n"] == n and x["created_at"] == created), None)
-        if not device:
-            raise ValueError("设备列表变了，请刷新页面再试")
-        if device["me"]:
-            raise ValueError("不能移除正在用的这台设备；要换设备，请在这台设备上退出登录")
-        if self_removals(row["id"]) >= SELF_REMOVALS:
-            raise ValueError(f"{SELF_REMOVAL_DAYS} 天内最多自己移除 {SELF_REMOVALS} 台设备，请联系管理员解绑")
-        db().execute(
-            "DELETE FROM devices WHERE site='teacher' AND license_id=? AND token_hash=?", (row["id"], device["token_hash"])
-        )
-        audit("device_self_remove", row["id"], device["name"])
+        devices.remove(row["id"], n, payload().get("created_at"), SELF_REMOVALS, SELF_REMOVAL_DAYS)
         return jsonify(ok=True)
 
     @app.post("/api/classes")
