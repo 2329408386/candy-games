@@ -54,11 +54,11 @@
 /* 妙笔集锦 */
 .a3-quotes{break-inside:avoid;margin:.4em 0 0;padding:.9em .9em .5em;border-radius:14px;background:linear-gradient(160deg,#fff4e6,#fdeee8);border:1.5px solid #efc6b8;position:relative}
 .a3-quotes h2{text-align:center;font-family:RedPen,KaiTi,serif;font-weight:400;font-size:1.4em;letter-spacing:.35em;color:var(--vermilion);margin-bottom:.4em}
-.a3-quotes h2::before,.a3-quotes h2::after{content:"❀";font-size:.6em;margin:0 .5em;vertical-align:middle;opacity:.8}
+.a3-quotes h2 .a3-flower{font-size:.6em;margin:0 .5em;vertical-align:middle;opacity:.8}
 .a3-quotes ul{list-style:none;margin:0;padding:0}
 .a3-quotes li{font-family:RedPen,KaiTi,serif;font-size:.95em;line-height:1.65;padding:.2em 0 .35em;border-bottom:1px dotted #e6c3b6}
 .a3-quotes li:last-child{border-bottom:0}
-.a3-quotes q{quotes:"「" "」"}
+.a3-quotes q{quotes:none}
 .a3-quotes cite{display:block;text-align:right;font-style:normal;font-size:.75em;color:#8a7a6a;font-family:'PingFang SC','Microsoft YaHei',sans-serif}
 
 .a3-foot{display:flex;justify-content:space-between;gap:20px;padding-top:8px;margin-top:6px;border-top:1px solid color-mix(in srgb,var(--accent) 35%,transparent);font-size:13px;color:#6b6553;letter-spacing:.5px}

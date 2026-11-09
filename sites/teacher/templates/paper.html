@@ -52,9 +52,9 @@
           {% endfor %}
           {% if quotes %}
             <section class="a3-quotes">
-              <h2>妙笔集锦</h2>
+              <h2><span class="a3-flower" aria-hidden="true">❀</span>妙笔集锦<span class="a3-flower" aria-hidden="true">❀</span></h2>
               <ul>
-                {% for q in quotes %}<li><q>{{q.quote}}</q><cite>—— {{q.student}}</cite></li>{% endfor %}
+                {% for q in quotes %}<li><q>「{{q.quote}}」</q><cite>—— {{q.student}}</cite></li>{% endfor %}
               </ul>
             </section>
           {% endif %}
@@ -99,85 +99,195 @@
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(layout);
   addEventListener('resize', scale);
 
-  /* 导出 PDF: the A3 sheet as it looks on a computer (also from a phone's reading view), drawn into a canvas
-   * through an SVG <foreignObject> with the page's styles, the background and the RedPen font inlined (an SVG
-   * image may not load anything itself), then one JPEG page of an A3 landscape PDF (RedPen.deliverPdf: a
-   * download, or on Android WeChat a link). No browser printing — phones cannot print. */
+  /* 导出 PDF: the A3 sheet as it looks on a computer (also from a phone's reading view), painted into a canvas
+   * from the page's own layout — every box's background and borders from its computed style, every character
+   * where the browser put it (Range.getClientRects) in the page's already loaded fonts — then one JPEG page of an
+   * A3 landscape PDF (RedPen.deliverPdf: a download, or on Android WeChat a link). No browser printing (phones
+   * cannot print) and no SVG <foreignObject> (phones' WebKit leaves the text out of it). */
   const W = 1587, H = 1123, K = 2;
-  const dataUrl = async (url) => {
-    const r = await fetch(url);
-    if (!r.ok) throw new Error('fetch ' + url);
-    const blob = await r.blob();
-    return new Promise((done, fail) => {
-      const reader = new FileReader();
-      reader.onload = () => done(reader.result);
-      reader.onerror = fail;
-      reader.readAsDataURL(blob);
-    });
-  };
-  /* The page's own style sheets as written (re-serialized rules lose var() in some shorthands), without their
-   * @font-face rules: RedPen goes in as a data URL instead. */
-  async function styles() {
-    const out = [];
-    let font = null;
-    for (const sheetEl of document.styleSheets) {
-      const base = sheetEl.href || location.href;
-      let text = '';
-      if (sheetEl.href) {
-        if (new URL(sheetEl.href).origin !== location.origin) continue;
-        const r = await fetch(sheetEl.href);
-        if (r.ok) text = await r.text();
-      } else if (sheetEl.ownerNode) text = sheetEl.ownerNode.textContent;
-      text = text.replace(/@font-face\s*\{[^}]*\}/g, (rule) => {
-        const m = /RedPen/.test(rule) && /url\(["']?([^"')]+)/.exec(rule);
-        if (m && !font) font = new URL(m[1], base).href;
-        return '';
-      });
-      out.push(text);
-    }
-    if (font) out.unshift(`@font-face{font-family:RedPen;src:url(${await dataUrl(font)}) format('woff2')}`);
-    return out.join('\n');
+  const px = (v) => parseFloat(v) || 0;
+  const clear = (c) => !c || c === 'transparent' || /^rgba\(.*,\s*0\)$/.test(c);
+  function roundRect(ctx, x, y, w, h, r) {
+    r = Math.max(0, Math.min(r, w / 2, h / 2));
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
   }
-  const load = (src) => new Promise((done, fail) => {
-    const img = new Image();
-    img.onload = () => done(img);
-    img.onerror = () => fail(new Error('image'));
-    img.src = src;
-  });
+  const dash = (style, w) => (style === 'dashed' ? [w * 3, w * 2.2] : style === 'dotted' ? [w, w * 1.6] : []);
+  function gradient(ctx, image, x, y, w, h) {
+    const m = /linear-gradient\((?:(-?[\d.]+)deg,\s*)?(.*)\)$/.exec(image);
+    const stops = m && m[2].match(/(rgba?|color)\([^)]*\)|#[0-9a-f]+/gi);
+    if (!stops || stops.length < 2) return null;
+    const a = ((m[1] ? +m[1] : 180) * Math.PI) / 180, dx = Math.sin(a), dy = -Math.cos(a);
+    const len = Math.abs(w * dx) + Math.abs(h * dy), cx = x + w / 2, cy = y + h / 2;
+    const g = ctx.createLinearGradient(cx - (dx * len) / 2, cy - (dy * len) / 2, cx + (dx * len) / 2, cy + (dy * len) / 2);
+    stops.forEach((c, k) => g.addColorStop(k / (stops.length - 1), c));
+    return g;
+  }
+  function paintBox(ctx, cs, r) {
+    const radius = px(cs.borderTopLeftRadius);
+    const fill = gradient(ctx, cs.backgroundImage || '', r.x, r.y, r.w, r.h) || (!clear(cs.backgroundColor) && cs.backgroundColor);
+    if (fill) {
+      ctx.fillStyle = fill;
+      roundRect(ctx, r.x, r.y, r.w, r.h, radius);
+      ctx.fill();
+    }
+    const sides = ['Top', 'Right', 'Bottom', 'Left'].map((s) => ({
+      s, w: px(cs['border' + s + 'Width']), style: cs['border' + s + 'Style'], color: cs['border' + s + 'Color'],
+    })).filter((b) => b.w > 0 && b.style !== 'none' && b.style !== 'hidden' && !clear(b.color));
+    if (!sides.length) return;
+    const same = sides.length === 4 && sides.every((b) => b.w === sides[0].w && b.style === sides[0].style && b.color === sides[0].color);
+    if (same) {
+      const b = sides[0];
+      ctx.save();
+      ctx.strokeStyle = b.color;
+      ctx.lineWidth = b.w;
+      ctx.setLineDash(dash(b.style, b.w));
+      roundRect(ctx, r.x + b.w / 2, r.y + b.w / 2, r.w - b.w, r.h - b.w, radius - b.w / 2);
+      ctx.stroke();
+      ctx.restore();
+      return;
+    }
+    for (const b of sides) {
+      ctx.save();
+      roundRect(ctx, r.x, r.y, r.w, r.h, radius);
+      ctx.clip();
+      ctx.strokeStyle = b.color;
+      ctx.lineWidth = b.w;
+      ctx.setLineDash(dash(b.style, b.w));
+      ctx.beginPath();
+      const h = b.w / 2;
+      if (b.s === 'Top') (ctx.moveTo(r.x, r.y + h), ctx.lineTo(r.x + r.w, r.y + h));
+      if (b.s === 'Bottom') (ctx.moveTo(r.x, r.y + r.h - h), ctx.lineTo(r.x + r.w, r.y + r.h - h));
+      if (b.s === 'Left') (ctx.moveTo(r.x + h, r.y), ctx.lineTo(r.x + h, r.y + r.h));
+      if (b.s === 'Right') (ctx.moveTo(r.x + r.w - h, r.y), ctx.lineTo(r.x + r.w - h, r.y + r.h));
+      ctx.stroke();
+      ctx.restore();
+    }
+  }
+  function line(ctx, x1, y1, x2, y2, color, width, pattern, alpha) {
+    ctx.save();
+    ctx.globalAlpha *= alpha;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = width;
+    ctx.setLineDash(pattern);
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+    ctx.restore();
+  }
+  function paintSheet(ctx, origin) {
+    const at = (rect) => ({ x: rect.left - origin.left, y: rect.top - origin.top, w: rect.width, h: rect.height });
+    const accent = getComputedStyle(sheet).getPropertyValue('--accent').trim() || '#2c4a37';
+    const range = document.createRange();
+    function text(node, cs) {
+      ctx.fillStyle = cs.color;
+      ctx.font = `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+      const descent = ctx.measureText('中').fontBoundingBoxDescent;
+      const value = node.nodeValue;
+      for (let k = 0; k < value.length; ) {
+        const code = value.codePointAt(k), n = code > 0xffff ? 2 : 1, ch = value.slice(k, k + n);
+        if (!/\s/.test(ch)) {
+          range.setStart(node, k);
+          range.setEnd(node, k + n);
+          const rect = [...range.getClientRects()].find((q) => q.width > 0);
+          if (rect) {
+            const r = at(rect);
+            ctx.fillText(ch, r.x, r.y + r.h - (descent >= 0 ? descent : px(cs.fontSize) * 0.12));
+          }
+        }
+        k += n;
+      }
+    }
+    function wavy(el, cs) {
+      const color = cs.textDecorationColor || cs.color, fs = px(cs.fontSize);
+      ctx.save();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1;
+      ctx.font = `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+      const descent = ctx.measureText('中').fontBoundingBoxDescent || fs * 0.12;
+      for (const rect of el.getClientRects()) {
+        const r = at(rect), y = r.y + r.h - descent + fs * 0.32 + 1.5, step = 3;
+        ctx.beginPath();
+        for (let x = r.x, up = true; x <= r.x + r.w; x += step, up = !up) (x === r.x ? ctx.moveTo(x, y) : ctx.lineTo(x, y + (up ? -1.2 : 1.2)));
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+    /* An element's boxes. WebKit places a display:table box (the 老师点评 tab) in the wrong column of a
+     * multi-column layout, so that one is measured around its text instead. */
+    function boxes(el, cs) {
+      if (cs.display !== 'table') return [...el.getClientRects()].map(at);
+      const inner = document.createRange();
+      inner.selectNodeContents(el);
+      const r = at(inner.getBoundingClientRect());
+      const w = r.w + px(cs.paddingLeft) + px(cs.paddingRight), h = (px(cs.lineHeight) || r.h) + px(cs.paddingTop) + px(cs.paddingBottom);
+      return [{ x: r.x - px(cs.paddingLeft), y: r.y + r.h / 2 - h / 2, w, h }];
+    }
+    function walk(el, alpha) {
+      const cs = getComputedStyle(el);
+      if (cs.display === 'none' || cs.visibility === 'hidden') return;
+      const opacity = parseFloat(cs.opacity);
+      if (!isNaN(opacity)) alpha *= opacity;
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      if (el.tagName === 'IMG') {
+        const r = at(el.getBoundingClientRect());
+        try { ctx.drawImage(el, r.x, r.y, r.w, r.h); } catch (e) {}
+        ctx.restore();
+        return;
+      }
+      if (el !== sheet) for (const r of boxes(el, cs)) paintBox(ctx, cs, r);
+      if (el.classList.contains('a3-cols')) {
+        const r = at(el.getBoundingClientRect());
+        line(ctx, r.x + r.w / 2, r.y, r.x + r.w / 2, r.y + r.h, accent, 1.5, [4.5, 3.5], 0.4);
+      }
+      const clip = el !== sheet && cs.overflowX !== 'visible';
+      if (clip) {
+        const r = at(el.getBoundingClientRect());
+        ctx.beginPath();
+        ctx.rect(r.x, r.y, r.w, r.h);
+        ctx.clip();
+      }
+      for (const child of el.childNodes) {
+        if (child.nodeType === 3) text(child, cs);
+        else if (child.nodeType === 1) walk(child, alpha);
+      }
+      if (el.classList.contains('good')) wavy(el, cs);
+      if (el.classList.contains('a3-head')) {
+        const r = at(el.getBoundingClientRect());
+        line(ctx, r.x, r.y + r.h - 4.75, r.x + r.w, r.y + r.h - 4.75, accent, 2.5, [], 0.75);
+        line(ctx, r.x, r.y + r.h - 0.5, r.x + r.w, r.y + r.h - 0.5, accent, 1, [], 0.75);
+      }
+      ctx.restore();
+    }
+    ctx.fillStyle = getComputedStyle(sheet).backgroundColor || '#f7f2e7';
+    ctx.fillRect(0, 0, W, H);
+    walk(sheet, 1);
+  }
   async function sheetJpeg() {
     try { await document.fonts.load('40px RedPen', '作文报'); } catch (e) {}
-    wrap.classList.remove('reading');
-    sheet.style.transform = '';
-    fit();
-    const copy = sheet.cloneNode(true);
-    scale();
-    copy.removeAttribute('id');
-    copy.style.transform = 'none';
-    copy.style.boxShadow = 'none';
-    copy.style.borderRadius = '0';
-    const bg = copy.querySelector('.a3-bg');
-    if (bg) bg.setAttribute('src', await dataUrl(sheet.querySelector('.a3-bg').src));
-    const body = getComputedStyle(document.body);
-    const box = document.createElement('div');
-    box.className = document.body.className;
-    box.setAttribute('style', `width:${W}px;height:${H}px;margin:0;font-family:${body.fontFamily};line-height:${body.lineHeight};color:${body.color}`);
-    const css = document.createElement('style');
-    css.textContent = await styles();
-    box.append(css, copy);
-    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}"><foreignObject x="0" y="0" width="100%" height="100%">${new XMLSerializer().serializeToString(box)}</foreignObject></svg>`;
-    const img = await load('data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg));
+    const bg = sheet.querySelector('.a3-bg');
+    if (bg && !bg.complete) await new Promise((done) => { bg.onload = bg.onerror = done; });
     const canvas = document.createElement('canvas');
     canvas.width = W * K;
     canvas.height = H * K;
     const ctx = canvas.getContext('2d');
-    const draw = () => {
-      ctx.fillStyle = '#fff';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-    };
-    draw(); // Safari may leave out the font and the background the first time
-    await new Promise((r) => setTimeout(r, 300));
-    draw();
+    wrap.classList.remove('reading');
+    sheet.style.transform = 'none';
+    try {
+      fit();
+      ctx.scale(K, K);
+      paintSheet(ctx, sheet.getBoundingClientRect());
+    } finally {
+      sheet.style.transform = '';
+      scale();
+    }
     const blob = await new Promise((done) => canvas.toBlob(done, 'image/jpeg', 0.9));
     canvas.width = canvas.height = 0;
     if (!blob) throw new Error('canvas');
