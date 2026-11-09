@@ -54,9 +54,9 @@ FLAGS = {
     "disagree": "复核等级相差较大，建议细看",
 }
 MAX_TEXT = 3000
-MAX_MARKS = 40
+MAX_MARKS = 50
 # Marks kept per kind: the review is careful (every real problem is pointed out); long notes go in the page margins.
-MARK_LIMITS = {"error": 25, "好词好句": 6, "修改建议": 8, "分段": 3}
+MARK_LIMITS = {"error": 30, "好词好句": 6, "修改建议": 12, "分段": 3}
 NOTE_MAX = 40
 ONE_SIDE = 600  # all the lines of a landscape photo end left of this (0–1000): the right page may not have been read
 SUMMARY_MAX = 200

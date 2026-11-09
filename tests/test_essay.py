@@ -617,7 +617,7 @@ def test_grading_helpers():
     essay = {"grade": 1, "genre": "看图写话", "requirement": "", "min_chars": 0, "title": "", "text": ESSAY}
     with pytest.raises(ValueError):
         grading.clean_review({"dims": {}}, essay)
-    # A careful review keeps many marks (up to 20 errors), the 分段 type, and a summary of a whole paragraph.
+    # A careful review keeps many marks (up to 30 errors), the 分段 type, and a summary of a whole paragraph.
     dims = {k: {"score": 3} for k in grading.DIMS}
     many = [{"quote": ESSAY[i : i + 2], "type": "病句", "fix": "X", "note": "要改"} for i in range(0, 70, 2)]
     long_summary = "你" * 150
@@ -625,7 +625,7 @@ def test_grading_helpers():
         {"dims": dims, "marks": many + [{"quote": ESSAY[60:64], "type": "分段", "fix": "", "note": "这里另起一段"}], "summary": long_summary},
         essay,
     )
-    assert sum(m["type"] == "病句" for m in cleaned["marks"]) == grading.MARK_LIMITS["error"] == 25
+    assert sum(m["type"] == "病句" for m in cleaned["marks"]) == grading.MARK_LIMITS["error"] == 30
     assert [m["type"] for m in cleaned["marks"] if m["type"] == "分段"] == ["分段"]
     # A 分段 mark where the child already began a paragraph (after a line break, indent or not) is dropped.
     paras = [{"quote": q, "type": "分段", "fix": "", "note": "这里另起一段"} for q in ("我们在湖边", "这真是快乐", "妈妈说要爱护")]
