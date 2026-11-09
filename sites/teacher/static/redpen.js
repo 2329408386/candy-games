@@ -406,9 +406,7 @@
         const r = Math.max(sheet.minFont * 0.42, h * 0.3);
         const cx = Math.min(sheet.x2 - r, last.x2 + r * 1.6), cy = Math.max(sheet.y1 + r, last.y1 - r * 0.15);
         taken.push({ x1: cx - r, y1: cy - r, x2: cx + r, y2: cy + r });
-        g.items.push(path(`M${f1(cx + r)} ${f1(cy)} A${f1(r)} ${f1(r)} 0 1 1 ${f1(cx + r - 0.01)} ${f1(cy - r * 0.05)}`, Math.max(1.2, r * 0.12)));
-        const digits = String(n), size = r * (digits.length > 1 ? 1.15 : 1.45);
-        g.items.push(pen(digits, cx, cy + size * 0.36, size, null, { anchor: 'middle' }));
+        g.items.push(...badge(n, cx, cy, r));
         g.items.push({ t: 'hit', x: cx - r * 1.3, y: cy - r * 1.3, w: r * 2.6, h: r * 2.6 });
       }
     });
@@ -447,6 +445,15 @@
   }
 
   const CIRCLED = '①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳';
+
+  /* A drawn circle with the number in it, for any number: the circled characters stop at ⑳. */
+  function badge(n, cx, cy, r) {
+    const digits = String(n), size = r * (digits.length > 1 ? 1.15 : 1.45);
+    return [
+      path(`M${f1(cx + r)} ${f1(cy)} A${f1(r)} ${f1(r)} 0 1 1 ${f1(cx + r - 0.01)} ${f1(cy - r * 0.05)}`, Math.max(1.2, r * 0.12)),
+      pen(digits, cx, cy + size * 0.36, size, null, { anchor: 'middle' }),
+    ];
+  }
 
   /* For the PDF: a surface with its numbered notes written in the margins on both sides — each note in the margin
    * nearer its mark, level with it where there is room, stacked downwards without overlapping, no leader lines.
@@ -500,7 +507,8 @@
     for (const p of layout) {
       const x = p.side === 'left' ? pad : M + cw + pad;
       const g = { t: 'group', items: [] };
-      g.items.push(pen(CIRCLED[p.n.n - 1] || '(' + p.n.n + ')', x, p.top + p.size * 0.95, p.size, p.n.n * 3 + 1));
+      // Drawn like the number on the page: the font has no circled characters past ⑩, and ㉑ on are rare everywhere.
+      g.items.push(...badge(p.n.n, x + p.size * 0.5, p.top + p.size * 0.6, p.size * 0.5));
       p.rows.forEach((r, k) => g.items.push(pen(r, x + p.label, p.top + p.size * 0.95 + k * p.lineH, p.size, p.n.n * 17 + k)));
       over.push(g);
       bottom = Math.max(bottom, p.top + p.height);
