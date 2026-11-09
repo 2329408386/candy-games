@@ -1,4 +1,4 @@
-import argparse, datetime, json, os, secrets, shutil, sqlite3, time, zipfile
+import argparse, atexit, datetime, json, os, secrets, shutil, sqlite3, sys, time, zipfile
 from pathlib import Path
 from werkzeug.security import generate_password_hash
 from core import schema
@@ -100,10 +100,33 @@ def backup():
         source.backup(dest)
     if (data_dir() / "secret.env").exists():
         shutil.copy2(data_dir() / "secret.env", folder / "secret.env")
+    # Old backups go after 3 days. One that cannot be removed (say it belongs to root) is only reported: the new
+    # backup is made, and the timer must not fail for it.
     for f in root.iterdir():
         if f.is_dir() and f.stat().st_mtime < time.time() - 3 * 86400:
-            shutil.rmtree(f)
+            try:
+                shutil.rmtree(f)
+            except OSError as e:
+                print(f"旧备份删不掉，已跳过：{f}（{e.strerror}）", file=sys.stderr)
     print("备份完成：" + str(folder))
+
+
+def give_back_to_owner():
+    """Run as root (maintenance over ssh), the files this makes in the data folder — backups, exports, SQLite's -wal
+    and -shm — would belong to root, and the service, which runs as the folder's owner, could not use or remove them
+    (a root-owned backup once made every later backup fail its cleanup). At exit they are handed to that owner."""
+    root = data_dir()
+    if os.geteuid() != 0 or not root.exists():
+        return
+    owner = root.stat()
+    if owner.st_uid == 0:
+        return
+    for path in [root, *root.rglob("*")]:
+        try:
+            if path.lstat().st_uid != owner.st_uid:
+                os.lchown(path, owner.st_uid, owner.st_gid)
+        except OSError:
+            pass
 
 
 def essay_reread(sid):
@@ -295,6 +318,7 @@ if __name__ == "__main__":
     p.add_argument("--max-id", type=int, help="essay-recalibrate: 只处理这个编号及之前的照片")
     p.add_argument("--file", help="essay-unboxes: essay-recalibrate 存下的文件；essay-retext: 改好的作文文字")
     args = p.parse_args()
+    atexit.register(give_back_to_owner)
     schema.initialize(data_dir() / schema.DB_NAME)
     if args.command == "backup":
         backup()
