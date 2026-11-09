@@ -888,7 +888,8 @@ def test_photo_essay_is_read_graded_and_drawn_on_the_photo(models, klass, db):
     t, cid, aid = klass
     s, st = student_client(db, cid)
     assert upload(s, f"/api/write/{aid}", []).status_code == 400  # neither photos nor text
-    r = upload(s, f"/api/write/{aid}", [photo_bytes(), photo_bytes(size=(900, 1200))])
+    # The form sends its title field, filled in with the assignment's name: the title read from the paper wins.
+    r = upload(s, f"/api/write/{aid}", [photo_bytes(), photo_bytes(size=(900, 1200))], title="作业的题目")
     assert r.status_code == 200, r.get_json()
     sid = r.get_json()["id"]
     images = db.execute("SELECT * FROM ess_images WHERE submission_id=? ORDER BY page", (sid,)).fetchall()
@@ -897,7 +898,7 @@ def test_photo_essay_is_read_graded_and_drawn_on_the_photo(models, klass, db):
     run_worker()
     sub = db.execute("SELECT * FROM ess_submissions WHERE id=?", (sid,)).fetchone()
     assert sub["status"] == "published" or sub["status"] == "review"
-    # Two pages, the same answer each: the text is both pages' lines; the student's own title is kept empty → OCR's.
+    # Two pages, the same answer each: the text is both pages' lines; the title is the one on the paper.
     assert sub["text"].startswith("今天是星期天，我和妈妈去公园玩。公园里的花开得真美") and sub["title"] == "快乐的星期天"
     assert "\n我们在湖边" in sub["text"]
     lines = json.loads(db.execute("SELECT lines FROM ess_images WHERE id=?", (images[0]["id"],)).fetchone()[0])

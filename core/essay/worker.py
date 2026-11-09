@@ -237,12 +237,15 @@ def read_photos(d, essay):
         d.execute("UPDATE ess_images SET lines=? WHERE id=?", (json.dumps(lines), img["id"]))
     d.commit()
     shapes = verify_shapes(d, essay, [s for s in shapes if s["pos"] < len(text)], text, [(img["id"], lines) for img, lines in zip(images, spots)])
+    # The title the child wrote on the paper wins: the form's title field (filled in with the assignment's name)
+    # is only kept when none was read, so the grading sees whether the child made up a title of their own.
+    title = title or essay["title"]
     d.execute(
-        "UPDATE ess_submissions SET text=?,title=CASE WHEN title='' THEN ? ELSE title END,writing=?,shapes=? WHERE id=?",
+        "UPDATE ess_submissions SET text=?,title=?,writing=?,shapes=? WHERE id=?",
         (text, title, writing, json.dumps(shapes, ensure_ascii=False) if shapes else "", essay["id"]),
     )
     d.commit()
-    return {**essay, "text": text, "title": essay["title"] or title, "writing": writing, "shapes": json.dumps(shapes, ensure_ascii=False) if shapes else ""}
+    return {**essay, "text": text, "title": title, "writing": writing, "shapes": json.dumps(shapes, ensure_ascii=False) if shapes else ""}
 
 
 def verify_step(d):
