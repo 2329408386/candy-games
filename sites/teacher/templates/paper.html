@@ -12,7 +12,7 @@
       <span class="tag {{'' if paper.published_at else 'off'}}">{{'学生已经能看到' if paper.published_at else '还没发布，学生看不到'}}</span>
       <span class="paper-toolbar-actions">
         <a class="button secondary small" href="{{url_for('paper_edit', aid=assignment.id)}}">编辑</a>
-        <button type="button" class="secondary small" id="paper-print">打印 / 存为 PDF（A3）</button>
+        <button type="button" class="secondary small" id="paper-pdf" data-name="{{head.title}}-{{paper.name}}第{{paper.issue}}期.pdf">导出 PDF（A3）</button>
         {% if paper.published_at %}
           <button type="button" class="secondary small" data-post="{{url_for('paper_publish', pid=paper.id, action='unpublish')}}" data-confirm="撤回后学生就看不到这期作文报了。确定？">撤回</button>
         {% else %}
@@ -66,9 +66,10 @@
       </div>
     </article>
   </div>
-  <p class="paper-legend hint">红色波浪线是老师圈出的好词好句{% if for_teacher %}。打印时纸张选 A3、横向，边距选「无」，并勾选「背景图形」{% endif %}。</p>
+  <p class="paper-legend hint">红色波浪线是老师圈出的好词好句。</p>
 {% endblock %}
 {% block scripts %}
+{% if for_teacher %}<script src="{{asset('redpen.js')}}"></script>{% endif %}
 <script>
 (() => {
   /* One A3 sheet: shrink the text until the six columns hold everything, then scale the sheet to the window. */
@@ -97,10 +98,108 @@
   layout();
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(layout);
   addEventListener('resize', scale);
-  addEventListener('beforeprint', () => { wrap.classList.remove('reading'); sheet.style.transform = ''; });
-  addEventListener('afterprint', scale);
-  const print = document.getElementById('paper-print');
-  if (print) print.addEventListener('click', () => window.print());
+
+  /* 导出 PDF: the A3 sheet as it looks on a computer (also from a phone's reading view), drawn into a canvas
+   * through an SVG <foreignObject> with the page's styles, the background and the RedPen font inlined (an SVG
+   * image may not load anything itself), then one JPEG page of an A3 landscape PDF (RedPen.deliverPdf: a
+   * download, or on Android WeChat a link). No browser printing — phones cannot print. */
+  const W = 1587, H = 1123, K = 2;
+  const dataUrl = async (url) => {
+    const r = await fetch(url);
+    if (!r.ok) throw new Error('fetch ' + url);
+    const blob = await r.blob();
+    return new Promise((done, fail) => {
+      const reader = new FileReader();
+      reader.onload = () => done(reader.result);
+      reader.onerror = fail;
+      reader.readAsDataURL(blob);
+    });
+  };
+  /* The page's own style sheets as written (re-serialized rules lose var() in some shorthands), without their
+   * @font-face rules: RedPen goes in as a data URL instead. */
+  async function styles() {
+    const out = [];
+    let font = null;
+    for (const sheetEl of document.styleSheets) {
+      const base = sheetEl.href || location.href;
+      let text = '';
+      if (sheetEl.href) {
+        if (new URL(sheetEl.href).origin !== location.origin) continue;
+        const r = await fetch(sheetEl.href);
+        if (r.ok) text = await r.text();
+      } else if (sheetEl.ownerNode) text = sheetEl.ownerNode.textContent;
+      text = text.replace(/@font-face\s*\{[^}]*\}/g, (rule) => {
+        const m = /RedPen/.test(rule) && /url\(["']?([^"')]+)/.exec(rule);
+        if (m && !font) font = new URL(m[1], base).href;
+        return '';
+      });
+      out.push(text);
+    }
+    if (font) out.unshift(`@font-face{font-family:RedPen;src:url(${await dataUrl(font)}) format('woff2')}`);
+    return out.join('\n');
+  }
+  const load = (src) => new Promise((done, fail) => {
+    const img = new Image();
+    img.onload = () => done(img);
+    img.onerror = () => fail(new Error('image'));
+    img.src = src;
+  });
+  async function sheetJpeg() {
+    try { await document.fonts.load('40px RedPen', '作文报'); } catch (e) {}
+    wrap.classList.remove('reading');
+    sheet.style.transform = '';
+    fit();
+    const copy = sheet.cloneNode(true);
+    scale();
+    copy.removeAttribute('id');
+    copy.style.transform = 'none';
+    copy.style.boxShadow = 'none';
+    copy.style.borderRadius = '0';
+    const bg = copy.querySelector('.a3-bg');
+    if (bg) bg.setAttribute('src', await dataUrl(sheet.querySelector('.a3-bg').src));
+    const body = getComputedStyle(document.body);
+    const box = document.createElement('div');
+    box.className = document.body.className;
+    box.setAttribute('style', `width:${W}px;height:${H}px;margin:0;font-family:${body.fontFamily};line-height:${body.lineHeight};color:${body.color}`);
+    const css = document.createElement('style');
+    css.textContent = await styles();
+    box.append(css, copy);
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}"><foreignObject x="0" y="0" width="100%" height="100%">${new XMLSerializer().serializeToString(box)}</foreignObject></svg>`;
+    const img = await load('data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg));
+    const canvas = document.createElement('canvas');
+    canvas.width = W * K;
+    canvas.height = H * K;
+    const ctx = canvas.getContext('2d');
+    const draw = () => {
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    };
+    draw(); // Safari may leave out the font and the background the first time
+    await new Promise((r) => setTimeout(r, 300));
+    draw();
+    const blob = await new Promise((done) => canvas.toBlob(done, 'image/jpeg', 0.9));
+    canvas.width = canvas.height = 0;
+    if (!blob) throw new Error('canvas');
+    return { w: W * K, h: H * K, jpeg: new Uint8Array(await blob.arrayBuffer()) };
+  }
+  const pdf = document.getElementById('paper-pdf');
+  if (pdf) pdf.addEventListener('click', async () => {
+    const label = pdf.textContent;
+    pdf.disabled = true;
+    pdf.textContent = '正在生成…';
+    try {
+      const page = await sheetJpeg();
+      const sent = await RedPen.deliverPdf([page], pdf.dataset.name, pdf, null, RedPen.A3_LANDSCAPE);
+      pdf.lastPdf = sent.blob; // for tests
+    } catch (e) {
+      alert((e && /[一-鿿]/.test(e.message) && e.message) || '导出失败，请稍后再试');
+    } finally {
+      scale();
+      pdf.disabled = false;
+      pdf.textContent = label;
+    }
+  });
 })();
 </script>
 {% endblock %}

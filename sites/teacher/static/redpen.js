@@ -7,6 +7,8 @@
  * RedPen.exportMany(list, fileName, button, note) — several essays (a list of such data) in one PDF, each
  *   starting on a new page (批量导出 on the assignment page). Android WeChat cannot save a blob: file, so there the
  *   PDF goes to the server and a dialog gives a link for a while, with `note` above it; the answer's `link` says so.
+ * RedPen.deliverPdf(pages [{w, h, jpeg}], name, button, note, size) — hands JPEG pages over as a PDF the same way;
+ *   size is the page in pt (default A4 portrait, RedPen.A3_LANDSCAPE for 班级作文报).
  *
  * With onPhoto the marks are drawn on the student's own photos: every recognised line knows which characters of
  * the text it holds and where it is, and a character's place within its line is estimated from its position
@@ -703,9 +705,11 @@
     return out;
   }
 
-  /* A PDF of A4 pages, each one JPEG image (no library needed). */
-  function makePdf(pages) {
-    const A4 = [595.28, 841.89];
+  const A4_PORTRAIT = [595.28, 841.89], A3_LANDSCAPE = [1190.55, 841.89];
+
+  /* A PDF of pages (A4 unless `page` says otherwise), each one JPEG image (no library needed). */
+  function makePdf(pages, page) {
+    const box = page || A4_PORTRAIT;
     const enc = new TextEncoder();
     const parts = [];
     let size = 0;
@@ -727,8 +731,8 @@
     obj(2, () => put(`<< /Type /Pages /Kids [${kids}] /Count ${pages.length} >>`));
     pages.forEach((p, k) => {
       const n = 3 + k * 3;
-      obj(n, () => put(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${A4[0]} ${A4[1]}] /Resources << /XObject << /Im0 ${n + 2} 0 R >> >> /Contents ${n + 1} 0 R >>`));
-      const content = `q ${A4[0]} 0 0 ${A4[1]} 0 0 cm /Im0 Do Q`;
+      obj(n, () => put(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${box[0]} ${box[1]}] /Resources << /XObject << /Im0 ${n + 2} 0 R >> >> /Contents ${n + 1} 0 R >>`));
+      const content = `q ${box[0]} 0 0 ${box[1]} 0 0 cm /Im0 Do Q`;
       obj(n + 1, () => put(`<< /Length ${content.length} >>\nstream\n${content}\nendstream`));
       obj(n + 2, () => {
         put(`<< /Type /XObject /Subtype /Image /Width ${p.w} /Height ${p.h} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${p.jpeg.length} >>\nstream\n`);
@@ -860,9 +864,9 @@
   }
 
   /* Hands the pages over as a file: a download, or on Android WeChat a link from the server. */
-  async function deliver(pages, name, button, note) {
+  async function deliver(pages, name, button, note, size) {
     if (!WB.androidWeChat()) {
-      const blob = makePdf(pages);
+      const blob = makePdf(pages, size);
       download(blob, name);
       return { link: false, blob };
     }
@@ -870,7 +874,7 @@
     for (let k = 0; k < parts.length; k++) {
       if (button) button.textContent = parts.length > 1 ? `正在上传 ${k + 1}/${parts.length}…` : '正在上传…';
       const label = parts.length > 1 ? name.replace(/\.pdf$/i, '') + `-第${k + 1}份.pdf` : name;
-      const answer = await WB.upload(window.WB_PDF_LINKS + '?name=' + encodeURIComponent(label), makePdf(parts[k])).catch((e) => {
+      const answer = await WB.upload(window.WB_PDF_LINKS + '?name=' + encodeURIComponent(label), makePdf(parts[k], size)).catch((e) => {
         throw e instanceof TypeError ? new Error('上传失败，请检查网络后重试') : e; // fetch itself failed
       });
       links.push(new URL(answer.url, location.href).href);
@@ -1015,5 +1019,5 @@
     popup(container);
   }
 
-  window.RedPen = { render, exportPdf, exportMany, scenes, segments, editOps };
+  window.RedPen = { render, exportPdf, exportMany, deliverPdf: deliver, A3_LANDSCAPE, scenes, segments, editOps };
 })();

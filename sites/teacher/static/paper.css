@@ -1,7 +1,8 @@
 /* 班级作文报 (paper.html) and its editor (paper_edit.html). The paper is one A3 landscape sheet (1587×1123 px =
  * 420×297 mm): a watercolor background for the topic (static/paper-art/, tools/paper_art.py), a translucent panel
  * with the masthead, then 卷首语, the essays, each with its 老师点评, and 妙笔集锦 flowing through six columns.
- * paper.html shrinks the text (--fs) until it fits and scales the sheet to the window; phones get a reading view. */
+ * paper.html shrinks the text (--fs) until it fits and scales the sheet to the window; phones get a reading view.
+ * 导出 PDF draws the sheet into an image (no browser printing), so there are no print styles. */
 .paper-page{--ink-2:#2b2a24;--vermilion:#b5483c}
 
 /* ---- toolbar (teacher) ---- */
@@ -73,17 +74,6 @@
 .a3-wrap.reading .a3-cols::before{display:none}
 .a3-wrap.reading .a3-foot{flex-direction:column;gap:2px}
 .a3-wrap.reading .a3-foot span:first-child{white-space:normal}
-
-/* ---- print: exactly one A3 landscape page ---- */
-@page{size:A3 landscape;margin:0}
-@media print{
-  html,body.paper-page{background:#fff;margin:0}
-  .paper-page *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  .paper-page .site-header,.paper-page .site-footer,.paper-page .trial-banner,.paper-page .notice,.paper-toolbar,.paper-legend{display:none!important}
-  .paper-page .student-main{padding:0!important;margin:0!important;max-width:none!important}
-  .a3-wrap{height:auto!important;max-width:none}
-  .a3{transform:none!important;box-shadow:none;border-radius:0;width:420mm;height:297mm;break-inside:avoid}
-}
 
 /* ---- editor ---- */
 .paper-edit{display:grid;grid-template-columns:minmax(300px,380px) 1fr;gap:20px;align-items:start}
