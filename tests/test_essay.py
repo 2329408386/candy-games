@@ -1213,6 +1213,19 @@ def test_unreadable_photo_fails_without_retries(models, klass, db):
     assert tuple(db.execute("SELECT status,fail FROM ess_submissions WHERE id=?", (sid,)).fetchone()) == ("failed", "不是作文")
 
 
+def test_empty_ocr_answer_without_a_reason_is_read_again(models, klass, db):
+    # An answer with no line and no reason is a one-off failure, not a page without writing: it is read again.
+    t, cid, aid = klass
+    s, _ = student_client(db, cid, "李华")
+    models.calls.clear()
+    models.ocr = [{"rotate": 0, "writing": "", "title": "", "lines": []}, OCR_PAGE]
+    sid = upload(s, f"/api/write/{aid}", [photo_bytes()]).get_json()["id"]
+    run_worker()
+    assert len([m for m, b in models.calls if "誊抄" in b["messages"][0]["content"][:80]]) == 2
+    status, text = db.execute("SELECT status,text FROM ess_submissions WHERE id=?", (sid,)).fetchone()
+    assert status in ("review", "published") and text
+
+
 def test_photo_problem_is_explained_and_not_counted(models, klass, db):
     import wsgi
 

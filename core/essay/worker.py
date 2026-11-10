@@ -157,6 +157,10 @@ def read_page(d, img, pages, meta, both_sides=False, slot=None):
     def parse(content):
         raw = llm.parse_json(content)
         page = grading.parse_ocr(raw)
+        if not page["lines"] and not page["error"] and not page["rotate"]:
+            # A one-off empty answer (no line, no reason given) once dropped a whole page of an essay without notice:
+            # tried again, then the backup, like any unusable answer. A photo with no essay must say why (ocr.md).
+            raise ValueError("一行也没抄出来，也没说明原因")
         if grading.missing_boxes(page):
             log.warning("submission %s image %s: %s", meta["submission_id"], img["id"], grading.box_report(raw))
         return page
