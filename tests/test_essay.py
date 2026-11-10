@@ -638,6 +638,10 @@ def test_grading_helpers():
     assert "第一学段" in msgs[0]["content"] and "拼音" in msgs[0]["content"] and ESSAY in msgs[1]["content"]
     assert "{band}" not in msgs[0]["content"] and "{anchors}" not in msgs[0]["content"]
     assert llm.parse_json('好的\n```json\n{"a": 1}\n```') == {"a": 1}
+    for bare in ("[]", '[{"text": "一行", "box": [1, 2, 3, 4]}, {"text": "二行"}]'):
+        with pytest.raises(ValueError, match="数组"):
+            llm.parse_json(bare)
+    assert "不要只输出数组" in grading.ocr_messages(b"x", 1, 1)[1]["content"][0]["text"]
     # Peak prices: Monday 2026-11-02 10:00 Beijing is peak, Saturday is not.
     monday10 = 1793584800  # 2026-11-02 02:00 UTC
     assert llm.in_peak("9-12,14-18", monday10) and not llm.in_peak("9-12,14-18", monday10 + 5 * 86400)

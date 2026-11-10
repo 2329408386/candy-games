@@ -308,6 +308,9 @@ def parse_json(content):
     m = re.search(r"```(?:json)?\s*(.*?)```", text, re.S)
     if m:
         text = m[1]
+    if text.startswith("["):
+        # qwen sometimes answers a bare array (often an empty []) instead of the object asked for.
+        raise ValueError("回答是 JSON 数组，不是要求的对象")
     start, end = text.find("{"), text.rfind("}")
     if start < 0 or end <= start:
         raise ValueError("回答里没有 JSON")

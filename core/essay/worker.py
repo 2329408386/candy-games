@@ -165,7 +165,8 @@ def read_page(d, img, pages, meta, both_sides=False, slot=None):
         d,
         "ocr",
         grading.ocr_messages(image_path(img["id"]).read_bytes(), img["page"], pages, both_sides),
-        json_mode=True,
+        # Not JSON mode: in it qwen returned a bare array about 1 time in 10 (parse_json handles fences and text).
+        json_mode=False,
         parse=parse,
         slot=slot,
         **meta,

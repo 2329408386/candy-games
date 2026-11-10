@@ -434,6 +434,11 @@ def clean_final(edit, review, text, band_max):
 
 
 # ---- photos ----
+# Repeated in the user message: without it qwen answered a bare array ([] or only the lines) about 1 time in 10;
+# with it and no JSON mode (worker.read_page), 0 in 150 test calls.
+OCR_OBJECT_NOTE = "只输出一个 JSON 对象（最外层是 { }，包含 rotate、writing、title、lines），不要只输出数组。"
+
+
 def ocr_messages(image_bytes, page, pages, both_sides=False):
     """both_sides: the first reading stopped at the left side of a landscape photo (reads_one_side)."""
     import base64
@@ -444,7 +449,7 @@ def ocr_messages(image_bytes, page, pages, both_sides=False):
         note += "照片右边如果还有一页作文，两页都要抄，先左后右。"
     return [
         {"role": "system", "content": OCR_PROMPT},
-        {"role": "user", "content": [{"type": "text", "text": note + "请誊抄这张照片。"}, {"type": "image_url", "image_url": {"url": url}}]},
+        {"role": "user", "content": [{"type": "text", "text": note + "请誊抄这张照片。" + OCR_OBJECT_NOTE}, {"type": "image_url", "image_url": {"url": url}}]},
     ]
 
 
