@@ -10,7 +10,6 @@ DB_NAME = "games.sqlite3"
 # ess_*: 语文老师工作台 (site 'teacher' only, so no site column), see core/essay/__init__.py. ess_images: photos of
 # handwritten essays (files in <data>/essay-images/<id>.jpg). ws_entitlements: which workbench features a teacher
 # license has and until when (core/essay/features.py); the clock starts when the teacher activates the code.
-# ws_referral_codes/ws_referrals/ws_notices: teachers recommending the workbench (core/essay/referral.py).
 # feedback: 改进建议 from licensed users of every site, answered on the workbench's back office (core/feedback.py).
 # migrations: one-off data changes already applied (see initialize).
 # trials records the one free round each browser (session device token) may play per game.
@@ -72,11 +71,6 @@ CREATE TABLE IF NOT EXISTS ess_trials(license_id INTEGER PRIMARY KEY,device_hash
 CREATE INDEX IF NOT EXISTS ess_trials_device ON ess_trials(device_hash);
 CREATE TABLE IF NOT EXISTS ess_papers(id INTEGER PRIMARY KEY,assignment_id INTEGER NOT NULL UNIQUE REFERENCES ess_assignments(id),name TEXT NOT NULL,issue INTEGER NOT NULL,intro TEXT NOT NULL DEFAULT '',created_at INTEGER NOT NULL,updated_at INTEGER NOT NULL,published_at INTEGER,title TEXT NOT NULL DEFAULT '',subject TEXT NOT NULL DEFAULT '',tagline TEXT NOT NULL DEFAULT '',art TEXT NOT NULL DEFAULT '');
 CREATE TABLE IF NOT EXISTS ess_paper_items(paper_id INTEGER NOT NULL REFERENCES ess_papers(id),submission_id INTEGER NOT NULL REFERENCES ess_submissions(id),position INTEGER NOT NULL,title TEXT NOT NULL,text TEXT NOT NULL,comment TEXT NOT NULL DEFAULT '',goods TEXT NOT NULL DEFAULT '[]',PRIMARY KEY(paper_id,submission_id));
-CREATE TABLE IF NOT EXISTS ws_referral_codes(license_id INTEGER PRIMARY KEY,code TEXT NOT NULL UNIQUE,created_at INTEGER NOT NULL);
-CREATE TABLE IF NOT EXISTS ws_referrals(referee_id INTEGER PRIMARY KEY,referrer_id INTEGER NOT NULL,created_at INTEGER NOT NULL);
-CREATE INDEX IF NOT EXISTS ws_referrals_referrer ON ws_referrals(referrer_id);
-CREATE TABLE IF NOT EXISTS ws_notices(id INTEGER PRIMARY KEY,license_id INTEGER NOT NULL,body TEXT NOT NULL,created_at INTEGER NOT NULL,seen_at INTEGER);
-CREATE INDEX IF NOT EXISTS ws_notices_unseen ON ws_notices(license_id,seen_at);
 CREATE TABLE IF NOT EXISTS feedback(id INTEGER PRIMARY KEY,site TEXT NOT NULL,license_id INTEGER NOT NULL,content TEXT NOT NULL,created_at INTEGER NOT NULL,reply TEXT,replied_at INTEGER,reply_seen_at INTEGER);
 CREATE INDEX IF NOT EXISTS feedback_author ON feedback(site,license_id,created_at);
 CREATE INDEX IF NOT EXISTS feedback_queue ON feedback(replied_at,created_at);
@@ -252,6 +246,12 @@ def migrate(d):
         # teacher's saved version). Marks the photo re-check turned into 书写提醒 stay where they are.
         restore_rejected(d)
         d.execute("INSERT INTO migrations VALUES('essay_restore_rejected',?)", (int(time.time()),))
+    if "drop_referral" not in done:
+        # 推荐码 and its one-time notices were removed from the workbench: their tables and audit entries go with them.
+        for table in ("ws_referral_codes", "ws_referrals", "ws_notices"):
+            d.execute(f"DROP TABLE IF EXISTS {table}")
+        d.execute("DELETE FROM audit WHERE action IN ('referral_used','referral_reward')")
+        d.execute("INSERT INTO migrations VALUES('drop_referral',?)", (int(time.time()),))
 
 
 BEIJING = 8 * 3600

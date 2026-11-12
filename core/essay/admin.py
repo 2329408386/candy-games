@@ -363,7 +363,7 @@ def register(app):
         """Turns a free-trial account into a paid one in place: its class, students and essays stay."""
         from core.schema import end_of_day
 
-        from . import features, is_trial, referral
+        from . import features, is_trial
 
         row = license_row(lid)
         if not row or row["archived_at"] is not None or not is_trial(lid):
@@ -389,14 +389,6 @@ def register(app):
             (lid, students, monthly),
         )
         features.set_expiry(d, lid, "essay", end_of_day(now + days * features.DAY), now=now)
-        code = request.form.get("referral", "")
-        if referral.normalize(code):  # a trial never meets the activation form: the admin enters the teacher's code
-            try:
-                referral.apply(d, lid, code, now)
-            except ValueError as e:
-                d.rollback()
-                flash(f"没有转为正式：{e}", "error")
-                return redirect(url_for("detail", lid=lid))
         audit("trial_convert", lid, f"试用转为正式：{buyer}；作文批改 {days} 天，学生 {students} 人，每月 {monthly} 篇")
         d.commit()
         flash("已转为正式授权，试用里的班级和作文都保留", "success")

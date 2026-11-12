@@ -2,7 +2,7 @@
 
 import pytest
 from conftest import TEACHER2_KEY, SiteClient
-from test_referral import activate, make_teacher
+from teacher_helpers import activate, make_teacher
 
 PATH = {"chinese": "/feedback", "math": "/feedback", "english": "/feedback", "teacher": "/teacher/feedback"}
 

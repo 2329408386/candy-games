@@ -1987,3 +1987,22 @@ def test_recalibrate_moves_only_the_boxes_of_old_photos_and_can_be_undone(models
         saved = sorted(data_dir().glob("essay-boxes-*.json"))[-1]
         manage.essay_unboxes(saved)
         assert stored() == spots
+
+
+def test_workbench_has_no_referral_or_notices(db):
+    """推荐码 was removed: an old form field is ignored, and no page or popup mentions it."""
+    from teacher_helpers import activate, make_teacher
+
+    db.execute("DELETE FROM limits WHERE bucket LIKE '%:activate:%'")
+    db.commit()
+    lid, key = make_teacher(db)
+    c, r = activate(key, referral="ABCDEFGH")
+    assert r.status_code == 200
+    assert db.execute("SELECT starts_at FROM ws_entitlements WHERE license_id=?", (lid,)).fetchone()[0]
+    for path in ("/teacher/", "/teacher/profile", "/teacher/help"):
+        page = c.get(path).get_data(as_text=True)
+        assert "推荐码" not in page and "wb-notices" not in page, path
+    login = SiteClient("teacher").get("/teacher/").get_data(as_text=True)
+    assert "推荐码" not in login
+    tables = {r[0] for r in db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+    assert not tables & {"ws_referral_codes", "ws_referrals", "ws_notices"}

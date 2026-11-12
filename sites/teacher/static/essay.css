@@ -83,11 +83,7 @@ a.wb-card:hover{transform:translateY(-2px);border-color:#c9d6c3}
 .attempt{background:var(--white);border:1px solid var(--line);border-radius:12px;padding:9px 14px}
 .wb-dialog{border:0;border-radius:18px;padding:24px;width:min(720px,calc(100vw - 32px));box-shadow:0 30px 80px #0003}
 .wb-dialog::backdrop{background:#2f443866}
-.notice-dialog{width:min(440px,calc(100vw - 32px));color:var(--ink)}
-.notice-dialog h2{margin:0 0 12px}
-.notice-dialog form{margin-top:16px;text-align:right}
 .fb-dot{display:inline-block;flex:none;width:8px;height:8px;border-radius:50%;background:#d9534f;vertical-align:middle}
-.referral-code{font-size:22px;font-weight:700;letter-spacing:2px;color:var(--green-dark);margin-right:12px}
 .form-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 
 /* essay text and marks */

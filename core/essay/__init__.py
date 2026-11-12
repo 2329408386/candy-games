@@ -47,7 +47,7 @@ from flask import Response, abort, g, jsonify, redirect, render_template, reques
 from core import feedback as user_feedback
 from core.app import KEY_ALPHABET, XLSX_MIME, csrf, current, data_dir, db, device_hash, limited, new_xlsx, site, xlsx_download
 from core import devices
-from . import features, grading, referral
+from . import features, grading
 
 DEFAULT_STUDENTS = 70
 DEFAULT_MONTHLY = 300
@@ -585,7 +585,6 @@ def register_essay(app):
         essay_default_monthly=DEFAULT_MONTHLY,
         workbench_features=lambda lid: features.overview(db(), lid),
         workbench_feature_list=features.FEATURES,
-        referral_info=lambda lid: referral.admin_info(db(), lid),
     )
     app.jinja_env.filters["mark_class"] = lambda t: MARK_CLASS.get(t, "tip")
     app.jinja_env.filters["date"] = lambda value: time.strftime("%Y-%m-%d", time.gmtime(value + BEIJING)) if value else ""
@@ -603,7 +602,6 @@ def register_essay(app):
                 "SELECT count(*) FROM ess_classes WHERE license_id=? AND archived_at IS NULL", (row["id"],)
             ).fetchone()[0]
             me["trial"] = dict(trial_info(row["id"]), id=row["id"]) if is_trial(row["id"]) else None
-            me["notices"] = referral.pending_notices(db(), row["id"])
             me["feedback_unread"] = 0 if me["trial"] else user_feedback.unread(row["id"])
         return {
             "side": side,
@@ -812,17 +810,7 @@ def register_pages(app):
         row = teacher()
         if not row:
             return redirect(url_for("teacher_home"))
-        d = db()
-        referral_code = referral.code_for(d, row["id"])
-        d.commit()
-        return render_template(
-            "profile.html",
-            name_max=TEACHER_NAME_MAX,
-            referral_code=referral_code,
-            referred=referral.count_referred(d, row["id"]),
-            referrer_days=referral.REFERRER_DAYS,
-            referee_days=referral.REFEREE_DAYS,
-        )
+        return render_template("profile.html", name_max=TEACHER_NAME_MAX)
 
     @app.get("/teacher/classes/")
     def classes_page():
@@ -1347,12 +1335,6 @@ def submission_photos():
 
 
 def register_teacher_api(app):
-    @app.post("/api/teacher/notices/seen")
-    @teacher_api
-    def notices_seen(row):
-        referral.mark_seen(db(), row["id"], payload().get("ids"), int(time.time()))
-        return jsonify(ok=True)
-
     @app.post("/api/me/name")
     @teacher_api
     def teacher_name(row):

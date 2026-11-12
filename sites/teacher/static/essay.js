@@ -472,15 +472,6 @@
     });
   };
 
-  /* Good news shown once: closing the dialog, however it is closed, marks these notices as read for the account. */
-  const notices = document.getElementById('wb-notices');
-  if (notices) {
-    notices.addEventListener('close', () => {
-      WB.post(notices.dataset.url, { ids: JSON.parse(notices.dataset.ids) }).catch(() => {});
-    });
-    notices.showModal();
-  }
-
   /* <button data-copy="text"> copies it to the clipboard. */
   document.addEventListener('click', async (e) => {
     const el = e.target.closest('[data-copy]');

@@ -56,7 +56,6 @@
                 <a href="{{url_for('classes_page')}}">我的班级</a>
                 <a href="{{url_for('profile_page')}}">修改名字和头像</a>
                 {% if not me_teacher.trial %}
-                  <a href="{{url_for('profile_page')}}#referral">我的推荐码</a>
                   <a href="{{url_for('feedback_page')}}">提改进建议{% if me_teacher.feedback_unread %} <span class="fb-dot" role="img" aria-label="有新回复"></span>{% endif %}</a>
                 {% endif %}
                 <button type="button" data-post="{{url_for('logout')}}" data-confirm="{{'退出后，可以在「免费试用」页面回到试用账号。确定退出？' if me_teacher.trial else '退出后，这台设备需要重新输入授权码。确定退出？'}}">退出登录</button>
@@ -86,13 +85,6 @@
       {% block content %}
       {% endblock %}
     </main>
-    {% if side == 'teacher' and me_teacher and me_teacher.notices %}
-      <dialog id="wb-notices" class="wb-dialog notice-dialog" data-url="{{url_for('notices_seen')}}" data-ids='{{me_teacher.notices|map(attribute="id")|list|tojson}}'>
-        <h2>好消息</h2>
-        {% for n in me_teacher.notices %}<p>{{n.body}}</p>{% endfor %}
-        <form method="dialog"><button>知道了</button></form>
-      </dialog>
-    {% endif %}
     <footer class="site-footer">
       语文老师工作台 <span>·</span> {{'用心管理，让学习更简单' if is_admin else '腹有诗书气自华 · 让每个孩子爱上语文'}}{% if not is_admin %}{% include 'cross_sites.html' %}{% endif %}
     </footer>

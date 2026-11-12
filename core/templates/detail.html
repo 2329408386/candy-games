@@ -45,7 +45,7 @@
           </form>
         </section>
       {% endif %}
-      {% if site.kind == 'workbench' %}{% include 'trial_convert.html' %}{% include 'referral_admin.html' %}{% include 'entitlements.html' %}{% include 'essay_quota.html' %}{% endif %}
+      {% if site.kind == 'workbench' %}{% include 'trial_convert.html' %}{% include 'entitlements.html' %}{% include 'essay_quota.html' %}{% endif %}
       <section class="panel">
         <h2>设备名额</h2>
         {% if site.kind == 'workbench' %}<p class="muted">已绑定 {{devices|length}} 个浏览器，设备数量不限</p>
