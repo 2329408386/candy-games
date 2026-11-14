@@ -681,6 +681,7 @@
       history: [], result: null, notice: '' }));
     round.ticket = SCORE && (round.mode === 'solo' || round.mode === 'mistakes')
       ? scorePost(SCORE.start, { mode: round.mode }).then(d => d.round, () => null) : null;
+    if (SCORE && round.mode === 'pk') scorePost(SCORE.start, { mode: 'pk' }).catch(() => {}); // only counted for the back office's statistics
     round.report = null;
     arena.replaceChildren();
     arena.classList.toggle('solo', round.players.length === 1);

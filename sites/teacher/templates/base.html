@@ -25,16 +25,10 @@
     </defs>
     </svg>
     <header class="site-header">
-      {% set brand_url = url_for('dashboard') if is_admin else url_for('teacher_home') if side == 'teacher' else url_for('student_home') if side == 'student' else url_for('home') %}
+      {% set brand_url = '/admin/stats' if is_admin else url_for('teacher_home') if side == 'teacher' else url_for('student_home') if side == 'student' else url_for('home') %}
       <a class="brand" href="{{brand_url}}"><span class="brand-icon"><svg><use href="#i-pen"/></svg></span><span>语文老师工作台<small>{{'管理工作台' if is_admin else '老师端' if side == 'teacher' else '学生端' if side == 'student' else '小学语文'}}</small></span></a>
       {% if is_admin %}
-        <nav aria-label="管理导航">
-          <a href="{{url_for('home')}}">工作台首页 <span aria-hidden="true">↗</span></a>{% if session.get('admin_version') %}<a href="{{url_for('dashboard')}}">授权管理</a><a href="{{url_for('models_page')}}">模型设置</a>{% set waiting = feedback_pending() %}<a href="{{url_for('feedback_admin')}}">用户建议{% if waiting %} <span class="tag">{{waiting}}</span>{% endif %}</a><a href="{{url_for('password')}}">修改密码</a>
-          <form method="post" action="{{url_for('admin_logout')}}">
-            <input type="hidden" name="csrf" value="{{csrf()}}"><button class="text-button">退出后台</button>
-          </form>
-        {% endif %}
-      </nav>
+        {% include 'admin_nav.html' %}
       {% else %}
         <span class="header-actions">
           {% block header_actions %}{% endblock %}

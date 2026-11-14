@@ -175,14 +175,6 @@ def csrf():
     return session["csrf"]
 
 
-def rotate_admin_session():
-    # Admin sign-in/out must not consume a new game device slot.
-    saved = {key: session[key] for key in ("device", "license") if key in session}
-    session.clear()
-    session.update(saved)
-    session.permanent = True
-
-
 def current(game=None):
     key = (session.get("license"), session.get("device"))
     if g.get("current_key") != key:
@@ -203,6 +195,14 @@ def current(game=None):
     if row and (not game or game in allowed_games(row)):
         return row
     return None
+
+
+def log_play(game, mode, lid):
+    """One round for 统计 (core/stats.py): mode pk (同屏双人), solo, mistakes or online. The caller commits."""
+    db().execute(
+        "INSERT INTO plays(site,game,mode,license_id,created_at) VALUES(?,?,?,?,?)",
+        (site().key, game, mode, lid, int(time.time())),
+    )
 
 
 def limited(kind, maximum, window):
@@ -270,18 +270,56 @@ def license_codes(lids=None):
     return {r["key_hash"]: r["code"] for r in db().execute(sql, params)}
 
 
+# ---- the back office: one admin and one sign-in for every site ----
+# The sign-in is a cookie of its own on path "/", signed with a key every site's app derives the same way, so signing
+# in once opens all four back offices and the statistics. Sign-in, password and statistics live in the Chinese app
+# (it owns "/admin"); each site's own back-office pages stay where they were.
+ADMIN_SITE = "all"  # the admin table's single row
+ADMIN_COOKIE = "candy_admin"
+ADMIN_LOGIN, ADMIN_PASSWORD, ADMIN_HOME = "/admin/login", "/admin/password", "/admin/stats"
+
+
+def admin_signer():
+    key = hmac.new(os.environ.get("CHINESE_SECRET", "").encode(), b"candy-admin", hashlib.sha256).hexdigest()
+    return URLSafeSerializer(key, salt="admin-sign-in")
+
+
 def admin_row():
-    return db().execute("SELECT * FROM admin WHERE site=?", (site().key,)).fetchone()
+    return db().execute("SELECT * FROM admin WHERE site=?", (ADMIN_SITE,)).fetchone()
+
+
+def admin_signed_in():
+    if "admin_in" not in g:
+        row = admin_row()
+        try:
+            version = admin_signer().loads(request.cookies.get(ADMIN_COOKIE, ""))
+        except BadSignature:
+            version = None
+        g.admin_in = bool(row) and version == row["version"]
+    return g.admin_in
+
+
+def admin_sign_in(response, version):
+    # Like the licenses: ten years, renewed on every visit (headers()), so it lasts until signing out.
+    response.set_cookie(
+        ADMIN_COOKIE, admin_signer().dumps(version), max_age=86400 * 3650, path="/", httponly=True, samesite="Lax"
+    )
+    return response
+
+
+def here():
+    """This page's address as the browser sees it (with the site's prefix), for coming back after signing in."""
+    query = request.query_string.decode()
+    return request.script_root + request.path + ("?" + query if query else "")
 
 
 def admin_only(fn):
     @functools.wraps(fn)
     def wrapper(*a, **kw):
-        row = admin_row()
-        if not row or session.get("admin_version") != row["version"]:
-            return redirect(url_for("login"))
-        if row["must_change"] and request.endpoint != "password":
-            return redirect(url_for("password"))
+        if not admin_signed_in():
+            return redirect(ADMIN_LOGIN + "?next=" + quote(here()))
+        if admin_row()["must_change"] and here() != ADMIN_PASSWORD:
+            return redirect(ADMIN_PASSWORD)
         return fn(*a, **kw)
 
     return wrapper
@@ -481,6 +519,8 @@ def create_app(site_config):
     app.teardown_appcontext(close_db)
     app.jinja_env.globals.update(
         csrf=csrf,
+        admin_signed_in=admin_signed_in,
+        feedback_pending=lambda: db().execute("SELECT count(*) FROM feedback WHERE replied_at IS NULL").fetchone()[0],
         site=site_config,
         all_sites=ALL_SITES,
         games=site_config.games,
@@ -550,6 +590,8 @@ def create_app(site_config):
         r.headers["X-Content-Type-Options"] = "nosniff"
         r.headers["X-Frame-Options"] = "SAMEORIGIN"
         r.headers["Referrer-Policy"] = "same-origin"
+        if g.get("admin_in") and not any(c.startswith(ADMIN_COOKIE + "=") for c in r.headers.getlist("Set-Cookie")):
+            admin_sign_in(r, admin_row()["version"])
         return r
 
     register_api(app)
@@ -784,28 +826,31 @@ def register_api(app):
         return redirect(url_for("home"))
 
 
-def register_admin(app):
-    """Admin back office: sign-in, license management, export and game groups."""
+def register_admin_account(app):
+    """Sign-in and password of the one admin, shared by every site's back office (Chinese app only)."""
 
     @app.route("/admin/login", methods=["GET", "POST"])
     def login():
+        target = request.values.get("next", "")
+        if not target.startswith("/") or target.startswith("//") or "\\" in target:
+            target = ADMIN_HOME
+        if request.method == "GET" and admin_signed_in():
+            return redirect(target)
         error = ""
         if request.method == "POST":
             if limited("admin", 10, 900):
-                return render_template("login.html", error="尝试过多，请15分钟后重试"), 429
+                return render_template("login.html", error="尝试过多，请15分钟后重试", target=target), 429
             row = admin_row()
             if (
                 request.form.get("username") == "admin"
                 and row
                 and check_password_hash(row["password"], request.form.get("password", ""))
             ):
-                rotate_admin_session()
-                session.update(admin_version=row["version"])
                 audit("login")
                 db().commit()
-                return redirect(url_for("dashboard"))
+                return admin_sign_in(redirect(target), row["version"])
             error = "用户名或密码错误"
-        return render_template("login.html", error=error)
+        return render_template("login.html", error=error, target=target)
 
     @app.route("/admin/password", methods=["GET", "POST"])
     @admin_only
@@ -813,27 +858,41 @@ def register_admin(app):
         error = ""
         if request.method == "POST":
             value = request.form.get("password", "")
-            old = request.form.get("old", "")
             row = admin_row()
-            if not check_password_hash(row["password"], old):
+            if not check_password_hash(row["password"], request.form.get("old", "")):
                 error = "当前密码错误"
             elif len(value) < 12 or value != request.form.get("confirm"):
                 error = "新密码至少12位，两次输入必须一致"
             else:
+                # The version goes up: every browser signed in so far (this one too) has to sign in again.
                 db().execute(
                     "UPDATE admin SET password=?,must_change=0,version=version+1 WHERE site=?",
-                    (generate_password_hash(value), site().key),
+                    (generate_password_hash(value), ADMIN_SITE),
                 )
                 audit("password_change")
                 db().commit()
-                rotate_admin_session()
-                return redirect(url_for("login"))
+                g.admin_in = False
+                return redirect(ADMIN_LOGIN)
         return render_template("password.html", error=error)
+
+    from .stats import register_stats
+
+    register_stats(app)
+
+
+def register_admin(app):
+    """Admin back office: sign-in, license management, export and game groups."""
 
     @app.post("/admin/logout")
     def admin_logout():
-        rotate_admin_session()
-        return redirect(url_for("login"))
+        # On every site, so the header's form posts with that site's own CSRF token.
+        r = redirect(ADMIN_LOGIN)
+        r.delete_cookie(ADMIN_COOKIE, path="/")
+        g.admin_in = False
+        return r
+
+    if app.site.key == "chinese":
+        register_admin_account(app)
 
     @app.get("/admin")
     @admin_only

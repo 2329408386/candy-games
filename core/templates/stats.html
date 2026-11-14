@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+{% block title %}使用统计{% endblock %}
+{% macro cell(n, color) %}<td class="hm"{% if color %} style="background:{{color}}{% if color in dark_steps %};color:#fff{% endif %}"{% endif %}>{{n or ''}}</td>{% endmacro %}
+{% block content %}
+  <style>
+    .st-tabs{display:flex;gap:6px;flex-wrap:wrap}
+    .st-tabs a{border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-size:13px;color:var(--muted);background:#fff}
+    .st-tabs a.on{background:var(--ink);border-color:var(--ink);color:#fff}
+    .st-cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:22px}
+    .st-card{background:var(--white);border:1px solid var(--line);border-radius:16px;padding:18px 20px;min-width:0}
+    .st-card h2{font-size:15px;margin:0 0 12px;display:flex;align-items:center;gap:8px}
+    .st-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+    .st-nums{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+    .st-nums div{min-width:0}.st-nums span{display:block;font-size:12px;color:var(--muted)}
+    .st-nums strong{display:block;font-size:24px;font-weight:650;line-height:1.4;font-variant-numeric:tabular-nums}
+    .st-card p{font-size:12px;color:var(--muted);margin:10px 0 0}
+    .st-legend{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin:-6px 0 12px}
+    .st-legend span{display:inline-flex;align-items:center;gap:6px}
+    .st-chart{width:100%;height:auto;display:block;overflow:visible;stroke:none}.st-chart rect{stroke:none}
+    .st-chart text{font-size:11px;fill:#7c8776}
+    .st-chart .bar:hover rect{opacity:.8}
+    .st-chart .grid{stroke:#edf0e7;stroke-width:1}
+    .st-num{text-align:right;font-variant-numeric:tabular-nums}
+    td.st-name{color:var(--ink)!important;font-size:13px!important;white-space:nowrap}
+    tr.zero td{color:#a8afa2!important}
+    .st-site-row td{background:#f5f7f0;font-weight:650;color:var(--ink)!important;font-size:13px!important}
+    .hm-wrap{overflow-x:auto}
+    .hm-table td,.hm-table th{padding:6px 4px;text-align:center;border-bottom:1px solid #fff;font-variant-numeric:tabular-nums}
+    .hm-table td.hm{min-width:30px;font-size:11px!important;color:var(--ink)!important;border-left:2px solid #fff}
+    .hm-table th{font-size:10px;font-weight:400}
+    .hm-table .sticky{position:sticky;left:0;background:var(--white);text-align:left;white-space:nowrap;padding-right:12px;z-index:1;color:var(--ink)!important;font-size:12px!important}
+    .hm-table tr:hover td.sticky{background:#fafbf7}
+    .st-note{font-size:12px;color:var(--muted);margin:10px 0 0}
+    @media(max-width:950px){.st-cards{grid-template-columns:1fr 1fr}}
+    @media(max-width:600px){.st-cards{grid-template-columns:1fr}.st-nums strong{font-size:21px}}
+  </style>
+  <div class="page-heading">
+    <div>
+      <span class="eyebrow">全部站点</span>
+      <h1>使用统计</h1>
+      <p>按北京时间统计。用户 = 一个授权码；局数包括双人PK、单人、错题重练和联网PK（联网PK每个参加的授权码各算一局）。</p>
+    </div>
+    <nav class="st-tabs" aria-label="时间范围">
+      {% for key, label in ranges.items() %}<a href="?range={{key}}"{% if key == span %} class="on" aria-current="true"{% endif %}>{{label}}</a>{% endfor %}
+    </nav>
+  </div>
+
+  <div class="st-cards">
+    {% for s in sites %}
+      <section class="st-card">
+        <h2><span class="st-dot" style="background:{{s.color}}"></span>{{s.title}}</h2>
+        <div class="st-nums">
+          <div><span>已激活用户</span><strong>{{s.summary.users}}</strong></div>
+          <div><span>{{ranges[span]}}活跃</span><strong>{{s.summary.active}}</strong></div>
+          <div><span>{{ranges[span]}}局数</span><strong>{{s.summary.rounds}}</strong></div>
+        </div>
+        <p>{{ranges[span]}}试玩 {{s.trials}} 次</p>
+      </section>
+    {% endfor %}
+    <section class="st-card">
+      <h2><span class="st-dot" style="background:var(--ink)"></span>{{workbench.title}}</h2>
+      <div class="st-nums">
+        <div><span>已激活老师</span><strong>{{work.teachers}}</strong></div>
+        <div><span>{{ranges[span]}}活跃</span><strong>{{work.active}}</strong></div>
+        <div><span>{{ranges[span]}}作文</span><strong>{{work.essays}}</strong></div>
+      </div>
+      <p>{{work.students}} 名学生交作文 · 布置 {{work.assignments}} 次 · 试用 {{work.trials}} 位 · 模型花费 ¥{{'%.2f'|format(work.cost)}}</p>
+    </section>
+  </div>
+
+  <section class="panel">
+    <div class="toolbar"><h2>近30天每天的局数</h2></div>
+    <div class="st-legend">{% for s in sites %}<span><span class="st-dot" style="background:{{s.color}}"></span>{{s.title}}</span>{% endfor %}</div>
+    {% set c = rounds_chart %}
+    <svg class="st-chart" viewBox="-40 -10 1050 {{c.height + 34}}" role="img" aria-label="近30天每天各站点的局数">
+      {% for f in (0, 0.5, 1) %}<line class="grid" x1="0" x2="1000" y1="{{c.height - c.height * f}}" y2="{{c.height - c.height * f}}"/><text x="-8" y="{{c.height - c.height * f + 4}}" text-anchor="end">{{(c.top * f)|round|int}}</text>{% endfor %}
+      {% for b in c.bars %}
+        <g class="bar"><title>{{b.label}}：共 {{b.sum}} 局{% for p in b.parts %}
+{{p.name}} {{p.n}}{% endfor %}</title>
+          <rect x="{{b.x - c.step * 0.18}}" y="0" width="{{c.step}}" height="{{c.height}}" fill="transparent"/>
+          {% for p in b.parts %}<rect x="{{b.x}}" y="{{p.y}}" width="{{b.w}}" height="{{p.h}}" rx="{{2 if loop.last else 0}}" fill="{{p.color}}"/>{% endfor %}
+        </g>
+        {% if loop.index0 % 5 == 4 or loop.last %}<text x="{{b.x + b.w / 2}}" y="{{c.height + 18}}" text-anchor="middle">{{b.label}}</text>{% endif %}
+      {% endfor %}
+    </svg>
+    <div class="toolbar" style="margin-top:22px"><h2>近30天每天交的作文</h2></div>
+    {% set c = essay_chart %}
+    <svg class="st-chart" viewBox="-40 -10 1050 {{c.height + 34}}" role="img" aria-label="近30天每天交的作文篇数">
+      {% for f in (0, 1) %}<line class="grid" x1="0" x2="1000" y1="{{c.height - c.height * f}}" y2="{{c.height - c.height * f}}"/><text x="-8" y="{{c.height - c.height * f + 4}}" text-anchor="end">{{(c.top * f)|round|int}}</text>{% endfor %}
+      {% for b in c.bars %}
+        <g class="bar"><title>{{b.label}}：{{b.sum}} 篇</title>
+          <rect x="{{b.x - c.step * 0.18}}" y="0" width="{{c.step}}" height="{{c.height}}" fill="transparent"/>
+          {% for p in b.parts %}<rect x="{{b.x}}" y="{{p.y}}" width="{{b.w}}" height="{{p.h}}" rx="2" fill="{{p.color}}"/>{% endfor %}
+        </g>
+        {% if loop.index0 % 5 == 4 or loop.last %}<text x="{{b.x + b.w / 2}}" y="{{c.height + 18}}" text-anchor="middle">{{b.label}}</text>{% endif %}
+      {% endfor %}
+    </svg>
+  </section>
+
+  <section class="panel">
+    <div class="toolbar"><h2>每个功能（{{ranges[span]}}）</h2><p>按局数排序，灰色是这段时间没人用的</p></div>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>游戏 / 功能</th><th class="st-num">用户</th><th class="st-num">总局数</th>{% for label in modes.values() %}<th class="st-num">{{label}}</th>{% endfor %}<th class="st-num">试玩</th></tr></thead>
+        <tbody>
+          {% for s in sites %}
+            <tr class="st-site-row"><td colspan="{{4 + modes|length}}"><span class="st-dot" style="background:{{s.color}};display:inline-block;margin-right:8px"></span>{{s.title}} · {{s.summary.active}} 人 · {{s.summary.rounds}} 局</td></tr>
+            {% for x in s.games %}
+              <tr{% if not x.total and not x.trials %} class="zero"{% endif %}><td class="st-name">{{x.name}}</td><td class="st-num">{{x.users}}</td><td class="st-num"><strong>{{x.total}}</strong></td>{% for key in modes %}<td class="st-num">{{x.modes.get(key, 0)}}</td>{% endfor %}<td class="st-num">{{x.trials}}</td></tr>
+            {% endfor %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="scroll" style="margin-top:18px">
+      <table>
+        <thead><tr><th>{{workbench.title}}</th><th class="st-num">活跃老师</th><th class="st-num">交作文的老师</th><th class="st-num">学生</th><th class="st-num">交作文</th><th class="st-num">已批改</th><th class="st-num">已发布</th><th class="st-num">布置作文</th><th class="st-num">试用</th><th class="st-num">模型花费</th></tr></thead>
+        <tbody><tr><td class="st-name">作文批改</td><td class="st-num">{{work.active}}</td><td class="st-num">{{work.writers}}</td><td class="st-num">{{work.students}}</td><td class="st-num"><strong>{{work.essays}}</strong></td><td class="st-num">{{work.graded}}</td><td class="st-num">{{work.published}}</td><td class="st-num">{{work.assignments}}</td><td class="st-num">{{work.trials}}</td><td class="st-num">¥{{'%.2f'|format(work.cost)}}</td></tr></tbody>
+      </table>
+    </div>
+    <p class="st-note">活跃老师按设备最后一次打开工作台的时间算；交作文的老师 = 这段时间有学生交了作文的老师。</p>
+  </section>
+
+  <section class="panel">
+    <div class="toolbar"><h2>近30天每天的使用量</h2><p>每格是那一天的局数（作文批改是交的篇数），颜色越深越多</p></div>
+    <div class="hm-wrap">
+      <table class="hm-table">
+        <thead><tr><th class="sticky">游戏 / 功能</th>{% for d in days %}<th>{{d[3:] if not loop.first and d[3:] != '01' else d}}</th>{% endfor %}</tr></thead>
+        <tbody>
+          {% for s in sites %}
+            {% for x in s.games %}
+              <tr><td class="sticky"><span class="st-dot" style="background:{{s.color}};display:inline-block;margin-right:6px"></span>{{x.name}}</td>{% for n in x.days %}{{cell(n, heat(n))}}{% endfor %}</tr>
+            {% endfor %}
+          {% endfor %}
+          <tr><td class="sticky"><span class="st-dot" style="background:var(--ink);display:inline-block;margin-right:6px"></span>作文批改</td>{% for n in essay_days %}{{cell(n, essay_heat(n))}}{% endfor %}</tr>
+        </tbody>
+      </table>
+    </div>
+    {% if first_full %}<p class="st-note">{{first_full}} 以前的局数只含计入排行的局（同屏双人PK、太快或超过每天上限的局当时没有记录）。</p>{% endif %}
+  </section>
+{% endblock %}

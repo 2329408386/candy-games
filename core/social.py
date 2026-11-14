@@ -11,7 +11,7 @@ import io, secrets, time
 from flask import Response, abort, jsonify, redirect, render_template, request, url_for
 from PIL import Image, ImageOps, UnidentifiedImageError
 from . import devices, feedback, ranks
-from .app import current, db, limited, site
+from .app import current, db, limited, log_play, site
 
 AVATAR_SIZE = 96
 NAME_MAX = 8
@@ -475,9 +475,14 @@ def register_social(app):
             return jsonify(error="授权已失效"), 403
         d = db()
         now = int(time.time())
+        mode = payload().get("mode")
+        mode = mode if mode in ("mistakes", "pk") else "solo"
+        log_play(game, mode, row["id"])
+        if mode == "pk":  # 同屏双人PK is only counted for 统计; it never scores
+            d.commit()
+            return jsonify(round=None)
         d.execute("DELETE FROM rounds WHERE site=? AND started_at<?", (site().key, now - 86400))
         ticket = secrets.token_urlsafe(16)
-        mode = "mistakes" if payload().get("mode") == "mistakes" else "solo"
         d.execute(
             "INSERT INTO rounds(site,id,license_id,game,started_at,mode) VALUES(?,?,?,?,?,?)",
             (site().key, ticket, row["id"], game, now, mode),

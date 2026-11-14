@@ -33,7 +33,6 @@ def _seed():
             "INSERT INTO game_groups VALUES(?,?,?,?,0)", [(key, grade + "-a", grade, "A组") for grade in GRADES]
         )
         d.executemany("INSERT INTO game_memberships VALUES(?,?,?)", [(key, game, "g3-t1-a") for game in site.games])
-        d.execute("INSERT INTO admin VALUES(?,?,0,1)", (key, generate_password_hash(PASSWORD)))
         d.execute(
             "INSERT INTO generation_batches VALUES(?,?,?,?,?,?,?)",
             (key, "historical-batch", "[]", 2, 3, 1, '["g3-t1"]'),
@@ -52,7 +51,7 @@ def _seed():
         )
         d.execute("INSERT INTO license_keys VALUES(?,3,?)", (key, key.upper() + "ARCHIVED"))
     # 语文老师工作台: its license group is created by create_app (seed_workbench); two teachers.
-    d.execute("INSERT INTO admin VALUES('teacher',?,0,1)", (generate_password_hash(PASSWORD),))
+    d.execute("INSERT INTO admin VALUES('all',?,0,1)", (generate_password_hash(PASSWORD),))  # one admin for every site
     for lid, code in ((1, KEYS["teacher"]), (2, TEACHER2_KEY)):
         d.execute(
             "INSERT INTO licenses(site,id,key_hash,games,buyer,created_at,device_limit) VALUES('teacher',?,?,'[]','老师',1,100)",
@@ -97,7 +96,9 @@ class SiteClient:
         return self.post("/api/activate", json={"key": key or KEYS[self.site]})
 
     def login(self):
-        return self.post("/admin/login", {"username": "admin", "password": PASSWORD})
+        """Signs in on the one sign-in page (the Chinese app's), which opens every site's back office."""
+        token = self.c.get("/api/csrf").get_json()["csrf"]
+        return self.c.post("/admin/login", data={"username": "admin", "password": PASSWORD, "csrf": token})
 
 
 def other_site(site):

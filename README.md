@@ -9,11 +9,19 @@
 | 英语 | `http://39.106.16.99/english/` | `/english/admin` |
 | 语文老师工作台 | `http://39.106.16.99/workspace/chinese/` | `/workspace/chinese/admin` |
 
+后台只有一个管理员账号、一个密码：在 `/admin/login` 登录一次，四个后台和统计页（`/admin/stats`）都能直接进入，每个后台页面顶部都有同一套导航（统计、语文、数学、英语、工作台、用户建议、模型设置、修改密码、退出）。登录状态存在独立的 Cookie `candy_admin` 里（路径 `/`，签名密钥由 `CHINESE_SECRET` 派生，四个站点都认），管理员记录是 `admin` 表里 `site='all'` 那一行。
+
+## 使用统计（`/admin/stats`）
+- 代码 `core/stats.py`，页面 `core/templates/stats.html`；按北京时间，可选今天 / 近7天 / 近30天。
+- 每局都记在 `plays` 表（`core/app.py` 的 `log_play`）：单人、错题重练（开局领票据时）、同屏双人PK（开局时游戏页另报一次，不计分）、联网PK（房间开始时每个授权码一局）。试玩读 `trials`；工作台读交的作文、布置次数、模型花费和老师设备的最后访问时间。
+- 页面：各站总览（已激活用户、活跃用户、局数）、近30天每天的局数和作文篇数、每个游戏/功能按模式分开的明细、近30天每天 × 每个功能的热力表。
+- `plays` 上线前的局是从 `scores` 补进来的，只含当时计入排行的局，页面上有注明。
+
 ## 结构
 - `wsgi.py`：一个 gunicorn 进程里挂三个 Flask 站点（语文在 `/`，数学在 `/math`，英语在 `/english`）。
 - `core/app.py`：共享的路由、授权、后台逻辑；`core/schema.py`：数据库表结构。
 - `sites/<chinese|math|english>/`：站点配置 `sites/__init__.py`、题库 `banks/<游戏>.json`、游戏页外壳 `games/`、静态资源 `static/`、站点专属模板（首页、外框）。
-- `core/templates/`：两站共用的后台模板。
+- `core/templates/`：各站共用的后台模板（`admin_nav.html` 是所有后台共用的顶部导航）。
 - `shared-static/pk/`：各站共用的游戏引擎 `pk-core.js`/`pk-core.css` 和各题型渲染器 `types/`；`shared-static/game-audio-v3/`：共用音效。
 - `tools/assets.py`：静态资源指纹；`tools/banks.py`：题库校验并生成复核清单；`tools/english_audio.py`：合成英语听力录音。
 - `docs/`：由题库生成的复核清单（不要手改）。
@@ -65,7 +73,7 @@
 - 模型：在后台「模型设置」配置，马上生效。服务商填 OpenAI 兼容地址和 API Key（加密存库，只显示末 4 位）；「照片识别 / 作文批改 / 批改复核」三步各选主模型和备用模型，可填温度、最大输出、额外参数（JSON）和价格（元 / 百万 token，可设高峰时段和倍数）；还可设每日花费上限。有「测试」按钮。
 - 质量：提示词在 `sites/teacher/prompts/`（按学段的评分标准 `bands.json`、文体要点 `genres.json`、`grade.md`、`check.md`；老师打过分的范文放 `anchors/<low|mid|high>.json` 会自动加入提示词），提示词版本是这些文件的哈希，随每条批改保存。总分和等级由服务器按各维度分数计算；标注引用的原文必须在作文里找得到，否则丢弃；复核模型逐条判断错别字、病句等是否成立，去掉误判，等级相差两档以上时提醒老师。
 - 模型版本：每个步骤可选「自动跟随最新版本 / 只在下线时自动替换 / 固定」（`core/essay/models_sync.py`）。批改进程每 6 小时读服务商的 `/models`，在同一系列（版本号换成占位符后相同的 id，如 `glm-#-flash`）里找更新的版本，测试请求通过后才切换，并按列表价格（美元 × 后台汇率）更新单价；服务商说模型不存在时马上检查并重试。模型设置页显示每次自动变更，可「改回上一个」（改回后策略变为固定）。
-- 照片识别：「照片识别（OCR）」一步要选能看图的模型（推荐 opencode 的 `qwen3.8-flash`）。没配置时拍照交的作文会排队等待。照片存在数据目录的 `essay-images/` 下。
+- 照片识别：「照片识别（OCR）」一步要选能看图的模型（推荐 opencode 的 `qwen3.8-flash`）。没配置时拍照交的作文会排队等待。照片存在数据目录的 `essay-images/` 下。页面上显示的是长边 1400 的压缩版（约原图 40%，第一次打开时生成在 `essay-images/view/`），导出 PDF 用原图（`?full=1`）；批改页在头部预加载照片。红笔字体约 1.6 MB，老师端和学生端页面空闲时以最低优先级（prefetch）悄悄下好，之后打开作文直接用缓存。
 
 ## 修改题库
 题库的唯一来源是 `sites/<站点>/banks/<游戏>.json`（字段说明见 `tools/banks.py` 开头）。修改后运行：
@@ -111,7 +119,7 @@ deploy/deploy.sh rollback   # 切回上一个版本
 - 服务：`systemctl status candy-games`；日志：`journalctl -u candy-games`。
 - 新增站点（如英语站）：先在 `/var/lib/candy-games/secret.env` 加上该站的密钥（如 `ENGLISH_SECRET=<随机64位>`）再发布；发布后运行 `manage.py seed --site <站点>`，建好各学期「A组」并把管理员初始密码写到 `/var/lib/candy-games/<站点>/管理员初始凭据.txt`。
 - https：Let's Encrypt 给 IP 签的短期证书（约 6 天），certbot 装在 `/opt/certbot`，`candy-games-cert.timer` 每天两次续期并重载 nginx；首次签发用 `/opt/candy-games/current/deploy/install.sh cert`。http 和 https 内容完全一样（共用 `deploy/nginx-locations.conf`），不强制跳转；授权 Cookie 两边通用，错题本和设置存在浏览器 localStorage、两边各一份，从 http 点「🔒 安全连接」或读句子时会带过去合并（`shared-static/social/carry.js`）。
-- 登录：授权和后台登录的 Cookie 有效期 10 年、每次访问续期，相当于永久；后台改密码后其它设备的后台登录失效。
+- 登录：授权和后台登录的 Cookie 有效期 10 年、每次访问续期，相当于永久；后台改密码后所有设备的后台登录都失效。
 - 自动恢复：进程退出后 1 秒内由 systemd 重新拉起（不限次数）；`candy-games-watchdog.timer` 每 30 秒检查两个站点的 `/health`，卡死时自动重启服务；nginx 也设置了自动重启。
 - 备份：`candy-games-backup.timer` 每天 03:15 备份到 `/var/lib/candy-games/backups/`，保留 3 天；每次发布前也备份一次。
 - 异地备份：在开发机上运行 `deploy/pull-backups.sh`，把服务器备份（含 secret.env）拉到 `~/candy-games-backups/`；需要每天自动拉取时，按脚本开头的说明加入开发机 crontab。
@@ -119,5 +127,5 @@ deploy/deploy.sh rollback   # 切回上一个版本
   ```bash
   cd /opt/candy-games/current
   sudo -u candy-games env $(cat /var/lib/candy-games/secret.env) GAME_DATA=/var/lib/candy-games /opt/candy-games/venv/bin/python manage.py summary
-  # export [--site chinese|math] / backup / reset-password --site chinese|math
+  # export [--site chinese|math] / backup / reset-password（重置唯一的管理员密码，写到数据目录的「管理员初始凭据.txt」）
   ```

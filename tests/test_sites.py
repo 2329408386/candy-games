@@ -1,4 +1,5 @@
 import io, re, zipfile
+from urllib.parse import quote
 import pytest
 from conftest import SiteClient, KEYS, FLASK, PREFIX, other_site, bank_size
 from sites import ALL_SITES, SITES
@@ -110,18 +111,19 @@ def test_admin_pages(admin, site):
         "/admin/groups",
         "/admin/licenses/new",
         "/admin/licenses/1",
-        "/admin/password",
     ]:
         r = admin.get(path)
         assert r.status_code == 200, (path, r.status_code)
         if site != "chinese":
-            assert not re.search(r'(?:href|action)="/(?:admin|api|games|static)', r.get_data(as_text=True)), path
+            # The shared header links every back office by its full address; the page's own links carry the prefix.
+            page = re.sub(r'<header class="site-header">.*?</header>', "", r.get_data(as_text=True), flags=re.S)
+            assert not re.search(r'(?:href|action)="/(?:admin|api|games|static)', page), path
     assert "<title>游戏分组管理 · " + SITES[site].title + "</title>" in admin.get("/admin/groups").get_data(
         as_text=True
     )
     assert admin.get("/admin?group=unknown").status_code == 400
     assert admin.get("/admin/licenses/99").status_code == 404
-    assert SiteClient(site).get("/admin").headers["Location"] == prefix + "/admin/login"
+    assert SiteClient(site).get("/admin").headers["Location"] == "/admin/login?next=" + quote(prefix + "/admin")
 
 
 def test_group_permissions_follow_moves(admin, site, db):
@@ -194,21 +196,49 @@ def test_license_edits_export_and_archive_guard(admin, site):
     assert admin.post("/admin/licenses/1/bogus", {}).status_code == 404
 
 
-def test_admin_password_change_and_logout_keep_device(site, db):
+def test_one_sign_in_opens_every_back_office(db):
+    from urllib.parse import quote
+    from conftest import PASSWORD
+
+    a = SiteClient("math")
+    assert a.activate().status_code == 200
+    # A page of any back office sends the browser to the one sign-in page and back again afterwards.
+    r = a.get("/admin/groups?grade=g3-t1")
+    assert r.headers["Location"] == "/admin/login?next=" + quote("/math/admin/groups?grade=g3-t1")
+    token = a.c.get("/api/csrf").get_json()["csrf"]
+    r = a.c.post("/admin/login", data={"username": "admin", "password": "wrong", "csrf": token, "next": "/math/admin"})
+    assert "用户名或密码错误" in r.get_data(as_text=True)
+    r = a.c.post("/admin/login", data={"username": "admin", "password": PASSWORD, "csrf": token, "next": "/math/admin"})
+    assert r.headers["Location"] == "/math/admin" and "Max-Age=315360000" in r.headers["Set-Cookie"]
+    for path in ("/admin", "/math/admin", "/english/admin/groups", "/workspace/chinese/admin", "/workspace/chinese/admin/models", "/admin/stats"):
+        page = a.c.get(path)
+        assert page.status_code == 200, path
+        assert 'aria-label="管理导航"' in page.get_data(as_text=True)
+    assert a.c.get("/admin/login").headers["Location"] == "/admin/stats"  # already signed in
+    for bad in ("//evil.example/", "https://evil.example/", "/\\evil.example"):
+        r = a.c.post("/admin/login", data={"username": "admin", "password": PASSWORD, "csrf": token, "next": bad})
+        assert r.headers["Location"] == "/admin/stats", bad
+    # Signing out on one site's page signs out of all of them; the game license stays.
+    r = a.post("/admin/logout")
+    assert r.headers["Location"] == "/admin/login"
+    for path in ("/admin", "/math/admin", "/workspace/chinese/admin", "/admin/stats"):
+        assert a.c.get(path).status_code == 302, path
+    assert a.get("/api/session").status_code == 200
+
+
+def test_admin_password_change_signs_out_everywhere(db):
     from werkzeug.security import generate_password_hash
     from conftest import PASSWORD
 
-    a = SiteClient(site)
-    assert a.activate().status_code == 200
-    assert a.login().status_code == 302
-    db.execute("UPDATE admin SET must_change=1 WHERE site=?", (site,))
+    a, b = SiteClient("chinese"), SiteClient("english")
+    assert a.login().status_code == 302 and b.login().status_code == 302
+    db.execute("UPDATE admin SET must_change=1 WHERE site='all'")
     db.commit()
-    prefix = PREFIX[site]
-    assert a.get("/admin").headers["Location"] == prefix + "/admin/password"
+    assert b.get("/admin").headers["Location"] == "/admin/password"
     r = a.post("/admin/password", {"old": PASSWORD, "password": "new-password-456", "confirm": "new-password-456"})
-    assert r.headers["Location"] == prefix + "/admin/login"
-    assert a.get("/api/session").status_code == 200, "admin sign-in/out keeps the game device"
-    db.execute("UPDATE admin SET password=?,must_change=0 WHERE site=?", (generate_password_hash(PASSWORD), site))
+    assert r.headers["Location"] == "/admin/login"
+    assert a.get("/admin").status_code == 302 and b.get("/admin").status_code == 302
+    db.execute("UPDATE admin SET password=?,must_change=0 WHERE site='all'", (generate_password_hash(PASSWORD),))
     db.commit()
 
 

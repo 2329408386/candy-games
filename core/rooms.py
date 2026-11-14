@@ -350,6 +350,11 @@ def register_rooms(app):
             "UPDATE pk_rooms SET status='running',question_ids=?,started_at=?,deadline=?,version=version+1 WHERE site=? AND code=?",
             (json.dumps(ids), start, start + room["seconds"], s, code),
         )
+        d.execute(  # 统计: one online round for every license in the room
+            "INSERT INTO plays(site,game,mode,license_id,created_at)"
+            " SELECT DISTINCT site,?,'online',license_id,? FROM pk_seats WHERE site=? AND code=?",
+            (room["game"], now, s, code),
+        )
         d.commit()
         return jsonify(state(room_row(code), mine["seat"], now))
 

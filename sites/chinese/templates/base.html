@@ -27,15 +27,9 @@
     </defs>
     </svg>
     <header class="site-header">
-      <a class="brand" href="{{url_for('dashboard') if is_admin else url_for('home')}}"><span class="brand-icon"><svg><use href="#i-book"/></svg></span><span>语文小游戏<small>{{'管理工作台' if is_admin else '让知识，在快乐里发芽'}}</small></span></a>
+      <a class="brand" href="{{'/admin/stats' if is_admin else url_for('home')}}"><span class="brand-icon"><svg><use href="#i-book"/></svg></span><span>语文小游戏<small>{{'管理工作台' if is_admin else '让知识，在快乐里发芽'}}</small></span></a>
       {% if is_admin %}
-        <nav aria-label="管理导航">
-          <a href="{{url_for('home')}}">游戏首页 <span aria-hidden="true">↗</span></a>{% if session.get('admin_version') %}<a href="{{url_for('dashboard')}}">授权管理</a><a href="{{url_for('game_directory')}}">游戏目录</a><a href="{{url_for('group_admin')}}">游戏分组</a><a href="{{url_for('password')}}">修改密码</a>
-          <form method="post" action="{{url_for('admin_logout')}}">
-            <input type="hidden" name="csrf" value="{{csrf()}}"><button class="text-button">退出后台</button>
-          </form>
-        {% endif %}
-      </nav>
+        {% include 'admin_nav.html' %}
       {% else %}<span class="header-actions"><a class="header-link" href="{{url_for('mistakes')}}">错题本</a>{% set me = header_profile() %}{% if me %}{% set on_rank = request.endpoint == 'ranking_page' %}<a class="header-rank top{{' active' if on_rank and board == 'top'}}" href="{{url_for('ranking_page')}}" title="全国用户总排行榜"><span aria-hidden="true">🏆</span><span class="label">总榜</span></a>{% if me.in_class %}<a class="header-rank class{{' active' if on_rank and board == 'class'}}" href="{{url_for('ranking_page', board='class')}}" title="班级排行榜"><span aria-hidden="true">🏅</span><span class="label">班级榜</span></a>{% endif %}<a class="header-avatar" href="{{url_for('me_page')}}" title="我的资料和班级">{% include 'avatar.html' %}<span class="name">{{me.name}}</span>{% if me.feedback_unread %}<span class="fb-dot" role="img" aria-label="有新回复"></span>{% endif %}</a>{% else %}<button type="button" class="header-link header-contact" data-contact>获取授权码</button>{% endif %}<span class="header-note"><span class="status-dot"></span> 一起玩，一起长大</span></span>{% endif %}
     </header>
     <main class="{{'admin-main' if is_admin else 'student-main'}}">

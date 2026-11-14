@@ -100,13 +100,7 @@ FEEDBACK_WHERE = {"pending": " WHERE f.replied_at IS NULL", "replied": " WHERE f
 FEEDBACK_PAGE = 30
 
 
-def feedback_pending():
-    return db().execute("SELECT count(*) FROM feedback WHERE replied_at IS NULL").fetchone()[0]
-
-
 def register(app):
-    app.jinja_env.globals["feedback_pending"] = feedback_pending
-
     @app.get("/admin/feedback")
     @admin_only
     def feedback_admin():

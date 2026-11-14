@@ -74,6 +74,8 @@ CREATE TABLE IF NOT EXISTS ess_paper_items(paper_id INTEGER NOT NULL REFERENCES 
 CREATE TABLE IF NOT EXISTS feedback(id INTEGER PRIMARY KEY,site TEXT NOT NULL,license_id INTEGER NOT NULL,content TEXT NOT NULL,created_at INTEGER NOT NULL,reply TEXT,replied_at INTEGER,reply_seen_at INTEGER);
 CREATE INDEX IF NOT EXISTS feedback_author ON feedback(site,license_id,created_at);
 CREATE INDEX IF NOT EXISTS feedback_queue ON feedback(replied_at,created_at);
+CREATE TABLE IF NOT EXISTS plays(id INTEGER PRIMARY KEY,site TEXT NOT NULL,game TEXT NOT NULL,mode TEXT NOT NULL,license_id INTEGER NOT NULL,created_at INTEGER NOT NULL);
+CREATE INDEX IF NOT EXISTS plays_time ON plays(created_at);
 """
 
 
@@ -252,6 +254,23 @@ def migrate(d):
             d.execute(f"DROP TABLE IF EXISTS {table}")
         d.execute("DELETE FROM audit WHERE action IN ('referral_used','referral_reward')")
         d.execute("INSERT INTO migrations VALUES('drop_referral',?)", (int(time.time()),))
+    if "plays_backfill" not in done:
+        # 统计 counts every round from here on (plays); before, only rounds that went into the rankings were kept.
+        d.execute(
+            "INSERT INTO plays(site,game,mode,license_id,created_at) SELECT site,game,mode,license_id,created_at"
+            " FROM scores WHERE mode IN ('solo','mistakes','online') ORDER BY created_at"
+        )
+        d.execute("INSERT INTO migrations VALUES('plays_backfill',?)", (int(time.time()),))
+    if "admin_unified" not in done:
+        # The four back offices share one admin (row 'all', see core/app.py): it keeps the password the sites
+        # already had in common (语文's, preferring one that is not waiting to be changed).
+        row = d.execute(
+            "SELECT password,must_change FROM admin WHERE site!='all' ORDER BY must_change,site!='chinese' LIMIT 1"
+        ).fetchone()
+        if row:
+            d.execute("INSERT OR IGNORE INTO admin VALUES('all',?,?,1)", row)
+        d.execute("DELETE FROM admin WHERE site!='all'")
+        d.execute("INSERT INTO migrations VALUES('admin_unified',?)", (int(time.time()),))
 
 
 BEIJING = 8 * 3600

@@ -2,7 +2,7 @@ import argparse, atexit, datetime, json, os, secrets, shutil, sqlite3, sys, time
 from pathlib import Path
 from werkzeug.security import generate_password_hash
 from core import schema
-from core.app import create_app, data_dir, db, licenses_xlsx, group_map, group_labels, GRADES
+from core.app import ADMIN_SITE, admin_row, create_app, data_dir, db, licenses_xlsx, group_map, group_labels, GRADES
 from sites import ALL_SITES as SITES
 
 os.umask(0o077)
@@ -20,20 +20,19 @@ def site_dir(site):
     return folder
 
 
-def password_reset(site):
+def password_reset():
+    """A new random password for the one admin of every back office, written to a private file."""
     password = secrets.token_urlsafe(20)
     db().execute(
         "INSERT INTO admin VALUES(?,?,1,1) ON CONFLICT(site) DO UPDATE SET password=excluded.password,must_change=1,version=version+1",
-        (site.key, generate_password_hash(password)),
+        (ADMIN_SITE, generate_password_hash(password)),
     )
     db().commit()
-    path = site_dir(site) / "管理员初始凭据.txt"
+    path = data_dir() / "管理员初始凭据.txt"
     path.write_text(
-        "后台："
-        + os.environ.get("SITE_URL", SITE_URLS[site.key]).rstrip("/")
-        + "/admin\n用户名：admin\n初始密码："
+        "后台：" + os.environ.get("SITE_URL", SITE_URLS["chinese"]).rstrip("/") + "/admin/login\n用户名：admin\n初始密码："
         + password
-        + "\n首次登录必须修改密码。\n"
+        + "\n所有站点的后台共用这个账号；首次登录必须修改密码。\n"
     )
     print("管理员凭据已写入私有文件：" + str(path))
 
@@ -52,8 +51,8 @@ def seed(site):
             [(s, game, site.game_grades[game] + "-a") for game in site.games],
         )
         d.commit()
-    if not d.execute("SELECT 1 FROM admin WHERE site=?", (s,)).fetchone():
-        password_reset(site)
+    if not admin_row():
+        password_reset()
     print("初始化完成；未生成任何正式授权码")
 
 
@@ -357,9 +356,11 @@ if __name__ == "__main__":
         with create_app(SITES["teacher"]).app_context():
             essay_reread(args.id)
         raise SystemExit
+    if args.command == "reset-password":
+        with create_app(SITES["chinese"]).app_context():
+            password_reset()
+        raise SystemExit
     targets = [SITES[args.site]] if args.site else list(SITES.values())
-    if args.command == "reset-password" and not args.site:
-        p.error("reset-password 需要 --site")
     for site in targets:
         with create_app(site).app_context():
-            {"seed": seed, "export": export, "reset-password": password_reset, "summary": summary}[args.command](site)
+            {"seed": seed, "export": export, "summary": summary}[args.command](site)

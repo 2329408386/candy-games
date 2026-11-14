@@ -1,0 +1,32 @@
+{# The back office header of every site: one sign-in, so every back office and the statistics are a click away. #}
+{% if admin_signed_in() %}
+  {% set on_stats = request.script_root == '' and request.path == '/admin/stats' %}
+  {% set waiting = feedback_pending() %}
+  <nav aria-label="管理导航" class="admin-nav">
+    <div class="admin-nav-row">
+      <a href="/admin/stats"{% if on_stats %} class="on" aria-current="page"{% endif %}>统计</a>
+      {% for key, label in (('chinese', '语文'), ('math', '数学'), ('english', '英语'), ('teacher', '工作台')) %}
+        <a href="{{all_sites[key].url}}admin"{% if site.key == key and not on_stats %} class="on"{% endif %}>{{label}}</a>
+      {% endfor %}
+      <a href="/workspace/chinese/admin/feedback">用户建议{% if waiting %} <span class="tag">{{waiting}}</span>{% endif %}</a>
+      <a href="/workspace/chinese/admin/models">模型设置</a>
+      <a href="/admin/password">修改密码</a>
+      <form method="post" action="{{url_for('admin_logout')}}"><input type="hidden" name="csrf" value="{{csrf()}}"><button class="text-button">退出</button></form>
+    </div>
+    {% if not on_stats %}
+      <div class="admin-nav-row sub">
+        <a href="{{site.url}}">{{'工作台首页' if site.kind == 'workbench' else '游戏首页'}} <span aria-hidden="true">↗</span></a>
+        <a href="{{site.url}}admin">授权管理</a>
+        {% if site.kind == 'games' %}<a href="{{site.url}}admin/games">游戏目录</a><a href="{{site.url}}admin/groups">游戏分组</a>{% endif %}
+      </div>
+    {% endif %}
+  </nav>
+  <style>
+    .site-header nav.admin-nav{flex-direction:column;align-items:flex-end;gap:6px}
+    .admin-nav-row{display:flex;gap:20px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+    .admin-nav-row.sub{font-size:12px}
+    .admin-nav .text-button{font-size:inherit;min-height:0}
+    .admin-nav a.on{color:inherit;font-weight:700;box-shadow:inset 0 -2px currentColor}
+    @media(max-width:600px){.site-header nav.admin-nav{align-items:flex-start}.admin-nav-row{gap:14px;justify-content:flex-start}}
+  </style>
+{% endif %}
