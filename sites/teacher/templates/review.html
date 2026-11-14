@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% block head %}{% for ph in photos %}<link rel="preload" as="image" href="{{url_for('essay_image', iid=ph.id)}}">{% endfor %}{% endblock %}
 {% block title %}审核 · {{sub.student_name}} · 语文老师工作台{% endblock %}
 {% block header_actions %}<a class="header-link" href="{{url_for('assignment_page', aid=sub.assignment_id)}}">返回作业</a>{% endblock %}
 {% block content %}

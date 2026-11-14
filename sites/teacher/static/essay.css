@@ -267,7 +267,7 @@ mark.mk{background:none}
 .typed-alt>summary{cursor:pointer;color:var(--green);font-size:14px;margin:4px 0}
 .photo-plain{display:block;max-width:100%;border-radius:12px;border:1px solid var(--line);margin:0 auto 14px}
 
-/* red pen (static/redpen.js?v=6959a30c) */
+/* red pen (static/redpen.js?v=0dc2bbdc) */
 @font-face{font-family:RedPen;src:url(redpen-font.0924cd57.woff2) format('woff2');font-display:swap}
 .redpen{position:relative;max-width:1040px;margin:0 auto}
 .rp-page{position:relative;width:100%;margin:0 0 16px;border-radius:6px;overflow:hidden;box-shadow:0 6px 24px #344b3818;background:#fff}

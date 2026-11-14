@@ -88,6 +88,22 @@
     <footer class="site-footer">
       语文老师工作台 <span>·</span> {{'用心管理，让学习更简单' if is_admin else '腹有诗书气自华 · 让每个孩子爱上语文'}}{% if not is_admin %}{% include 'cross_sites.html' %}{% endif %}
     </footer>
-    {% if not is_admin %}<script>window.WB_CSRF={{url_for('csrf_token')|tojson}};window.WB_PDF_LINKS={{url_for('pdf_link_create')|tojson}};</script>{% block page_data %}{% endblock %}<script src="{{asset('essay.js')}}"></script>{% block scripts %}{% endblock %}{% endif %}
+    {% if not is_admin %}<script>window.WB_CSRF={{url_for('csrf_token')|tojson}};window.WB_PDF_LINKS={{url_for('pdf_link_create')|tojson}};</script>{% block page_data %}{% endblock %}<script src="{{asset('essay.js')}}"></script>{% block scripts %}{% endblock %}
+    <script>
+      // The red-pen font (1.6 MB, cached for a year) is fetched quietly once the page is idle, so the first essay
+      // opened later already has it. prefetch is the browser's lowest priority; skipped when saving data.
+      addEventListener('load', () => {
+        if (navigator.connection && navigator.connection.saveData) return;
+        const later = window.requestIdleCallback || ((fn) => setTimeout(fn, 3000));
+        later(() => {
+          const link = document.createElement('link');
+          link.rel = 'prefetch';
+          link.as = 'font';
+          link.crossOrigin = 'anonymous';
+          link.href = {{url_for('static', filename='redpen-font.0924cd57.woff2')|tojson}};
+          document.head.appendChild(link);
+        });
+      });
+    </script>{% endif %}
   </body>
 </html>

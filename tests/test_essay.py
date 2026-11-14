@@ -920,6 +920,16 @@ def test_photo_essay_is_read_graded_and_drawn_on_the_photo(models, klass, db):
     assert s.c.get(src).status_code == 200 and t.c.get(src).status_code == 200
     s2, _ = student_client(db, cid, "李华")
     assert s2.c.get(src).status_code == 404 and teacher_client(TEACHER2_KEY).c.get(src).status_code == 404
+    assert s2.c.get(src + "?full=1").status_code == 404
+    # Pages show a lighter copy (long side 1400); ?full=1 (PDF export) is the original.
+    import io
+    from PIL import Image
+
+    assert Image.open(io.BytesIO(s.c.get(src).data)).size == (1050, 1400)
+    assert Image.open(io.BytesIO(s.c.get(src + "?full=1").data)).size == (1200, 1600)
+    page = s.get(f"/student/essay/results/{sid}").get_data(as_text=True)
+    assert f'<link rel="preload" as="image" href="{src}">' in page
+    assert "rel = 'prefetch'" in page and "redpen-font." in page  # the font is fetched quietly when idle
 
 
 def test_sideways_photo_is_turned_upright_and_read_again(models, klass, db):

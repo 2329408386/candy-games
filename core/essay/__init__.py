@@ -360,6 +360,32 @@ def image_path(iid):
     return images_dir() / f"{iid}.jpg"
 
 
+VIEW_SIDE, VIEW_QUALITY = 1400, 75  # the copy pages show: about 40% of the original's bytes
+
+
+def view_path(iid):
+    """A lighter copy of a photo for showing on screen (the original stays for reading, re-reading and printing).
+    Made on first request and again whenever the original is newer."""
+    original = image_path(iid)
+    folder = images_dir() / "view"
+    folder.mkdir(mode=0o700, exist_ok=True)
+    path = folder / f"{iid}.jpg"
+    if path.exists() and path.stat().st_mtime >= original.stat().st_mtime:
+        return path
+    from PIL import Image
+
+    with Image.open(original) as img:
+        img.draft("RGB", (VIEW_SIDE, VIEW_SIDE))
+        img = img.convert("RGB")
+        img.thumbnail((VIEW_SIDE, VIEW_SIDE), Image.LANCZOS)
+        buf = io.BytesIO()
+        img.save(buf, "JPEG", quality=VIEW_QUALITY, optimize=True, progressive=True)
+    temp = path.with_suffix(f".{secrets.token_hex(4)}.tmp")
+    temp.write_bytes(buf.getvalue())
+    temp.replace(path)  # two workers making the same copy at once both end with a whole file
+    return path
+
+
 def read_photos():
     """The uploaded photos (form field "photos"), upright, at most PHOTO_SIDE px, as JPEG: [(bytes, w, h)]."""
     from PIL import Image, ImageOps, UnidentifiedImageError
@@ -1173,7 +1199,8 @@ def register_pages(app):
         )
         if not allowed or not image_path(iid).exists():
             abort(404)
-        r = Response(image_path(iid).read_bytes(), mimetype="image/jpeg")
+        path = image_path(iid) if request.args.get("full") == "1" else view_path(iid)
+        r = Response(path.read_bytes(), mimetype="image/jpeg")
         r.headers["Cache-Control"] = "private, max-age=31536000, immutable"
         r.headers["Content-Security-Policy"] = "default-src 'none'"
         return r

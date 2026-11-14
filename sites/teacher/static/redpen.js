@@ -764,7 +764,7 @@
     await Promise.all(
       [...srcs].map(async (src) => {
         const img = new Image();
-        img.src = src;
+        img.src = src + (src.includes('?') ? '&' : '?') + 'full=1'; // the page shows a lighter copy; print the original
         try {
           await img.decode();
           images[src] = img;
