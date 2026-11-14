@@ -6,7 +6,7 @@
 Each game has sites/<site>/banks/<game>.json:
   type       renderer in shared-static/pk/ ("choice", "blanks", "tiles", "expand", "edit", "measure", "read",
              "handwrite" or "modes": hands-on modes mixed with choice questions, see types/modes.js)
-  draw       how each player's 20 questions are drawn (see draw_plans)
+  draw       how each player's 20 questions are drawn (see draw_plans); pk-core.js scales it to the 5—30 chosen in 设置
   ui         per-game options for the renderer (task, instruction, blankOptions, lettered, allowUnusedCards,
              joiner: text between word cards, units/unitNames: the start page offers 期末综合 or one unit)
 English questions may add unit (one of ui.units), audio (a recording in sites/<site>/static/audio/, transcript
@@ -506,6 +506,11 @@ def check_angles(q):
 
 def check_odometer(q):
     errors = []
+    # 三年级的孩子算一千以内的数：题里出现的里程、读数、答案都不超过 1000。
+    text = json.dumps({k: v for k, v in q.items() if k != "source"}, ensure_ascii=False)
+    big = sorted({int(n) for n in re.findall(r"\d+", text) if int(n) > 1000})
+    if big:
+        errors.append(f"出现超过 1000 的数：{big}")
     stops = q.get("stops")
     if stops and [s["km"] for s in stops] != sorted({s["km"] for s in stops}):
         errors.append("里程应从小到大且不重复")
@@ -533,8 +538,8 @@ def check_odometer(q):
             errors.append("选项的两站相同")
     elif kind == "reading":
         r = [x["value"] for x in q["readings"]]
-        if r != sorted(r) or max(r) > 9999:
-            errors.append("读数应递增且不超过 4 位")
+        if r != sorted(r):
+            errors.append("读数应递增")
         want = r[calc["to"]] - r[calc["from"]]
     elif kind == "before":
         want = q["readings"][0]["value"] - calc["driven"]
@@ -547,7 +552,7 @@ def check_odometer(q):
     if want is not None:
         if q["fields"][0]["answer"] != str(want):
             errors.append(f"路程错误：应为 {want}，题库 {q['fields'][0]['answer']}")
-        if kind in ("between", "reading", "before") and not 0 < want <= 9999:
+        if kind in ("between", "reading", "before") and not 0 < want <= 1000:
             errors.append(f"结果超出范围：{want}")
     return errors
 
@@ -796,10 +801,10 @@ def render_doc(site, game, bank):
     title = SITES[site].games[game]
     plans = draw_plans(bank)
     if plans == [None]:
-        draw = "每人从全部题目中随机抽20题，双方不重复。"
+        draw = "每人从全部题目中随机抽题（默认20题，设置里可改5—30题），双方不重复。"
     else:
         draw = (
-            "每人20题，按分类抽取，双方不重复："
+            "每人默认20题（设置里可改5—30题，按比例抽），按分类抽取，双方不重复："
             + "；或 ".join("、".join(f"{k}×{v}" for k, v in plan.items() if v) for plan in plans)
             + "。"
         )

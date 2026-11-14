@@ -2,7 +2,7 @@
 
 > 本文件由 `python tools/banks.py --fix` 根据 `sites/math/banks/measure.json` 生成，请修改题库后重新生成，不要直接编辑。
 
-共 100 题。每人20题，按分类抽取，双方不重复：single-mm/zero×1、single-mm/offset×1、single-cm/zero×1、single-cm/offset×1、single-dm/zero×1、single-dm/offset×1、cm-mm/zero×3、cm-mm/offset×3、dm-cm/zero×2、dm-cm/offset×2、cm-mm-long/zero×2、cm-mm-long/offset×2。
+共 100 题。每人默认20题（设置里可改5—30题，按比例抽），按分类抽取，双方不重复：single-mm/zero×1、single-mm/offset×1、single-cm/zero×1、single-cm/offset×1、single-dm/zero×1、single-dm/offset×1、cm-mm/zero×3、cm-mm/offset×3、dm-cm/zero×2、dm-cm/offset×2、cm-mm-long/zero×2、cm-mm-long/offset×2。
 
 - 题目依据北师大版三年级上册知识点总结自编，非教材原题。
 - 10类彩色SVG实物插画（shared-static/pk/measure-objects.js），按真实长度匹配；物品描边限定在测量端点内。

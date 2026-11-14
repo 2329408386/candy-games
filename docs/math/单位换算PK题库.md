@@ -2,7 +2,7 @@
 
 > 本文件由 `python tools/banks.py --fix` 根据 `sites/math/banks/conversion.json` 生成，请修改题库后重新生成，不要直接编辑。
 
-共 100 题。每人20题，按分类抽取，双方不重复：single×12、mixed×8。
+共 100 题。每人默认20题（设置里可改5—30题，按比例抽），按分类抽取，双方不重复：single×12、mixed×8。
 
 - 题目依据北师大版三年级上册知识点总结自编，非教材原题。
 

@@ -21,6 +21,7 @@ from .app import bank_json, current, db, device_hash, limited, site
 from .social import SOLO_PER_DAY, _top_cache, display, ensure_profile, period_start, profile_row, rank_points
 
 MAX_PLAYERS = 10
+MAX_QUESTIONS = 30  # per round; players pick 5—30 in 设置 (pk-core.js MAX_COUNT)
 # Placing bonus by number of scoring licenses: 2 players → 1st +10; 3 or more → +20/+10/+5; nobody loses points.
 # Ties share a place.
 PLACE_BONUS = {2: (10,), 3: (20, 10, 5)}
@@ -333,7 +334,7 @@ def register_rooms(app):
         ids = body().get("questions")
         if (
             not isinstance(ids, list)
-            or not 1 <= len(ids) <= 20
+            or not 1 <= len(ids) <= MAX_QUESTIONS
             or len(set(map(str, ids))) != len(ids)
             or not set(map(str, ids)) <= bank_ids(room["game"])
         ):

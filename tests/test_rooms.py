@@ -87,7 +87,7 @@ def test_lobby_join_leave_and_versions(alice, bob, site, db):
 
 def test_start_checks_questions(alice, bob, site, db):
     code = open_room(alice, bob, site, db)
-    for bad in ([], ["no-such-id"], ids(alice, site, 1) * 2, ids(alice, site, 21), "x"):
+    for bad in ([], ["no-such-id"], ids(alice, site, 1) * 2, ids(alice, site, 31), "x"):
         assert alice.post(f"/api/rooms/{code}/start", json={"questions": bad}).status_code == 400, bad
     st = alice.post(f"/api/rooms/{code}/start", json={"questions": ids(alice, site)}).get_json()
     assert st["status"] == "running" and st["startsAt"] == st["now"] + 3 and st["deadline"] == st["startsAt"] + 120

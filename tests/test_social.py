@@ -179,7 +179,7 @@ def test_solo_rounds_score_once_and_rank(alice, bob, site, db):
     assert got["rank"]["name"] == "青铜 III" and got["rank"]["progress"] == 3 and got["stars"] == 0 and not got["promoted"]
     again = alice.post(f"/api/rounds/{game}/finish", json={"round": ticket, "answers": [True] * 20})
     assert again.status_code == 409, "a ticket counts once"
-    assert finish(alice, game, db, site, [True] * 21)[1].status_code == 400
+    assert finish(alice, game, db, site, [True] * 31)[1].status_code == 400
     assert finish(alice, game, db, site, ["yes"])[1].status_code == 400
     fast = finish(alice, game, db, site, [True] * 20, ago=5)[1].get_json()
     assert not fast["recorded"] and "异常" in fast["reason"]

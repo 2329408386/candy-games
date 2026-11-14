@@ -2,7 +2,7 @@
 
 > 本文件由 `python tools/banks.py --fix` 根据 `sites/chinese/banks/punctuation.json` 生成，请修改题库后重新生成，不要直接编辑。
 
-共 100 题。每人20题，按分类抽取，双方不重复：before/textbook×6、before/extension×1、middle/extension×6、after/textbook×4、after/extension×3；或 before/textbook×5、before/extension×2、middle/textbook×1、middle/extension×5、after/textbook×4、after/extension×3。
+共 100 题。每人默认20题（设置里可改5—30题，按比例抽），按分类抽取，双方不重复：before/textbook×6、before/extension×1、middle/extension×6、after/textbook×4、after/extension×3；或 before/textbook×5、before/extension×2、middle/textbook×1、middle/extension×5、after/textbook×4、after/extension×3。
 
 - 课内50题全部为教材连续原文片段，文字、标点与提示语位置不改写；课外50题独立自编，不套用课文对话扩写。
 - 不在横线、操作提示或读屏标签中显示每格所需标点数量；保留逐个点选、删除，未填完整只提示不扣分。

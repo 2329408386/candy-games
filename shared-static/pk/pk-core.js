@@ -16,7 +16,8 @@
   const ROOM = PAGE.room || null;
   const QR = 'static/shared/contact/wechat-qr.0736f95e.jpeg';
   const SUBJECT = { chinese: '语文', math: '数学', english: '英语' }[cfg.site];
-  const PER_PLAYER = 20;
+  // Questions per player in a round: 20 by default, 5—30 in 设置 (the server accepts at most 30 per round).
+  const DEFAULT_COUNT = 20, MIN_COUNT = 5, MAX_COUNT = 30;
   const NAMES = ['玩家一', '玩家二'];
   const base = new URL('../', document.baseURI); // site root for /games/<id>, /math/games/<id>, /english/games/<id> and legacy /<name>.html
   const url = path => new URL(path, base).href;
@@ -103,10 +104,12 @@
   // ---------- settings ----------
   const SETTINGS_KEY = cfg.site + '-pk-settings-v1';
   const validSeconds = n => Number.isInteger(n) && n >= 30 && n <= 1800;
+  const validCount = n => Number.isInteger(n) && n >= MIN_COUNT && n <= MAX_COUNT;
   let settings = readStore(SETTINGS_KEY, {});
   let musicOn = settings.music !== false, fxOn = settings.fx !== false, voiceOn = settings.voice !== false;
   let presentOn = settings.present === true;
   let duration = validSeconds(settings.durations?.[cfg.id]) ? settings.durations[cfg.id] : cfg.defaultSeconds;
+  let questionCount = validCount(settings.counts?.[cfg.id]) ? settings.counts[cfg.id] : DEFAULT_COUNT;
   // Banks with ui.units can be played one unit at a time ('' = every unit, the 期末综合 draw).
   let unit = typeof settings.units?.[cfg.id] === 'string' ? settings.units[cfg.id] : '';
   function saveSettings() {
@@ -119,6 +122,9 @@
     // Only a changed time is remembered, so a new default for the game still reaches everybody else.
     if (duration === cfg.defaultSeconds) delete settings.durations[cfg.id];
     else settings.durations[cfg.id] = duration;
+    if (!settings.counts || typeof settings.counts !== 'object' || Array.isArray(settings.counts)) settings.counts = {};
+    if (questionCount === DEFAULT_COUNT) delete settings.counts[cfg.id];
+    else settings.counts[cfg.id] = questionCount;
     if (!settings.units || typeof settings.units !== 'object' || Array.isArray(settings.units)) settings.units = {};
     if (unit) settings.units[cfg.id] = unit;
     else delete settings.units[cfg.id];
@@ -303,33 +309,49 @@
     const questions = bank.questions;
     if (round.mode === 'mistakes') {
       const wanted = new Set(mistakes.ids());
-      return [shuffle(questions.filter(q => wanted.has(q.id))).slice(0, PER_PLAYER)];
+      return [shuffle(questions.filter(q => wanted.has(q.id))).slice(0, questionCount)];
     }
-    if (unit) {
-      const pool = shuffle(unitPool()), per = perPlayer(count);
-      if (!per) throw Error('本单元题目不足，请换一个单元。');
+    const per = perPlayer(count);
+    if (!per) throw Error(unit ? '本单元题目不足，请换一个单元。' : '题库题目不足，请刷新页面。');
+    const draw = bank.draw;
+    if (unit || draw.count) {
+      const pool = shuffle(unit ? unitPool() : questions);
       return Array.from({ length: count }, (_, p) => pool.slice(p * per, (p + 1) * per));
     }
-    const draw = bank.draw;
-    if (draw.count) {
-      const pool = shuffle(questions);
-      return Array.from({ length: count }, (_, p) => pool.slice(p * PER_PLAYER, (p + 1) * PER_PLAYER));
-    }
     // Quotas per category keep both players' rounds alike; the same pool is split, so nobody repeats a question.
+    // The bank's quotas are for 20 questions; other counts scale them, and a category that runs short is made up
+    // from the questions left over in the others.
     const plans = draw.alternatives || [draw.counts];
-    const plan = plans[Math.floor(Math.random() * plans.length)];
+    const plan = scaleQuota(plans[Math.floor(Math.random() * plans.length)], per);
     const rounds = Array.from({ length: count }, () => []);
-    for (const [key, take] of Object.entries(plan)) {
+    let rest = [];
+    for (const [key, want] of Object.entries(plan)) {
       const pool = shuffle(questions.filter(q => draw.by.map(field => String(q[field])).join('/') === key));
-      if (pool.length < take * count) throw Error('题库分类题量不足，请刷新页面。');
+      const take = Math.min(want, Math.floor(pool.length / count));
       rounds.forEach((r, p) => r.push(...pool.slice(p * take, (p + 1) * take)));
+      rest.push(...pool.slice(take * count));
     }
+    rest = shuffle(rest);
+    for (const r of rounds) r.push(...rest.splice(0, per - r.length));
     return rounds.map(shuffle);
   }
+  // {key: n} quotas summing to 20 -> quotas summing to total, by largest remainder.
+  function scaleQuota(plan, total) {
+    const sum = Object.values(plan).reduce((a, b) => a + b, 0);
+    if (sum === total || !sum) return plan;
+    const parts = Object.entries(plan).map(([key, n]) => ({ key, exact: (n * total) / sum, tie: Math.random() }));
+    for (const part of parts) part.take = Math.floor(part.exact);
+    let left = total - parts.reduce((a, part) => a + part.take, 0);
+    for (const part of [...parts].sort((a, b) => b.exact - b.take - (a.exact - a.take) || a.tie - b.tie)) {
+      if (left-- <= 0) break;
+      part.take++;
+    }
+    return Object.fromEntries(parts.map(part => [part.key, part.take]));
+  }
 
-  // Unit rounds draw only that unit's questions: up to 20 each, fewer when two players split a small unit.
+  // Each player gets the chosen number of questions, fewer when the bank (or a unit) cannot give everybody that many.
   const unitPool = () => bank.questions.filter(q => q.unit === unit);
-  const perPlayer = count => (bank && unit ? Math.min(PER_PLAYER, Math.floor(unitPool().length / count)) : PER_PLAYER);
+  const perPlayer = count => (bank ? Math.min(questionCount, Math.floor((unit ? unitPool() : bank.questions).length / count)) : questionCount);
   function showUnits() {
     const units = bank.ui?.units;
     // A trial bank only holds one round's questions, so it always plays the 期末综合 draw.
@@ -390,7 +412,7 @@
   emblem.setAttribute('aria-hidden', 'true');
   card.append(el('p', 'pk-eyebrow', `${PAGE.grade ? PAGE.grade + ' · ' : ''}${SUBJECT}小课堂`), emblem, el('h1', 'pk-title', cfg.title), el('p', 'pk-description', cfg.description));
   const stats = el('div', 'pk-stats');
-  const statBank = el('strong', '', '…'), statPer = el('strong', '', String(PER_PLAYER)), statSeconds = el('strong', '', String(duration));
+  const statBank = el('strong', '', '…'), statPer = el('strong', '', String(questionCount)), statSeconds = el('strong', '', String(duration));
   for (const [strong, label] of [[statBank, '题库题量'], [statPer, '每人题数'], [statSeconds, '本局时长（秒）']]) {
     const box = el('div');
     box.append(strong, el('span', '', label));
@@ -465,16 +487,16 @@
     modeButtons.mistakes.disabled = !count;
     modeNote.textContent = {
       pk: '两位玩家同时作答，各自抽到不同的题目，得分高者获胜。',
-      solo: `一个人练习${PER_PLAYER}题，答错的题会记入本机错题本。` +
+      solo: `一个人练习${perPlayer(1)}题，答错的题会记入本机错题本。` +
         (cfg.noPk ? (cfg.noPkReason || '听力题要听录音，两人共用一个喇叭会互相干扰，') + (ROOM ? '所以没有双人PK；想和同学比赛，请用「联网PK」。' : '所以没有双人PK。') : ''),
-      mistakes: `从本机错题本中抽题练习（最多${PER_PLAYER}题），答对后自动移出错题本，每改对一道 +1 分。`,
-      online: `和同学各用自己的设备，同时答同一套${PER_PLAYER}道题，实时比分；2到10人一起玩，前三名有名次奖励（第一名 +20，第二名 +10，第三名 +5；只有两人时第一名 +10）。`,
+      mistakes: `从本机错题本中抽题练习（最多${questionCount}题），答对后自动移出错题本，每改对一道 +1 分。`,
+      online: `和同学各用自己的设备，同时答同一套题（题数由开房间的同学在设置里定），实时比分；2到10人一起玩，前三名有名次奖励（第一名 +20，第二名 +10，第三名 +5；只有两人时第一名 +10）。`,
     }[mode];
     go.hidden = mode === 'online';
     onlinePanel.hidden = mode !== 'online';
     if (mode === 'online') online.showPanel();
     else online.hidePanel();
-    statPer.textContent = mode === 'mistakes' ? String(Math.min(count, PER_PLAYER)) : String(perPlayer(mode === 'pk' ? 2 : 1));
+    statPer.textContent = mode === 'mistakes' ? String(Math.min(count, questionCount)) : String(perPlayer(mode === 'pk' ? 2 : 1));
     if (bank && !trial.claiming) go.textContent = (mode === 'pk' ? '开始PK' : '开始练习') + (TRIAL ? ' · 试玩' : '');
   }
 
@@ -496,7 +518,9 @@
   dialog.setAttribute('aria-label', '游戏设置');
   dialog.innerHTML = '<div class="pk-dialog-head"><h2>游戏设置</h2><button type="button" class="pk-close" aria-label="关闭设置">×</button></div>' +
     '<label class="pk-label" for="pk-seconds">本局时长（秒）</label><input id="pk-seconds" type="number" min="30" max="1800" step="1" inputmode="numeric">' +
-    '<div class="pk-presets"></div><p class="pk-help">30—1800秒；游戏开始后，本局时长固定。</p>' +
+    '<div class="pk-presets pk-second-presets"></div><p class="pk-help">30—1800秒；游戏开始后，本局时长固定。</p>' +
+    `<label class="pk-label" for="pk-count">每人题数</label><input id="pk-count" type="number" min="${MIN_COUNT}" max="${MAX_COUNT}" step="1" inputmode="numeric">` +
+    `<div class="pk-presets pk-count-presets"></div><p class="pk-help">${MIN_COUNT}—${MAX_COUNT}题，默认${DEFAULT_COUNT}题；题多时记得把本局时长也调长一些。</p>` +
     '<label class="pk-switch"><span>背景音乐</span><input id="pk-music" type="checkbox"></label>' +
     '<label class="pk-switch"><span>点击与答题音效</span><input id="pk-fx" type="checkbox"></label>' +
     '<label class="pk-switch"><span>连击欢呼</span><input id="pk-voice" type="checkbox"></label>' +
@@ -504,12 +528,18 @@
     '<p class="pk-help">连续答对5题及以上时播放欢呼；关闭点击与答题音效时，欢呼也会静音。</p><p class="pk-error" role="status"></p>' +
     '<div class="pk-actions"><button type="button" class="pk-reset">恢复默认</button><button type="button" class="pk-save">保存设置</button></div>';
   document.body.append(dialog);
-  const secondsInput = dialog.querySelector('#pk-seconds'), musicInput = dialog.querySelector('#pk-music'),
+  const secondsInput = dialog.querySelector('#pk-seconds'), countInput = dialog.querySelector('#pk-count'), musicInput = dialog.querySelector('#pk-music'),
     fxInput = dialog.querySelector('#pk-fx'), voiceInput = dialog.querySelector('#pk-voice'),
     presentInput = dialog.querySelector('#pk-present'), settingsError = dialog.querySelector('.pk-error');
   for (const seconds of [60, 120, 150, 180, 300, 600]) {
-    dialog.querySelector('.pk-presets').append(button(seconds + '秒', () => {
+    dialog.querySelector('.pk-second-presets').append(button(seconds + '秒', () => {
       secondsInput.value = seconds;
+      settingsError.textContent = '';
+    }, 'pk-preset'));
+  }
+  for (const n of [10, 15, 20, 30]) {
+    dialog.querySelector('.pk-count-presets').append(button(n + '题', () => {
+      countInput.value = n;
       settingsError.textContent = '';
     }, 'pk-preset'));
   }
@@ -518,9 +548,17 @@
     if (!round.running) timeValue.textContent = duration;
     settingsButton.textContent = musicOn || fxOn ? '⚙ 设置' : '⚙ 设置 · 已静音';
   }
+  // A new 每人题数 shows on the start page (and in the mode note) right away.
+  function refreshCount() {
+    if (round.running) return;
+    if (round.mode === 'online') statPer.textContent = String(perPlayer(1));
+    else selectMode(round.mode);
+  }
   function openSettings() {
     secondsInput.value = duration;
     secondsInput.disabled = round.running;
+    countInput.value = questionCount;
+    countInput.disabled = round.running;
     dialog.querySelectorAll('.pk-preset,.pk-reset').forEach(b => (b.disabled = round.running));
     musicInput.checked = musicOn;
     fxInput.checked = fxOn;
@@ -530,7 +568,10 @@
     dialog.showModal();
   }
   dialog.querySelector('.pk-close').onclick = () => dialog.close();
-  dialog.querySelector('.pk-reset').onclick = () => (secondsInput.value = cfg.defaultSeconds);
+  dialog.querySelector('.pk-reset').onclick = () => {
+    secondsInput.value = cfg.defaultSeconds;
+    countInput.value = DEFAULT_COUNT;
+  };
   dialog.querySelector('.pk-save').onclick = () => {
     const n = Number(secondsInput.value);
     if (!round.running && !validSeconds(n)) {
@@ -538,12 +579,22 @@
       secondsInput.focus();
       return;
     }
-    if (!round.running) duration = n;
+    const c = Number(countInput.value);
+    if (!round.running && !validCount(c)) {
+      settingsError.textContent = `请输入${MIN_COUNT}至${MAX_COUNT}之间的整数题数。`;
+      countInput.focus();
+      return;
+    }
+    if (!round.running) {
+      duration = n;
+      questionCount = c;
+    }
     musicOn = musicInput.checked;
     fxOn = fxInput.checked;
     voiceOn = voiceInput.checked;
     saveSettings();
     updateSettingsLabels();
+    refreshCount();
     audio.settingsChanged();
     dialog.close();
     if (presentInput.checked !== presentOn) setPresent(presentInput.checked, true);
@@ -556,7 +607,9 @@
     voiceOn = s.voice !== false;
     if ((s.present === true) !== presentOn) setPresent(s.present === true, false);
     if (!round.running && validSeconds(s.durations?.[cfg.id])) duration = s.durations[cfg.id];
+    if (!round.running) questionCount = validCount(s.counts?.[cfg.id]) ? s.counts[cfg.id] : DEFAULT_COUNT;
     updateSettingsLabels();
+    refreshCount();
     audio.settingsChanged();
   });
 
